@@ -22,11 +22,14 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.json.JsonObject;
+import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.racetrainingsketch.core.BooleanParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.ColorParser;
@@ -51,10 +54,10 @@ import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
  */
 public abstract class BoatElement extends Element {
 
-    final protected ScenarioElement scenario;
+    private final ScenarioElement scenario;
     private final Decision decision;
-    private final CourseLegWithStrategy leg;
-    
+    private CourseLegWithStrategy leg;
+
     private Angle direction;
     private Location location;
     private Color color;
@@ -70,9 +73,9 @@ public abstract class BoatElement extends Element {
     private boolean downwindluffupiflifted;
     private Channel upwindchannel;
     private Channel downwindchannel;
-    
+
     private final Color sailcolor = Color.white;
-    
+
     private final BoatMetrics metrics;
     private double boatspeed = 0;
     private Angle rotationAnglePerSecond;
@@ -91,8 +94,8 @@ public abstract class BoatElement extends Element {
      * @param marks the set of marks
      */
     public BoatElement(JsonObject paramsobj, ScenarioElement scenario, CourseLeg cleg, BoatMetrics metrics) throws IOException {
-        direction = Angle.parse(paramsobj,"heading").orElse(ANGLE0);
-        location = Location.parse(paramsobj,"location").orElse(new Location(0,0));
+        direction = Angle.parse(paramsobj, "heading").orElse(ANGLE0);
+        location = Location.parse(paramsobj, "location").orElse(new Location(0, 0));
         color = ColorParser.parse(paramsobj, "colour").orElse(Color.black);
         trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(Color.black);
         upwindsailonbesttack = BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(false);
@@ -111,13 +114,31 @@ public abstract class BoatElement extends Element {
         this.close = metrics.getLength() * 3;
         this.clearance = metrics.getWidth() * 2;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
-        leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(),metrics,this);
+        leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), metrics, this);
         decision = new Decision(this);
+        decision.addPropertyChangeListener(new decisionActionChangeListener());
     }
-    
+
+    private class decisionActionChangeListener implements PropertyChangeListener {
+
+        @Override
+        public void propertyChange(PropertyChangeEvent e) {
+            String propertyName = e.getPropertyName();
+            if ("ACTION".equals(propertyName)) {
+                if (e.getOldValue() == MARKROUNDING) {
+                    try {
+                        leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), metrics, BoatElement.this);
+                    } catch (IOException ex) {
+                        // TODO sort out the squashed IOException here!
+                    }
+                }
+            }
+        }
+    }
+
     public void change(JsonObject paramsobj) throws IOException {
-        direction = Angle.parse(paramsobj,"heading").orElse(direction);
-        location = Location.parse(paramsobj,"location").orElse(location);
+        direction = Angle.parse(paramsobj, "heading").orElse(direction);
+        location = Location.parse(paramsobj, "location").orElse(location);
         color = ColorParser.parse(paramsobj, "colour").orElse(color);
         trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(trackcolor);
         upwindsailonbesttack = BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(upwindsailonbesttack);
@@ -132,20 +153,19 @@ public abstract class BoatElement extends Element {
         upwindchannel = Channel.parse(paramsobj, "upwindchannel").orElse(upwindchannel);
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(downwindchannel);
     }
-    
+
     public Location getLocation() {
         return location;
     }
-    
+
     public Angle getDirection() {
         return direction;
     }
 
-    
     Channel getUpwindchannel() {
         return upwindchannel;
     }
-    
+
     Channel getDownwindchannel() {
         return downwindchannel;
     }
@@ -185,19 +205,19 @@ public abstract class BoatElement extends Element {
     boolean isDownwindluffupiflifted() {
         return downwindluffupiflifted;
     }
-    
+
     public double getTurndistance() {
         return boatspeed * 4;
     }
-    
+
     public Angle getClosehauled() {
         return metrics.getUpwindrelative();
     }
-    
+
     public Angle getDownwind() {
         return metrics.getDownwindrelative();
     }
-    
+
     public BoatMetrics getMetrics() {
         return metrics;
     }
@@ -213,7 +233,7 @@ public abstract class BoatElement extends Element {
     public Angle closeAngle() {
         return ANGLE90.sub(rotationAnglePerSecond.div(2));
     }
-    
+
     /**
      * Advance time. Recalculate the boat position and other parameters.
      *
@@ -221,7 +241,7 @@ public abstract class BoatElement extends Element {
      */
     @Override
     public void timerAdvance(int time) throws IOException {
-        if (decision.getAction() == SAILON){
+        if (decision.getAction() == SAILON) {
             leg.nextTimeInterval(decision, this, scenario.getWindflow(location).getAngle());
         }
         SpeedPolar windflow = scenario.getWindflow(location);

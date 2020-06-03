@@ -32,8 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.Scrollable;
-import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
-import uk.theretiredprogrammer.racetrainingsketch.course.MarkElement;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -65,7 +63,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     private final DefFileDataObject dataobj;
     private final JToolBar toolbar = new JToolBar();
     private final JLabel timeinfo = new JLabel("Time: 0:00");
-    private JLabel firstleginfo = null;
+//    private JLabel firstleginfo = null;
     private transient MultiViewElementCallback callback;
     //
     private ScenarioElement scenario;
@@ -115,10 +113,10 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         toolbar.add(new StartAction(this));
         toolbar.add(new PauseAction(this));
         toolbar.addSeparator();
-        if (firstleginfo != null) {
-            toolbar.add(firstleginfo);
-            toolbar.addSeparator();
-        }
+//        if (firstleginfo != null) {
+//            toolbar.add(firstleginfo);
+//            toolbar.addSeparator();
+//        }
         toolbar.add(timeinfo);
         toolbar.addSeparator();
     }
@@ -126,11 +124,11 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     private void parseAndCreateSimulationDisplay() throws IOException {
         simulationtime = 0;
         scenario = new DefFile(dataobj.getPrimaryFile()).parse();
-        MarkElement m1 = scenario.getFirstmark();
-        if (m1 != null) {
-            DistancePolar p1 = new DistancePolar(scenario.getStartlocation(), m1.getLocation());
-            firstleginfo = new JLabel("First Mark: " + Integer.toString((int) p1.getDistance()) + "m");
-        }
+//        MarkElement m1 = scenario.getFirstmark();
+//        if (m1 != null) {
+//            DistancePolar p1 = new DistancePolar(scenario.getStartlocation(), m1.getLocation());
+//            firstleginfo = new JLabel("First Mark: " + Integer.toString((int) p1.getDistance()) + "m");
+//        }
         dp = new DisplayPanel();
         attachPanelScrolling(dp);
         validate();

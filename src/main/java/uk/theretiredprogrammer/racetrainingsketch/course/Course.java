@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.racetrainingsketch.course;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.ListOf;
@@ -31,27 +30,26 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Leg;
  */
 public class Course {
 
-    private final List<CourseLeg> courselegs = new ArrayList<>();
+    private final CourseLeg firstcourseleg;
 
     public Course(JsonObject paramsobj, ScenarioElement scenario) throws IOException {
         Location start = Location.parse(paramsobj, "start").orElse(new Location(0, 0));
         List<Leg> legs = ListOf.<Leg>parse(paramsobj, "legs", (jval) -> Leg.parseElement(jval))
                 .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
-        List<CourseLeg> partcourselegs = new ArrayList<>();
-        Location startofleg = start;
-        int i = 0;
-        for (Leg leg : legs) {
-            MarkElement mark = scenario.getMark(leg.getMarkname());
-            partcourselegs.add(new CourseLeg(startofleg, mark.getLocation(), leg.getTurn()));
-            startofleg = mark.getLocation();
-            i++;
+        CourseLeg following = null;
+        int i = legs.size() - 1;
+        while (i >= 0) {
+            following = new CourseLeg(
+                    i == 0 ? start : scenario.getMark(legs.get(i-1).getMarkname()).getLocation(),
+                    scenario.getMark(legs.get(i).getMarkname()).getLocation(),
+                    legs.get(i).getTurn(),
+                    following);
+            i--;
         }
-        for (i = 0; i < partcourselegs.size() - 1; i++) {
-            courselegs.add(partcourselegs.get(i).addFollowingleg(partcourselegs.get(i + 1)));
-        }
+        firstcourseleg = following;
     }
 
     public CourseLeg getFirstCourseLeg() {
-        return courselegs.get(0);
+        return firstcourseleg;
     }
 }

@@ -35,25 +35,17 @@ public class CourseLeg {
     private final Location startfrom;
     private final Location marklocation;
     private final TurnDirection turn;
-    private final CourseLeg followingleg;
-
-    public CourseLeg(Location startfrom, Location marklocation, TurnDirection turn) {
-        this(startfrom, marklocation, turn, null);
-    }
+    private CourseLeg followingleg;
 
     public CourseLeg(CourseLeg from) {
         this(from.startfrom, from.marklocation, from.turn, from.followingleg);
     }
 
-    private CourseLeg(Location startfrom, Location marklocation, TurnDirection turn, CourseLeg followingleg) {
+    public CourseLeg(Location startfrom, Location marklocation, TurnDirection turn, CourseLeg followingleg) {
         this.startfrom = startfrom;
         this.marklocation = marklocation;
         this.turn = turn;
         this.followingleg = followingleg;
-    }
-
-    CourseLeg addFollowingleg(CourseLeg followingleg) {
-        return new CourseLeg(startfrom, marklocation, turn, followingleg);
     }
 
     public CourseLeg getFollowingLeg() {

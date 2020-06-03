@@ -33,10 +33,8 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Element;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.IntegerParser;
-import uk.theretiredprogrammer.racetrainingsketch.core.StringParser;
 import uk.theretiredprogrammer.racetrainingsketch.flows.ConstantFlowElement;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
-import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.course.Course;
 import uk.theretiredprogrammer.racetrainingsketch.flows.FlowElement;
 import uk.theretiredprogrammer.racetrainingsketch.flows.FlowElementFactory;
@@ -71,11 +69,9 @@ public class ScenarioElement extends Element {
     private final double westlimit;
     private final double northlimit;
     private final double southlimit;
-    private final Location startlocation;
     private final double zoom;
     private final int secondsperdisplay;
     private final double speedup;
-    private final String firstmark;
     
 
     public ScenarioElement(JsonObject paramsobj) throws IOException {
@@ -87,11 +83,9 @@ public class ScenarioElement extends Element {
         northlimit = DoubleParser.parse(paramsobj, "northlimit").orElse(north);
         south = DoubleParser.parse(paramsobj, "south").orElse(SOUTH_DEFAULT);
         southlimit = DoubleParser.parse(paramsobj, "southlimit").orElse(south);
-        startlocation = Location.parse(paramsobj, "startlocation").orElse(new Location((east+west)/2, (north+south)/2));
         zoom = DoubleParser.parse(paramsobj, "zoom").orElse(SCALE_DEFAULT);
         secondsperdisplay = IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1);
         speedup = DoubleParser.parse(paramsobj, "speedup").orElse(1.0);
-        firstmark = StringParser.parse(paramsobj, "firstmark").orElse(null);
     }
 
     public void setWater(JsonObject waterparamsobj) throws IOException {
@@ -171,10 +165,6 @@ public class ScenarioElement extends Element {
         return speedup;
     }
 
-    public Location getStartlocation() {
-        return startlocation;
-    }
-
     public double getZoom() {
         return zoom;
     }
@@ -195,20 +185,6 @@ public class ScenarioElement extends Element {
         return marks.get(name);
     }
 
-    public MarkElement getFirstmark() {
-        return getMark(firstmark);
-    }
-
-    public Double getFirstLegLength() {
-        MarkElement m1 = getFirstmark();
-        if (m1 != null) {
-            DistancePolar p1 = new DistancePolar(getStartlocation(), m1.getLocation());
-            return p1.getDistance();
-        } else {
-            return null;
-        }
-    }
-    
     @Override
     public void finish() {
         wind.finish();
