@@ -18,9 +18,9 @@ package uk.theretiredprogrammer.racetrainingsketch.core;
 import java.io.IOException;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Decision.TurnDirection;
-import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.TurnDirection.ANTICLOCKWISE;
-import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.TurnDirection.CLOCKWISE;
+import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 
 /**
  * A leg is a mark name and passing (port / starboard)

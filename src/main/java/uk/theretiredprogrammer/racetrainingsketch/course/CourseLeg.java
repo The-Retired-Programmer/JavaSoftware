@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.course;
 
-import uk.theretiredprogrammer.racetrainingsketch.boats.Decision.TurnDirection;
+import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import static uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg.LegType.GYBINGDOWNWIND;

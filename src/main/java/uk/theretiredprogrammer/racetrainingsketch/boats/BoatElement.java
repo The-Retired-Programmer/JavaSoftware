@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.boats;
 
+import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision;
+import uk.theretiredprogrammer.racetrainingsketch.strategy.CourseLegWithStrategy;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -29,8 +31,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.json.JsonObject;
-import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.racetrainingsketch.boats.Decision.DecisionAction.SAILON;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.MARKROUNDING;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.racetrainingsketch.core.BooleanParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.ColorParser;
 import uk.theretiredprogrammer.racetrainingsketch.ui.ScenarioElement;
@@ -114,7 +116,7 @@ public abstract class BoatElement extends Element {
         this.close = metrics.getLength() * 3;
         this.clearance = metrics.getWidth() * 2;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
-        leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), metrics, this);
+        leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), this);
         decision = new Decision(this);
         decision.addPropertyChangeListener(new decisionActionChangeListener());
     }
@@ -127,7 +129,7 @@ public abstract class BoatElement extends Element {
             if ("ACTION".equals(propertyName)) {
                 if (e.getOldValue() == MARKROUNDING) {
                     try {
-                        leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), metrics, BoatElement.this);
+                        leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), BoatElement.this);
                     } catch (IOException ex) {
                         // TODO sort out the squashed IOException here!
                     }
@@ -162,47 +164,47 @@ public abstract class BoatElement extends Element {
         return direction;
     }
 
-    Channel getUpwindchannel() {
+    public Channel getUpwindchannel() {
         return upwindchannel;
     }
 
-    Channel getDownwindchannel() {
+    public Channel getDownwindchannel() {
         return downwindchannel;
     }
 
-    boolean isUpwindsailonbesttack() {
+    public boolean isUpwindsailonbesttack() {
         return upwindsailonbesttack;
     }
 
-    boolean isUpwindtackifheaded() {
+    public boolean isUpwindtackifheaded() {
         return upwindtackifheaded;
     }
 
-    boolean isUpwindbearawayifheaded() {
+    public boolean isUpwindbearawayifheaded() {
         return upwindbearawayifheaded;
     }
 
-    boolean isUpwindluffupiflifted() {
+    public boolean isUpwindluffupiflifted() {
         return upwindluffupiflifted;
     }
 
-    boolean isReachdownwind() {
+    public boolean isReachdownwind() {
         return reachdownwind;
     }
 
-    boolean isDownwindsailonbestgybe() {
+    public boolean isDownwindsailonbestgybe() {
         return downwindsailonbestgybe;
     }
 
-    boolean isDownwindbearawayifheaded() {
+    public boolean isDownwindbearawayifheaded() {
         return downwindbearawayifheaded;
     }
 
-    boolean isDownwindgybeiflifted() {
+    public boolean isDownwindgybeiflifted() {
         return downwindgybeiflifted;
     }
 
-    boolean isDownwindluffupiflifted() {
+    public boolean isDownwindluffupiflifted() {
         return downwindluffupiflifted;
     }
 
