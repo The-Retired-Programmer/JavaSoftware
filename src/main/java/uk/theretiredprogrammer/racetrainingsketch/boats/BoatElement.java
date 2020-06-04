@@ -24,8 +24,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -118,23 +116,6 @@ public abstract class BoatElement extends Element {
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
         leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), this);
         decision = new Decision(this);
-    }
-
-    private class decisionActionChangeListener implements PropertyChangeListener {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent e) {
-            String propertyName = e.getPropertyName();
-            if ("ACTION".equals(propertyName)) {
-                if (e.getOldValue() == MARKROUNDING) {
-                    try {
-                        leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), BoatElement.this);
-                    } catch (IOException ex) {
-                        // TODO sort out the squashed IOException here!
-                    }
-                }
-            }
-        }
     }
 
     public void change(JsonObject paramsobj) throws IOException {
@@ -272,7 +253,7 @@ public abstract class BoatElement extends Element {
             moveBoat(decision.getAngle(), windflow, waterflow);
             decision.setSAILON();
             return true;
-        } 
+        }
         moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isClockwise())), windflow, waterflow);
         return false;
     }

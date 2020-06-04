@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 
@@ -25,76 +23,61 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Decision {
-    
+
     public enum TurnDirection {
-        CLOCKWISE , ANTICLOCKWISE
+        CLOCKWISE, ANTICLOCKWISE
     }
-    
+
     public enum DecisionAction {
         SAILON, STOP, MARKROUNDING, TURN
     }
-    
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    
+
     private final BoatElement boat;
-    
+
     private DecisionAction action = DecisionAction.SAILON;
     private Angle angle = null;
     private TurnDirection turndirection = TurnDirection.CLOCKWISE;
-    
+
     public Decision(BoatElement boat) {
         this.boat = boat;
     }
-    
-    public void addPropertyChangeListener(PropertyChangeListener listener){
-        pcs.addPropertyChangeListener(listener);
-    }
-    
-    public void removePropertyChangeListener(PropertyChangeListener listener){
-        pcs.removePropertyChangeListener(listener);
-    }
-    
-    public void setSAILON(){
+
+    public void setSAILON() {
         set(DecisionAction.SAILON, null, TurnDirection.CLOCKWISE);
     }
-    
-    public void setTURN(Angle angle, TurnDirection turndirection ){
+
+    public void setTURN(Angle angle, TurnDirection turndirection) {
         set(DecisionAction.TURN, angle, turndirection);
     }
-    
-    public void setMARKROUNDING(Angle angle, TurnDirection turndirection){
+
+    public void setMARKROUNDING(Angle angle, TurnDirection turndirection) {
         set(DecisionAction.MARKROUNDING, angle, turndirection);
     }
-    
-    public void setSTOP(){
+
+    public void setSTOP() {
         set(DecisionAction.STOP, null, TurnDirection.CLOCKWISE);
     }
-    
+
     private void set(DecisionAction action, Angle angle, TurnDirection turndirection) {
-        DecisionAction oldaction = this.action;
         this.action = action;
         this.angle = angle;
         this.turndirection = turndirection;
-        if (!action.equals(oldaction)) {
-            pcs.firePropertyChange("ACTION", oldaction, action);
-        }
     }
 
     public DecisionAction getAction() {
         return action;
     }
-    
+
     private boolean isRotating() {
         return action.equals(DecisionAction.TURN) || action.equals(DecisionAction.MARKROUNDING);
     }
-    
+
     public void UpdateAngle(Angle angle) {
         this.angle = angle;
     }
 
-    
     public Angle getAngle() {
-        return isRotating() ? angle: boat.getDirection();
+        return isRotating() ? angle : boat.getDirection();
     }
 
     public boolean isClockwise() {
