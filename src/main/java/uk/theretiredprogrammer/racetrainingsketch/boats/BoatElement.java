@@ -118,7 +118,6 @@ public abstract class BoatElement extends Element {
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
         leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), this);
         decision = new Decision(this);
-        decision.addPropertyChangeListener(new decisionActionChangeListener());
     }
 
     private class decisionActionChangeListener implements PropertyChangeListener {
@@ -255,22 +254,27 @@ public abstract class BoatElement extends Element {
             case STOP:
                 return;
             case MARKROUNDING:
+                if (turn(windflow, waterflow)) {
+                    leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), this);
+                }
+                return;
             case TURN:
-                turn(windflow, waterflow, decision);
+                turn(windflow, waterflow);
                 return;
             default:
                 throw new IOException("Illegal sailing Mode when moving boat");
         }
     }
 
-    private void turn(SpeedPolar windflow, SpeedPolar waterflow, Decision decision) throws IOException {
+    private boolean turn(SpeedPolar windflow, SpeedPolar waterflow) throws IOException {
         Angle newdirection = decision.getAngle();
         if (direction.absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(decision.getAngle(), windflow, waterflow);
             decision.setSAILON();
-        } else {
-            moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isClockwise())), windflow, waterflow);
-        }
+            return true;
+        } 
+        moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isClockwise())), windflow, waterflow);
+        return false;
     }
 
     /**

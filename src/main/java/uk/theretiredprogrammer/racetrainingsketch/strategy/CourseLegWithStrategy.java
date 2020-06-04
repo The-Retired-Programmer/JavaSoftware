@@ -31,7 +31,7 @@ import static uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg.LegTyp
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class CourseLegWithStrategy extends CourseLeg  {
-
+    
     private final SailingStrategy legstrategy;
     private final RoundingStrategy roundingstrategy;
     private final double closetomark;
@@ -136,7 +136,7 @@ public class CourseLegWithStrategy extends CourseLeg  {
     Angle getAngletoSail(Location here,boolean onPort, Angle winddirection) {
         return here.angleto(getSailToLocation(onPort, winddirection));
     }
-    
+        
     public void nextTimeInterval(Decision decision, BoatElement boat, Angle winddirection) {
         getSailingStrategy(boat.getLocation()).nextTimeInterval(decision, boat, this, winddirection);
     }
