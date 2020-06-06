@@ -236,7 +236,10 @@ public abstract class BoatElement extends Element {
                 return;
             case MARKROUNDING:
                 if (turn(windflow, waterflow)) {
-                    leg = new CourseLegWithStrategy(leg.getFollowingLeg(), scenario.getWindmeanflowangle(), this);
+                    CourseLeg nextleg = leg.getFollowingLeg();
+                    leg = nextleg == null
+                            ? new CourseLegWithStrategy(leg)
+                            : new CourseLegWithStrategy(nextleg, scenario.getWindmeanflowangle(), this);
                 }
                 return;
             case TURN:

@@ -36,6 +36,13 @@ public class CourseLegWithStrategy extends CourseLeg  {
     private final RoundingStrategy roundingstrategy;
     private final double closetomark;
     
+    public CourseLegWithStrategy(CourseLeg courseleg) {
+        super(courseleg);
+        legstrategy = new AfterFinishSailingStrategy();
+        roundingstrategy = null;
+        closetomark = 0;
+}
+     
     public CourseLegWithStrategy(CourseLeg courseleg, Angle meanwinddirection,
             BoatElement boat) throws IOException {
         super(courseleg);
@@ -96,6 +103,10 @@ public class CourseLegWithStrategy extends CourseLeg  {
                         return turn.equals(CLOCKWISE)
                                 ? new WindwardtoGybingDownwindStarboardRoundingStrategy(metrics.getWidth()*2)
                                 : new WindwardtoGybingDownwindPortRoundingStrategy(metrics.getWidth()*2);
+                    case NONE:
+                        return turn.equals(CLOCKWISE)
+                                ? new WindwardtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
+                                : new WindwardtoNonePortRoundingStrategy(metrics.getWidth()*2);
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 
@@ -110,6 +121,10 @@ public class CourseLegWithStrategy extends CourseLeg  {
                         return turn.equals(CLOCKWISE)
                                 ? new OffwindtoOffwindStarboardRoundingStrategy(metrics.getWidth()*2)
                                 : new OffwindtoOffwindPortRoundingStrategy(metrics.getWidth()*2);
+                    case NONE:
+                        return turn.equals(CLOCKWISE)
+                                ? new OffwindtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
+                                : new OffwindtoNonePortRoundingStrategy(metrics.getWidth()*2);
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 
@@ -120,6 +135,14 @@ public class CourseLegWithStrategy extends CourseLeg  {
                         return turn.equals(CLOCKWISE)
                                 ? new GybingDownwindtoWindwardStarboardRoundingStrategy(metrics.getWidth()*2)
                                 : new GybingDownwindtoWindwardPortRoundingStrategy(metrics.getWidth()*2);
+                    case OFFWIND:
+                        return turn.equals(CLOCKWISE)
+                                ? new GybingDownwindtoOffwindStarboardRoundingStrategy(metrics.getWidth()*2)
+                                : new GybingDownwindtoOffwindPortRoundingStrategy(metrics.getWidth()*2);
+                    case NONE:
+                        return turn.equals(CLOCKWISE)
+                                ? new GybingDownwindtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
+                                : new GybingDownwindtoNonePortRoundingStrategy(metrics.getWidth()*2);
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 

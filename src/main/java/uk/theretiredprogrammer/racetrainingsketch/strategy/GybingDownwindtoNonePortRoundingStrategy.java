@@ -17,42 +17,38 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
 import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 
 /**
  *
- * @@author Richard Linsdale (richard at theretiredprogrammer.uk)
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class OffwindtoWindwardStarboardRoundingStrategy extends RoundingStrategy {
+class GybingDownwindtoNonePortRoundingStrategy extends RoundingStrategy {
 
     private final double clearance;
 
-    OffwindtoWindwardStarboardRoundingStrategy(double clearance) {
+    GybingDownwindtoNonePortRoundingStrategy(double clearance) {
         this.clearance = clearance;
     }
 
     @Override
     void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
-        CourseLeg followingleg = leg.getFollowingLeg();
+        boolean onPort = boat.getDirection().gteq(winddirection);
         if (leg.getEndLocation().angleto(boat.getLocation())
-                .gteq(getOffsetAngle(leg))) {
-            if (followingleg == null){
-                decision.setSTOP();
-                return;
-            }
-            decision.setMARKROUNDING(winddirection.sub(boat.getClosehauled()),CLOCKWISE);
+                .lteq(getOffsetAngle(onPort, winddirection))) {
+            decision.setMARKROUNDING(winddirection.add(ANGLE90), ANTICLOCKWISE);
         }
     }
-
-    private Angle getOffsetAngle(CourseLeg leg) {
-        return leg.getAngleofLeg().sub(ANGLE90);
+    
+    private Angle getOffsetAngle(boolean onPort, Angle winddirection) {
+        return winddirection.add(new Angle(onPort ? -135 : -45));
     }
 
     @Override
     DistancePolar getOffset(boolean onPort, Angle winddirection, CourseLeg leg) {
-        return new DistancePolar(clearance, getOffsetAngle(leg));
+        return new DistancePolar(clearance, getOffsetAngle(onPort,  winddirection));
     }
 }

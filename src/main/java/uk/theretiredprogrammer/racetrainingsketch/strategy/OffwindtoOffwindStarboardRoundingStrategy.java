@@ -39,10 +39,11 @@ class OffwindtoOffwindStarboardRoundingStrategy extends RoundingStrategy {
         CourseLeg followingleg = leg.getFollowingLeg();
         if (leg.getEndLocation().angleto(boat.getLocation())
                 .gteq(getOffsetAngle(leg))) {
-            decision.setMARKROUNDING(followingleg != null
-                    ? leg.getEndLocation().angleto(followingleg.getEndLocation())
-                    : boat.getDirection(),
-                    CLOCKWISE);
+            if (followingleg == null){
+                decision.setSTOP();
+                return;
+            }
+            decision.setMARKROUNDING(leg.getEndLocation().angleto(followingleg.getEndLocation()), CLOCKWISE);
         }
     }
 

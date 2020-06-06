@@ -24,26 +24,21 @@ import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 
 /**
  *
- * @@author Richard Linsdale (richard at theretiredprogrammer.uk)
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class OffwindtoWindwardStarboardRoundingStrategy extends RoundingStrategy {
+class OffwindtoNoneStarboardRoundingStrategy extends RoundingStrategy {
 
     private final double clearance;
 
-    OffwindtoWindwardStarboardRoundingStrategy(double clearance) {
+    OffwindtoNoneStarboardRoundingStrategy(double clearance) {
         this.clearance = clearance;
     }
 
     @Override
     void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
-        CourseLeg followingleg = leg.getFollowingLeg();
         if (leg.getEndLocation().angleto(boat.getLocation())
                 .gteq(getOffsetAngle(leg))) {
-            if (followingleg == null){
-                decision.setSTOP();
-                return;
-            }
-            decision.setMARKROUNDING(winddirection.sub(boat.getClosehauled()),CLOCKWISE);
+            decision.setMARKROUNDING(winddirection.sub(ANGLE90), CLOCKWISE);
         }
     }
 

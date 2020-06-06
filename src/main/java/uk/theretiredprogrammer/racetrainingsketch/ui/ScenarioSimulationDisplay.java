@@ -63,7 +63,6 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     private final DefFileDataObject dataobj;
     private final JToolBar toolbar = new JToolBar();
     private final JLabel timeinfo = new JLabel("Time: 0:00");
-//    private JLabel firstleginfo = null;
     private transient MultiViewElementCallback callback;
     //
     private ScenarioElement scenario;
@@ -105,7 +104,8 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         try {
             parseAndCreateSimulationDisplay();
         } catch (IOException ex) {
-            displayablefailuremessage = ex.getLocalizedMessage();
+            dp.failure(ex);
+           // displayablefailuremessage = ex.getLocalizedMessage();
         }
         //
         toolbar.addSeparator();
@@ -113,10 +113,6 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         toolbar.add(new StartAction(this));
         toolbar.add(new PauseAction(this));
         toolbar.addSeparator();
-//        if (firstleginfo != null) {
-//            toolbar.add(firstleginfo);
-//            toolbar.addSeparator();
-//        }
         toolbar.add(timeinfo);
         toolbar.addSeparator();
     }
@@ -124,11 +120,6 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     private void parseAndCreateSimulationDisplay() throws IOException {
         simulationtime = 0;
         scenario = new DefFile(dataobj.getPrimaryFile()).parse();
-//        MarkElement m1 = scenario.getFirstmark();
-//        if (m1 != null) {
-//            DistancePolar p1 = new DistancePolar(scenario.getStartlocation(), m1.getLocation());
-//            firstleginfo = new JLabel("First Mark: " + Integer.toString((int) p1.getDistance()) + "m");
-//        }
         dp = new DisplayPanel();
         attachPanelScrolling(dp);
         validate();
@@ -160,7 +151,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         try {
             parseAndCreateSimulationDisplay();
         } catch (IOException ex) {
-            displayablefailuremessage = ex.getLocalizedMessage();
+            dp.failure(ex);
         }
     }
 
@@ -298,7 +289,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
                 timeinfo.setText("Time: " + mmssformat(simulationtime));
                 dp.updateDisplay();
             } catch (IOException ex) {
-                dp.failure(ex.getLocalizedMessage());
+                dp.failure(ex);
             }
         }
     }
@@ -339,8 +330,8 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
             preferredsize = new Dimension((int) (width * scale), (int) (depth * scale));
         }
 
-        public void failure(String failuremessage) {
-            displayablefailuremessage = failuremessage;
+        public void failure(IOException failure) {
+            displayablefailuremessage = failure.getMessage();
             this.repaint();
         }
 
@@ -363,7 +354,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
                 try {
                     scenario.draw(g2D);
                 } catch (IOException ex) {
-                    displayablefailuremessage = ex.getLocalizedMessage();
+                    failure(ex);
                 }
             }
             if (displayablefailuremessage != null) {
