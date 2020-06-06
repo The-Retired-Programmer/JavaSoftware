@@ -21,6 +21,7 @@ import uk.theretiredprogrammer.racetrainingsketch.boats.BoatMetrics;
 import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
@@ -59,7 +60,7 @@ public class CourseLegWithStrategy extends CourseLeg  {
                 : followingleg.getLegType(meanwinddirection, metrics.getUpwindrelative()))
                 : NONE;
         roundingstrategy = selectroundingstrategy(thislegtype,
-                followinglegtype, courseleg.getTurn(), metrics);
+                followinglegtype, courseleg.getTurn(), boat);
     }
     
     private SailingStrategy selectlegstrategy(LegType thislegtype, Angle meanwinddirection,
@@ -91,22 +92,40 @@ public class CourseLegWithStrategy extends CourseLeg  {
     }
     
     private RoundingStrategy selectroundingstrategy(LegType thislegtype, LegType followinglegtype,
-            TurnDirection turn, BoatMetrics metrics) throws IOException {
+            TurnDirection turn, BoatElement boat) throws IOException {
     switch (thislegtype){
             case WINDWARD:
                 switch (followinglegtype){
                     case OFFWIND:
                         return turn.equals(CLOCKWISE)
-                                ? new WindwardtoOffwindStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new WindwardtoOffwindPortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? -45 : -135)),
+                                        (winddirection) -> this.getEndLocation().angleto(this.getFollowingLeg().getEndLocation())
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 135 : 45)),
+                                        (winddirection) -> this.getEndLocation().angleto(this.getFollowingLeg().getEndLocation())
+                                );
                     case GYBINGDOWNWIND:
                         return turn.equals(CLOCKWISE)
-                                ? new WindwardtoGybingDownwindStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new WindwardtoGybingDownwindPortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? -45 : -135)),
+                                        (winddirection) -> winddirection.add(boat.getDownwind())
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 135 : 45)),
+                                        (winddirection) -> winddirection.sub(boat.getDownwind())
+                                        );
                     case NONE:
                         return turn.equals(CLOCKWISE)
-                                ? new WindwardtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new WindwardtoNonePortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? -45 : -135)),
+                                        (winddirection) -> winddirection.add(ANGLE90)
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 135 : 45)),
+                                        (winddirection) -> winddirection.sub(ANGLE90)
+                                        );
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 
@@ -114,17 +133,35 @@ public class CourseLegWithStrategy extends CourseLeg  {
             case OFFWIND:
                 switch (followinglegtype){
                     case WINDWARD:
-                        return turn.equals(CLOCKWISE)
-                                ? new OffwindtoWindwardStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new OffwindtoWindwardPortRoundingStrategy(metrics.getWidth()*2);
+                         return turn.equals(CLOCKWISE)
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().sub(ANGLE90),
+                                        (winddirection) -> winddirection.sub(boat.getClosehauled())
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().add(ANGLE90),
+                                        (winddirection) -> winddirection.add(boat.getClosehauled())
+                                );
                     case OFFWIND:
                         return turn.equals(CLOCKWISE)
-                                ? new OffwindtoOffwindStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new OffwindtoOffwindPortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().sub(ANGLE90),
+                                        (winddirection) -> this.getFollowingLeg().getAngleofLeg()
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().add(ANGLE90),
+                                        (winddirection) -> this.getFollowingLeg().getAngleofLeg()
+                                );
                     case NONE:
                         return turn.equals(CLOCKWISE)
-                                ? new OffwindtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new OffwindtoNonePortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().sub(ANGLE90),
+                                        (winddirection) -> winddirection.sub(ANGLE90)
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> this.getAngleofLeg().add(ANGLE90),
+                                        (winddirection) -> winddirection.add(ANGLE90)
+                                );
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 
@@ -132,17 +169,35 @@ public class CourseLegWithStrategy extends CourseLeg  {
             case GYBINGDOWNWIND:
                 switch (followinglegtype){
                     case WINDWARD:
-                        return turn.equals(CLOCKWISE)
-                                ? new GybingDownwindtoWindwardStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new GybingDownwindtoWindwardPortRoundingStrategy(metrics.getWidth()*2);
+                       return turn.equals(CLOCKWISE)
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 45 : 135)),
+                                        (winddirection) -> winddirection.sub(boat.getClosehauled())
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) ->  winddirection.add(new Angle(onport ? -135 : -45)),
+                                        (winddirection) -> winddirection.add(boat.getClosehauled())
+                                );
                     case OFFWIND:
                         return turn.equals(CLOCKWISE)
-                                ? new GybingDownwindtoOffwindStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new GybingDownwindtoOffwindPortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 45 : 135)),
+                                        (winddirection) -> this.getFollowingLeg().getAngleofLeg()
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) ->  winddirection.add(new Angle(onport ? -135 : -45)),
+                                        (winddirection) -> this.getFollowingLeg().getAngleofLeg()
+                                );
                     case NONE:
                         return turn.equals(CLOCKWISE)
-                                ? new GybingDownwindtoNoneStarboardRoundingStrategy(metrics.getWidth()*2)
-                                : new GybingDownwindtoNonePortRoundingStrategy(metrics.getWidth()*2);
+                                ? new StarboardRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? 45 : 135)),
+                                        (winddirection) -> winddirection.sub(ANGLE90)
+                                )
+                                : new PortRoundingStrategy(boat,
+                                        (onport, winddirection) -> winddirection.add(new Angle(onport ? -135 : -45)),
+                                        (winddirection) -> winddirection.add(ANGLE90)
+                                );
                     default:
                        throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: "
                                + thislegtype.toString()+"->"+followinglegtype.toString()); 

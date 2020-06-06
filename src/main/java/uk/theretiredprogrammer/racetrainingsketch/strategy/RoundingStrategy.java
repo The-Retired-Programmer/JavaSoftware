@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
+import java.util.function.BiFunction;
 import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
@@ -25,6 +26,15 @@ import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
  */
 abstract class RoundingStrategy extends SailingStrategy {
     
-    abstract DistancePolar getOffset(boolean onPort, Angle winddirection, CourseLeg leg);
+    private final double clearance;
+    final BiFunction<Boolean, Angle, Angle> getOffsetAngle;
+
+    RoundingStrategy(double clearance, BiFunction<Boolean, Angle, Angle> getOffsetAngle) {
+        this.clearance = clearance;
+        this.getOffsetAngle = getOffsetAngle;
+    }
     
+    final DistancePolar getOffset(boolean onPort, Angle winddirection, CourseLeg leg) {
+        return new DistancePolar(clearance, getOffsetAngle.apply(onPort,  winddirection));
+    }
 }
