@@ -39,10 +39,6 @@ class GybingDownwindtoOffwindPortRoundingStrategy extends RoundingStrategy {
         CourseLeg followingleg = leg.getFollowingLeg();
         if (leg.getEndLocation().angleto(boat.getLocation())
                 .lteq(getOffsetAngle(onPort, winddirection))) {
-            if (followingleg == null){
-                decision.setSTOP();
-                return;
-            }
             decision.setMARKROUNDING(followingleg.getAngleofLeg(), ANTICLOCKWISE);
         }
     }

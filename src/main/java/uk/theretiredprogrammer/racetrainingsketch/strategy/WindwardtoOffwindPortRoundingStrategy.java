@@ -39,10 +39,6 @@ class WindwardtoOffwindPortRoundingStrategy extends RoundingStrategy {
         CourseLeg followingleg = leg.getFollowingLeg();
         if (leg.getEndLocation().angleto(boat.getLocation())
                 .lteq(getOffsetAngle(onPort, winddirection))) {
-            if (followingleg == null){
-                decision.setSTOP();
-                return;
-            }
             decision.setMARKROUNDING(leg.getEndLocation().angleto(followingleg.getEndLocation()),ANTICLOCKWISE);
         }
     }
