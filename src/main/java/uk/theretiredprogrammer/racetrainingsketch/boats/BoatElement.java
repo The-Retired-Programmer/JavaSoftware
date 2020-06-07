@@ -250,7 +250,7 @@ public abstract class BoatElement extends Element {
         }
     }
 
-    private boolean turn(SpeedPolar windflow, SpeedPolar waterflow) throws IOException {
+    private boolean turn(SpeedPolar windflow, SpeedPolar waterflow)  {
         Angle newdirection = decision.getAngle();
         if (direction.absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(decision.getAngle(), windflow, waterflow);
@@ -266,7 +266,7 @@ public abstract class BoatElement extends Element {
      *
      * @param nextdirection the required direction
      */
-    private void moveBoat(Angle nextdirection, SpeedPolar windflow, SpeedPolar waterflow) throws IOException {
+    private void moveBoat(Angle nextdirection, SpeedPolar windflow, SpeedPolar waterflow) {
         // calculate the potential boat speed - based on wind speed and relative angle 
         double potentialBoatspeed = SpeedPolar.convertKnots2MetresPerSecond(
                 metrics.getPotentialBoatSpeed(nextdirection.absAngleDiff(windflow.getAngle()),
@@ -288,7 +288,7 @@ public abstract class BoatElement extends Element {
      * @param pixelsPerMetre the scale factor
      */
     @Override
-    public void draw(Graphics2D g2D, double pixelsPerMetre) throws IOException {
+    public void draw(Graphics2D g2D, double pixelsPerMetre)  {
         Angle relative = direction.angleDiff(scenario.getWindflow(location).getAngle());
         boolean onStarboard = relative.gt(ANGLE0);
         Angle absrelative = relative.abs();

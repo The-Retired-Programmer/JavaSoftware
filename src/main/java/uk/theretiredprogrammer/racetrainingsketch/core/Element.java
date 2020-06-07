@@ -65,6 +65,6 @@ public abstract class Element {
     public void timerAdvance(int time) throws IOException{
     }
 
-    public void draw(Graphics2D g2D, double pixelsPerMetre) throws IOException {
+    public void draw(Graphics2D g2D, double pixelsPerMetre) {
     }
 }

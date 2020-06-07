@@ -59,8 +59,7 @@ public class CourseLegWithStrategy extends CourseLeg  {
                 ? followingleg.getLegType(meanwinddirection, metrics.getUpwindrelative(), metrics.getDownwindrelative())
                 : followingleg.getLegType(meanwinddirection, metrics.getUpwindrelative()))
                 : NONE;
-        roundingstrategy = selectroundingstrategy(thislegtype,
-                followinglegtype, courseleg.getTurn(), boat);
+        roundingstrategy = selectroundingstrategy(thislegtype, followinglegtype, courseleg.getTurn(), boat);
     }
     
     private SailingStrategy selectlegstrategy(LegType thislegtype, Angle meanwinddirection,

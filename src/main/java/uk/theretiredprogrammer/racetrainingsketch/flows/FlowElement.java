@@ -39,7 +39,7 @@ public abstract class FlowElement extends Element {
      * @param pos the point at which the flow is to be calculated
      * @return the flow
      */
-    public abstract SpeedPolar getFlow(Location pos) throws IOException;
+    public abstract SpeedPolar getFlow(Location pos);
 
     /**
      * Get the mean value for the direction across the entire flow model.

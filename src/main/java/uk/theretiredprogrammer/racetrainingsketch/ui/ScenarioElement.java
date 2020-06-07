@@ -169,7 +169,7 @@ public class ScenarioElement extends Element {
         return zoom;
     }
 
-    public SpeedPolar getWindflow(Location pos) throws IOException {
+    public SpeedPolar getWindflow(Location pos) {
         return wind.getFlow(pos);
     }
 
@@ -177,7 +177,7 @@ public class ScenarioElement extends Element {
         return wind.getMeanFlowAngle();
     }
 
-    public SpeedPolar getWaterflow(Location pos) throws IOException {
+    public SpeedPolar getWaterflow(Location pos) {
         return water.getFlow(pos);
     }
 
@@ -208,7 +208,7 @@ public class ScenarioElement extends Element {
 //    }
 
     @Override
-    public void timerAdvance(int simulationtime) throws IOException {
+    public void timerAdvance(int simulationtime) throws IOException  {
         wind.timerAdvance(simulationtime);
         water.timerAdvance(simulationtime);
         for (BoatElement boat : boats) {
@@ -221,7 +221,7 @@ public class ScenarioElement extends Element {
      *
      * @param g2D the 2D graphics object
      */
-    public void draw(Graphics2D g2D) throws IOException {
+    public void draw(Graphics2D g2D) {
         // set transform
         double w = getWest();
         double n = getNorth();
@@ -264,16 +264,16 @@ public class ScenarioElement extends Element {
         }
         wind.draw(g2D, scale);
         water.draw(g2D, scale);
-        for (MarkElement mark: marks.values()) {
+        marks.values().forEach((mark) -> {
             mark.draw(g2D, scale);
-        }
-        for (BoatElement boat : boats) {
+        });
+        boats.forEach((boat) -> {
             boat.draw(g2D, scale);
-        }
+        });
     }
 
     @Override
-    public void draw(Graphics2D g2D, double pixelsPerMetre) throws IOException {
+    public void draw(Graphics2D g2D, double pixelsPerMetre) {
         draw(g2D);
     }
 }

@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -35,6 +34,7 @@ import javax.swing.Scrollable;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
+import org.openide.awt.StatusDisplayer;
 import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileEvent;
@@ -71,7 +71,6 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     private Timer timer;
     private TimeStepsRunner runner;
     private int simulationtime = 0;
-    private String displayablefailuremessage = null;
 
     /**
      * Get the simulation display instance which is in focus.
@@ -104,8 +103,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         try {
             parseAndCreateSimulationDisplay();
         } catch (IOException ex) {
-            dp.failure(ex);
-           // displayablefailuremessage = ex.getLocalizedMessage();
+            reportfailure(ex);
         }
         //
         toolbar.addSeparator();
@@ -147,11 +145,13 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     public void reset(){
         terminate();
         removeAll();
-        scenario.finish();
+        if (scenario != null) {
+            scenario.finish();
+        }
         try {
             parseAndCreateSimulationDisplay();
         } catch (IOException ex) {
-            dp.failure(ex);
+            reportfailure(ex);
         }
     }
 
@@ -164,6 +164,10 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         }
         isRunning = false;
         timer.cancel();
+    }
+    
+    private void reportfailure(IOException ex) {
+        StatusDisplayer.getDefault().setStatusText(ex.getLocalizedMessage());
     }
 
     /**
@@ -289,7 +293,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
                 timeinfo.setText("Time: " + mmssformat(simulationtime));
                 dp.updateDisplay();
             } catch (IOException ex) {
-                dp.failure(ex);
+                reportfailure(ex);
             }
         }
     }
@@ -330,11 +334,6 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
             preferredsize = new Dimension((int) (width * scale), (int) (depth * scale));
         }
 
-        public void failure(IOException failure) {
-            displayablefailuremessage = failure.getMessage();
-            this.repaint();
-        }
-
         /**
          * Update the display
          */
@@ -350,18 +349,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
             // set the rendering hints
             g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            if (displayablefailuremessage == null) {
-                try {
-                    scenario.draw(g2D);
-                } catch (IOException ex) {
-                    failure(ex);
-                }
-            }
-            if (displayablefailuremessage != null) {
-                g2D.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-                g2D.drawString(displayablefailuremessage, 0, 0);
-                displayablefailuremessage = null;
-            }
+            scenario.draw(g2D);
         }
 
         @Override

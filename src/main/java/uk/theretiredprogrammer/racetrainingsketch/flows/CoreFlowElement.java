@@ -237,5 +237,6 @@ abstract class CoreFlowElement extends FlowElement {
         }
         return f;
     }
+    
     abstract SpeedPolar getFlowWithoutSwing(Location pos);
 }

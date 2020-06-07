@@ -122,7 +122,7 @@ public class MarkElement extends Element {
     private final static Angle LEEWARDLAYLINEANGLE = new Angle(45);
 
     @Override
-    public void draw(Graphics2D g2D, double pixelsPerMetre) throws IOException {
+    public void draw(Graphics2D g2D, double pixelsPerMetre)  {
         Angle windAngle = scenario.getWindflow(getLocation()).getAngle();
         DistancePolar toPt = getDownwindlaylines()
                 ? new DistancePolar(2 * SIZE, windAngle.add(isPort() ? ANGLE90MINUS : ANGLE90))

@@ -54,7 +54,7 @@ public class TestFlowElement extends FlowElement {
     }
 
     @Override
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         return new SpeedPolar(speed , from);
     }
 }
