@@ -62,6 +62,20 @@ class GybingDownwindSailingStrategy extends SailingStrategy {
                 return;
             }
         }
+        // check if need to reach for mark
+        if (onPort) {
+            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
+            if (coursetomark.lt(boat.getDownwind()) && boat.getDirection().neq(coursetomark)) {
+                decision.setTURN(coursetomark, ANTICLOCKWISE);
+                return;
+            }
+        } else {
+            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
+            if (coursetomark.gt(boat.getDownwind().negate())) {
+                decision.setTURN(coursetomark, CLOCKWISE);
+                return;
+            }
+        }
         if (channel != null) {
             if (leg.getDistanceToEnd(boat.getLocation()) > channel.getInneroffset(leg.getEndLocation()) * 1.5) {
                 if (!channel.isInchannel(boat.getLocation())) {
