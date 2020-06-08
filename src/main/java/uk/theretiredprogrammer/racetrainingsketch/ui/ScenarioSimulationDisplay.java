@@ -24,6 +24,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.json.JsonException;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -102,7 +103,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         });
         try {
             parseAndCreateSimulationDisplay();
-        } catch (IOException ex) {
+        } catch (JsonException | IOException ex) {
             reportfailure(ex);
         }
         //
@@ -150,7 +151,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         }
         try {
             parseAndCreateSimulationDisplay();
-        } catch (IOException ex) {
+        } catch (JsonException | IOException ex) {
             reportfailure(ex);
         }
     }
@@ -166,7 +167,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         timer.cancel();
     }
     
-    private void reportfailure(IOException ex) {
+    private void reportfailure(Exception ex) {
         StatusDisplayer.getDefault().setStatusText(ex.getLocalizedMessage());
     }
 
