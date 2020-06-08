@@ -30,7 +30,7 @@ class OffwindSailingStrategy extends SailingStrategy {
     void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
         boolean onPort = boat.getDirection().gteq(winddirection);
         Angle nextDirection = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
-        if (!nextDirection.eq(boat.getDirection())){
+        if (nextDirection.neq(boat.getDirection())){
             decision.setTURN(nextDirection, boat.getDirection().gt(nextDirection) ? ANTICLOCKWISE : CLOCKWISE);
         }
     }
