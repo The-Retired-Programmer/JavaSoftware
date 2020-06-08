@@ -64,6 +64,20 @@ class WindwardSailingStrategy extends SailingStrategy {
                 return;
             }
         }
+        // check if we are overstanding and need to reach to mark
+        if (onPort) {
+            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
+            if (coursetomark.gt(closehauledangle) && coursetomark.neq(boat.getDirection())) {
+                decision.setTURN(coursetomark, CLOCKWISE);
+                return;
+            }
+        } else {
+            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
+            if (coursetomark.lt(closehauledangle.negate())&& coursetomark.neq(boat.getDirection())) {
+                decision.setTURN(coursetomark, ANTICLOCKWISE);
+                return;
+            }
+        }
         // stay in channel
         if (channel != null) {
             if (leg.getDistanceToEnd(boat.getLocation()) > channel.getInneroffset(leg.getEndLocation()) * 1.5) {
