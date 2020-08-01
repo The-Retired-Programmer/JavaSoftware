@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 
 /**
  *
@@ -30,28 +31,7 @@ public class PolarTest {
     
     private final static double DELTA = 0.0000001;
     
-    public PolarTest() {
-    }
     
-    @BeforeAll
-    public static void setUpClass() {
-    }
-    
-    @AfterAll
-    public static void tearDownClass() {
-    }
-    
-    @BeforeEach
-    public void setUp() {
-    }
-    
-    @AfterEach
-    public void tearDown() {
-    }
-
-    /**
-     * Test of add method, of class Polar.
-     */
     @Test
     public void testAdd() {
         System.out.println("add");
@@ -71,10 +51,6 @@ public class PolarTest {
         assertEquals(0, res.getDistance(), DELTA);
     }
 
-
-    /**
-     * Test of subtract method, of class Polar.
-     */
     @Test
     public void testSubtract() {
         System.out.println("subtract");
@@ -91,14 +67,10 @@ public class PolarTest {
         assertEquals(100*Math.sqrt(2), res.getDistance(), DELTA);
         other = new DistancePolar(100, new Angle(180));
         res = (DistancePolar) instance.subtract(other);
-        assertEquals(0, res.getAngle().getDegrees());
+        assertEquals(0, res.getAngle().getDegrees(), DELTA);
         assertEquals(200, res.getDistance(), DELTA);
     }
 
-
-    /**
-     * Test of mult method, of class Polar.
-     */
     @Test
     public void testMult() {
         System.out.println("mult");
@@ -114,9 +86,6 @@ public class PolarTest {
         assertEquals(65.5, res.getDistance(),DELTA);
     }
 
-    /**
-     * Test of angleDiff method, of class Polar.
-     */
     @Test
     public void testAngleDiff_Angle() {
         System.out.println("angleDiff<Angle>");
@@ -124,9 +93,6 @@ public class PolarTest {
         assertEquals(92, instance.angleDiff(new Angle(180)).getDegrees());
     }
 
-    /**
-     * Test of angleDiff method, of class Polar.
-     */
     @Test
     public void testAngleDiff_Polar() {
         System.out.println("angleDiff<Polar>");
@@ -135,13 +101,30 @@ public class PolarTest {
         assertEquals(92, instance.angleDiff(other).getDegrees());
     }
 
-    /**
-     * Test of getAngle method, of class Polar.
-     */
     @Test
     public void testGetAngle() {
         System.out.println("getAngle");
         DistancePolar instance = new DistancePolar(1,new Angle(88));
         assertEquals(88, instance.getAngle().getDegrees());
+    }
+    
+    @Test
+    public void testMeanAngle1() {
+        System.out.println("meanAngle1");
+        Polar[][] array = new Polar[2][1];
+        array[0][0] = new SpeedPolar(1,ANGLE0);
+        array[1][0] = new SpeedPolar(10, new Angle(50));
+        assertEquals(new Angle(25), Polar.meanAngle(array));
+    }
+    
+    @Test
+    public void testMeanAngle2() {
+        System.out.println("meanAngle2");
+        Polar[][] array = new Polar[2][2];
+        array[0][0] = new SpeedPolar(1,ANGLE0);
+        array[1][0] = new SpeedPolar(5,ANGLE0);
+        array[0][1] = new SpeedPolar(10,ANGLE0);
+        array[1][1] = new SpeedPolar(15, new Angle(45));
+        assertEquals( 10.7990805, Polar.meanAngle(array).getDegrees(), DELTA);
     }
 }

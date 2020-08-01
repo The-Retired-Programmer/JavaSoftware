@@ -16,12 +16,7 @@
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90MINUS;
 
 /**
  *
@@ -33,7 +28,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
     public void test1() throws IOException {
         System.out.println("on starboard reach - sailon");
         Decision decision = makeDecision("/reach-starboardtack.json");
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -41,9 +36,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
         System.out.println("on starboard reach - pointing high - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
                 () -> setboatintvalue("heading", -80));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(ANGLE90MINUS, decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -90, false);
     }
 
     @Test
@@ -51,9 +44,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
         System.out.println("on starboard reach - pointing low - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
                 () -> setboatintvalue("heading", -100));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(ANGLE90MINUS, decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -90, true);
     }
 
     @Test
@@ -61,8 +52,6 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
         System.out.println("on starboard reach - sailing low - turn to closer reach");
         Decision decision = makeDecision("/reach-starboardtack.json",
                 () -> setboatlocationvalue("location", 40, 50));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-84), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -84, true);
     }
 }

@@ -15,24 +15,34 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
+import java.util.Optional;
+import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE180;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class OffwindSailingStrategy extends SailingStrategy {
+class OffwindSailingStrategy extends SailingLegStrategy {
 
     @Override
-    void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
+    String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
         boolean onPort = boat.getDirection().gteq(winddirection);
         Angle nextDirection = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
         if (nextDirection.neq(boat.getDirection())){
             decision.setTURN(nextDirection, boat.getDirection().gt(nextDirection) ? ANTICLOCKWISE : CLOCKWISE);
+            return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
+        return "Sail ON";
     }
     // TODO - could add a channel to this as well
+
+    @Override
+    boolean applyRoundingStrategy(CourseLegWithStrategy leg, Boat boat, Angle winddirection) {
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), winddirection.sub(ANGLE180));
+        return refdistance.isPresent() ? refdistance.get() <= boat.getMetrics().getWidth() * 20 : true;
+    }
 }

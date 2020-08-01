@@ -15,7 +15,8 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
+import java.util.Optional;
+import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
@@ -25,7 +26,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class WindwardSailingStrategy extends SailingStrategy {
+class WindwardSailingStrategy extends SailingLegStrategy {
 
     private final boolean sailonbesttack;
     private final boolean tackifheaded;
@@ -46,37 +47,22 @@ class WindwardSailingStrategy extends SailingStrategy {
     }
 
     @Override
-    void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
+    String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
         Angle boatangletowind = boat.getDirection().absAngleDiff(winddirection);
-        boolean onPort = boat.getDirection().gteq(winddirection);
+        boolean onPort = boat.isPort(winddirection);
         Angle closehauledangle = boat.getClosehauled();
         // check if need to tack for mark
         if (onPort) {
-            if (leg.getAngletoSail(boat.getLocation(), !onPort, winddirection).lteq(closehauledangle.negate())) {
-                Angle nextDirection = winddirection.sub(closehauledangle);
-                decision.setTURN(nextDirection, ANTICLOCKWISE);
-                return;
+            if (tackifonstarboardlayline(boat, leg, decision, winddirection)) {
+                return "tacking on starboard layline - port->starboard";
             }
         } else {
-            if (leg.getAngletoSail(boat.getLocation(), !onPort, winddirection).gteq(closehauledangle)) {
-                Angle nextDirection = winddirection.add(closehauledangle);
-                decision.setTURN(nextDirection, CLOCKWISE);
-                return;
+            if (tackifonportlayline(boat, leg, decision, winddirection)) {
+                return "tacking on port layline - starboard->port";
             }
         }
-        // check if we are overstanding and need to reach to mark
-        if (onPort) {
-            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
-            if (coursetomark.gt(closehauledangle) && coursetomark.neq(boat.getDirection())) {
-                decision.setTURN(coursetomark, CLOCKWISE);
-                return;
-            }
-        } else {
-            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
-            if (coursetomark.lt(closehauledangle.negate())&& coursetomark.neq(boat.getDirection())) {
-                decision.setTURN(coursetomark, ANTICLOCKWISE);
-                return;
-            }
+        if (adjustDirectCourseToWindwardMarkOffset(boat, leg, decision, winddirection)) {
+            return "Beating on Layline to windward mark - course adjustment";
         }
         // stay in channel
         if (channel != null) {
@@ -84,7 +70,7 @@ class WindwardSailingStrategy extends SailingStrategy {
                 if (!channel.isInchannel(boat.getLocation())) {
                     Angle nextDirection = winddirection.add(closehauledangle.negateif(onPort));
                     decision.setTURN(nextDirection, onPort ? ANTICLOCKWISE : CLOCKWISE);
-                    return;
+                    return "Tacking to stay within channel";
                 }
             }
         }
@@ -94,13 +80,13 @@ class WindwardSailingStrategy extends SailingStrategy {
                 if (winddirection.gt(meanwinddirection)) {
                     Angle nextDirection = winddirection.sub(closehauledangle);
                     decision.setTURN(nextDirection, ANTICLOCKWISE);
-                    return;
+                    return "Tack onto best tack - starboard";
                 }
             } else {
                 if (winddirection.lt(meanwinddirection)) {
                     Angle nextDirection = winddirection.add(closehauledangle);
                     decision.setTURN(nextDirection, CLOCKWISE);
-                    return;
+                    return "Tack onto best tack - port";
                 }
             }
         }
@@ -109,12 +95,12 @@ class WindwardSailingStrategy extends SailingStrategy {
             if (tackifheaded) {
                 Angle nextDirection = winddirection.add(closehauledangle.negateif(onPort));
                 decision.setTURN(nextDirection, onPort ? ANTICLOCKWISE : CLOCKWISE);
-                return;
+                return "Tack when headed";
             }
             if (bearawayifheaded) {
                 Angle nextDirection = winddirection.add(closehauledangle.negateif(!onPort));
                 decision.setTURN(nextDirection, onPort ? CLOCKWISE : ANTICLOCKWISE);
-                return;
+                return "Bearaway when headed";
             }
         }
         // check if pointing low
@@ -122,7 +108,15 @@ class WindwardSailingStrategy extends SailingStrategy {
             if (luffupiflifted) {
                 Angle nextDirection = winddirection.add(closehauledangle.negateif(!onPort));
                 decision.setTURN(nextDirection, onPort ? ANTICLOCKWISE : CLOCKWISE);
+                return "Luff when lifted";
             }
         }
+        return "Sail ON";
+    }
+    
+    @Override
+    boolean applyRoundingStrategy(CourseLegWithStrategy leg, Boat boat, Angle winddirection) {
+       Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), winddirection); 
+       return refdistance.isPresent()? refdistance.get() <= boat.getMetrics().getLength() * 5: true;
     }
 }

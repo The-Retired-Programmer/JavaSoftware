@@ -17,24 +17,19 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrategyTest {
-    
+
     @Test
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
                 () -> setboatlocationvalue("location", 53, 12));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -42,46 +37,41 @@ public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrat
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
                 () -> setboatlocationvalue("location", 53, 11));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
-    public void layline3()  throws IOException {
+    public void layline3() throws IOException {
         System.out.println("layline 3");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
                 () -> setboatlocationvalue("location", 53, 10));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-45), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -90, true);
     }
 
     @Test
-    public void layline4()  throws IOException {
+    public void layline4() throws IOException {
         System.out.println("layline 4");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setboatlocationvalue("location", 53, 9.5));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-45), decision.getAngle());
-        assert (decision.isClockwise());
+                () -> setboatlocationvalue("location", 52.5, 9.5));
+        assertTURN(decision, -90, true);
     }
 
     @Test
-    public void layline5()  throws IOException {
+    public void layline5() throws IOException {
         System.out.println("layline 5");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
                 () -> setwindfrom(45),
                 () -> setboatlocationvalue("location", 53, 11));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
-    public void layline6()  throws IOException {
+    public void layline6() throws IOException {
         System.out.println("layline 6");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
                 () -> setwindfrom(45),
-                () -> setboatlocationvalue("location", 53, 10));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(ANGLE0, decision.getAngle());
-        assert (decision.isClockwise());
+                () -> setboatdirectionvalue("heading", -135),
+                () -> setboatlocationvalue("location", 52, 8));
+        assertTURN(decision, -45, true);
     }
 }

@@ -44,13 +44,13 @@ public class DistancePolar extends Polar<DistancePolar> {
                 if (values.size() == 2) {
                     return Optional.of(new DistancePolar(
                             values.getJsonNumber(1).doubleValue(),
-                            new Angle(values.getJsonNumber(0).intValueExact())
+                            new Angle(values.getJsonNumber(0).doubleValue())
                     ));
                 }
             }
         } catch (ArithmeticException ex) {
         }
-        throw new IOException("Malformed Definition file - integer and decimal expected with " + key);
+        throw new IOException("Malformed Definition file - decimal and decimal expected with " + key);
     }
     
     private final double distance;
@@ -61,7 +61,7 @@ public class DistancePolar extends Polar<DistancePolar> {
     }
 
     public DistancePolar(Location origin, Location pos) {
-        super(new Angle((int) Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))));
+        super(new Angle(Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))));
         double deltax = (pos.getX() - origin.getX());
         double deltay = (pos.getY() - origin.getY());
         distance = Math.sqrt(deltax * deltax + deltay * deltay);
@@ -85,6 +85,4 @@ public class DistancePolar extends Polar<DistancePolar> {
     DistancePolar create(double dimension, Angle angle) {
         return new DistancePolar(dimension, angle);
     }
-    
-    
 }

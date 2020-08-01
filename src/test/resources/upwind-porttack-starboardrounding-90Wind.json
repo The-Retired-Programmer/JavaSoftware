@@ -10,12 +10,14 @@
         "zoom": 10,
         "speedup": 5
     },
-    "WIND": {
-        "type": "testflow",
-        "speed": 4,
-        "from": 90,
-        "mean": 90
-    },
+    "WIND": [
+        {
+            "type": "testflow",
+            "speed": 4,
+            "from": 90,
+            "mean": 90
+        }
+    ],
     "MARKS": [
         {
             "name": "mark1",

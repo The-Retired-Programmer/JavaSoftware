@@ -15,33 +15,57 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.course;
 
+import java.awt.Graphics2D;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import uk.theretiredprogrammer.racetrainingsketch.core.ListOf;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
-import uk.theretiredprogrammer.racetrainingsketch.ui.ScenarioElement;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.core.Leg;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
 
 /**
  * The Mark Class - represent course marks.
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Course {
+public class Course implements Displayable {
 
     private final CourseLeg firstcourseleg;
+    private final Map<String, Mark> marks = new HashMap<>();
 
-    public Course(JsonObject paramsobj, ScenarioElement scenario) throws IOException {
-        Location start = Location.parse(paramsobj, "start").orElse(new Location(0, 0));
-        List<Leg> legs = ListOf.<Leg>parse(paramsobj, "legs", (jval) -> Leg.parseElement(jval))
+    public Course(JsonObject parsedjson, Scenario scenario) throws IOException {
+        JsonArray markarray = parsedjson.getJsonArray("MARKS");
+        if (markarray != null) {
+            for (JsonValue markv : markarray) {
+                if (markv.getValueType() == JsonValue.ValueType.OBJECT) {
+                    JsonObject markparms = (JsonObject) markv;
+                    Mark mark = new Mark(markparms, scenario);
+                    marks.put(mark.getName(), mark);
+                } else {
+                    throw new IOException("Malformed Definition File - MARKS array contains items other that mark objects");
+                }
+            }
+        }
+        //
+        JsonObject courseobj = parsedjson.getJsonObject("COURSE");
+        if (courseobj == null) {
+            throw new IOException("Malformed Definition File - missing COURSE object");
+        }
+        Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
+        List<Leg> legs = ListOf.<Leg>parse(courseobj, "legs", (jval) -> Leg.parseElement(jval))
                 .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
         CourseLeg following = null;
         int i = legs.size() - 1;
         while (i >= 0) {
             following = new CourseLeg(
-                    i == 0 ? start : scenario.getMark(legs.get(i-1).getMarkname()).getLocation(),
-                    scenario.getMark(legs.get(i).getMarkname()).getLocation(),
+                    i == 0 ? start : marks.get(legs.get(i - 1).getMarkname()).getLocation(),
+                    marks.get(legs.get(i).getMarkname()).getLocation(),
                     legs.get(i).getTurn(),
                     following);
             i--;
@@ -51,5 +75,13 @@ public class Course {
 
     public CourseLeg getFirstCourseLeg() {
         return firstcourseleg;
+    }
+
+    @Override
+    public void draw(Graphics2D g2D, double zoom) throws IOException {
+        for (Mark mark : marks.values()) {
+            mark.draw(g2D, zoom);
+        }
+
     }
 }

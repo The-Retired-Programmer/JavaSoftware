@@ -17,9 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 
 /**
@@ -28,12 +25,15 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
  */
 public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingStrategyTest {
 
+    private static final Angle DELTAANGLE = new Angle(5);
+
     @Test
     public void testStarboardlayline1A() throws IOException {
         System.out.println("starboard layline 1A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 52, 84));
-        assertEquals(SAILON, decision.getAction());
+        Angle starboardclosedhauled = getStarboardCloseHauled();
+        assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
     @Test
@@ -41,7 +41,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 2A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 50, 86));
-        assertEquals(SAILON, decision.getAction());
+        Angle starboardclosedhauled = getStarboardCloseHauled();
+        assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
     @Test
@@ -50,9 +51,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 48, 88));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 45, true);
     }
 
     @Test
@@ -61,9 +60,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 47.8, 88.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 45, true);
     }
 
     @Test
@@ -71,9 +68,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 5A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 48, 88));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(180), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 45, true);
     }
 
     @Test
@@ -81,9 +76,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 6A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 47.8, 88.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(180), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 45, true);
     }
 
     @Test
@@ -91,7 +84,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 1A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 44, 88));
-        assertEquals(SAILON, decision.getAction());
+        Angle portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
     }
 
     @Test
@@ -99,7 +93,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 2A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 46, 90));
-        assertEquals(SAILON, decision.getAction());
+        Angle portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
     }
 
     @Test
@@ -108,9 +103,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 48, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertMARKROUNDING(decision, 135, true);
     }
 
     @Test
@@ -119,29 +112,23 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 48.2, 92.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertMARKROUNDING(decision, 135, true);
     }
 
     @Test
     public void testPortlayline5A() throws IOException {
-        System.out.println("port layline 3A");
+        System.out.println("port layline 5A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 48, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(180), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
     public void testPortlayline6A() throws IOException {
-        System.out.println("port layline 4A");
+        System.out.println("port layline 6A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocationvalue("location", 48.2, 92.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(180), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -149,7 +136,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 1B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 44, 88));
-        assertEquals(SAILON, decision.getAction());
+        Angle starboardclosedhauled = getStarboardCloseHauled();
+        assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
     @Test
@@ -157,7 +145,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 2B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 46, 90));
-        assertEquals(SAILON, decision.getAction());
+        Angle starboardclosedhauled = getStarboardCloseHauled();
+        assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
     @Test
@@ -166,9 +155,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 48, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -177,9 +164,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 48.2, 92.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -187,9 +172,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 3B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 48, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-90), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -197,9 +180,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 4B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 48.2, 92.2));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-90), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -207,7 +188,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 1B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 48, 96));
-        assertEquals(SAILON, decision.getAction());
+        Angle portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
     }
 
     @Test
@@ -215,7 +197,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 2B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 50, 94));
-        assertEquals(SAILON, decision.getAction());
+        Angle portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
     }
 
     @Test
@@ -224,9 +207,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 52, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertMARKROUNDING(decision, -135, true);
     }
 
     @Test
@@ -235,28 +216,22 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatparam("reachdownwind", true),
                 () -> setboatlocationvalue("location", 52.2, 91.8));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertMARKROUNDING(decision, -135, true);
     }
 
     @Test
     public void testPortlayline5B() throws IOException {
-        System.out.println("port layline 3B");
+        System.out.println("port layline 5B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 52, 92));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-90), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -135, true);
     }
 
     @Test
     public void testPortlayline6B() throws IOException {
-        System.out.println("port layline 4B");
+        System.out.println("port layline 6B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocationvalue("location", 52.2, 91.8));
-        assertEquals(MARKROUNDING, decision.getAction());
-        assertEquals(new Angle(-90), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -135, true);
     }
 }

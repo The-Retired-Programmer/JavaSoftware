@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
+import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 
 /**
@@ -32,13 +32,13 @@ public class Decision {
         SAILON, STOP, MARKROUNDING, TURN
     }
 
-    private final BoatElement boat;
+    private final Boat boat;
 
     private DecisionAction action = DecisionAction.SAILON;
     private Angle angle = null;
     private TurnDirection turndirection = TurnDirection.CLOCKWISE;
 
-    public Decision(BoatElement boat) {
+    public Decision(Boat boat) {
         this.boat = boat;
     }
 

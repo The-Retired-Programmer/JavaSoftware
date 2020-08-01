@@ -15,27 +15,15 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.json.JsonException;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.Scrollable;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
-import org.openide.awt.StatusDisplayer;
 import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileEvent;
@@ -62,16 +50,13 @@ import org.openide.windows.TopComponent;
 public final class ScenarioSimulationDisplay extends JPanel implements MultiViewElement {
 
     private final DefFileDataObject dataobj;
-    private final JToolBar toolbar = new JToolBar();
+    private JToolBar toolbar;
     private final JLabel timeinfo = new JLabel("Time: 0:00");
     private transient MultiViewElementCallback callback;
     //
-    private ScenarioElement scenario;
+    private Scenario scenario;
     private DisplayPanel dp;
-    private boolean isRunning = false;
-    private Timer timer;
-    private TimeStepsRunner runner;
-    private int simulationtime = 0;
+    private Controller controller;
 
     /**
      * Get the simulation display instance which is in focus.
@@ -101,122 +86,58 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
                 reset();
             }
         });
-        try {
-            parseAndCreateSimulationDisplay();
-        } catch (JsonException | IOException ex) {
-            reportfailure(ex);
-        }
-        //
+        setup();
+    }
+
+    private void setup() {
+        controller = new Controller(dataobj, (t) -> updateDisplay(t));
+        dp = new DisplayPanel(controller);
+        this.add(new JScrollPane(dp));
+        validate();
+        repaint();
+        toolbar = new JToolBar();
         toolbar.addSeparator();
         toolbar.add(new ResetAction(this));
         toolbar.add(new StartAction(this));
         toolbar.add(new PauseAction(this));
         toolbar.addSeparator();
+        toolbar.add(new DisplayAllLogAction(this));
+        toolbar.add(new DisplayFilteredLogAction(this));
+        toolbar.addSeparator();
         toolbar.add(timeinfo);
         toolbar.addSeparator();
     }
-    
-    private void parseAndCreateSimulationDisplay() throws IOException {
-        simulationtime = 0;
-        scenario = new DefFile(dataobj.getPrimaryFile()).parse();
-        dp = new DisplayPanel();
-        attachPanelScrolling(dp);
-        validate();
-        repaint();
+
+    private void updateDisplay(String t) {
+        timeinfo.setText("Time: " + t);
+        dp.updateDisplay();
     }
 
-
-    /**
-     * Start running the simulation.
-     */
     public void start() {
-        if (isRunning) {
-            return;
-        }
-        int rate = (int) (scenario.getSecondsperdisplay() * 1000 / scenario.getSpeedup());
-        timer = new Timer();
-        runner = new TimeStepsRunner();
-        timer.scheduleAtFixedRate(runner, 0, rate);
-        isRunning = true;
+        controller.start();
     }
 
-    /**
-     * Reset the simulation.
-     */
-    public void reset(){
-        terminate();
+    public void stop() {
+        controller.stop();
+    }
+
+    public void reset() {
+        controller.stop();
         removeAll();
-        if (scenario != null) {
-            scenario.finish();
-        }
-        try {
-            parseAndCreateSimulationDisplay();
-        } catch (JsonException | IOException ex) {
-            reportfailure(ex);
-        }
+        setup();
     }
 
-    /**
-     * Terminate the simulation.
-     */
-    public void terminate() {
-        if (!isRunning) {
-            return;
-        }
-        isRunning = false;
-        timer.cancel();
-    }
-    
-    private void reportfailure(Exception ex) {
-        StatusDisplayer.getDefault().setStatusText(ex.getLocalizedMessage());
+    public void displaylog() {
+        controller.displaylog();
     }
 
-    /**
-     * Act on a function keystroke.
-     *
-     * @param key the keystroke
-     */
-    // TODO - keyaction body disabled - needs to be reworked at a later date
+    public void displayfilteredlog() {
+        controller.displayfilteredlog("Yellow");
+    }
+
     public void keyAction(String key) {
-//        try {
-//            scenario.actionKey(key);
-//            for (BoatElement boat : boats.values()) {
-//                boat.actionKey(key);
-//            }
-//        } catch (IOException ex) {
-//            displayablefailuremessage = ex.getLocalizedMessage();
-//        }
-
+        controller.keyAction(key);
     }
-
-    /**
-     * Attach a panel to this element (embedded in a scroll pane). This would
-     * typically be the display canvas for the simulation display.
-     *
-     * @param panel the display canvas
-     */
-    public void attachPanelScrolling(JPanel panel) {
-        this.add(new JScrollPane(panel));
-    }
-
-    @Override
-    public String getName() {
-        return "DefFileSimulation";
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        setName("SimulationPanel"); // NOI18N
-        setLayout(new java.awt.BorderLayout());
-    }// </editor-fold>//GEN-END:initComponents
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    // End of variables declaration//GEN-END:variables
 
     @Override
     public JComponent getVisualRepresentation() {
@@ -244,7 +165,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
 
     @Override
     public void componentClosed() {
-        terminate();
+        stop();
     }
 
     @Override
@@ -278,109 +199,17 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
         return CloseOperationState.STATE_OK;
     }
 
-    private class TimeStepsRunner extends TimerTask {
-
-        @Override
-        public void run() {
-            try {
-                int secondsperdisplay = scenario.getSecondsperdisplay();
-                while (secondsperdisplay > 0) {
-//TODO timer call to actionFutureParameters disabled - will needto be enabled in the future                   
-//                    scenario.actionFutureParameters(simulationtime);
-                    scenario.timerAdvance(simulationtime);
-                    secondsperdisplay--;
-                    simulationtime++;
-                }
-                timeinfo.setText("Time: " + mmssformat(simulationtime));
-                dp.updateDisplay();
-            } catch (IOException ex) {
-                reportfailure(ex);
-            }
-        }
-    }
-
     /**
-     * Format a time in seconds into mm:ss format.
-     *
-     * @param seconds the time interval in seconds
-     * @return the time interval expressed as a mm:ss string
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
-    public static String mmssformat(int seconds) {
-        int mins = seconds / 60;
-        int secs = seconds % 60;
-        String ss = Integer.toString(secs);
-        if (ss.length() == 1) {
-            ss = "0" + ss;
-        }
-        return Integer.toString(mins) + ":" + ss;
-    }
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-    /**
-     * The display canvas for the simulation.
-     *
-     * @author Richard Linsdale (richard at theretiredprogrammer.uk)
-     */
-    private final class DisplayPanel extends JPanel implements Scrollable {
-
-        private final Dimension preferredsize;
-
-        /**
-         * Constructor
-         *
-         */
-        public DisplayPanel() {
-            double width = scenario.getEast() - scenario.getWest();
-            double depth = scenario.getNorth() - scenario.getSouth();
-            double scale = scenario.getZoom();
-            preferredsize = new Dimension((int) (width * scale), (int) (depth * scale));
-        }
-
-        /**
-         * Update the display
-         */
-        public void updateDisplay() {
-            this.repaint();
-        }
-
-        @Override
-        public void paintComponent(Graphics g) {
-            this.setBackground(new Color(200, 255, 255));
-            super.paintComponent(g);
-            Graphics2D g2D = (Graphics2D) g;
-            // set the rendering hints
-            g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            scenario.draw(g2D);
-        }
-
-        @Override
-        public Dimension getPreferredSize() {
-            return preferredsize;
-        }
-
-        @Override
-        public Dimension getPreferredScrollableViewportSize() {
-            return preferredsize;
-        }
-
-        @Override
-        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 20;
-        }
-
-        @Override
-        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-            return 200;
-        }
-
-        @Override
-        public boolean getScrollableTracksViewportWidth() {
-            return false;
-        }
-
-        @Override
-        public boolean getScrollableTracksViewportHeight() {
-            return false;
-        }
-    }
+        setName("SimulationPanel"); // NOI18N
+        setLayout(new java.awt.BorderLayout());
+    }// </editor-fold>//GEN-END:initComponents
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // End of variables declaration//GEN-END:variables
 }

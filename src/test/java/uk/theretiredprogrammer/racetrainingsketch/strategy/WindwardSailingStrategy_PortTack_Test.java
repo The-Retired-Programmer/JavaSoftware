@@ -17,10 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 
 /**
  *
@@ -32,7 +28,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test1() throws IOException {
         System.out.println("on port - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json");
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -40,7 +36,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("don't luff to closehauled (on port) - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setwindfrom(-5));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -49,9 +45,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setwindfrom(-5),
                 () -> setboatparam("upwindluffupiflifted", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, 40, false);
     }
 
     @Test
@@ -60,9 +54,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setwindfrom(5),
                 () -> setboatparam("upwindbearawayifheaded", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(50), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 50, true);
     }
 
     @Test
@@ -71,9 +63,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setwindfrom(5),
                 () -> setboatparam("upwindtackifheaded", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -40, false);
     }
 
     @Test
@@ -83,7 +73,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
                 () -> setwindfrom(-5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
                 () -> setboatintvalue("heading", 40));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -93,9 +83,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
                 () -> setwindfrom(-5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
                 () -> setboatintvalue("heading", 35));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(40), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 40, true);
     }
 
     @Test
@@ -105,9 +93,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
                 () -> setwindfrom(-5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
                 () -> setboatintvalue("heading", 50));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, 40, false);
     }
 
     @Test
@@ -117,9 +103,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
                 () -> setwindfrom(5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
                 () -> setboatintvalue("heading", 50));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -40, false);
     }
 
     @Test
@@ -128,9 +112,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setwindfrom(5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -40, false);
     }
 
     @Test
@@ -140,9 +122,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
                 () -> setwindfrom(5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
                 () -> setboatintvalue("heading", 55));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-40), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -40, false);
     }
 
     @Test
@@ -150,7 +130,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("sail near to starboard corner - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setboatlocationvalue("location", 88, 48));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -158,7 +138,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("sail to starboard corner (on line of mark - sail on");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setboatlocationvalue("location", 90, 50));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -166,9 +146,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("sail beyond starboard corner - tack onto starboard - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setboatlocationvalue("location", 92.2, 52.2));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-45), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -45, false);
     }
 
     @Test
@@ -176,9 +154,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("sail beyond starboard corner - tack onto starboard - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
                 () -> setboatlocationvalue("location", 94, 54));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-45), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, -45, false);
     }
     // TODO - all tests are based on port mark roundings - 12-15 both _ and A should be repeated on starboard
     // TODO - need to add tests for mean wind direction at alternative angle 

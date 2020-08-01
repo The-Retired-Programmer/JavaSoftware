@@ -20,6 +20,7 @@ import java.util.Optional;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 
 /**
  * A Polar location is the relative value (distance, flow etc from a logical
@@ -43,13 +44,13 @@ public class SpeedPolar extends Polar<SpeedPolar> {
                 if (values.size() == 2) {
                     return Optional.of(new SpeedPolar(
                             values.getJsonNumber(1).doubleValue(),
-                            new Angle(values.getJsonNumber(0).intValueExact())
+                            new Angle(values.getJsonNumber(0).doubleValue())
                     ));
                 }
             }
         } catch (ArithmeticException ex) {
         }
-        throw new IOException("Malformed Definition file - integer and decimal expected with " + key);
+        throw new IOException("Malformed Definition file - decimal and decimal expected with " + key);
     }
 
     private static final double KNOTSTOMETRESPERSECOND = (double) 1853 / 3600; // multiply knots to get m/s
@@ -60,6 +61,11 @@ public class SpeedPolar extends Polar<SpeedPolar> {
     public SpeedPolar(double speed, Angle angle) {
         super(angle);
         this.speed = speed;
+    }
+    
+    public SpeedPolar() {
+        super(ANGLE0);
+        this.speed = 0.0;
     }
 
     @Override
@@ -84,9 +90,28 @@ public class SpeedPolar extends Polar<SpeedPolar> {
         return knots * KNOTSTOMETRESPERSECOND;
     }
 
-    public SpeedPolar extrapolate(SpeedPolar other, double fraction) {
-        SpeedPolar thisweightedpolar = mult(fraction);
-        SpeedPolar otherweightedpolar = other.mult(1.0 - fraction);
-        return thisweightedpolar.add(otherweightedpolar);
+    private Angle extrapolateAngle(Angle other, double fraction) {
+        return new SpeedPolar(1,this.getAngle()).mult(1.0 - fraction)
+                .add(new SpeedPolar(1,other).mult(fraction))
+                .getAngle();
+    }
+    
+    private double extrapolateSpeed(double other, double fraction) {
+        return speed*(1.0 - fraction)+other*fraction;
+    }
+    
+    private SpeedPolar extrapolate(SpeedPolar other, double fraction) {
+        return new SpeedPolar(extrapolateSpeed(other.getSpeed(), fraction),
+                extrapolateAngle(other.getAngle(), fraction));
+    } 
+    
+    public SpeedPolar extrapolate(SpeedPolar nw, SpeedPolar ne, SpeedPolar se, Location fractions) {
+        SpeedPolar w = this.extrapolate(nw, fractions.getY());
+        SpeedPolar e = se.extrapolate(ne, fractions.getY());
+        return w.extrapolate(e, fractions.getX());
+    }
+    
+    public static Angle meanAngle(SpeedPolar[][] array) {
+        return Polar.meanAngle(array);
     }
 }

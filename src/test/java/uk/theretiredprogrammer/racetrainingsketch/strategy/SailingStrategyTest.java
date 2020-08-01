@@ -19,29 +19,36 @@ import java.io.IOException;
 import java.util.function.Supplier;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
+import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import static javax.json.JsonValue.FALSE;
 import static javax.json.JsonValue.TRUE;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import uk.theretiredprogrammer.racetrainingsketch.flows.FlowElement;
-import uk.theretiredprogrammer.racetrainingsketch.ui.DefFile;
-import uk.theretiredprogrammer.racetrainingsketch.ui.ScenarioElement;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.MARKROUNDING;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.STOP;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.TURN;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class SailingStrategyTest {
-    
-    private BoatElement boat;
-    private FlowElement wind;
 
-    
+    private Boat boat;
+    private Scenario scenario;
+    private Controller controller;
+    private Angle winddirection;
+
     public Decision makeDecision(String filename, Supplier<String>... configs) throws IOException {
-        ScenarioElement scenario = new DefFile(filename).parse();
-        boat = scenario.getBoat(0);
-        wind = scenario.getWind();
-        Decision decision = new Decision(boat);
+        controller = new Controller(filename, (s) -> requestpaint(s));
+        scenario = controller.getScenario();
+        boat = scenario.getBoats().getBoat("Red");
         //
         for (var config : configs) {
             String error = config.get();
@@ -49,36 +56,55 @@ public class SailingStrategyTest {
                 throw new IOException(error);
             }
         }
-        //
-        Angle winddirection = scenario.getWindflow(boat.getLocation()).getAngle();
+        Decision decision = new Decision(boat);
+        winddirection = scenario.getWindflow(boat.getLocation()).getAngle();
         CourseLegWithStrategy leg = new CourseLegWithStrategy(scenario.getCourse().getFirstCourseLeg(),
                 scenario.getWindmeanflowangle(), boat);
         leg.nextTimeInterval(decision, boat, winddirection);
         return decision;
     }
-    
-   String setwindfrom(int degrees) {
+
+    private void requestpaint(String s) {
+        fail("BAD - request for paint made -should not occur");
+    }
+
+    String setwindfrom(String name, int degrees) {
         try {
-            wind.change(Json.createObjectBuilder().add("from", degrees).build());
+            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
+            scenario.recalculateWindFlow();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
         }
     }
-    
+
+    String setwindfrom(int zlevel, int degrees) {
+        try {
+            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
+            scenario.recalculateWindFlow();
+            return null;
+        } catch (IOException ex) {
+            return ex.getLocalizedMessage();
+        }
+    }
+
+    String setwindfrom(int degrees) {
+        return setwindfrom(0, degrees);
+    }
+
     String setboatparam(String name, boolean value) {
         try {
-            boat.change(Json.createObjectBuilder().add(name, value?TRUE:FALSE).build());
+            boat.change(Json.createObjectBuilder().add(name, value ? TRUE : FALSE).build());
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
         }
     }
-    
+
     String setboatparamstrue(String... names) {
         try {
             JsonObjectBuilder job = Json.createObjectBuilder();
-            for (String name: names){
+            for (String name : names) {
                 job.add(name, TRUE);
             }
             boat.change(job.build());
@@ -87,8 +113,8 @@ public class SailingStrategyTest {
             return ex.getLocalizedMessage();
         }
     }
-    
-    String setboatintvalue(String name, int value) {
+
+    public String setboatintvalue(String name, int value) {
         try {
             boat.change(Json.createObjectBuilder().add(name, value).build());
             return null;
@@ -96,7 +122,7 @@ public class SailingStrategyTest {
             return ex.getLocalizedMessage();
         }
     }
-    
+
     String setboatlocationvalue(String name, double x, double y) {
         try {
             boat.change(Json.createObjectBuilder()
@@ -107,4 +133,84 @@ public class SailingStrategyTest {
             return ex.getLocalizedMessage();
         }
     }
+    
+    String setboatdirectionvalue(String name, double angle){
+        try {
+            boat.change(Json.createObjectBuilder()
+                    .add(name, angle)
+                    .build());
+            return null;
+        } catch (IOException ex) {
+            return ex.getLocalizedMessage();
+        }
+    }
+
+    Angle getStarboardCloseHauled() {
+        return boat.getStarboardCloseHauledCourse(winddirection);
+    }
+
+    Angle getPortCloseHauled() {
+        return boat.getPortCloseHauledCourse(winddirection);
+    }
+    
+    Angle getStarboardReaching() {
+        return boat.getStarboardReachingCourse(winddirection);
+    }
+
+    Angle getPortReaching() {
+        return boat.getPortReachingCourse(winddirection);
+    }
+
+    void assertTURN(Decision decision, int angle, boolean isclockwise) {
+        assertAll("Decision is TURN?",
+                () -> assertEquals(TURN, decision.getAction()),
+                () -> assertEquals(new Angle(angle), decision.getAngle()),
+                () -> assertEquals(isclockwise, decision.isClockwise())
+        );
+    }
+    
+    void assertTURN(Decision decision, Angle angle, boolean isclockwise) {
+        assertAll("Decision is TURN?",
+                () -> assertEquals(TURN, decision.getAction()),
+                () -> assertEquals(angle, decision.getAngle()),
+                () -> assertEquals(isclockwise, decision.isClockwise())
+        );
+    }
+
+    void assertSailing(Decision decision, Angle minangle, Angle maxangle) {
+        switch (decision.getAction()) {
+            case TURN:
+                assertAll("Check angle Range of a Turn",
+                        () -> assertTrue(minangle.lteq(decision.getAngle()), "angle "+ decision.getAngle().toString()+" is less than minimum " + minangle.toString()),
+                        () -> assertTrue(maxangle.gteq(decision.getAngle()), "angle "+decision.getAngle().toString()+" is greater than maximum " + maxangle.toString())
+                );
+                return;
+            case SAILON:
+                return;
+            default:
+                fail("action is not TURN or SAILON");
+        }
+
+    }
+
+    void assertSAILON(Decision decision) {
+        assertAll("Decision is SAILON?",
+                () -> assertEquals(SAILON, decision.getAction())
+        );
+    }
+
+    void assertMARKROUNDING(Decision decision, int angle, boolean isclockwise) {
+        assertAll("Decision is MARKROUNDING?",
+                () -> assertEquals(MARKROUNDING, decision.getAction()),
+                () -> assertEquals(new Angle(angle), decision.getAngle()),
+                () -> assertEquals(isclockwise, decision.isClockwise())
+        );
+    }
+
+    void assertSTOP(Decision decision) {
+        assertAll("Decision is STOP?",
+                () -> assertEquals(STOP, decision.getAction())
+        );
+    }
+
 }

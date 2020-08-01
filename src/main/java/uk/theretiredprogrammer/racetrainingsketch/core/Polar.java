@@ -38,10 +38,9 @@ abstract class Polar<P extends Polar> {
         double x = dimension * Math.sin(angle.getRadians()) + pdimension * Math.sin(p.getAngle().getRadians());
         double y = dimension* Math.cos(angle.getRadians()) + pdimension * Math.cos(p.getAngle().getRadians());
         //
-        
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle( (int)Math.toDegrees(Math.atan2(x, y)))); 
+                new Angle( Math.toDegrees(Math.atan2(x, y)))); 
     }
 
     public P subtract(P p) {
@@ -52,7 +51,7 @@ abstract class Polar<P extends Polar> {
         //
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle( (int)Math.toDegrees(Math.atan2(x, y))));
+                new Angle( Math.toDegrees(Math.atan2(x, y))));
     }
 
     public P mult(double multiplier) {
@@ -71,5 +70,18 @@ abstract class Polar<P extends Polar> {
 
     public Angle getAngle() {
         return angle;
+    }
+    
+    public static Angle meanAngle(Polar[][] array) {
+        double x = 0;
+        double y = 0;
+        for (Polar[] column : array) {
+            for (Polar cell : column) {
+                double r = cell.angle.getRadians();
+                x += Math.sin(r);
+                y += Math.cos(r);
+            }
+        }
+        return new Angle(Math.toDegrees(Math.atan2(x, y)));
     }
 }

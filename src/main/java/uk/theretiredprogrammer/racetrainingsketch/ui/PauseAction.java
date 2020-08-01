@@ -41,6 +41,6 @@ public final class PauseAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        element.terminate();
+        element.stop();
     }
 }

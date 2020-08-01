@@ -10,12 +10,14 @@
         "zoom": 10,
         "speedup": 5
     },
-    "WIND": {
-        "type": "testflow",
-        "speed": 4,
-        "from": 90,
-        "mean": 90
-    },
+    "WIND": [
+        {
+            "type": "testflow",
+            "speed": 4,
+            "from": 90,
+            "mean": 90
+        }
+    ],
     "MARKS": [
         {
             "name": "mark1",
@@ -31,7 +33,7 @@
     "COURSE": {
         "start": [90, 10],
         "legs": [
-            ["mark1","port"],
+            ["mark1", "port"],
             ["mark2", "port"]
         ]
     },

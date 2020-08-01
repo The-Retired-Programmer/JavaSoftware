@@ -32,7 +32,7 @@ public class Angle {
     public final static Angle ANGLE90 = new Angle(90);
     public final static Angle ANGLE180 = new Angle(180);
     public final static Angle ANGLE90MINUS = new Angle(-90);
-    
+
     public static Optional<Angle> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
             return Optional.empty();
@@ -43,14 +43,14 @@ public class Angle {
         }
         try {
             if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-                return Optional.of(new Angle(((JsonNumber) value).intValueExact()));
+                return Optional.of(new Angle(((JsonNumber) value).doubleValue()));
             }
         } catch (ArithmeticException ex) {
         }
-        throw new IOException("Malformed Definition file - Integer expected with " + key);
+        throw new IOException("Malformed Definition file - Double expected with " + key);
     }
 
-    private final int angle_degrees; // Range +-179 to +180 degrees
+    private final double angle_degrees; // Range +-179.999.. to +180.0 degrees
 
     public Angle() {
         angle_degrees = 0;
@@ -60,7 +60,7 @@ public class Angle {
         angle_degrees = d.angle_degrees;
     }
 
-    public Angle(int degrees) {
+    public Angle(double degrees) {
         angle_degrees = normalise(degrees);
     }
 
@@ -77,7 +77,7 @@ public class Angle {
     }
 
     public final Angle mult(double mult) {
-        return new Angle(normalise((int) (mult * angle_degrees)));
+        return new Angle(normalise((mult * angle_degrees)));
     }
 
     public final Angle div(int div) {
@@ -85,7 +85,7 @@ public class Angle {
     }
 
     public final double div(Angle a) {
-        return ((double) angle_degrees) / a.angle_degrees;
+        return angle_degrees / a.angle_degrees;
     }
 
     public final Angle negate() {
@@ -101,19 +101,19 @@ public class Angle {
     }
 
     public final Angle reflectH() {
-        return new Angle(normalise(180 - angle_degrees));
+        return new Angle(normalise(180.0 - angle_degrees));
     }
 
     public final Angle reflectHif(boolean test) {
-        return new Angle(normalise(test ? 180 - angle_degrees : angle_degrees));
+        return new Angle(normalise(test ? 180.0 - angle_degrees : angle_degrees));
     }
 
     public final Angle reflectV() {
-        return new Angle(normalise(360 - angle_degrees));
+        return new Angle(normalise(360.0 - angle_degrees));
     }
 
     public final Angle reflectVif(boolean test) {
-        return new Angle(normalise(test ? 360 - angle_degrees : angle_degrees));
+        return new Angle(normalise(test ? 360.0 - angle_degrees : angle_degrees));
     }
 
     public final boolean isPositive() {
@@ -127,11 +127,11 @@ public class Angle {
     public final boolean isNegative() {
         return angle_degrees < 0;
     }
-    
+
     public final boolean eq(Angle a) {
         return angle_degrees == a.angle_degrees;
     }
-    
+
     public final boolean neq(Angle a) {
         return angle_degrees != a.angle_degrees;
     }
@@ -150,6 +150,10 @@ public class Angle {
 
     public final boolean lteq(Angle a) {
         return normalise(angle_degrees - a.angle_degrees) <= 0;
+    }
+    
+    public final boolean between(Angle min, Angle max){
+        return this.gteq(min) && this.lteq(max);
     }
 
     public final Angle angleDiff(Angle d) {
@@ -174,16 +178,16 @@ public class Angle {
 
     // for testing purposes 
     // TODO can we get rid of this
-    final int getDegrees() {
+    public final double getDegrees() {
         return angle_degrees;
     }
 
-    private int normalise(int angle) {
-        while (angle > 180) {
-            angle -= 360;
+    private double normalise(double angle) {
+        while (angle > 180.0) {
+            angle -= 360.0;
         }
-        while (angle <= -180) {
-            angle += 360;
+        while (angle <= -180.0) {
+            angle += 360.0;
         }
         return angle;
     }
@@ -191,7 +195,7 @@ public class Angle {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + this.angle_degrees;
+        hash = 67 * hash + Double.hashCode(angle_degrees);
         return hash;
     }
 
@@ -212,7 +216,7 @@ public class Angle {
 
     @Override
     public String toString() {
-        return Integer.toString(angle_degrees);
+        return Double.toString(angle_degrees);
     }
 
 }

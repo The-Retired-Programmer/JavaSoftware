@@ -15,17 +15,19 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import uk.theretiredprogrammer.racetrainingsketch.boats.BoatElement;
+import java.util.Optional;
+import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE180;
 import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class GybingDownwindSailingStrategy extends SailingStrategy {
+class GybingDownwindSailingStrategy extends SailingLegStrategy {
 
     private final boolean sailonbestgybe;
     private final boolean gybeiflifted;
@@ -45,43 +47,32 @@ class GybingDownwindSailingStrategy extends SailingStrategy {
     }
 
     @Override
-    void nextTimeInterval(Decision decision, BoatElement boat, CourseLegWithStrategy leg, Angle winddirection) {
+    String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
         Angle boatangletowind = boat.getDirection().absAngleDiff(winddirection);
-        boolean onPort = boat.getDirection().gteq(winddirection);
+        boolean onPort = boat.isPort(winddirection);
         // check if need to gybe for mark
         if (onPort) {
             if (leg.getAngletoSail(boat.getLocation(), !onPort, winddirection).gteq(boat.getDownwind().negate())) {
                 Angle nextDirection = winddirection.sub(boat.getDownwind());
                 decision.setTURN(nextDirection, CLOCKWISE);
-                return;
+                return "Gybing onto starboard layline";
             }
         } else {
             if (leg.getAngletoSail(boat.getLocation(), !onPort, winddirection).lteq(boat.getDownwind())) {
                 Angle nextDirection = winddirection.add(boat.getDownwind());
                 decision.setTURN(nextDirection, ANTICLOCKWISE);
-                return;
+                return "Gybing onto port layline";
             }
         }
-        // check if need to reach for mark
-        if (onPort) {
-            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
-            if (coursetomark.lt(boat.getDownwind()) && boat.getDirection().neq(coursetomark)) {
-                decision.setTURN(coursetomark, ANTICLOCKWISE);
-                return;
-            }
-        } else {
-            Angle coursetomark = leg.getAngletoSail(boat.getLocation(), onPort, winddirection);
-            if (coursetomark.gt(boat.getDownwind().negate())) {
-                decision.setTURN(coursetomark, CLOCKWISE);
-                return;
-            }
+        if (adjustDirectCourseToLeewardMarkOffset(boat, leg, decision, winddirection)) {
+            return "Reaching on Layline to leeward mark - course adjustment";
         }
         if (channel != null) {
             if (leg.getDistanceToEnd(boat.getLocation()) > channel.getInneroffset(leg.getEndLocation()) * 1.5) {
                 if (!channel.isInchannel(boat.getLocation())) {
                     Angle nextDirection = winddirection.add(boat.getDownwind().negateif(onPort));
                     decision.setTURN(nextDirection, onPort ? CLOCKWISE : ANTICLOCKWISE);
-                    return;
+                    return "Gybing to stay in channel";
                 }
             }
         }
@@ -91,13 +82,13 @@ class GybingDownwindSailingStrategy extends SailingStrategy {
                 if (winddirection.lt(meanwinddirection)) {
                     Angle nextDirection = winddirection.sub(boat.getDownwind());
                     decision.setTURN(nextDirection, CLOCKWISE);
-                    return;
+                    return "Gybe onto best tack - starboard";
                 }
             } else {
                 if (winddirection.gt(meanwinddirection)) {
                     Angle nextDirection = winddirection.add(boat.getDownwind());
                     decision.setTURN(nextDirection, ANTICLOCKWISE);
-                    return;
+                    return "Gybe onto best tack - port";
                 }
             }
         }
@@ -106,12 +97,12 @@ class GybingDownwindSailingStrategy extends SailingStrategy {
             if (gybeiflifted) {
                 Angle nextDirection = winddirection.add(boat.getDownwind().negateif(onPort));
                 decision.setTURN(nextDirection, onPort ? CLOCKWISE : ANTICLOCKWISE);
-                return;
+                return "Reaching - gybe if lifted";
             }
             if (luffupiflifted) {
                 Angle nextDirection = winddirection.add(boat.getDownwind().negateif(!onPort));
                 decision.setTURN(nextDirection, onPort ? ANTICLOCKWISE : CLOCKWISE);
-                return;
+                return "Reaching - luff if lifted";
             }
         }
         // check if sailing too high
@@ -119,7 +110,15 @@ class GybingDownwindSailingStrategy extends SailingStrategy {
             if (bearawayifheaded) {
                 Angle nextDirection = winddirection.add(boat.getDownwind().negateif(!onPort));
                 decision.setTURN(nextDirection, onPort ? CLOCKWISE : ANTICLOCKWISE);
+                return "Reaching - bearaway if headed";
             }
         }
+        return "Sail ON";
+    }
+    
+    @Override
+    boolean applyRoundingStrategy(CourseLegWithStrategy leg, Boat boat, Angle winddirection) {
+       Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), winddirection.sub(ANGLE180)); 
+       return refdistance.isPresent()? refdistance.get() <= boat.getMetrics().getWidth() * 20 : true;
     }
 }

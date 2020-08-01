@@ -10,12 +10,14 @@
         "zoom": 10,
         "speedup": 5
     },
-    "WIND": {
-        "type": "testflow",
-        "speed": 4,
-        "from": 0,
-        "mean": 0
-    },
+    "WIND": [
+        {
+            "type": "testflow",
+            "speed": 4,
+            "from": 0,
+            "mean": 0
+        }
+    ],
     "MARKS": [
         {
             "name": "mark1",
@@ -29,9 +31,9 @@
         }
     ],
     "COURSE": {
-        "start": [10,50],
+        "start": [10, 50],
         "legs": [
-            ["mark2","starboard"],
+            ["mark2", "starboard"],
             ["mark1", "starboard"]
         ]
     },
@@ -39,7 +41,7 @@
         {
             "name": "Red",
             "type": "laser2",
-            "location": [50,53],
+            "location": [50, 53],
             "heading": 90,
             "colour": "red"
         }

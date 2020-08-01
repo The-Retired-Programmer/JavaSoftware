@@ -87,7 +87,15 @@ public class Location {
     }
     
     public Angle angleto(Location target){
-        return new Angle((int) Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY())));
+        return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
+    }
+    
+    public Location getFractionalLocation(Location lowerleft, double width, double height){
+        // note this location uses fractional units - not metres
+        return new Location(
+                (this.x - lowerleft.x)/(width),
+                (this.y - lowerleft.y)/(height)
+        );
     }
     
     

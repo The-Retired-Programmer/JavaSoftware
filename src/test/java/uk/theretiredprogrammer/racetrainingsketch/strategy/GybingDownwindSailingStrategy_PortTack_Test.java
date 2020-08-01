@@ -17,10 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 
 /**
  *
@@ -32,7 +28,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
     public void test1() throws IOException {
         System.out.println("on port - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json");
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -40,7 +36,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         System.out.println("don't luff to downwind (on port) - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatintvalue("heading", 140));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -49,9 +45,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatintvalue("heading", 140),
                 () -> setboatparam("downwindluffupiflifted", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, 135, false);
     }
 
     @Test
@@ -60,9 +54,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatintvalue("heading", 130),
                 () -> setboatparam("downwindbearawayifheaded", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -71,9 +63,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatintvalue("heading", 140),
                 () -> setboatparam("downwindgybeiflifted", true));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -135, true);
     }
 
     @Test
@@ -83,7 +73,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(5),
                 () -> setboatintvalue("heading", 140),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -93,9 +83,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(5),
                 () -> setboatintvalue("heading", 125),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(140), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, 140, true);
     }
 
     @Test
@@ -105,9 +93,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(5),
                 () -> setboatintvalue("heading", 145),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(140), decision.getAngle());
-        assert (!decision.isClockwise());
+        assertTURN(decision, 140, false);
     }
 
     @Test
@@ -117,9 +103,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(-5),
                 () -> setboatintvalue("heading", 135),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-140), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -140, true);
     }
 
     @Test
@@ -129,9 +113,8 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(-5),
                 () -> setboatintvalue("heading", 125),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-140), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -140, true);
+        
     }
 
     @Test
@@ -141,9 +124,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
                 () -> setwindfrom(-5),
                 () -> setboatintvalue("heading", 150),
                 () -> setboatparamstrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-140), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -140, true);
     }
 
     @Test
@@ -151,7 +132,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         System.out.println("sail near to rh corner - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatlocationvalue("location", 87, 53));
-        assertEquals(SAILON, decision.getAction());
+        assertSAILON(decision);
     }
 
     @Test
@@ -159,9 +140,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         System.out.println("sail to rh corner - gybe onto Starboard - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatlocationvalue("location", 88.1, 51.9));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -135, true);
     }
 
     @Test
@@ -169,9 +148,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         System.out.println("sail beyond rh corner - gybe onto starboard - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatlocationvalue("location", 90, 50));
-        assertEquals(TURN, decision.getAction());
-        assertEquals(new Angle(-135), decision.getAngle());
-        assert (decision.isClockwise());
+        assertTURN(decision, -135, true);
     }
     // TODO - all tests are based on port mark roundings - 12-14 both _ and A should be repeated on starboard
     // TODO - need to add tests for mean wind direction at alternative angle 
