@@ -17,8 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
@@ -34,7 +32,7 @@ class OffwindSailingDecisions extends SailingDecisions {
         boolean onPort = boat.isPort(winddirection);
         Angle nextDirection = legstrategy.getAngletoSail(boat.location, onPort);
         if (nextDirection.neq(boat.direction)) {
-            decision.setTURN(nextDirection, boat.direction.gt(nextDirection) ? PORT : STARBOARD);
+            decision.setTURN(nextDirection, boat.direction.gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

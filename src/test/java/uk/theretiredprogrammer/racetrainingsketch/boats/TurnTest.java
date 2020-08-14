@@ -22,7 +22,6 @@ import javax.json.Json;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
@@ -58,7 +57,7 @@ public class TurnTest {
         return boat;
     }
 
-    Boat makeTurn(Angle finalangle, TurnDirection turndirection) throws IOException {
+    Boat makeTurn(Angle finalangle, boolean turndirection) throws IOException {
         decision.setTURN(finalangle, turndirection);
         while (decision.getAction() != SAILON) {
             boat.moveUsingDecision();
@@ -89,7 +88,7 @@ public class TurnTest {
             return ex.getLocalizedMessage();
         }
     }
-    
+
     String setwindfrom(String name, int degrees) {
         try {
             controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
@@ -113,7 +112,7 @@ public class TurnTest {
     String setwindfrom(int degrees) {
         return setwindfrom(0, degrees);
     }
-    
+
     String setwindspeed(String name, double speed) {
         try {
             controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), name);

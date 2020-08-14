@@ -198,7 +198,7 @@ public abstract class Boat {
             decision.setSAILON();
             return true;
         }
-        moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isSTARBOARD())), windflow, waterflow);
+        moveBoat(direction.add(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
         return false;
     }
 

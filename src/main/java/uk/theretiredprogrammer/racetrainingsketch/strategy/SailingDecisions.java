@@ -22,8 +22,8 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
@@ -120,7 +120,7 @@ abstract class SailingDecisions {
 
     private boolean adjustCourse(Angle current, Angle target, Decision decision) {
         if (target.neq(current)) {
-            decision.setTURN(target, target.gt(current) ? STARBOARD : PORT);
+            decision.setTURN(target, target.lteq(current));
             return true;
         }
         return true;

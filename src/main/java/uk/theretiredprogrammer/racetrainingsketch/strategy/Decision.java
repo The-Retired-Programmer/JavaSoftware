@@ -24,10 +24,9 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
  */
 public class Decision {
 
-    public enum TurnDirection {
-        STARBOARD, PORT
-    }
-
+    public static final boolean PORT = true;
+    public static final boolean STARBOARD = false;
+    
     public enum DecisionAction {
         SAILON, STOP, MARKROUNDING, TURN
     }
@@ -36,29 +35,29 @@ public class Decision {
 
     private DecisionAction action = DecisionAction.SAILON;
     private Angle angle = null;
-    private TurnDirection turndirection = TurnDirection.STARBOARD;
+    private boolean turndirection = STARBOARD;
 
     public Decision(Boat boat) {
         this.boat = boat;
     }
 
     public void setSAILON() {
-        set(DecisionAction.SAILON, null, TurnDirection.STARBOARD);
+        set(DecisionAction.SAILON, null, STARBOARD);
     }
 
-    public void setTURN(Angle angle, TurnDirection turndirection) {
+    public void setTURN(Angle angle, boolean turndirection) {
         set(DecisionAction.TURN, angle, turndirection);
     }
 
-    public void setMARKROUNDING(Angle angle, TurnDirection turndirection) {
+    public void setMARKROUNDING(Angle angle, boolean turndirection) {
         set(DecisionAction.MARKROUNDING, angle, turndirection);
     }
 
     public void setSTOP() {
-        set(DecisionAction.STOP, null, TurnDirection.STARBOARD);
+        set(DecisionAction.STOP, null, STARBOARD);
     }
 
-    private void set(DecisionAction action, Angle angle, TurnDirection turndirection) {
+    private void set(DecisionAction action, Angle angle, boolean turndirection) {
         this.action = action;
         this.angle = angle;
         this.turndirection = turndirection;
@@ -72,15 +71,11 @@ public class Decision {
         return action.equals(DecisionAction.TURN) || action.equals(DecisionAction.MARKROUNDING);
     }
 
-    public void UpdateAngle(Angle angle) {
-        this.angle = angle;
-    }
-
     public Angle getAngle() {
         return isRotating() ? angle : boat.direction;
     }
-
-    public boolean isSTARBOARD() {
-        return turndirection.equals(TurnDirection.STARBOARD);
+    
+    public boolean isPort() {
+        return turndirection;
     }
 }

@@ -162,7 +162,7 @@ public class SailingStrategyTest {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(new Angle(angle), decision.getAngle()),
-                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
+                () -> assertEquals(isSTARBOARD, !decision.isPort())
         );
     }
 
@@ -170,7 +170,7 @@ public class SailingStrategyTest {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(angle, decision.getAngle()),
-                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
+                () -> assertEquals(isSTARBOARD, !decision.isPort())
         );
     }
 
@@ -200,7 +200,7 @@ public class SailingStrategyTest {
         assertAll("Decision is MARKROUNDING?",
                 () -> assertEquals(MARKROUNDING, decision.getAction()),
                 () -> assertEquals(new Angle(angle), decision.getAngle()),
-                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
+                () -> assertEquals(isSTARBOARD, !decision.isPort())
         );
     }
 

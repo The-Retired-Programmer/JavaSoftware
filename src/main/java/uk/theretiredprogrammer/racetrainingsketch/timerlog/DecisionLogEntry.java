@@ -25,14 +25,14 @@ public class DecisionLogEntry extends TimerLogEntry {
 
     private final Decision.DecisionAction decisionaction;
     private final double decisionangle;
-    private final boolean decisionSTARBOARD;
+    private final boolean decisionPORT;
     private final String boatname;
 
     public DecisionLogEntry(String boatname, Decision decision) {
         this.boatname = boatname;
         this.decisionaction = decision.getAction();
         this.decisionangle = decision.getAngle().getDegrees();
-        this.decisionSTARBOARD = decision.isSTARBOARD();
+        this.decisionPORT = decision.isPort();
     }
     
     @Override
@@ -54,7 +54,7 @@ public class DecisionLogEntry extends TimerLogEntry {
                 sb.append(" to ");
                 sb.append(format1dp(decisionangle));
                 sb.append("° ");
-                sb.append(decisionSTARBOARD ? "STARBOARD" : "PORT");
+                sb.append(decisionPORT ? "PORT" : "STARBOARD");
         }
         return sb.toString();
     }

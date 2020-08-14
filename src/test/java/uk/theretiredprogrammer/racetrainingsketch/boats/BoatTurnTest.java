@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
-import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
 
 /**
  *
@@ -51,7 +50,7 @@ public class BoatTurnTest extends TurnTest {
                 () -> this.setwindspeed(15));
         testradiusY(2.18);
     }
-    
+
     @Test
     public void test2() throws IOException {
         System.out.println("bearaway radius calculation");
@@ -68,7 +67,7 @@ public class BoatTurnTest extends TurnTest {
                 () -> this.setwindspeed(15));
         testradiusX(4.45);
     }
-    
+
     @Test
     public void test3() throws IOException {
         System.out.println("gybing radius calculation");
@@ -85,7 +84,7 @@ public class BoatTurnTest extends TurnTest {
                 () -> this.setwindspeed(15));
         testradiusY(6.56);
     }
-    
+
     @Test
     public void test4() throws IOException {
         System.out.println("luffup radius calculation");
@@ -104,7 +103,7 @@ public class BoatTurnTest extends TurnTest {
     }
 
     private void runturntest(int startangleint, int finishangleint,
-            TurnDirection turndirection, int secondstospeed,
+            boolean turndirection, int secondstospeed,
             Location expectedstartturnlocation, Location expectedendturnlocation,
             Supplier<String>... configs) throws IOException {
         Angle startangle = new Angle(startangleint);

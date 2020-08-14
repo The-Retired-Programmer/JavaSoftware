@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**

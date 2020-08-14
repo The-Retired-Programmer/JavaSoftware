@@ -17,10 +17,10 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
