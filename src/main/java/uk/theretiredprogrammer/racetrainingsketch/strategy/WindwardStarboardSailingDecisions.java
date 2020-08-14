@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 import java.io.IOException;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
@@ -28,21 +27,6 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 class WindwardStarboardSailingDecisions extends SailingDecisions {
-
-    private final boolean sailonbesttack;
-    private final boolean tackifheaded;
-    private final boolean bearawayifheaded;
-    private final boolean luffupiflifted;
-    private final Channel channel;
-
-    WindwardStarboardSailingDecisions(boolean sailonbesttack, boolean tackifheaded, boolean bearawayifheaded,
-            boolean luffupiflifted, Channel channel) {
-        this.sailonbesttack = sailonbesttack;
-        this.tackifheaded = tackifheaded;
-        this.bearawayifheaded = bearawayifheaded;
-        this.luffupiflifted = luffupiflifted;
-        this.channel = channel;
-    }
 
     @Override
     String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
@@ -56,16 +40,16 @@ class WindwardStarboardSailingDecisions extends SailingDecisions {
             return "Beating on Starboard Layline to windward mark - course adjustment";
         }
         // stay in channel
-        if (channel != null) {
-            if (legstrategy.getDistanceToMark(boat.location) > channel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
-                if (!channel.isInchannel(boat.location)) {
+        if (boat.upwindchannel != null) {
+            if (legstrategy.getDistanceToMark(boat.location) > boat.upwindchannel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
+                if (!boat.upwindchannel.isInchannel(boat.location)) {
                     decision.setTURN(boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                     return "Tacking onto port to stay within channel";
                 }
             }
         }
         // check if need to tack onto best tack
-        if (sailonbesttack) {
+        if (boat.upwindsailonbesttack) {
             if (winddirection.lt(meanwinddirection)) {
                 decision.setTURN(boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                 return "Tack onto best tack - port";
@@ -73,18 +57,18 @@ class WindwardStarboardSailingDecisions extends SailingDecisions {
         }
         // check if pointing high
         if (boatangletowind.lt(boat.metrics.upwindrelative)) {
-            if (tackifheaded) {
+            if (boat.upwindtackifheaded) {
                 decision.setTURN(boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                 return "Tack onto port when headed";
             }
-            if (bearawayifheaded) {
+            if (boat.upwindbearawayifheaded) {
                 decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                 return "Bearaway when headed";
             }
         }
         // check if pointing low
         if (boatangletowind.gt(boat.metrics.upwindrelative)) {
-            if (luffupiflifted) {
+            if (boat.upwindluffupiflifted) {
                 decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), STARBOARD);
                 return "Luff when lifted";
             }

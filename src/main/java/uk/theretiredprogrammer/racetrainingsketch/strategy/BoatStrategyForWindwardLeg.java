@@ -38,20 +38,8 @@ public class BoatStrategyForWindwardLeg extends BoatStrategyForLeg {
         super(boat, leg,
                 leg.getMarkMeanwinddirection().add(new Angle(135)), leg.getMarkMeanwinddirection().add(new Angle(45)),
                 leg.getMarkMeanwinddirection().add(new Angle(-45)), leg.getMarkMeanwinddirection().add(new Angle(-135)));
-        starboardstrategy = new WindwardStarboardSailingDecisions(
-                boat.upwindsailonbesttack,
-                boat.upwindtackifheaded,
-                boat.upwindbearawayifheaded,
-                boat.upwindluffupiflifted,
-                null
-        );
-        portstrategy = new WindwardPortSailingDecisions(
-                boat.upwindsailonbesttack,
-                boat.upwindtackifheaded,
-                boat.upwindbearawayifheaded,
-                boat.upwindluffupiflifted,
-                null
-        );
+        starboardstrategy = new WindwardStarboardSailingDecisions();
+        portstrategy = new WindwardPortSailingDecisions();
         roundingstrategy = getRoundingStrategy(controller, boat, leg);
     }
 
