@@ -15,18 +15,20 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.course;
 
+import uk.theretiredprogrammer.racetrainingsketch.strategy.Leg;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import uk.theretiredprogrammer.racetrainingsketch.core.ListOf;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
-import uk.theretiredprogrammer.racetrainingsketch.core.Leg;
+import uk.theretiredprogrammer.racetrainingsketch.core.LegValue;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
 
 /**
@@ -36,17 +38,17 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
  */
 public class Course implements Displayable {
 
-    private final CourseLeg firstcourseleg;
+    private final Leg firstcourseleg;
     private final Map<String, Mark> marks = new HashMap<>();
 
-    public Course(JsonObject parsedjson, Scenario scenario) throws IOException {
+    public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray markarray = parsedjson.getJsonArray("MARKS");
         if (markarray != null) {
             for (JsonValue markv : markarray) {
                 if (markv.getValueType() == JsonValue.ValueType.OBJECT) {
                     JsonObject markparms = (JsonObject) markv;
-                    Mark mark = new Mark(markparms, scenario);
-                    marks.put(mark.getName(), mark);
+                    Mark mark = new Mark(controllersupplier, markparms);
+                    marks.put(mark.name, mark);
                 } else {
                     throw new IOException("Malformed Definition File - MARKS array contains items other that mark objects");
                 }
@@ -58,22 +60,22 @@ public class Course implements Displayable {
             throw new IOException("Malformed Definition File - missing COURSE object");
         }
         Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
-        List<Leg> legs = ListOf.<Leg>parse(courseobj, "legs", (jval) -> Leg.parseElement(jval))
+        List<LegValue> legvalues = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))
                 .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
-        CourseLeg following = null;
-        int i = legs.size() - 1;
+        Leg following = null;
+        int i = legvalues.size() - 1;
         while (i >= 0) {
-            following = new CourseLeg(
-                    i == 0 ? start : marks.get(legs.get(i - 1).getMarkname()).getLocation(),
-                    marks.get(legs.get(i).getMarkname()).getLocation(),
-                    legs.get(i).getTurn(),
+            Location endmarklocation = marks.get(legvalues.get(i).getMarkname()).location;
+            following = new Leg(controllersupplier,
+                    i == 0 ? start : marks.get(legvalues.get(i - 1).getMarkname()).location,
+                    endmarklocation, legvalues.get(i).isPortRounding(),
                     following);
             i--;
         }
         firstcourseleg = following;
     }
 
-    public CourseLeg getFirstCourseLeg() {
+    public Leg getFirstCourseLeg() {
         return firstcourseleg;
     }
 
@@ -82,6 +84,5 @@ public class Course implements Displayable {
         for (Mark mark : marks.values()) {
             mark.draw(g2D, zoom);
         }
-
     }
 }

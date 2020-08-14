@@ -16,10 +16,11 @@
 package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
@@ -27,7 +28,7 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  */
 public class WindFlow extends Flow {
     
-    public static WindFlow create(JsonObject parsedjson, Scenario scenario) throws IOException {
+    public static WindFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray windarray = parsedjson.getJsonArray("WIND");
         if (windarray == null) {
             throw new IOException("Malformed Definition File - missing WIND array");
@@ -36,18 +37,17 @@ public class WindFlow extends Flow {
         for (JsonValue windv : windarray) {
             if (windv.getValueType() == JsonValue.ValueType.OBJECT) {
                 JsonObject wind = (JsonObject) windv;
-                flowcomponents.add(FlowComponentFactory.createflowelement(wind, scenario));
+                flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, wind));
             } else {
                 throw new IOException("Malformed Definition File - WIND array contains items other that wind objects");
             }
         }
-        JsonObject windparams = parsedjson.getJsonObject("WIND-SHIFTS");
-        WindFlow windflow = new WindFlow(windparams, scenario, flowcomponents);
-        return windflow;
+        JsonObject windshiftparams = parsedjson.getJsonObject("WIND-SHIFTS");
+        return new WindFlow(controllersupplier, windshiftparams, flowcomponents);
     }
     
-    private WindFlow(JsonObject params, Scenario scenario, FlowComponentSet flowcomponents) throws IOException {
-        super(params, scenario,flowcomponents);
+    private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
+        super(controllersupplier, params, flowcomponents);
     }
     
 }

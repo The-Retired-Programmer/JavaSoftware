@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 public class Decision {
 
     public enum TurnDirection {
-        CLOCKWISE, ANTICLOCKWISE
+        STARBOARD, PORT
     }
 
     public enum DecisionAction {
@@ -36,14 +36,14 @@ public class Decision {
 
     private DecisionAction action = DecisionAction.SAILON;
     private Angle angle = null;
-    private TurnDirection turndirection = TurnDirection.CLOCKWISE;
+    private TurnDirection turndirection = TurnDirection.STARBOARD;
 
     public Decision(Boat boat) {
         this.boat = boat;
     }
 
     public void setSAILON() {
-        set(DecisionAction.SAILON, null, TurnDirection.CLOCKWISE);
+        set(DecisionAction.SAILON, null, TurnDirection.STARBOARD);
     }
 
     public void setTURN(Angle angle, TurnDirection turndirection) {
@@ -55,7 +55,7 @@ public class Decision {
     }
 
     public void setSTOP() {
-        set(DecisionAction.STOP, null, TurnDirection.CLOCKWISE);
+        set(DecisionAction.STOP, null, TurnDirection.STARBOARD);
     }
 
     private void set(DecisionAction action, Angle angle, TurnDirection turndirection) {
@@ -77,10 +77,10 @@ public class Decision {
     }
 
     public Angle getAngle() {
-        return isRotating() ? angle : boat.getDirection();
+        return isRotating() ? angle : boat.direction;
     }
 
-    public boolean isClockwise() {
-        return turndirection.equals(TurnDirection.CLOCKWISE);
+    public boolean isSTARBOARD() {
+        return turndirection.equals(TurnDirection.STARBOARD);
     }
 }

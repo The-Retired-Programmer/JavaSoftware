@@ -32,7 +32,6 @@ import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.Decis
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 
 /**
  *
@@ -41,14 +40,12 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 public class SailingStrategyTest {
 
     private Boat boat;
-    private Scenario scenario;
     private Controller controller;
     private Angle winddirection;
 
     public Decision makeDecision(String filename, Supplier<String>... configs) throws IOException {
         controller = new Controller(filename, (s) -> requestpaint(s));
-        scenario = controller.getScenario();
-        boat = scenario.getBoats().getBoat("Red");
+        boat = controller.boats.getBoat("Red");
         //
         for (var config : configs) {
             String error = config.get();
@@ -56,12 +53,12 @@ public class SailingStrategyTest {
                 throw new IOException(error);
             }
         }
-        Decision decision = new Decision(boat);
-        winddirection = scenario.getWindflow(boat.getLocation()).getAngle();
-        CourseLegWithStrategy leg = new CourseLegWithStrategy(scenario.getCourse().getFirstCourseLeg(),
-                scenario.getWindmeanflowangle(), boat);
-        leg.nextTimeInterval(decision, boat, winddirection);
-        return decision;
+        Leg leg = controller.course.getFirstCourseLeg();
+        winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        BoatStrategyForLeg strategy = BoatStrategyForLeg.getLegStrategy(
+                controller, boat, leg);
+        strategy.nextTimeInterval(controller);
+        return strategy.decision;
     }
 
     private void requestpaint(String s) {
@@ -70,8 +67,8 @@ public class SailingStrategyTest {
 
     String setwindfrom(String name, int degrees) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
@@ -80,8 +77,8 @@ public class SailingStrategyTest {
 
     String setwindfrom(int zlevel, int degrees) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
@@ -133,8 +130,8 @@ public class SailingStrategyTest {
             return ex.getLocalizedMessage();
         }
     }
-    
-    String setboatdirectionvalue(String name, double angle){
+
+    String setboatdirectionvalue(String name, double angle) {
         try {
             boat.change(Json.createObjectBuilder()
                     .add(name, angle)
@@ -152,7 +149,7 @@ public class SailingStrategyTest {
     Angle getPortCloseHauled() {
         return boat.getPortCloseHauledCourse(winddirection);
     }
-    
+
     Angle getStarboardReaching() {
         return boat.getStarboardReachingCourse(winddirection);
     }
@@ -161,19 +158,19 @@ public class SailingStrategyTest {
         return boat.getPortReachingCourse(winddirection);
     }
 
-    void assertTURN(Decision decision, int angle, boolean isclockwise) {
+    void assertTURN(Decision decision, int angle, boolean isSTARBOARD) {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(new Angle(angle), decision.getAngle()),
-                () -> assertEquals(isclockwise, decision.isClockwise())
+                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
         );
     }
-    
-    void assertTURN(Decision decision, Angle angle, boolean isclockwise) {
+
+    void assertTURN(Decision decision, Angle angle, boolean isSTARBOARD) {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(angle, decision.getAngle()),
-                () -> assertEquals(isclockwise, decision.isClockwise())
+                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
         );
     }
 
@@ -181,8 +178,8 @@ public class SailingStrategyTest {
         switch (decision.getAction()) {
             case TURN:
                 assertAll("Check angle Range of a Turn",
-                        () -> assertTrue(minangle.lteq(decision.getAngle()), "angle "+ decision.getAngle().toString()+" is less than minimum " + minangle.toString()),
-                        () -> assertTrue(maxangle.gteq(decision.getAngle()), "angle "+decision.getAngle().toString()+" is greater than maximum " + maxangle.toString())
+                        () -> assertTrue(minangle.lteq(decision.getAngle()), "angle " + decision.getAngle().toString() + " is less than minimum " + minangle.toString()),
+                        () -> assertTrue(maxangle.gteq(decision.getAngle()), "angle " + decision.getAngle().toString() + " is greater than maximum " + maxangle.toString())
                 );
                 return;
             case SAILON:
@@ -199,11 +196,11 @@ public class SailingStrategyTest {
         );
     }
 
-    void assertMARKROUNDING(Decision decision, int angle, boolean isclockwise) {
+    void assertMARKROUNDING(Decision decision, int angle, boolean isSTARBOARD) {
         assertAll("Decision is MARKROUNDING?",
                 () -> assertEquals(MARKROUNDING, decision.getAction()),
                 () -> assertEquals(new Angle(angle), decision.getAngle()),
-                () -> assertEquals(isclockwise, decision.isClockwise())
+                () -> assertEquals(isSTARBOARD, decision.isSTARBOARD())
         );
     }
 

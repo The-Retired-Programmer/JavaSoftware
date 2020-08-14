@@ -16,10 +16,11 @@
 package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
@@ -27,26 +28,25 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  */
 public class WaterFlow extends Flow {
     
-    public static WaterFlow create(JsonObject parsedjson, Scenario scenario) throws IOException {
+    public static WaterFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray waterarray = parsedjson.getJsonArray("WATER");
         if (waterarray != null) {
             FlowComponentSet flowcomponents = new FlowComponentSet();
             for (JsonValue waterv : waterarray) {
                 if (waterv.getValueType() == JsonValue.ValueType.OBJECT) {
                     JsonObject water = (JsonObject) waterv;
-                    flowcomponents.add(FlowComponentFactory.createflowelement(water, scenario));
+                    flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, water));
                 } else {
                     throw new IOException("Malformed Definition File - WATER array contains items other that water objects");
                 }
             }
-            WaterFlow waterflow = new WaterFlow(null, scenario, flowcomponents);
-            return waterflow;
+            return new WaterFlow(controllersupplier, null, flowcomponents);
         }
         return null;
     }
     
-    private WaterFlow(JsonObject params, Scenario scenario, FlowComponentSet flowcomponents) throws IOException{
-        super(params, scenario, flowcomponents);
+    private WaterFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException{
+        super(controllersupplier, params, flowcomponents);
     }   
     
 }

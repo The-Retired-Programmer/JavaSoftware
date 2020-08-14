@@ -21,7 +21,6 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 
 /**
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -29,11 +28,10 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 public abstract class FlowComponentTest {
 
     final static double DELTA = 0.0000001;
-    private Scenario scenario;
+    private Controller controller;
 
     public void initialiseFlow(String filename) throws IOException {
-        Controller controller = new Controller(filename, (s) -> requestpaint(s));
-        scenario = controller.getScenario();
+        controller = new Controller(filename, (s) -> requestpaint(s));
     }
 
     private void requestpaint(String s) {
@@ -41,12 +39,12 @@ public abstract class FlowComponentTest {
     }
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {
-        SpeedPolar flow = scenario.getWindflow(at);
+        SpeedPolar flow = controller.windflow.getFlow(at);
         assertEquals(expected.getAngle().getDegrees(), flow.getAngle().getDegrees(),DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
 
     void assertMeanFlowAngle(Angle expected) throws IOException {
-        assertEquals(expected.getDegrees(), scenario.getWindmeanflowangle().getDegrees(), DELTA);
+        assertEquals(expected.getDegrees(), controller.windflow.getMeanFlowAngle().getDegrees(), DELTA);
     }
 }

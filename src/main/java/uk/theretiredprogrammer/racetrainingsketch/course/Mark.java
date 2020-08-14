@@ -22,17 +22,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.BooleanParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.ColorParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.StringParser;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
-import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90MINUS;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The Mark Class - represent course marks.
@@ -43,18 +42,16 @@ public class Mark {
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
-    private final Scenario scenario;
-
-    private final String name;
-    private final Location location;
+    final String name;
+    final Location location;
+    //
     private final boolean windwardlaylines;
     private final boolean downwindlaylines;
-
     private final double laylinelength;
     private final Color laylinecolor;
     private final Color color;
-    private final boolean leavetoport;
-    private final String nextmark;
+
+    private final Supplier<Controller> controllersupplier;
 
     /**
      * Constructor
@@ -62,7 +59,8 @@ public class Mark {
      * @param name the name
      * @param wind the wind flow to be applied
      */
-    public Mark(JsonObject paramsobj, Scenario scenario) throws IOException {
+    public Mark(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
+        this.controllersupplier = controllersupplier;
         name = StringParser.parse(paramsobj, "name")
                 .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
         location = Location.parse(paramsobj, "location").orElse(new Location(0, 0));
@@ -71,80 +69,41 @@ public class Mark {
         laylinelength = DoubleParser.parse(paramsobj, "laylinelength").orElse(0.0);
         laylinecolor = ColorParser.parse(paramsobj, "laylinecolour").orElse(Color.black);
         color = ColorParser.parse(paramsobj, "colour").orElse(Color.red);
-        leavetoport = BooleanParser.parse(paramsobj, "leavetoport").orElse(false);
-        nextmark = StringParser.parse(paramsobj, "name").orElse(null);
-        //
-        this.scenario = scenario;
-    }
-
-    public final String getName() {
-        return name;
-    }
-
-    public final Location getLocation() {
-        return location;
-    }
-
-    private boolean getWindwardlaylines() {
-        return windwardlaylines;
-    }
-
-    private boolean getDownwindlaylines() {
-        return downwindlaylines;
-    }
-
-    private double getLaylinelength() {
-        return laylinelength;
-    }
-
-    private Color getLaylinecolor() {
-        return laylinecolor;
-    }
-
-    private Color getColor() {
-        return color;
-    }
-
-    public final boolean isPort() {
-        return leavetoport;
     }
 
     private final static Angle WINDWARDLAYLINEANGLE = new Angle(135);
     private final static Angle LEEWARDLAYLINEANGLE = new Angle(45);
 
     public void draw(Graphics2D g2D, double zoom) throws IOException {
-        Angle windAngle = scenario.getWindflow(getLocation()).getAngle();
-        DistancePolar toPt = getDownwindlaylines()
-                ? new DistancePolar(2 * SIZE, windAngle.add(isPort() ? ANGLE90MINUS : ANGLE90))
-                : new DistancePolar(2 * SIZE, windAngle.add(isPort() ? ANGLE90 : ANGLE90MINUS));
-        Location laylineBase = toPt.polar2Location(getLocation());
+        Controller controller = controllersupplier.get();
+        Angle windAngle = controller.windflow.getFlow(location).getAngle();
         double radius = zoom > 6
                 ? SIZE / 2 * zoom // if it will be visible then draw circle to scale
                 : 3; // create visible object
         Ellipse2D s = new Ellipse2D.Double(-radius, -radius, radius * 2, radius * 2);
         AffineTransform xform = g2D.getTransform();
-        g2D.translate(getLocation().getX(), getLocation().getY());
+        g2D.translate(location.getX(), location.getY());
         g2D.scale(1 / zoom, 1 / zoom);
-        g2D.setColor(getColor());
+        g2D.setColor(color);
         g2D.draw(s);
         g2D.fill(s);
         g2D.setTransform(xform);
         // now draw the laylines - this are scale independent and set to 1 pixel line
-        if (getWindwardlaylines()) {
-            pixelLine(g2D, laylineBase,
-                    new DistancePolar(getLaylinelength(), windAngle.add(WINDWARDLAYLINEANGLE)),
-                    getLaylinecolor(), zoom);
-            pixelLine(g2D, laylineBase,
-                    new DistancePolar(getLaylinelength(), windAngle.sub(WINDWARDLAYLINEANGLE)),
-                    getLaylinecolor(), zoom);
+        if (windwardlaylines) {
+            pixelLine(g2D, location,
+                    new DistancePolar(laylinelength, windAngle.add(WINDWARDLAYLINEANGLE)),
+                    laylinecolor, zoom);
+            pixelLine(g2D, location,
+                    new DistancePolar(laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE)),
+                    laylinecolor, zoom);
         }
-        if (getDownwindlaylines()) {
-            pixelLine(g2D, laylineBase,
-                    new DistancePolar(getLaylinelength(), windAngle.add(LEEWARDLAYLINEANGLE)),
-                    getLaylinecolor(), zoom);
-            pixelLine(g2D, laylineBase,
-                    new DistancePolar(getLaylinelength(), windAngle.sub(LEEWARDLAYLINEANGLE)),
-                    getLaylinecolor(), zoom);
+        if (downwindlaylines) {
+            pixelLine(g2D, location,
+                    new DistancePolar(laylinelength, windAngle.add(LEEWARDLAYLINEANGLE)),
+                    laylinecolor, zoom);
+            pixelLine(g2D, location,
+                    new DistancePolar(laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE)),
+                    laylinecolor, zoom);
         }
     }
 

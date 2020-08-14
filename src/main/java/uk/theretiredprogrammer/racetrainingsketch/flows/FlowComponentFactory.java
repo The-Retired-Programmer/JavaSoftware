@@ -16,8 +16,9 @@
 package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The FlowElement Factory Class.
@@ -26,19 +27,19 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  */
 public class FlowComponentFactory {
 
-    public static FlowComponent createflowelement(JsonObject paramobj, Scenario scenario) throws IOException{
+    public static FlowComponent createflowelement(Supplier<Controller>controllersupplier, JsonObject paramobj) throws IOException{
         if (paramobj == null) {
             return null;
         }
         switch (paramobj.getString("type", "MISSING")){
             case "testflow":
-                return new TestFlowComponent(paramobj, scenario);
+                return new TestFlowComponent(controllersupplier, paramobj);
             case "complexflow":
-                return new ComplexFlowComponent(paramobj, scenario);
+                return new ComplexFlowComponent(controllersupplier, paramobj);
             case "constantflow":
-                return new ConstantFlowComponent(paramobj, scenario);
+                return new ConstantFlowComponent(controllersupplier, paramobj);
             case "gradientflow":
-                return new GradientFlowComponent(paramobj, scenario);
+                return new GradientFlowComponent(controllersupplier, paramobj);
             default:
                 throw new IOException("Missing or Unknown type parameter in flow definition");
         }

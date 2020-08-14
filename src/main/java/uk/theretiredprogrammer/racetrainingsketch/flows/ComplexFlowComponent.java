@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2014-2020 Richard Linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,14 @@
 package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The ComplexFlow Class - represents a flow which is described by flows (speed
@@ -32,15 +33,14 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class ComplexFlowComponent extends FlowComponent {
-    
+
     private SpeedPolar nwflow;
     private SpeedPolar neflow;
     private SpeedPolar seflow;
     private SpeedPolar swflow;
-    
-    
-    public ComplexFlowComponent(JsonObject paramsobj, Scenario scenario) throws IOException {
-        super(paramsobj, scenario);
+
+    public ComplexFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
+        super(controllersupplier, paramsobj);
         nwflow = new SpeedPolar(
                 DoubleParser.parse(paramsobj, "northwestspeed").orElse(0.0),
                 Angle.parse(paramsobj, "northwestfrom").orElse(ANGLE0)
@@ -58,7 +58,7 @@ public class ComplexFlowComponent extends FlowComponent {
                 Angle.parse(paramsobj, "southwestfrom").orElse(ANGLE0)
         );
     }
-    
+
     @Override
     public void change(JsonObject paramsobj) throws IOException {
         super.change(paramsobj);
@@ -84,8 +84,8 @@ public class ComplexFlowComponent extends FlowComponent {
     public SpeedPolar getFlow(Location pos) throws IOException {
         testLocationWithinArea(pos);
         Location bottomleft = getArea().getBottomleft();
-        double xfraction = (pos.getX()-bottomleft.getX())/getArea().getWidth();
-        double yfraction = (pos.getY()-bottomleft.getY())/getArea().getHeight();
+        double xfraction = (pos.getX() - bottomleft.getX()) / getArea().getWidth();
+        double yfraction = (pos.getY() - bottomleft.getY()) / getArea().getHeight();
         Location fractions = new Location(xfraction, yfraction);
         return swflow.extrapolate(nwflow, neflow, seflow, fractions);
     }

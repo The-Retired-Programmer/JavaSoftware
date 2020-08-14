@@ -17,12 +17,13 @@ package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The ConstantFlow Class - represents a flow which is steady in speed and
@@ -34,8 +35,8 @@ public class ConstantFlowComponent extends FlowComponent {
 
     private SpeedPolar flow;
 
-    public ConstantFlowComponent(JsonObject paramsobj, Scenario scenario) throws IOException {
-        super(paramsobj, scenario);
+    public ConstantFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
+        super(controllersupplier, paramsobj);
         flow = new SpeedPolar(
                 DoubleParser.parse(paramsobj, "speed").orElse(0.0),
                 Angle.parse(paramsobj, "from").orElse(ANGLE0)
@@ -56,5 +57,5 @@ public class ConstantFlowComponent extends FlowComponent {
         testLocationWithinArea(pos);
         return flow;
     }
-    
+
 }

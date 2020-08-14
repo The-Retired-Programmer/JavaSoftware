@@ -16,9 +16,9 @@
 package uk.theretiredprogrammer.racetrainingsketch.boats;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
@@ -26,13 +26,13 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  */
 public class BoatFactory {
 
-    public static Boat createboatelement(JsonObject paramobj, Scenario scenario, CourseLeg courseleg) throws IOException{
+    public static Boat createboatelement(Supplier<Controller> controllersupplier, JsonObject paramobj) throws IOException{
         if (paramobj == null) {
             return null;
         }
         switch (paramobj.getString("type", "MISSING")){
             case "laser2":
-                return new Laser2(paramobj, scenario, courseleg);
+                return new Laser2(controllersupplier, paramobj);
             default:
                 throw new IOException("Missing or Unknown class parameter in boat definition");
         }

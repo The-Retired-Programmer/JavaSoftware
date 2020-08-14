@@ -132,7 +132,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
     }
 
     public void displayfilteredlog() {
-        controller.displayfilteredlog("Yellow");
+        controller.displayfilteredlog("SELECTED");
     }
 
     public void keyAction(String key) {

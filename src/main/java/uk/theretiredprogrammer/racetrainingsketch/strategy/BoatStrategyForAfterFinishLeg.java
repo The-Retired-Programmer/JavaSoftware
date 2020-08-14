@@ -16,18 +16,22 @@
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class AfterFinishSailingStrategy extends SailingLegStrategy {
+class BoatStrategyForAfterFinishLeg extends BoatStrategyForLeg {
+
+    BoatStrategyForAfterFinishLeg(Boat boat, Leg previousleg) {
+        super(boat, previousleg);
+    }
 
     @Override
-    String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
-        double fromfinishmark = boat.getLocation().to(leg.getEndLocation());
-        if (fromfinishmark > boat.getMetrics().getLength()*5) {
+    String nextTimeInterval(Controller controller) {
+        double fromfinishmark = boat.location.to(leg.getEndLocation());
+        if (fromfinishmark > boat.metrics.getLength() * 5) {
             decision.setSTOP();
             return "stoping at end of course";
         } else {
@@ -35,8 +39,5 @@ class AfterFinishSailingStrategy extends SailingLegStrategy {
             return "Sail ON";
         }
     }
-    @Override
-    boolean applyRoundingStrategy(CourseLegWithStrategy leg, Boat boat, Angle winddirection) {
-        return false; // no rounding stategy after finsihing
-    }
+
 }

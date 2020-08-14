@@ -17,11 +17,13 @@ package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Gradient;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The EastWestGradientFlow Class - represents a flow with differing parameters
@@ -40,8 +42,8 @@ public class GradientFlowComponent extends FlowComponent{
      * @param name the name
      * @param scenario the field of play
      */
-    public GradientFlowComponent(JsonObject paramsobj, Scenario scenario) throws IOException {
-        super(paramsobj, scenario);
+    public GradientFlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
+        super(controllersupplier, paramsobj);
         gradient = Gradient.parse(paramsobj, "gradient").orElse(new Gradient());
     }
     

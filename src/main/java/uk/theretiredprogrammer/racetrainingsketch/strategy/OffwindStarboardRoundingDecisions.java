@@ -15,33 +15,32 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import java.util.function.BiFunction;
+import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class OffwindPortRoundingStrategy extends RoundingStrategy {
+class OffwindStarboardRoundingDecisions extends RoundingDecisions {
 
     private final Function<Angle, Angle> getDirectionAfterTurn;
 
-    OffwindPortRoundingStrategy(Boat boat,
-            BiFunction<Boolean, Angle, Angle> getOffsetAngle,
+    OffwindStarboardRoundingDecisions(
             Function<Angle, Angle> getDirectionAfterTurn) {
-        super(boat.getMetrics().getWidth() * 2, getOffsetAngle, ANTICLOCKWISE);
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
-    final String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
-        if (atPortRoundingTurnPoint(leg, boat)) {
-            return executePortRounding(getDirectionAfterTurn, winddirection, boat, decision);
+    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        if (atStarboardRoundingTurnPoint(legstrategy, boat)) {
+            return executeStarboardRounding(getDirectionAfterTurn, winddirection, boat, decision);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, leg, decision, winddirection);
-        return "course adjustment - approaching mark - port rounding";
+        adjustDirectCourseToDownwindMarkOffset(boat, legstrategy, decision, winddirection);
+        return "course adjustment - approaching mark - starboard rounding";
     }
 }

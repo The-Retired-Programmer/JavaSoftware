@@ -16,9 +16,9 @@
 package uk.theretiredprogrammer.racetrainingsketch.boats;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The Laser 2 Dinghy.
@@ -27,8 +27,8 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
  */
 public class Laser2 extends Boat {
 
-    public Laser2(JsonObject paramsobj, Scenario scenario, CourseLeg courseleg) throws IOException {
-        this(paramsobj, scenario,courseleg,
+    public Laser2(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
+        super(controllersupplier, paramsobj,
                 new BoatMetricsBuilder()
                         .length(4)
                         .width(1.5)
@@ -52,9 +52,5 @@ public class Laser2 extends Boat {
                                         .build()
                         ).build()
         );
-    }
-
-    private Laser2(JsonObject paramsobj, Scenario scenario, CourseLeg courseleg, BoatMetrics metrics) throws IOException {
-        super(paramsobj, scenario, courseleg, metrics);
     }
 }

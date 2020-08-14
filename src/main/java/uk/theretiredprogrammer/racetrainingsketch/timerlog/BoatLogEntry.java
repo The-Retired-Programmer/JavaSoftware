@@ -30,11 +30,11 @@ public class BoatLogEntry extends TimerLogEntry {
     private final String boatname;
 
     public BoatLogEntry(Boat boat) {
-        Location loc = boat.getLocation();
+        Location loc = boat.location;
         this.boatx = loc.getX();
         this.boaty = loc.getY();
-        this.boatangle = boat.getDirection().getDegrees();
-        this.boatname = boat.getName();
+        this.boatangle = boat.direction.getDegrees();
+        this.boatname = boat.name;
     }
     
     @Override

@@ -15,51 +15,50 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import java.util.function.BiFunction;
+import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class WindwardPortRoundingStrategy extends RoundingStrategy {
+class WindwardPortRoundingDecisions extends RoundingDecisions {
 
     private final Function<Angle, Angle> getDirectionAfterTurn;
 
-    WindwardPortRoundingStrategy(Boat boat,
-            BiFunction<Boolean, Angle, Angle> getOffsetAngle,
-            Function<Angle, Angle> getDirectionAfterTurn) {
-        super(boat.getMetrics().getWidth() * 2, getOffsetAngle, ANTICLOCKWISE);
+    WindwardPortRoundingDecisions(Function<Angle, Angle> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
-    final String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
+    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
         if (boat.isPort(winddirection)) {
-            if (boat.isPortRear90Quadrant(leg.getEndLocation())) {
-                decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), ANTICLOCKWISE);
+            if (boat.isPortRear90Quadrant(legstrategy.getMarkLocation())) {
+                decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                 return "pre markrounding action - tack to starboard - port tack - port rounding";
             }
-            if (adjustDirectCourseToWindwardMarkOffset(boat, leg, decision, winddirection)) {
+            if (adjustPortDirectCourseToWindwardMarkOffset(boat, legstrategy, decision, winddirection)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
             }
-            decision.setTURN(boat.getPortCloseHauledCourse(winddirection), CLOCKWISE);
+            decision.setTURN(boat.getPortCloseHauledCourse(winddirection), STARBOARD);
             return "course adjustment - bearing away to hold port c/h - port tack - port rounding";
         } else {
-            if (atPortRoundingTurnPoint(leg, boat)) {
+            if (atPortRoundingTurnPoint(legstrategy, boat)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, boat, decision);
             }
-            if (adjustDirectCourseToWindwardMarkOffset(boat, leg, decision, winddirection)) {
+            if (adjustStarboardDirectCourseToWindwardMarkOffset(boat, legstrategy, decision, winddirection)) {
                 return "course adjustment - approaching mark - starboard tack - port rounding";
             }
-            if (tackifonportlayline(boat, leg, decision, winddirection)) {
+            if (tackifonportlayline(boat, legstrategy, decision, winddirection)) {
                 return "tacking on port layline - starboard->port";
             }
-            decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), ANTICLOCKWISE);
+            decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
             return "course adjustment - bearing away to hold starboard c/h - starboard tack - port rounding";
         }
     }

@@ -33,6 +33,10 @@ public class TimerLog {
     public void setTime(String mmsstime) {
         this.mmsstime = mmsstime;
     }
+    
+    public void clear() {
+        log.clear();
+    }
 
     public void add(TimerLogEntry entry) {
         entry.setTime(mmsstime);
@@ -40,7 +44,7 @@ public class TimerLog {
     }
 
     public void write2output(String title) {
-        InputOutput io = IOProvider.getDefault().getIO(title, false);
+        InputOutput io = IOProvider.getDefault().getIO(title, true);
         io.select();
         try ( OutputWriter msg = io.getOut()) {
             log.stream().forEach(entry -> msg.println(entry.toString()));
@@ -48,7 +52,7 @@ public class TimerLog {
     }
     
     public void writefiltered2output(String title, String boatname) {
-        InputOutput io = IOProvider.getDefault().getIO(title, false);
+        InputOutput io = IOProvider.getDefault().getIO(title, true);
         io.select();
         try ( OutputWriter msg = io.getOut()) {
             log.stream()

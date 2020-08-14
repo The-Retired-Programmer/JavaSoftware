@@ -24,7 +24,6 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 
 /**
  *
@@ -33,14 +32,12 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 public class TurnTest {
 
     private Boat boat;
-    private Scenario scenario;
     private Controller controller;
     private Decision decision;
 
     Boat setupForTurn(String filename, Supplier<String>... configs) throws IOException {
         controller = new Controller(filename, (s) -> requestpaint(s));
-        scenario = controller.getScenario();
-        boat = scenario.getBoats().getBoat("Red");
+        boat = controller.boats.getBoat("Red");
         //
         for (var config : configs) {
             String error = config.get();
@@ -48,14 +45,14 @@ public class TurnTest {
                 throw new IOException(error);
             }
         }
-        decision = boat.getDecision();
+        decision = controller.boatstrategies.getStrategy(boat).decision;
         return boat;
     }
 
     Boat getUptospeed(int seconds) throws IOException {
         while (seconds > 0) {
             decision.setSAILON();
-            boat.moveusingdecision();
+            boat.moveUsingDecision();
             seconds--;
         }
         return boat;
@@ -64,7 +61,7 @@ public class TurnTest {
     Boat makeTurn(Angle finalangle, TurnDirection turndirection) throws IOException {
         decision.setTURN(finalangle, turndirection);
         while (decision.getAction() != SAILON) {
-            boat.moveusingdecision();
+            boat.moveUsingDecision();
         }
         return boat;
     }
@@ -95,8 +92,8 @@ public class TurnTest {
     
     String setwindfrom(String name, int degrees) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
@@ -105,8 +102,8 @@ public class TurnTest {
 
     String setwindfrom(int zlevel, int degrees) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
@@ -119,8 +116,8 @@ public class TurnTest {
     
     String setwindspeed(String name, double speed) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), name);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), name);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();
@@ -129,8 +126,8 @@ public class TurnTest {
 
     String setwindspeed(int zlevel, double speed) {
         try {
-            scenario.getWindFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), zlevel);
-            scenario.recalculateWindFlow();
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), zlevel);
+            controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
             return ex.getLocalizedMessage();

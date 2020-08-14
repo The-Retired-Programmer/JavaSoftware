@@ -15,71 +15,48 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
-import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
-import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
-import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.STARBOARD;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-abstract class RoundingStrategy extends SailingStrategy {
+abstract class RoundingDecisions extends SailingDecisions {
 
-    final double closetomark;
-    final BiFunction<Boolean, Angle, Angle> getOffsetAngle;
-    private final TurnDirection turndirection;
-
-    RoundingStrategy(double closetomark, BiFunction<Boolean, Angle, Angle> getOffsetAngle,
-            TurnDirection turndirection) {
-        this.closetomark = closetomark;
-        this.getOffsetAngle = getOffsetAngle;
-        this.turndirection = turndirection;
+    final boolean atPortRoundingTurnPoint(BoatStrategyForLeg legstrategy, Boat boat) {
+        return boat.isPortRear90Quadrant(legstrategy.getMarkLocation());
     }
 
-    final DistancePolar getOffset(boolean onPort, Angle winddirection, CourseLeg leg) {
-        return new DistancePolar(closetomark, getOffsetAngle.apply(onPort, winddirection));
-    }
-
-    final TurnDirection getTurndirection() {
-        return turndirection;
-    }
-
-    final boolean atPortRoundingTurnPoint(CourseLegWithStrategy leg, Boat boat) {
-        return boat.isPortRear90Quadrant(leg.getEndLocation());
-    }
-
-    final boolean atStarboardRoundingTurnPoint(CourseLegWithStrategy leg, Boat boat) {
-        return boat.isStarboardRear90Quadrant(leg.getEndLocation());
+    final boolean atStarboardRoundingTurnPoint(BoatStrategyForLeg legstrategy, Boat boat) {
+        return boat.isStarboardRear90Quadrant(legstrategy.getMarkLocation());
     }
 
     final String executePortRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, Boat boat, Decision decision) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
-        Angle turnangle = finaldirection.absAngleDiff(boat.getDirection());
+        Angle turnangle = finaldirection.absAngleDiff(boat.direction);
         if (turnangle.gt(ANGLE90)) {
-            decision.setTURN(boat.getDirection().sub(ANGLE90), ANTICLOCKWISE);
+            decision.setTURN(boat.direction.sub(ANGLE90), PORT);
             return "markrounding action - first phase - starboard tack - port rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
-        decision.setMARKROUNDING(finaldirection, ANTICLOCKWISE);
+        decision.setMARKROUNDING(finaldirection, PORT);
         return "markrounding action - starboard tack - port rounding";
     }
 
     final String executeStarboardRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, Boat boat, Decision decision) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
-        Angle turnangle = finaldirection.absAngleDiff(boat.getDirection());
+        Angle turnangle = finaldirection.absAngleDiff(boat.direction);
         if (turnangle.gt(ANGLE90)) {
-            decision.setTURN(boat.getDirection().add(ANGLE90), CLOCKWISE);
+            decision.setTURN(boat.direction.add(ANGLE90), STARBOARD);
             return "markrounding action - first phase - port tack - starboard rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
-        decision.setMARKROUNDING(finaldirection, CLOCKWISE);
+        decision.setMARKROUNDING(finaldirection, STARBOARD);
         return "markrounding action - port tack - starboard rounding";
     }
 }

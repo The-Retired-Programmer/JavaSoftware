@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.racetrainingsketch.flows;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
@@ -25,6 +26,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.IntegerParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.StringParser;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
 
@@ -40,11 +42,12 @@ public abstract class FlowComponent {
     private Area area;
     private int zlevel;
 
-    public FlowComponent(JsonObject paramsobj, Scenario scenario) throws IOException {
+    public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
+        Scenario scenario = controllersupplier.get().scenario;
         name = StringParser.parse(paramsobj, "name").orElse("");
-        Location bottomleft = Location.parse(paramsobj, "location").orElse(new Location(scenario.getWest(), scenario.getSouth()));
-        double width = DoubleParser.parse(paramsobj, "width").orElse(scenario.getEast() - scenario.getWest());
-        double height = DoubleParser.parse(paramsobj, "height").orElse(scenario.getNorth() - scenario.getSouth());
+        Location bottomleft = Location.parse(paramsobj, "location").orElse(new Location(scenario.west, scenario.south));
+        double width = DoubleParser.parse(paramsobj, "width").orElse(scenario.east - scenario.west);
+        double height = DoubleParser.parse(paramsobj, "height").orElse(scenario.north - scenario.south);
         zlevel = IntegerParser.parse(paramsobj, "zlevel").orElse(0);
         area = new Area(bottomleft, width, height);
     }

@@ -31,6 +31,7 @@ import uk.theretiredprogrammer.racetrainingsketch.boats.Boats;
 import uk.theretiredprogrammer.racetrainingsketch.course.Course;
 import uk.theretiredprogrammer.racetrainingsketch.flows.WaterFlow;
 import uk.theretiredprogrammer.racetrainingsketch.flows.WindFlow;
+import uk.theretiredprogrammer.racetrainingsketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
 
 /**
@@ -39,8 +40,14 @@ import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
  */
 public class Controller {
 
+    public Scenario scenario;
+    public WindFlow windflow;
+    public WaterFlow waterflow;
+    public Course course;
+    public Boats boats;
+    public BoatStrategies boatstrategies;
+    //
     private int simulationtime;
-    private Scenario scenario;
     private boolean isRunning;
     private Timer timer;
     private TimeStepRunner runner;
@@ -53,10 +60,11 @@ public class Controller {
             parsedjson = rdr.readObject();
         }
         scenario = new Scenario(parsedjson);
-        scenario.setWaterFlow(WaterFlow.create(parsedjson, scenario));
-        scenario.setWindFlow(WindFlow.create(parsedjson, scenario));
-        scenario.setCourse(new Course(parsedjson, scenario));
-        scenario.setBoats(new Boats(parsedjson, scenario, scenario.getCourse().getFirstCourseLeg()));
+        waterflow = WaterFlow.create(() -> this, parsedjson);
+        windflow = WindFlow.create(() -> this, parsedjson);
+        course = new Course(() -> this, parsedjson);
+        boats = new Boats(() -> this, parsedjson);
+        boatstrategies = new BoatStrategies(this);
     }
 
     public Controller(DefFileDataObject dataobj, Consumer<String> displayupdaterequest) {
@@ -76,10 +84,6 @@ public class Controller {
             reportfailure(ex);
         }
     }
-    
-    public Scenario getScenario() {
-        return scenario;
-    }
 
     Dimension getGraphicDimension() {
         return scenario.getGraphicDimension();
@@ -87,7 +91,14 @@ public class Controller {
 
     void paint(Graphics2D g2D) {
         try {
+            double scale = scenario.zoom;
             scenario.draw(g2D);
+            windflow.draw(g2D, scale);
+            if (waterflow != null) {
+                waterflow.draw(g2D, scale);
+            }
+            course.draw(g2D, scale);
+            boats.draw(g2D, scale);
         } catch (IOException ex) {
             reportfailure(ex);
         }
@@ -100,7 +111,7 @@ public class Controller {
         if (isRunning) {
             return;
         }
-        int rate = (int) (scenario.getSecondsperdisplay() * 1000 / scenario.getSpeedup());
+        int rate = (int) (scenario.secondsperdisplay * 1000 / scenario.speedup);
         timer = new Timer();
         runner = new TimeStepRunner();
         timer.scheduleAtFixedRate(runner, 0, rate);
@@ -117,15 +128,20 @@ public class Controller {
         isRunning = false;
         timer.cancel();
     }
+    
+    public void reset() {
+        stop();
+        timerlog.clear();
+    }
 
     private void reportfailure(Exception ex) {
         StatusDisplayer.getDefault().setStatusText(ex.getLocalizedMessage());
     }
-    
+
     public void displaylog() {
         timerlog.write2output("Timer Log");
     }
-    
+
     public void displayfilteredlog(String boatname) {
         timerlog.writefiltered2output("Timer Log", boatname);
     }
@@ -147,20 +163,24 @@ public class Controller {
 //        }
 
     }
-    
-    private TimerLog timerlog  = new TimerLog();
+
+    private TimerLog timerlog = new TimerLog();
 
     private class TimeStepRunner extends TimerTask {
-        
+
         @Override
         public void run() {
             try {
-                int secondsperdisplay = scenario.getSecondsperdisplay();
+                int secondsperdisplay = scenario.secondsperdisplay;
                 while (secondsperdisplay > 0) {
 //TODO timer call to actionFutureParameters disabled - will needto be enabled in the future                   
 //                    scenario.actionFutureParameters(simulationtime);
                     timerlog.setTime(mmssformat(simulationtime));
-                    scenario.timerAdvance(simulationtime, timerlog);
+                    windflow.timerAdvance(simulationtime, timerlog);
+                    if (waterflow != null) {
+                        waterflow.timerAdvance(simulationtime, timerlog);
+                    }
+                    boatstrategies.timerAdvance(Controller.this, simulationtime, timerlog);
                     secondsperdisplay--;
                     simulationtime++;
                 }

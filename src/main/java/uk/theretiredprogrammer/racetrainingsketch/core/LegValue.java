@@ -18,23 +18,20 @@ package uk.theretiredprogrammer.racetrainingsketch.core;
 import java.io.IOException;
 import javax.json.JsonArray;
 import javax.json.JsonValue;
-import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
 
 /**
  * A leg is a mark name and passing (port / starboard)
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Leg {
+public class LegValue {
 
-    public static Leg parseElement(JsonValue parameter) {
+    public static LegValue parseElement(JsonValue parameter) {
         if (parameter.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) parameter;
             if (values.size() == 2) {
                 try {
-                    return new Leg(values.getString(0), values.getString(1));
+                    return new LegValue(values.getString(0), values.getString(1));
                 } catch (IOException ex) {
                 }
             }
@@ -45,7 +42,7 @@ public class Leg {
     private final String mark;
     private final String passing;
 
-    public Leg(String mark, String passing) throws IOException {
+    public LegValue(String mark, String passing) throws IOException {
         this.mark = mark;
         passing = passing.toLowerCase();
         if (passing.equals("port") || passing.equals("starboard")) {
@@ -55,12 +52,11 @@ public class Leg {
         }
     }
 
-    public TurnDirection getTurn() {
-        return passing.equals("port") ? ANTICLOCKWISE : CLOCKWISE;
+    public boolean isPortRounding() {
+        return passing.equals("port");
     }
 
     public String getMarkname() {
         return mark;
     }
-
 }

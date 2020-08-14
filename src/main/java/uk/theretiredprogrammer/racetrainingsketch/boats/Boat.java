@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.racetrainingsketch.boats;
 
 import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision;
-import uk.theretiredprogrammer.racetrainingsketch.strategy.CourseLegWithStrategy;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -28,12 +27,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.racetrainingsketch.core.BooleanParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.ColorParser;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
@@ -43,11 +42,8 @@ import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.StringParser;
-import uk.theretiredprogrammer.racetrainingsketch.course.CourseLeg;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.BoatLogEntry;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.DecisionLogEntry;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.ReasonLogEntry;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
+import uk.theretiredprogrammer.racetrainingsketch.flows.Flow;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  * The Abstract Boat class - implements the core capabilities of a boat.
@@ -57,48 +53,35 @@ import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class Boat {
-
-    private final Scenario scenario;
-    private final Decision decision;
-    private CourseLegWithStrategy leg;
-
-    private final String name;
-    private Angle direction;
-    private Location location;
+    
+    private final Supplier<Controller> controllersupplier;
+    //
+    public final String name;
+    public Angle direction;
+    public  Location location;
+    //
     private Color color;
     private Color trackcolor;
-    private boolean upwindsailonbesttack;
-    private boolean upwindtackifheaded;
-    private boolean upwindbearawayifheaded;
-    private boolean upwindluffupiflifted;
-    private boolean reachdownwind;
-    private boolean downwindsailonbestgybe;
-    private boolean downwindbearawayifheaded;
-    private boolean downwindgybeiflifted;
-    private boolean downwindluffupiflifted;
-    private Channel upwindchannel;
-    private Channel downwindchannel;
-
+    public boolean upwindsailonbesttack;
+    public boolean upwindtackifheaded;
+    public boolean upwindbearawayifheaded;
+    public boolean upwindluffupiflifted;
+    public boolean reachdownwind;
+    public boolean downwindsailonbestgybe;
+    public boolean downwindbearawayifheaded;
+    public boolean downwindgybeiflifted;
+    public boolean downwindluffupiflifted;
+    public Channel upwindchannel;
+    public Channel downwindchannel;
     private final Color sailcolor = Color.white;
-
-    private final BoatMetrics metrics;
+    public final BoatMetrics metrics;
+    //
     private double boatspeed = 0;
     private Angle rotationAnglePerSecond;
-    private final double close;
-    private final double clearance;
-    //
     private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
 
-    /**
-     * Constructor
-     *
-     * @param name the flow name - either wind or water
-     * @param scenario the scenario to be applied
-     * @param wind the wind flow
-     * @param water the water flow
-     * @param marks the set of marks
-     */
-    public Boat(JsonObject paramsobj, Scenario scenario, CourseLeg cleg, BoatMetrics metrics) throws IOException {
+    public Boat(Supplier<Controller> controllersupplier, JsonObject paramsobj, BoatMetrics metrics) throws IOException {
+        this.controllersupplier = controllersupplier;
         name = StringParser.parse(paramsobj, "name")
                 .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
         direction = Angle.parse(paramsobj, "heading").orElse(ANGLE0);
@@ -116,13 +99,8 @@ public abstract class Boat {
         downwindluffupiflifted = BooleanParser.parse(paramsobj, "downwindluffupiflifted").orElse(false);
         upwindchannel = Channel.parse(paramsobj, "upwindchannel").orElse(CHANNELOFF);
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(CHANNELOFF);
-        this.scenario = scenario;
         this.metrics = metrics;
-        this.close = metrics.getLength() * 3;
-        this.clearance = metrics.getWidth() * 2;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
-        leg = new CourseLegWithStrategy(cleg, scenario.getWindmeanflowangle(), this);
-        decision = new Decision(this);
     }
 
     public void change(JsonObject paramsobj) throws IOException {
@@ -143,108 +121,24 @@ public abstract class Boat {
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(downwindchannel);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public Angle getDirection() {
-        return direction;
-    }
-
-    public Channel getUpwindchannel() {
-        return upwindchannel;
-    }
-
-    public Channel getDownwindchannel() {
-        return downwindchannel;
-    }
-
-    public boolean isUpwindsailonbesttack() {
-        return upwindsailonbesttack;
-    }
-
-    public boolean isUpwindtackifheaded() {
-        return upwindtackifheaded;
-    }
-
-    public boolean isUpwindbearawayifheaded() {
-        return upwindbearawayifheaded;
-    }
-
-    public boolean isUpwindluffupiflifted() {
-        return upwindluffupiflifted;
-    }
-
-    public boolean isReachdownwind() {
-        return reachdownwind;
-    }
-
-    public boolean isDownwindsailonbestgybe() {
-        return downwindsailonbestgybe;
-    }
-
-    public boolean isDownwindbearawayifheaded() {
-        return downwindbearawayifheaded;
-    }
-
-    public boolean isDownwindgybeiflifted() {
-        return downwindgybeiflifted;
-    }
-
-    public boolean isDownwindluffupiflifted() {
-        return downwindluffupiflifted;
-    }
-
-    public double getTurndistance() {
-        return boatspeed * 4;
-    }
-
-    public Angle getClosehauled() {
-        return metrics.getUpwindrelative();
-    }
-
-    public Angle getDownwind() {
-        return metrics.getDownwindrelative();
-    }
-
-    public BoatMetrics getMetrics() {
-        return metrics;
-    }
-
-    public double close() {
-        return close;
-    }
-
-    public double clearance() {
-        return clearance;
-    }
-
-    public Angle closeAngle() {
-        return ANGLE90.sub(rotationAnglePerSecond.div(2));
-    }
-
     public boolean isPort(Angle winddirection) {
-        return getDirection().gteq(winddirection);
+        return direction.gteq(winddirection);
     }
 
     public Angle getStarboardCloseHauledCourse(Angle winddirection) {
-        return winddirection.sub(metrics.getUpwindrelative());
+        return winddirection.sub(metrics.upwindrelative);
     }
 
     public Angle getPortCloseHauledCourse(Angle winddirection) {
-        return winddirection.add(metrics.getUpwindrelative());
+        return winddirection.add(metrics.upwindrelative);
     }
 
     public Angle getStarboardReachingCourse(Angle winddirection) {
-        return winddirection.sub(metrics.getDownwindrelative());
+        return winddirection.sub(metrics.downwindrelative);
     }
 
     public Angle getPortReachingCourse(Angle winddirection) {
-        return winddirection.add(metrics.getDownwindrelative());
+        return winddirection.add(metrics.downwindrelative);
     }
 
     public boolean isPortRear90Quadrant(Location location) {
@@ -275,53 +169,36 @@ public abstract class Boat {
         return this.location.angleto(location).between(min, max);
     }
 
-    public void timerAdvance(int simulationtime, TimerLog timerlog) throws IOException {
-        if (decision.getAction() == SAILON) {
-            String reason = leg.nextTimeInterval(decision, this, scenario.getWindflow(location).getAngle());
-            timerlog.add(new BoatLogEntry(this));
-            timerlog.add(new DecisionLogEntry(name, decision));
-            timerlog.add(new ReasonLogEntry(name, reason));
-        }
-        moveusingdecision();
-    }
-
-    Decision getDecision() {
-        return decision;
-    }
-
-    void moveusingdecision() throws IOException {
-        SpeedPolar windflow = scenario.getWindflow(location);
-        SpeedPolar waterflow = scenario.getWaterflow(location);
+    public boolean moveUsingDecision() throws IOException {
+        Controller controller = controllersupplier.get();
+        SpeedPolar windflow = controller.windflow.getFlow(location);
+        Flow waterFlow = controller.waterflow;
+        SpeedPolar waterflow = waterFlow != null ? waterFlow.getFlow(location) : new SpeedPolar(0, ANGLE0);
+        Decision decision = controller.boatstrategies.getStrategy(this).decision;
         switch (decision.getAction()) {
             case SAILON:
                 moveBoat(direction, windflow, waterflow);
-                return;
+                return false;
             case STOP:
-                return;
+                return false;
             case MARKROUNDING:
-                if (turn(windflow, waterflow)) {
-                    CourseLeg nextleg = leg.getFollowingLeg();
-                    leg = nextleg == null
-                            ? new CourseLegWithStrategy(leg)
-                            : new CourseLegWithStrategy(nextleg, scenario.getWindmeanflowangle(), this);
-                }
-                return;
+                return turn(decision, windflow, waterflow);
             case TURN:
-                turn(windflow, waterflow);
-                return;
+                turn(decision, windflow, waterflow);
+                return false;
             default:
                 throw new IOException("Illegal sailing Mode when moving boat");
         }
     }
 
-    boolean turn(SpeedPolar windflow, SpeedPolar waterflow) {
+    private boolean turn(Decision decision, SpeedPolar windflow, SpeedPolar waterflow) {
         Angle newdirection = decision.getAngle();
         if (direction.absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
-            moveBoat(decision.getAngle(), windflow, waterflow);
+            moveBoat(newdirection, windflow, waterflow);
             decision.setSAILON();
             return true;
         }
-        moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isClockwise())), windflow, waterflow);
+        moveBoat(direction.add(rotationAnglePerSecond.negateif(!decision.isSTARBOARD())), windflow, waterflow);
         return false;
     }
 
@@ -352,7 +229,7 @@ public abstract class Boat {
      * @param zoom the scale factor (pixelsPerMetre)
      */
     public void draw(Graphics2D g2D, double zoom) throws IOException {
-        Angle relative = direction.angleDiff(scenario.getWindflow(location).getAngle());
+        Angle relative = direction.angleDiff(controllersupplier.get().windflow.getFlow(location).getAngle());
         boolean onStarboard = relative.gt(ANGLE0);
         Angle absrelative = relative.abs();
         Angle sailRotation = absrelative.lteq(new Angle(45)) ? ANGLE0 : absrelative.sub(new Angle(45)).mult(2.0 / 3);

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.ANTICLOCKWISE;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.PORT;
 
 /**
  *
@@ -38,7 +38,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test1() throws IOException {
         System.out.println("tacking radius calculation");
-        runturntest(45, -45, ANTICLOCKWISE, 12, new Location(58.28, 58.28), new Location(57.94, 60.56),
+        runturntest(45, -45, PORT, 12, new Location(58.28, 58.28), new Location(57.94, 60.56),
                 () -> this.setboatintvalue("heading", 45));
         testradiusY(1.378);
     }
@@ -46,7 +46,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test1A() throws IOException {
         System.out.println("tacking radius calculation - 15kt");
-        runturntest(45, -45, ANTICLOCKWISE, 12, new Location(67.05, 67.05), new Location(66.07, 71.10),
+        runturntest(45, -45, PORT, 12, new Location(67.05, 67.05), new Location(66.07, 71.10),
                 () -> this.setboatintvalue("heading", 45),
                 () -> this.setwindspeed(15));
         testradiusY(2.18);
@@ -55,7 +55,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test2() throws IOException {
         System.out.println("bearaway radius calculation");
-        runturntest(-45, -135, ANTICLOCKWISE, 12, new Location(41.72, 58.28), new Location(38.06, 57.24),
+        runturntest(-45, -135, PORT, 12, new Location(41.72, 58.28), new Location(38.06, 57.24),
                 () -> this.setboatintvalue("heading", -45));
         testradiusX(1.85);
     }
@@ -63,7 +63,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test2A() throws IOException {
         System.out.println("bearaway radius calculation - 15kt");
-        runturntest(-45, -135, ANTICLOCKWISE, 12, new Location(32.95, 67.05), new Location(23.22, 63.60),
+        runturntest(-45, -135, PORT, 12, new Location(32.95, 67.05), new Location(23.22, 63.60),
                 () -> this.setboatintvalue("heading", -45),
                 () -> this.setwindspeed(15));
         testradiusX(4.45);
@@ -72,7 +72,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test3() throws IOException {
         System.out.println("gybing radius calculation");
-        runturntest(-135, 135, ANTICLOCKWISE, 12, new Location(41.23, 41.23), new Location(42.09, 37.97),
+        runturntest(-135, 135, PORT, 12, new Location(41.23, 41.23), new Location(42.09, 37.97),
                 () -> this.setboatintvalue("heading", -135));
         testradiusY(1.69);
     }
@@ -80,7 +80,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test3A() throws IOException {
         System.out.println("gybing radius calculation - 15kt");
-        runturntest(-135, 135, ANTICLOCKWISE, 12, new Location(14.83, 14.83), new Location(18.17, 2.21),
+        runturntest(-135, 135, PORT, 12, new Location(14.83, 14.83), new Location(18.17, 2.21),
                 () -> this.setboatintvalue("heading", -135),
                 () -> this.setwindspeed(15));
         testradiusY(6.56);
@@ -89,7 +89,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test4() throws IOException {
         System.out.println("luffup radius calculation");
-        runturntest(135, 45, ANTICLOCKWISE, 12, new Location(58.77, 41.23), new Location(62.59, 42.23),
+        runturntest(135, 45, PORT, 12, new Location(58.77, 41.23), new Location(62.59, 42.23),
                 () -> this.setboatintvalue("heading", 135));
         testradiusX(1.99);
     }
@@ -97,7 +97,7 @@ public class BoatTurnTest extends TurnTest {
     @Test
     public void test4A() throws IOException {
         System.out.println("luffup radius calculation - 15kt");
-        runturntest(135, 45, ANTICLOCKWISE, 12, new Location(85.17, 14.83), new Location(99.33, 17.96),
+        runturntest(135, 45, PORT, 12, new Location(85.17, 14.83), new Location(99.33, 17.96),
                 () -> this.setboatintvalue("heading", 135),
                 () -> this.setwindspeed(15));
         testradiusX(7.80);
@@ -111,17 +111,17 @@ public class BoatTurnTest extends TurnTest {
         Angle targetangle = new Angle(finishangleint);
         setupForTurn("/boat-turn-calculation.json", configs);
         Boat boat = getUptospeed(secondstospeed);
-        Angle direction = boat.getDirection();
+        Angle direction = boat.direction;
         assertEquals(startangle, direction);
-        startturnlocation = boat.getLocation();
+        startturnlocation = boat.location;
         assertAll("startturnlocation",
                 () -> assertEquals(expectedstartturnlocation.getY(), startturnlocation.getY(), DELTA),
                 () -> assertEquals(expectedstartturnlocation.getX(), startturnlocation.getX(), DELTA)
         );
         boat = makeTurn(targetangle, turndirection);
-        direction = boat.getDirection();
+        direction = boat.direction;
         assertEquals(targetangle, direction);
-        endturnlocation = boat.getLocation();
+        endturnlocation = boat.location;
         assertAll("endturnlocation",
                 () -> assertEquals(expectedendturnlocation.getY(), endturnlocation.getY(), DELTA),
                 () -> assertEquals(expectedendturnlocation.getX(), endturnlocation.getX(), DELTA)
@@ -150,12 +150,12 @@ public class BoatTurnTest extends TurnTest {
 //    public void test2() throws IOException {
 //        System.out.println("bearaway radius calculation");
 //        Angle targetangle = new Angle(-135);
-//        TurnDirection turndirection = ANTICLOCKWISE; 
+//        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", -45));
-//        Angle direction = boat.getDirection();
+//        Angle direction = boat.direction;
 //        assertEquals(targetangle, direction);
-//        Location location = boat.getLocation();
+//        Location location = boat.location;
 //        assertAll("location",
 //            () -> assertEquals(49.17, location.getY(), DELTA),
 //            () -> assertEquals(46.04, location.getX(), DELTA)
@@ -166,12 +166,12 @@ public class BoatTurnTest extends TurnTest {
 //    public void test3() throws IOException {
 //        System.out.println("gybe radius calculation");
 //        Angle targetangle = new Angle(135);
-//        TurnDirection turndirection = ANTICLOCKWISE; 
+//        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", -135));
-//        Angle direction = boat.getDirection();
+//        Angle direction = boat.direction;
 //        assertEquals(targetangle, direction);
-//        Location location = boat.getLocation();
+//        Location location = boat.location;
 //        assertAll("location",
 //            () -> assertEquals(46.27, location.getY(), DELTA),
 //            () -> assertEquals(51.11, location.getX(), DELTA)
@@ -182,12 +182,12 @@ public class BoatTurnTest extends TurnTest {
 //    public void test4() throws IOException {
 //        System.out.println("luff radius calculation");
 //        Angle targetangle = new Angle(45);
-//        TurnDirection turndirection = ANTICLOCKWISE; 
+//        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", 135));
-//        Angle direction = boat.getDirection();
+//        Angle direction = boat.direction;
 //        assertEquals(targetangle, direction);
-//        Location location = boat.getLocation();
+//        Location location = boat.location;
 //        assertAll("location",
 //            () -> assertEquals(51.04, location.getY(), DELTA),
 //            () -> assertEquals(53.96, location.getX(), DELTA)

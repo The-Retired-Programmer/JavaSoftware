@@ -15,33 +15,32 @@
  */
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
-import java.util.function.BiFunction;
+import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.TurnDirection.CLOCKWISE;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-class OffwindStarboardRoundingStrategy extends RoundingStrategy {
+class OffwindPortRoundingDecisions extends RoundingDecisions {
 
     private final Function<Angle, Angle> getDirectionAfterTurn;
 
-    OffwindStarboardRoundingStrategy(Boat boat,
-            BiFunction<Boolean, Angle, Angle> getOffsetAngle,
+    OffwindPortRoundingDecisions(
             Function<Angle, Angle> getDirectionAfterTurn) {
-        super(boat.getMetrics().getWidth() * 2, getOffsetAngle, CLOCKWISE);
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
-    final String nextTimeInterval(Decision decision, Boat boat, CourseLegWithStrategy leg, Angle winddirection) {
-        if (atStarboardRoundingTurnPoint(leg, boat)) {
-            return executeStarboardRounding(getDirectionAfterTurn, winddirection, boat, decision);
+    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        if (atPortRoundingTurnPoint(legstrategy, boat)) {
+            return executePortRounding(getDirectionAfterTurn, winddirection, boat, decision);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, leg, decision, winddirection);
-        return "course adjustment - approaching mark - starboard rounding";
+        adjustDirectCourseToDownwindMarkOffset(boat, legstrategy, decision, winddirection);
+        return "course adjustment - approaching mark - port rounding";
     }
 }

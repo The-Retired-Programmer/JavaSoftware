@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
@@ -36,6 +37,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.racetrainingsketch.timerlog.WindShiftLogEntry;
 import uk.theretiredprogrammer.racetrainingsketch.timerlog.WindSwingLogEntry;
+import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Timerable;
@@ -65,11 +67,10 @@ public abstract class Flow implements Displayable, Timerable {
     private int shiftperiod;
     private boolean randomshifts;
 
-    private final Scenario scenario;
     private Angle meanflowangle;
     private final FlowComponentSet flowset;
 
-    public Flow(JsonObject paramsobj, Scenario scenario, FlowComponentSet flowset) throws IOException {
+    public Flow(Supplier<Controller> controllersupplier, JsonObject paramsobj, FlowComponentSet flowset) throws IOException {
         showflow = BooleanParser.parse(paramsobj, "showflow").orElse(false);
         showflowinterval = DoubleParser.parse(paramsobj, "showflowinterval").orElse(100.0);
         showflowcolor = ColorParser.parse(paramsobj, "showflowcolour").orElse(Color.black);
@@ -79,9 +80,9 @@ public abstract class Flow implements Displayable, Timerable {
         shiftperiod = IntegerParser.parse(paramsobj, "shiftperiod").orElse(0);
         randomshifts = BooleanParser.parse(paramsobj, "randomshifts").orElse(false);
         //
-        this.scenario = scenario;
-        this.area = new Area(new Location(scenario.getWest(), scenario.getSouth()),
-                scenario.getEast() - scenario.getWest(), scenario.getNorth() - scenario.getSouth());
+        Scenario scenario = controllersupplier.get().scenario;
+        this.area = new Area(new Location(scenario.west, scenario.south),
+                scenario.east - scenario.west, scenario.north - scenario.south);
         wstepsize = area.getWidth() / WIDTHSTEPS;
         hstepsize = area.getHeight() / HEIGHTSTEPS;
         this.flowset = flowset;
@@ -135,6 +136,10 @@ public abstract class Flow implements Displayable, Timerable {
             h = HEIGHTSTEPS;
         }
         return flowarray[w][h];
+    }
+    
+    public Angle getMeanFlowAngle(Location pos) throws IOException {
+        return getFlowwithoutswing(pos).getAngle();
     }
 
     public Angle getMeanFlowAngle() throws IOException {

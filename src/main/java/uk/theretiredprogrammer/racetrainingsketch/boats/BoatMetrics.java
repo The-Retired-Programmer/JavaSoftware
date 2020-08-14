@@ -23,12 +23,12 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
  */
 public class BoatMetrics {
 
-    private final double length;// metres
-    private final double width;// metres
+    public final double length;// metres
+    public final double width;// metres
     private final double inertia;// fraction of speed lost or gained in changing winds
     private final Angle maxTurningAnglePerSecond;
-    private final Angle upwindrelative;
-    private final Angle downwindrelative;
+    public final Angle upwindrelative;
+    public final Angle downwindrelative;
     private final PerformanceVectors performancevectors;
 
     BoatMetrics(double length, double width, double inertia, Angle maxTurningAnglePerSecond,
