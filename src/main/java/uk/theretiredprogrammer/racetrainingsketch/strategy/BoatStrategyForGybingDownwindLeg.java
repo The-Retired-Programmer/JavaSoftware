@@ -29,7 +29,8 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  */
 public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
 
-    private final GybingDownwindSailingDecisions strategy;
+    private final GybingDownwindStarboardSailingDecisions starboardstrategy;
+    private final GybingDownwindPortSailingDecisions portstrategy;
     private final RoundingDecisions roundingstrategy;
     private boolean useroundingstrategy = false;
 
@@ -37,7 +38,14 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
         super(boat, leg,
                 leg.getMarkMeanwinddirection().add(new Angle(-135)), leg.getMarkMeanwinddirection().add(new Angle(-45)),
                 leg.getMarkMeanwinddirection().add(new Angle(45)), leg.getMarkMeanwinddirection().add(new Angle(135)));
-        strategy = new GybingDownwindSailingDecisions(
+        portstrategy = new GybingDownwindPortSailingDecisions(
+                boat.downwindsailonbestgybe,
+                boat.downwindgybeiflifted,
+                boat.downwindbearawayifheaded,
+                boat.downwindluffupiflifted,
+                null
+        );
+        starboardstrategy = new GybingDownwindStarboardSailingDecisions(
                 boat.downwindsailonbestgybe,
                 boat.downwindgybeiflifted,
                 boat.downwindbearawayifheaded,
@@ -71,6 +79,7 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
     @Override
     String nextTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
+        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
         if (useroundingstrategy) {
             return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
         }
@@ -78,7 +87,7 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
             useroundingstrategy = true;
             return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
         }
-        return strategy.nextTimeInterval(controller, decision, boat, this);
+        return (boat.isPort(winddirection)?portstrategy:starboardstrategy).nextTimeInterval(controller, decision, boat, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
