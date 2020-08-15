@@ -29,11 +29,11 @@ class BoatStrategyForAfterFinishLeg extends BoatStrategyForLeg {
     }
 
     @Override
-    String nextTimeInterval(Controller controller) {
+    String nextBoatStrategyTimeInterval(Controller controller) {
         double fromfinishmark = boat.location.to(leg.getEndLocation());
         if (fromfinishmark > boat.metrics.getLength() * 5) {
             decision.setSTOP();
-            return "stoping at end of course";
+            return "Stopping at end of course";
         } else {
             decision.setSAILON();
             return "Sail ON";

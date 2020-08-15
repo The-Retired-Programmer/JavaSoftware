@@ -29,47 +29,47 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  */
 public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
 
-    private final GybingDownwindStarboardSailingDecisions starboardstrategy;
-    private final GybingDownwindPortSailingDecisions portstrategy;
-    private final RoundingDecisions roundingstrategy;
-    private boolean useroundingstrategy = false;
+    private final GybingDownwindStarboardSailingDecisions starboarddecisions;
+    private final GybingDownwindPortSailingDecisions portdecisions;
+    private final RoundingDecisions roundingdeciions;
+    private boolean useroundingdecisions = false;
 
     public BoatStrategyForGybingDownwindLeg(Controller controller, Boat boat, Leg leg) throws IOException {
         super(boat, leg,
                 leg.getMarkMeanwinddirection().add(new Angle(-135)), leg.getMarkMeanwinddirection().add(new Angle(-45)),
                 leg.getMarkMeanwinddirection().add(new Angle(45)), leg.getMarkMeanwinddirection().add(new Angle(135)));
-        portstrategy = new GybingDownwindPortSailingDecisions(
+        portdecisions = new GybingDownwindPortSailingDecisions(
                 boat.downwindsailonbestgybe,
                 boat.downwindgybeiflifted,
                 boat.downwindbearawayifheaded,
                 boat.downwindluffupiflifted,
                 null
         );
-        starboardstrategy = new GybingDownwindStarboardSailingDecisions(
+        starboarddecisions = new GybingDownwindStarboardSailingDecisions(
                 boat.downwindsailonbestgybe,
                 boat.downwindgybeiflifted,
                 boat.downwindbearawayifheaded,
                 boat.downwindluffupiflifted,
                 null
         );
-        roundingstrategy = getRoundingStrategy(controller, boat, leg);
+        roundingdeciions = getRoundingStrategy(controller, boat, leg);
     }
 
     private RoundingDecisions getRoundingStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
             case WINDWARD:
-                return !leg.isPortRounding()
-                        ? new LeewardReachingStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle))
-                        : new LeewardReachingPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle));
+                return leg.isPortRounding()
+                        ? new LeewardReachingPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
+                        : new LeewardReachingStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
             case OFFWIND:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
-                        : new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
+                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
             case NONE:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle))
-                        : new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle));
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
             default:
                 throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Gybing downwind to "
                         + followinglegtype.toString());
@@ -77,17 +77,17 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
     }
 
     @Override
-    String nextTimeInterval(Controller controller) throws IOException {
+    String nextBoatStrategyTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
         Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
-        if (useroundingstrategy) {
-            return roundingstrategy.nextTimeInterval(controller, this);
+        if (useroundingdecisions) {
+            return roundingdeciions.nextTimeInterval(controller, this);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
-            useroundingstrategy = true;
-            return roundingstrategy.nextTimeInterval(controller, this);
+            useroundingdecisions = true;
+            return roundingdeciions.nextTimeInterval(controller, this);
         }
-        return (boat.isPort(winddirection)?portstrategy:starboardstrategy).nextTimeInterval(controller, this);
+        return (boat.isPort(winddirection)?portdecisions:starboarddecisions).nextTimeInterval(controller, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {

@@ -19,10 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.BoatLogEntry;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.DecisionLogEntry;
-import uk.theretiredprogrammer.racetrainingsketch.timerlog.ReasonLogEntry;
 import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
@@ -47,21 +43,9 @@ public class BoatStrategies {
 
     public void timerAdvance(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
         for (var boatstrategy : boatstrategies.values()) {
-            Boat boat = boatstrategy.boat;
-            String boatname = boat.name;
-            if (boatstrategy.decision.getAction() == SAILON) {
-                String reason = boatstrategy.nextTimeInterval(controller);
-                timerlog.add(new BoatLogEntry(boat));
-                timerlog.add(new DecisionLogEntry(boatname, boatstrategy.decision));
-                timerlog.add(new ReasonLogEntry(boatname, reason));
-            }
-            if (boat.moveUsingDecision()) {
-                Leg nextleg = boatstrategy.leg.getFollowingLeg();
-                if (nextleg == null) {
-                    boatstrategies.put(boatname, new BoatStrategyForAfterFinishLeg(boat, boatstrategy.leg));
-                } else {
-                    boatstrategies.put(boatname, BoatStrategyForLeg.getLegStrategy(controller, boat, nextleg));
-                }
+            BoatStrategyForLeg newstrategy = boatstrategy.nextTimeInterval(controller, simulationtime, timerlog);
+            if (newstrategy != null ) {
+                boatstrategies.put(boatstrategy.boat.name, newstrategy);
             }
         }
     }

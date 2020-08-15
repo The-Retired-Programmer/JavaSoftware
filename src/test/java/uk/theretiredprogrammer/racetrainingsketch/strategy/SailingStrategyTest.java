@@ -57,7 +57,7 @@ public class SailingStrategyTest {
         winddirection = controller.windflow.getFlow(boat.location).getAngle();
         BoatStrategyForLeg strategy = BoatStrategyForLeg.getLegStrategy(
                 controller, boat, leg);
-        strategy.nextTimeInterval(controller);
+        strategy.nextBoatStrategyTimeInterval(controller);
         return strategy.decision;
     }
 

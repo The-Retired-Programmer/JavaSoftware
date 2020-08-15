@@ -30,36 +30,36 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  */
 public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
 
-    private final OffwindSailingDecisions strategy;
-    private final RoundingDecisions roundingstrategy;
-    private boolean useroundingstrategy = false;
+    private final OffwindSailingDecisions decisions;
+    private final RoundingDecisions roundingdecisions;
+    private boolean useroundingdecisions = false;
 
     public BoatStrategyForOffwindLeg(Controller controller, Boat boat, Leg leg) throws IOException {
-        super(boat, leg, 
-                leg.getAngleofLeg().add(ANGLE90), leg.getAngleofLeg().sub(ANGLE90));
-        strategy = new OffwindSailingDecisions();
-        roundingstrategy = getRoundingStrategy(controller, boat, leg);
+        super(boat, leg, leg.getAngleofLeg().add(ANGLE90), leg.getAngleofLeg().sub(ANGLE90));
+        decisions = new OffwindSailingDecisions();
+        roundingdecisions = getRoundingStrategy(controller, boat, leg);
     }
 
     private RoundingDecisions getRoundingStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
             case WINDWARD:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle))
-                        : new OffwindPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle));
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
+
             case OFFWIND:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
-                        : new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
+                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
             case GYBINGDOWNWIND:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle))
-                        : new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle));
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
             case NONE:
-                return !leg.isPortRounding()
-                        ? new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(ANGLE90))
-                        : new OffwindPortRoundingDecisions((windangle) -> windangle.add(ANGLE90));
+                return leg.isPortRounding()
+                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.add(ANGLE90))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(ANGLE90));
             default:
                 throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());
@@ -67,16 +67,16 @@ public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
     }
 
     @Override
-    String nextTimeInterval(Controller controller) throws IOException {
+    String nextBoatStrategyTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
-        if (useroundingstrategy) {
-            return roundingstrategy.nextTimeInterval(controller, this);
+        if (useroundingdecisions) {
+            return roundingdecisions.nextTimeInterval(controller, this);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
-            useroundingstrategy = true;
-            return roundingstrategy.nextTimeInterval(controller, this);
+            useroundingdecisions = true;
+            return roundingdecisions.nextTimeInterval(controller, this);
         }
-        return strategy.nextTimeInterval(controller, this);
+        return decisions.nextTimeInterval(controller, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {

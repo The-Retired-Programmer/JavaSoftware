@@ -21,6 +21,11 @@ import uk.theretiredprogrammer.racetrainingsketch.boats.BoatMetrics;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
+import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
+import uk.theretiredprogrammer.racetrainingsketch.timerlog.BoatLogEntry;
+import uk.theretiredprogrammer.racetrainingsketch.timerlog.DecisionLogEntry;
+import uk.theretiredprogrammer.racetrainingsketch.timerlog.ReasonLogEntry;
+import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
@@ -127,5 +132,22 @@ public abstract class BoatStrategyForLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    abstract String nextTimeInterval(Controller controller) throws IOException;
+    abstract String nextBoatStrategyTimeInterval(Controller controller) throws IOException;
+
+    BoatStrategyForLeg nextTimeInterval(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
+        String boatname = boat.name;
+        if (decision.getAction() == SAILON) {
+            String reason = nextBoatStrategyTimeInterval(controller);
+            timerlog.add(new BoatLogEntry(boat));
+            timerlog.add(new DecisionLogEntry(boatname, decision));
+            timerlog.add(new ReasonLogEntry(boatname, reason));
+        }
+        if (boat.moveUsingDecision()) {
+            Leg nextleg = leg.getFollowingLeg();
+            return nextleg == null
+                    ? new BoatStrategyForAfterFinishLeg(boat, leg)
+                    : BoatStrategyForLeg.getLegStrategy(controller, boat, nextleg);
+        }
+        return null;
+    }
 }
