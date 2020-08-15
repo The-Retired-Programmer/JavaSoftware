@@ -49,10 +49,10 @@ class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
         Angle boatangletowind = legstrategy.boat.direction.absAngleDiff(winddirection);
         Angle meanwinddirection = controller.windflow.getMeanFlowAngle();
         // check if need to gybe for mark
-        if (gybeifonportlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (gybeifonportlayline(legstrategy, winddirection)) {
             return "Gybing onto port layline";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy, winddirection)) {
             return "Reaching on starboard Layline to leeward mark - course adjustment";
         }
         if (channel != null) {

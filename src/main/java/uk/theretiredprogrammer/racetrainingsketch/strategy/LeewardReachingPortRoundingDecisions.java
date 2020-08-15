@@ -41,10 +41,10 @@ class LeewardReachingPortRoundingDecisions extends RoundingDecisions {
             if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
             }
-            if (adjustPortDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (adjustPortDirectCourseToLeewardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
             }
-            if (gybeifonstarboardlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (gybeifonstarboardlayline(legstrategy, winddirection)) {
                 return "gybing on starboard layline - port->starboard";
             }
             legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
@@ -54,7 +54,7 @@ class LeewardReachingPortRoundingDecisions extends RoundingDecisions {
             legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
             return "pre markrounding action - gybe to port - starboard tack - port rounding";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy, winddirection)) {
             return "course adjustment - approaching mark - starboard tack - port rounding";
         }
         legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);

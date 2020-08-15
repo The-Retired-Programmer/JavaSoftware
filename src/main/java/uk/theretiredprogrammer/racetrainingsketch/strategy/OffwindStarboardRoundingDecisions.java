@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import java.util.function.Function;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
@@ -40,7 +39,7 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
         if (atStarboardRoundingTurnPoint(legstrategy, legstrategy.boat)) {
             return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
         }
-        adjustDirectCourseToDownwindMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(legstrategy, winddirection);
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

@@ -42,7 +42,7 @@ class WindwardStarboardRoundingDecisions extends RoundingDecisions {
                 legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                 return "pre markrounding action - tack to port - starboard tack - starboard rounding";
             }
-            if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - starboard tack - starboard rounding";
             }
             legstrategy.decision.setTURN(legstrategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
@@ -51,10 +51,10 @@ class WindwardStarboardRoundingDecisions extends RoundingDecisions {
         if (atStarboardRoundingTurnPoint(legstrategy, legstrategy.boat)) {
             return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
             return "course adjustment - approaching mark - port tack - starboard rounding";
         }
-        if (tackifonstarboardlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (tackifonstarboardlayline(legstrategy, winddirection)) {
             return "tacking on starboard layline - port->starboard";
         }
         legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), PORT);

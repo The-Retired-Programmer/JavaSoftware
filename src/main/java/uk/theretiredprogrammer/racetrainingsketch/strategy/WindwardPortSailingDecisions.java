@@ -32,10 +32,10 @@ class WindwardPortSailingDecisions extends SailingDecisions {
         Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
         Angle meanwinddirection = controller.windflow.getMeanFlowAngle();
         Angle boatangletowind = legstrategy.boat.direction.absAngleDiff(winddirection);
-        if (tackifonstarboardlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (tackifonstarboardlayline(legstrategy, winddirection)) {
             return "tacking on starboard layline - port->starboard";
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
             return "Beating on Port Layline to windward mark - course adjustment";
         }
         // stay in channel

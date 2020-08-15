@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import java.util.function.Function;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
@@ -43,7 +42,7 @@ class WindwardPortRoundingDecisions extends RoundingDecisions {
                 legstrategy.decision.setTURN(legstrategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
                 return "pre markrounding action - tack to starboard - port tack - port rounding";
             }
-            if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
             }
             legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
@@ -52,10 +51,10 @@ class WindwardPortRoundingDecisions extends RoundingDecisions {
             if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
             }
-            if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - starboard tack - port rounding";
             }
-            if (tackifonportlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
+            if (tackifonportlayline(legstrategy, winddirection)) {
                 return "tacking on port layline - starboard->port";
             }
             legstrategy.decision.setTURN(legstrategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
