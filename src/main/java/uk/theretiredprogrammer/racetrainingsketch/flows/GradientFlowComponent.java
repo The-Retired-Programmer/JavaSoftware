@@ -19,9 +19,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import java.io.IOException;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
-import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Gradient;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
