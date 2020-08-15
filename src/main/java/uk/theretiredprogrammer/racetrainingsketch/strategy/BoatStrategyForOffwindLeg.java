@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE180;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.SailingDecisions.getRefDistance;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
- * @author richard
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
 
@@ -37,29 +36,28 @@ public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
     public BoatStrategyForOffwindLeg(Controller controller, Boat boat, Leg leg) throws IOException {
         super(boat, leg, leg.getAngleofLeg().add(ANGLE90), leg.getAngleofLeg().sub(ANGLE90));
         decisions = new OffwindSailingDecisions();
-        roundingdecisions = getRoundingStrategy(controller, boat, leg);
-    }
-
-    private RoundingDecisions getRoundingStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
             case WINDWARD:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
-
+                break;
             case OFFWIND:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
                         : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                break;
             case GYBINGDOWNWIND:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
+                break;
             case NONE:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> windangle.add(ANGLE90))
                         : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(ANGLE90));
+                break;
             default:
                 throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());

@@ -124,21 +124,4 @@ abstract class SailingDecisions {
         }
         return true;
     }
-
-    static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
-        DistancePolar tomark = new DistancePolar(location, marklocation);
-        Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);
-        if (refangle2mark.gt(ANGLE90)) {
-            return Optional.empty();
-        }
-        return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
-    }
-
-    private static double refdistancetomark(double distancetomark, Angle refangle2mark) {
-        return distancetomark * Math.cos(refangle2mark.getRadians());
-    }
-
-    private static Angle refangletomark(Angle tomarkangle, Angle refangle) {
-        return tomarkangle.absAngleDiff(refangle);
-    }
 }

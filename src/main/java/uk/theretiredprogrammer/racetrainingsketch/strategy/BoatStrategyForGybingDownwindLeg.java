@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,56 +20,42 @@ import java.util.Optional;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE180;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.SailingDecisions.getRefDistance;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
- * @author richard
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
 
     private final GybingDownwindStarboardSailingDecisions starboarddecisions;
     private final GybingDownwindPortSailingDecisions portdecisions;
-    private final RoundingDecisions roundingdeciions;
+    private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
 
     public BoatStrategyForGybingDownwindLeg(Controller controller, Boat boat, Leg leg) throws IOException {
         super(boat, leg,
                 leg.getMarkMeanwinddirection().add(new Angle(-135)), leg.getMarkMeanwinddirection().add(new Angle(-45)),
                 leg.getMarkMeanwinddirection().add(new Angle(45)), leg.getMarkMeanwinddirection().add(new Angle(135)));
-        portdecisions = new GybingDownwindPortSailingDecisions(
-                boat.downwindsailonbestgybe,
-                boat.downwindgybeiflifted,
-                boat.downwindbearawayifheaded,
-                boat.downwindluffupiflifted,
-                null
-        );
-        starboarddecisions = new GybingDownwindStarboardSailingDecisions(
-                boat.downwindsailonbestgybe,
-                boat.downwindgybeiflifted,
-                boat.downwindbearawayifheaded,
-                boat.downwindluffupiflifted,
-                null
-        );
-        roundingdeciions = getRoundingStrategy(controller, boat, leg);
-    }
-
-    private RoundingDecisions getRoundingStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
+        portdecisions = new GybingDownwindPortSailingDecisions();
+        starboarddecisions = new GybingDownwindStarboardSailingDecisions();
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
             case WINDWARD:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new LeewardReachingPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
                         : new LeewardReachingStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
+                break;
             case OFFWIND:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
                         : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                break;
             case NONE:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
+                break;
             default:
                 throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Gybing downwind to "
                         + followinglegtype.toString());
@@ -81,13 +67,13 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
         Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
         if (useroundingdecisions) {
-            return roundingdeciions.nextTimeInterval(controller, this);
+            return roundingdecisions.nextTimeInterval(controller, this);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdeciions.nextTimeInterval(controller, this);
+            return roundingdecisions.nextTimeInterval(controller, this);
         }
-        return (boat.isPort(winddirection)?portdecisions:starboarddecisions).nextTimeInterval(controller, this);
+        return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(controller, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {

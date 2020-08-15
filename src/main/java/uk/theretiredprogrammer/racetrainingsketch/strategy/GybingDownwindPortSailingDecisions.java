@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
@@ -27,21 +26,6 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 class GybingDownwindPortSailingDecisions extends SailingDecisions {
-
-    private final boolean sailonbestgybe;
-    private final boolean gybeiflifted;
-    private final boolean bearawayifheaded;
-    private final boolean luffupiflifted;
-    private final Channel channel;
-
-    GybingDownwindPortSailingDecisions(boolean sailonbestgybe, boolean gybeiflifted, boolean bearawayifheaded,
-            boolean luffupiflifted, Channel channel) {
-        this.sailonbestgybe = sailonbestgybe;
-        this.gybeiflifted = gybeiflifted;
-        this.bearawayifheaded = bearawayifheaded;
-        this.luffupiflifted = luffupiflifted;
-        this.channel = channel;
-    }
 
     @Override
     String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
@@ -54,16 +38,16 @@ class GybingDownwindPortSailingDecisions extends SailingDecisions {
         if (adjustPortDirectCourseToLeewardMarkOffset(legstrategy, winddirection)) {
             return "Reaching on port Layline to leeward mark - course adjustment";
         }
-        if (channel != null) {
-            if (legstrategy.getDistanceToMark(legstrategy.boat.location) > channel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
-                if (!channel.isInchannel(legstrategy.boat.location)) {
+        if (legstrategy.boat.downwindchannel != null) {
+            if (legstrategy.getDistanceToMark(legstrategy.boat.location) > legstrategy.boat.downwindchannel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
+                if (!legstrategy.boat.downwindchannel.isInchannel(legstrategy.boat.location)) {
                     legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
                     return "Gybing onto starboard to stay in channel";
                 }
             }
         }
         // check if need to gybe onto best tack
-        if (sailonbestgybe) {
+        if (legstrategy.boat.downwindsailonbestgybe) {
             if (winddirection.lt(meanwinddirection)) {
                 legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
                 return "Gybe onto best tack - starboard";
@@ -71,18 +55,18 @@ class GybingDownwindPortSailingDecisions extends SailingDecisions {
         }
         // check if sailing too low
         if (boatangletowind.gt(legstrategy.boat.metrics.downwindrelative)) {
-            if (gybeiflifted) {
+            if (legstrategy.boat.downwindgybeiflifted) {
                 legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
                 return "Reaching - gybe onto starboard if lifted";
             }
-            if (luffupiflifted) {
+            if (legstrategy.boat.downwindluffupiflifted) {
                 legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
                 return "Reaching - luff if lifted";
             }
         }
         // check if sailing too high
         if (boatangletowind.lt(legstrategy.boat.metrics.downwindrelative)) {
-            if (bearawayifheaded) {
+            if (legstrategy.boat.downwindbearawayifheaded) {
                 legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), STARBOARD);
                 return "Reaching - bearaway if headed";
             }

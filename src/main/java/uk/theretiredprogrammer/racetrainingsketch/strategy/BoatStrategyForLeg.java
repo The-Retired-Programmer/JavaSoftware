@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
+import java.util.Optional;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.boats.BoatMetrics;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
+import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.racetrainingsketch.core.DistancePolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.DecisionAction.SAILON;
@@ -30,7 +32,7 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
- * @author richard
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class BoatStrategyForLeg {
 
@@ -65,6 +67,23 @@ public abstract class BoatStrategyForLeg {
             return LegType.GYBINGDOWNWIND;
         }
         return LegType.OFFWIND;
+    }
+    
+    static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
+        DistancePolar tomark = new DistancePolar(location, marklocation);
+        Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);
+        if (refangle2mark.gt(ANGLE90)) {
+            return Optional.empty();
+        }
+        return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
+    }
+
+    private static double refdistancetomark(double distancetomark, Angle refangle2mark) {
+        return distancetomark * Math.cos(refangle2mark.getRadians());
+    }
+
+    private static Angle refangletomark(Angle tomarkangle, Angle refangle) {
+        return tomarkangle.absAngleDiff(refangle);
     }
 
     public final Boat boat;

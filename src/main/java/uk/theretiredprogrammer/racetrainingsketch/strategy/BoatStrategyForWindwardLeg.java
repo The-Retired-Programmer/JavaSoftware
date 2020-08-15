@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 richard linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,11 @@ import java.util.Optional;
 import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE90;
-import static uk.theretiredprogrammer.racetrainingsketch.strategy.SailingDecisions.getRefDistance;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
 /**
  *
- * @author richard
+ * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class BoatStrategyForWindwardLeg extends BoatStrategyForLeg {
 
@@ -40,33 +39,23 @@ public class BoatStrategyForWindwardLeg extends BoatStrategyForLeg {
                 leg.getMarkMeanwinddirection().add(new Angle(-45)), leg.getMarkMeanwinddirection().add(new Angle(-135)));
         starboarddecisions = new WindwardStarboardSailingDecisions();
         portdecisions = new WindwardPortSailingDecisions();
-        roundingdecisions = getRoundingStrategy(controller, boat, leg);
-    }
-
-    private RoundingDecisions getRoundingStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
             case OFFWIND:
-                return leg.isPortRounding()
+                roundingdecisions = leg.isPortRounding()
                         ? new WindwardPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
                         : new WindwardStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
-
+                break;
             case GYBINGDOWNWIND:
-                return leg.isPortRounding()
-                        ? new WindwardPortRoundingDecisions(
-                                (windangle) -> boat.getStarboardReachingCourse(windangle)
-                        )
-                        : new WindwardStarboardRoundingDecisions(
-                                (windangle) -> boat.getPortReachingCourse(windangle)
-                        );
+                roundingdecisions = leg.isPortRounding()
+                        ? new WindwardPortRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle))
+                        : new WindwardStarboardRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle));
+                break;
             case NONE:
-                return leg.isPortRounding()
-                        ? new WindwardPortRoundingDecisions(
-                                (windangle) -> windangle.sub(ANGLE90)
-                        )
-                        : new WindwardStarboardRoundingDecisions(
-                                (windangle) -> windangle.add(ANGLE90)
-                        );
+                roundingdecisions = leg.isPortRounding()
+                        ? new WindwardPortRoundingDecisions((windangle) -> windangle.sub(ANGLE90))
+                        : new WindwardStarboardRoundingDecisions((windangle) -> windangle.add(ANGLE90));
+                break;
             default:
                 throw new IOException("Illegal/unknown/Unsupported WindwardRounding: " + followinglegtype.toString());
         }
