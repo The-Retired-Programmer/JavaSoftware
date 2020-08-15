@@ -48,8 +48,8 @@ class WindwardPortRoundingDecisions extends RoundingDecisions {
             legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
             return "course adjustment - bearing away to hold port c/h - port tack - port rounding";
         } else {
-            if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
-                return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
+            if (atPortRoundingTurnPoint(legstrategy)) {
+                return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy);
             }
             if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - starboard tack - port rounding";

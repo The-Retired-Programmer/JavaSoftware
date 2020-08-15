@@ -38,8 +38,8 @@ class LeewardReachingPortRoundingDecisions extends RoundingDecisions {
     final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
         Angle winddirection = controller.windflow.getMeanFlowAngle(legstrategy.boat.location);
         if (legstrategy.boat.isPort(winddirection)) {
-            if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
-                return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
+            if (atPortRoundingTurnPoint(legstrategy)) {
+                return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy);
             }
             if (adjustPortDirectCourseToLeewardMarkOffset(legstrategy, winddirection)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
