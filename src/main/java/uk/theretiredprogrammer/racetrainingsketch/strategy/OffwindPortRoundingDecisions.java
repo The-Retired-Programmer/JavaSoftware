@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import java.util.function.Function;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 
@@ -35,12 +34,12 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
-        if (atPortRoundingTurnPoint(legstrategy, boat)) {
-            return executePortRounding(getDirectionAfterTurn, winddirection, boat, decision);
+    final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
+            return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, legstrategy, decision, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection);
         return "course adjustment - approaching mark - port rounding";
     }
 }

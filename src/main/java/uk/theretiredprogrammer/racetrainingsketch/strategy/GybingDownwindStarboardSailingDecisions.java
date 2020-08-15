@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import uk.theretiredprogrammer.racetrainingsketch.core.Channel;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
@@ -45,21 +44,21 @@ class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
     }
 
     @Override
-    String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
-        Angle boatangletowind = boat.direction.absAngleDiff(winddirection);
+    String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        Angle boatangletowind = legstrategy.boat.direction.absAngleDiff(winddirection);
         Angle meanwinddirection = controller.windflow.getMeanFlowAngle();
         // check if need to gybe for mark
-        if (gybeifonportlayline(boat, legstrategy, decision, winddirection)) {
+        if (gybeifonportlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
             return "Gybing onto port layline";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, legstrategy, decision, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
             return "Reaching on starboard Layline to leeward mark - course adjustment";
         }
         if (channel != null) {
-            if (legstrategy.getDistanceToMark(boat.location) > channel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
-                if (!channel.isInchannel(boat.location)) {
-                    decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+            if (legstrategy.getDistanceToMark(legstrategy.boat.location) > channel.getInneroffset(legstrategy.getMarkLocation()) * 1.5) {
+                if (!channel.isInchannel(legstrategy.boat.location)) {
+                    legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
                     return "Gybing onto port to stay in channel";
                 }
             }
@@ -67,25 +66,25 @@ class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
         // check if need to gybe onto best tack
         if (sailonbestgybe) {
             if (winddirection.gt(meanwinddirection)) {
-                decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+                legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
                 return "Gybe onto best tack - port";
             }
         }
         // check if sailing too low
-        if (boatangletowind.gt(boat.metrics.downwindrelative)) {
+        if (boatangletowind.gt(legstrategy.boat.metrics.downwindrelative)) {
             if (gybeiflifted) {
-                decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+                legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
                 return "Reaching - gybe oto port if lifted";
             }
             if (luffupiflifted) {
-                decision.setTURN(boat.getStarboardReachingCourse(winddirection), STARBOARD);
+                legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
                 return "Reaching - luff if lifted";
             }
         }
         // check if sailing too high
-        if (boatangletowind.lt(boat.metrics.downwindrelative)) {
+        if (boatangletowind.lt(legstrategy.boat.metrics.downwindrelative)) {
             if (bearawayifheaded) {
-                decision.setTURN(boat.getStarboardReachingCourse(winddirection), PORT);
+                legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), PORT);
                 return "Reaching - bearaway if headed";
             }
         }

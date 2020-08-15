@@ -27,12 +27,12 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
 class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
-        boolean onPort = boat.isPort(winddirection);
-        Angle nextDirection = legstrategy.getAngletoSail(boat.location, onPort);
-        if (nextDirection.neq(boat.direction)) {
-            decision.setTURN(nextDirection, boat.direction.gt(nextDirection));
+    String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        boolean onPort = legstrategy.boat.isPort(winddirection);
+        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.location, onPort);
+        if (nextDirection.neq(legstrategy.boat.direction)) {
+            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.direction.gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

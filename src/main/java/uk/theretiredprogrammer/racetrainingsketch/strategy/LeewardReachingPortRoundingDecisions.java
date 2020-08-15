@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.racetrainingsketch.strategy;
 
 import java.io.IOException;
 import java.util.function.Function;
-import uk.theretiredprogrammer.racetrainingsketch.boats.Boat;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.racetrainingsketch.strategy.Decision.STARBOARD;
@@ -36,29 +35,29 @@ class LeewardReachingPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getMeanFlowAngle(boat.location);
-        if (boat.isPort(winddirection)) {
-            if (atPortRoundingTurnPoint(legstrategy, boat)) {
-                return executePortRounding(getDirectionAfterTurn, winddirection, boat, decision);
+    final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getMeanFlowAngle(legstrategy.boat.location);
+        if (legstrategy.boat.isPort(winddirection)) {
+            if (atPortRoundingTurnPoint(legstrategy, legstrategy.boat)) {
+                return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
             }
-            if (adjustPortDirectCourseToLeewardMarkOffset(boat, legstrategy, decision, winddirection)) {
+            if (adjustPortDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
             }
-            if (gybeifonstarboardlayline(boat, legstrategy, decision, winddirection)) {
+            if (gybeifonstarboardlayline(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
                 return "gybing on starboard layline - port->starboard";
             }
-            decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+            legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
             return "course adjustment - luff up to hold port reaching - port tack - port rounding";
         }
-        if (boat.isPortRear90Quadrant(legstrategy.getMarkLocation())) {
-            decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+        if (legstrategy.boat.isPortRear90Quadrant(legstrategy.getMarkLocation())) {
+            legstrategy.decision.setTURN(legstrategy.boat.getPortReachingCourse(winddirection), PORT);
             return "pre markrounding action - gybe to port - starboard tack - port rounding";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, legstrategy, decision, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection)) {
             return "course adjustment - approaching mark - starboard tack - port rounding";
         }
-        decision.setTURN(boat.getStarboardReachingCourse(winddirection), STARBOARD);
+        legstrategy.decision.setTURN(legstrategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
         return "course adjustment - luff up to hold starboard reaching - starboard tack - port rounding";
     }
 }

@@ -35,12 +35,12 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
-        if (atStarboardRoundingTurnPoint(legstrategy, boat)) {
-            return executeStarboardRounding(getDirectionAfterTurn, winddirection, boat, decision);
+    final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        if (atStarboardRoundingTurnPoint(legstrategy, legstrategy.boat)) {
+            return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy.boat, legstrategy.decision);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, legstrategy, decision, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(legstrategy.boat, legstrategy, legstrategy.decision, winddirection);
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

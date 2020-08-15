@@ -70,13 +70,13 @@ public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
     String nextTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
         if (useroundingstrategy) {
-            return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
+            return roundingstrategy.nextTimeInterval(controller, this);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingstrategy = true;
-            return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
+            return roundingstrategy.nextTimeInterval(controller, this);
         }
-        return strategy.nextTimeInterval(controller, decision, boat, this);
+        return strategy.nextTimeInterval(controller, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {

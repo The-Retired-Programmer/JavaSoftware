@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
  */
 abstract class SailingDecisions {
 
-    abstract String nextTimeInterval(Controller controller, Decision decision, Boat boat, BoatStrategyForLeg legstrategy) throws IOException;
+    abstract String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException;
 
     boolean tackifonstarboardlayline(Boat boat, BoatStrategyForLeg legstrategy, Decision decision, Angle winddirection) {
         if (boat.isPortTackingQuadrant(legstrategy.getSailToLocation(false), winddirection)) {

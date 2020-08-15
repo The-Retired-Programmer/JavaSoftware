@@ -81,13 +81,13 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
         Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
         if (useroundingstrategy) {
-            return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
+            return roundingstrategy.nextTimeInterval(controller, this);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingstrategy = true;
-            return roundingstrategy.nextTimeInterval(controller, decision, boat, this);
+            return roundingstrategy.nextTimeInterval(controller, this);
         }
-        return (boat.isPort(winddirection)?portstrategy:starboardstrategy).nextTimeInterval(controller, decision, boat, this);
+        return (boat.isPort(winddirection)?portstrategy:starboardstrategy).nextTimeInterval(controller, this);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
