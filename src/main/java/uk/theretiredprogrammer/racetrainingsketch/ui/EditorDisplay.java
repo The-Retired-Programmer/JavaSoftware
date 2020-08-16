@@ -24,14 +24,14 @@ import org.openide.util.Lookup;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class ScenarioEditorDisplay extends MultiViewEditorElement {
+public class EditorDisplay extends MultiViewEditorElement {
 
     /**
      * Creator
      *
      * @param lkp the top component lookup
      */
-    public ScenarioEditorDisplay(Lookup lkp) {
+    public EditorDisplay(Lookup lkp) {
         super(lkp);
     }
 }

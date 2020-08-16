@@ -135,6 +135,6 @@ public class DefFileDataObject extends MultiDataObject {
             position = 1000)
     @Messages("LBL_DefFile_EDITOR=Definition File")
     public static MultiViewEditorElement createEditor(Lookup lkp) {
-        return new ScenarioEditorDisplay(lkp);
+        return new EditorDisplay(lkp);
     }
 }

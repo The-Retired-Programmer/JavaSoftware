@@ -3,12 +3,14 @@
         "title": "constantwindflow"
     },
     "DISPLAY": {
+        "zoom": 10,
+        "speedup": 5
+    },
+    "SAILING AREA": {
         "west": 0,
         "east": 100,
         "north": 100,
-        "south": 0,
-        "zoom": 10,
-        "speedup": 5
+        "south": 0
     },
     "WIND": [
         {

@@ -2,11 +2,13 @@
     "TITLE": {
         "title": "boat-turn-calculation"
     },
-    "DISPLAY": {
+    "SAILING AREA": {
         "west": 0,
         "east": 100,
         "north": 100,
-        "south": 0,
+        "south": 0
+    },
+    "DISPLAY": {
         "zoom": 10,
         "speedup": 5
     },

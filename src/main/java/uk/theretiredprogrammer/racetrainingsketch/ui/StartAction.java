@@ -26,7 +26,7 @@ import org.openide.util.ImageUtilities;
  */
 public final class StartAction extends AbstractAction {
 
-    private final ScenarioSimulationDisplay element;
+    private final SimulationDisplay element;
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ public final class StartAction extends AbstractAction {
      * @param element the simulation element into which the action icon is to be
      * placed
      */
-    public StartAction(ScenarioSimulationDisplay element) {
+    public StartAction(SimulationDisplay element) {
         super("Start Simulation", ImageUtilities.loadImageIcon("com/famfamfam/www/silkicons/control_play_blue.png", false));
         this.element = element;
     }

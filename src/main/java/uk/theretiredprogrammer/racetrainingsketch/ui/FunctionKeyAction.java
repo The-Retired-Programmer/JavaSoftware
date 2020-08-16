@@ -52,7 +52,7 @@ public final class FunctionKeyAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String key = e.getActionCommand();
-        ScenarioSimulationDisplay simulationdisplayinfocus = ScenarioSimulationDisplay.getSimulationInFocus();
+        SimulationDisplay simulationdisplayinfocus = SimulationDisplay.getSimulationInFocus();
         if (simulationdisplayinfocus != null) {
             simulationdisplayinfocus.keyAction(key);
         }

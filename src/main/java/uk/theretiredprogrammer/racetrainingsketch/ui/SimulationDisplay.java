@@ -47,14 +47,14 @@ import org.openide.windows.TopComponent;
         preferredID = "DefFileSimulation",
         position = 2000)
 @Messages("LBL_DefFile_SIMULATION=Simulation")
-public final class ScenarioSimulationDisplay extends JPanel implements MultiViewElement {
+public final class SimulationDisplay extends JPanel implements MultiViewElement {
 
     private final DefFileDataObject dataobj;
     private JToolBar toolbar;
     private final JLabel timeinfo = new JLabel("Time: 0:00");
     private transient MultiViewElementCallback callback;
     //
-    private Scenario scenario;
+    private SailingArea scenario;
     private DisplayPanel dp;
     private Controller controller;
 
@@ -63,12 +63,12 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
      *
      * @return this instance
      */
-    public static ScenarioSimulationDisplay getSimulationInFocus() {
+    public static SimulationDisplay getSimulationInFocus() {
         TopComponent tc = TopComponent.getRegistry().getActivated();
         if (tc == null) {
             return null;
         }
-        return tc.getLookup().lookup(ScenarioSimulationDisplay.class);
+        return tc.getLookup().lookup(SimulationDisplay.class);
     }
 
     /**
@@ -76,7 +76,7 @@ public final class ScenarioSimulationDisplay extends JPanel implements MultiView
      *
      * @param lkp the top component lookup
      */
-    public ScenarioSimulationDisplay(Lookup lkp) {
+    public SimulationDisplay(Lookup lkp) {
         dataobj = lkp.lookup(DefFileDataObject.class);
         assert dataobj != null;
         initComponents();

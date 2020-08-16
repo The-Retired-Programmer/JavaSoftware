@@ -26,7 +26,7 @@ import org.openide.util.ImageUtilities;
  */
 public final class DisplayAllLogAction extends AbstractAction {
 
-    private final ScenarioSimulationDisplay element;
+    private final SimulationDisplay element;
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ public final class DisplayAllLogAction extends AbstractAction {
      * @param element the simulation element into which the action icon is to be
      * placed
      */
-    public DisplayAllLogAction(ScenarioSimulationDisplay element) {
+    public DisplayAllLogAction(SimulationDisplay element) {
         super("Display Log", ImageUtilities.loadImageIcon("com/famfamfam/www/silkicons/page_gear.png", false));
         this.element = element;
     }

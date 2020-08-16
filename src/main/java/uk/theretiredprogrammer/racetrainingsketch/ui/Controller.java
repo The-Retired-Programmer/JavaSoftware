@@ -40,7 +40,8 @@ import uk.theretiredprogrammer.racetrainingsketch.timerlog.TimerLog;
  */
 public class Controller {
 
-    public Scenario scenario;
+    public SailingArea sailingarea;
+    public DisplayParameters displayparameters;
     public WindFlow windflow;
     public WaterFlow waterflow;
     public Course course;
@@ -59,7 +60,8 @@ public class Controller {
         try ( JsonReader rdr = Json.createReader(is)) {
             parsedjson = rdr.readObject();
         }
-        scenario = new Scenario(parsedjson);
+        sailingarea = new SailingArea(parsedjson);
+        displayparameters = new DisplayParameters(parsedjson);
         waterflow = WaterFlow.create(() -> this, parsedjson);
         windflow = WindFlow.create(() -> this, parsedjson);
         course = new Course(() -> this, parsedjson);
@@ -86,13 +88,13 @@ public class Controller {
     }
 
     Dimension getGraphicDimension() {
-        return scenario.getGraphicDimension();
+        return sailingarea.getGraphicDimension(displayparameters.zoom);
     }
 
     void paint(Graphics2D g2D) {
         try {
-            double scale = scenario.zoom;
-            scenario.draw(g2D);
+            double scale = displayparameters.zoom;
+            sailingarea.draw(g2D, scale);
             windflow.draw(g2D, scale);
             if (waterflow != null) {
                 waterflow.draw(g2D, scale);
@@ -111,7 +113,7 @@ public class Controller {
         if (isRunning) {
             return;
         }
-        int rate = (int) (scenario.secondsperdisplay * 1000 / scenario.speedup);
+        int rate = (int) (displayparameters.secondsperdisplay * 1000 / displayparameters.speedup);
         timer = new Timer();
         runner = new TimeStepRunner();
         timer.scheduleAtFixedRate(runner, 0, rate);
@@ -128,7 +130,7 @@ public class Controller {
         isRunning = false;
         timer.cancel();
     }
-    
+
     public void reset() {
         stop();
         timerlog.clear();
@@ -154,7 +156,7 @@ public class Controller {
     // TODO - keyaction body disabled - needs to be reworked at a later date
     public void keyAction(String key) {
 //        try {
-//            scenario.actionKey(key);
+//            sailingarea.actionKey(key);
 //            for (BoatElement boat : boats.values()) {
 //                boat.actionKey(key);
 //            }
@@ -171,10 +173,10 @@ public class Controller {
         @Override
         public void run() {
             try {
-                int secondsperdisplay = scenario.secondsperdisplay;
+                int secondsperdisplay = displayparameters.secondsperdisplay;
                 while (secondsperdisplay > 0) {
 //TODO timer call to actionFutureParameters disabled - will needto be enabled in the future                   
-//                    scenario.actionFutureParameters(simulationtime);
+//                    sailingarea.actionFutureParameters(simulationtime);
                     timerlog.setTime(mmssformat(simulationtime));
                     windflow.timerAdvance(simulationtime, timerlog);
                     if (waterflow != null) {

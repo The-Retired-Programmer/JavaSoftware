@@ -26,7 +26,7 @@ import org.openide.util.ImageUtilities;
  */
 public final class ResetAction extends AbstractAction {
 
-    private final ScenarioSimulationDisplay element;
+    private final SimulationDisplay element;
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ public final class ResetAction extends AbstractAction {
      * @param element the simulation element into which the action icon is to be
      * placed
      */
-    public ResetAction(ScenarioSimulationDisplay element) {
+    public ResetAction(SimulationDisplay element) {
         super("Reset Simulation", ImageUtilities.loadImageIcon("com/famfamfam/www/silkicons/control_start_blue.png", false));
         this.element = element;
     }

@@ -24,7 +24,6 @@ import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
 
 /**
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)

@@ -24,14 +24,13 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
-import uk.theretiredprogrammer.racetrainingsketch.core.IntegerParser;
 
 /**
  * The Information to describe the Simulation "Field of play
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Scenario implements Displayable {
+public class SailingArea implements Displayable {
 
     // dimensions of the visible "playing surface" in metres
     // (default is a 1km square with 0,0 in centre).
@@ -39,7 +38,6 @@ public class Scenario implements Displayable {
     public static final double WEST_DEFAULT = 500;
     public static final double NORTH_DEFAULT = 500;
     public static final double SOUTH_DEFAULT = -500;
-    public static final double SCALE_DEFAULT = 1;
 
     public final double east;
     public final double west;
@@ -49,14 +47,11 @@ public class Scenario implements Displayable {
     private final double westlimit;
     private final double northlimit;
     private final double southlimit;
-    public final double zoom;
-    public final int secondsperdisplay;
-    public final double speedup;
 
-    public Scenario(JsonObject parsedjson) throws IOException {
-        JsonObject paramsobj = parsedjson.getJsonObject("DISPLAY");
+    public SailingArea(JsonObject parsedjson) throws IOException {
+        JsonObject paramsobj = parsedjson.getJsonObject("SAILING AREA");
         if (paramsobj == null) {
-            throw new IOException("Malformed Definition File - missing DISPLAY object");
+            throw new IOException("Malformed Definition File - missing SAILING AREA object");
         }
         east = DoubleParser.parse(paramsobj, "east").orElse(EAST_DEFAULT);
         eastlimit = DoubleParser.parse(paramsobj, "eastlimit").orElse(east);
@@ -66,9 +61,6 @@ public class Scenario implements Displayable {
         northlimit = DoubleParser.parse(paramsobj, "northlimit").orElse(north);
         south = DoubleParser.parse(paramsobj, "south").orElse(SOUTH_DEFAULT);
         southlimit = DoubleParser.parse(paramsobj, "southlimit").orElse(south);
-        zoom = DoubleParser.parse(paramsobj, "zoom").orElse(SCALE_DEFAULT);
-        secondsperdisplay = IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1);
-        speedup = DoubleParser.parse(paramsobj, "speedup").orElse(1.0);
     }
 
 // TODO action Future Parameter disabled (due to disabled method in Element) - needs to be reworked later
@@ -83,12 +75,9 @@ public class Scenario implements Displayable {
 //            boat.actionFutureParameters(simulationtime);
 //        }
 //    }
-    /**
-     * Draw the ScenarioElement on the display canvas.
-     *
-     * @param g2D the 2D graphics object
-     */
-    public void draw(Graphics2D g2D) throws IOException {
+    
+    @Override
+     public void draw(Graphics2D g2D, double zoom) throws IOException {
         // set transform
         g2D.transform(new AffineTransform(zoom, 0, 0, -zoom, -west * zoom, north * zoom));
         // if limits set then darken limit areas
@@ -122,12 +111,7 @@ public class Scenario implements Displayable {
         }
     }
 
-    @Override
-    public void draw(Graphics2D g2D, double zoom) throws IOException {
-        draw(g2D);
-    }
-
-    public Dimension getGraphicDimension() {
+    public Dimension getGraphicDimension(double zoom) {
         double width = east - west;
         double depth = north - south;
         double scale = zoom;

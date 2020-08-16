@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.racetrainingsketch.core.Angle;
-import static uk.theretiredprogrammer.racetrainingsketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.racetrainingsketch.core.Area;
 import uk.theretiredprogrammer.racetrainingsketch.core.DoubleParser;
 import uk.theretiredprogrammer.racetrainingsketch.core.IntegerParser;
@@ -27,8 +26,7 @@ import uk.theretiredprogrammer.racetrainingsketch.core.Location;
 import uk.theretiredprogrammer.racetrainingsketch.core.SpeedPolar;
 import uk.theretiredprogrammer.racetrainingsketch.core.StringParser;
 import uk.theretiredprogrammer.racetrainingsketch.ui.Controller;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Scenario;
-import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
+import uk.theretiredprogrammer.racetrainingsketch.ui.SailingArea;
 
 /**
  * Abstract Class describing a Flow Model. A Flow Model represents variable
@@ -38,12 +36,12 @@ import uk.theretiredprogrammer.racetrainingsketch.ui.Displayable;
  */
 public abstract class FlowComponent {
 
-    private String name;
+    private final String name;
     private Area area;
     private int zlevel;
 
     public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
-        Scenario scenario = controllersupplier.get().scenario;
+        SailingArea scenario = controllersupplier.get().sailingarea;
         name = StringParser.parse(paramsobj, "name").orElse("");
         Location bottomleft = Location.parse(paramsobj, "location").orElse(new Location(scenario.west, scenario.south));
         double width = DoubleParser.parse(paramsobj, "width").orElse(scenario.east - scenario.west);

@@ -26,7 +26,7 @@ import org.openide.util.ImageUtilities;
  */
 public final class PauseAction extends AbstractAction {
 
-    private final ScenarioSimulationDisplay element;
+    private final SimulationDisplay element;
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ public final class PauseAction extends AbstractAction {
      * @param element the simulation element into which the action icon is to be
      * placed
      */
-    public PauseAction(ScenarioSimulationDisplay element) {
+    public PauseAction(SimulationDisplay element) {
         super("Pause Simulation", ImageUtilities.loadImageIcon("com/famfamfam/www/silkicons/control_pause_blue.png", false));
         this.element = element;
     }
