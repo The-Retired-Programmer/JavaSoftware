@@ -18,6 +18,9 @@ package uk.theretiredprogrammer.sketch.jfx;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Consumer;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
@@ -25,23 +28,23 @@ import javafx.scene.control.TreeView;
  *
  * @author richard
  */
-public class FileExplorer {
+public class FileSelectorPane extends TitledPane {
 
     public final static String FILEROOT = "/Users/richard/Race training Scenarios/Race Sketches/";
-
-    public TreeView getExplorerView() {
+    
+    public FileSelectorPane(Consumer<TreeItem<Path>> selectionlistener) {
         var rootitem = builditem(Path.of(FILEROOT));
-        TreeView treeView = new TreeView();
-        treeView.setRoot(rootitem);
-        //
-        treeView.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> System.out.println("Selected Text : " + newValue));
-        //
-        return treeView;
+        TreeView<Path> directoryview = new TreeView<>();
+        directoryview.setRoot(rootitem);
+        directoryview.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> selectionlistener.accept(newValue));
+        directoryview.setShowRoot(false);
+        this.setText(FILEROOT);
+        this.setContent(new ScrollPane(directoryview));
     }
 
-    private TreeItem builditem(Path path) {
-        TreeItem node = new TreeItem(path.getFileName());
+    private PathTreeItem builditem(Path path) {
+        PathTreeItem node = new PathTreeItem(path);
         if (Files.isDirectory(path)) {
             try {
                 for (Path child : Files.newDirectoryStream(path)) {
@@ -50,8 +53,6 @@ public class FileExplorer {
             } catch (IOException ex) {
                 // skip directory if problem
             }
-        } else {
-            // need to be able to click select filename
         }
         return node;
     }
