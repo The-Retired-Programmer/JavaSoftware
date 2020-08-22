@@ -62,36 +62,79 @@ public class ColorParser {
         throw new IOException("Malformed Definition file - Colour (RGBA) expected with " + key);
     }
 
-    private static Color string2color(String value) throws IOException {
-        switch (value.toLowerCase()) {
-            case "black":
-                return Color.BLACK;
-            case "blue":
-                return Color.BLUE;
-            case "cyan":
-                return Color.cyan;
-            case "darkgrey":
-                return Color.DARK_GRAY;
-            case "grey":
-                return Color.GRAY;
-            case "green":
-                return Color.GREEN;
-            case "lightgrey":
-                return Color.LIGHT_GRAY;
-            case "magenta":
-                return Color.MAGENTA;
-            case "orange":
-                return Color.ORANGE;
-            case "pink":
-                return Color.PINK;
-            case "red":
-                return Color.RED;
-            case "white":
-                return Color.WHITE;
-            case "yellow":
-                return Color.YELLOW;
-            default:
-                return null;
+    private static Color string2color(String value) {
+        return switch (value.toLowerCase()) {
+            case "black" ->
+                Color.BLACK;
+            case "blue" ->
+                Color.BLUE;
+            case "cyan" ->
+                Color.cyan;
+            case "darkgrey" ->
+                Color.DARK_GRAY;
+            case "grey" ->
+                Color.GRAY;
+            case "green" ->
+                Color.GREEN;
+            case "lightgrey" ->
+                Color.LIGHT_GRAY;
+            case "magenta" ->
+                Color.MAGENTA;
+            case "orange" ->
+                Color.ORANGE;
+            case "pink" ->
+                Color.PINK;
+            case "red" ->
+                Color.RED;
+            case "white" ->
+                Color.WHITE;
+            case "yellow" ->
+                Color.YELLOW;
+            default ->
+                null;
+        };
+    }
+
+    public static String color2String(Color color) {
+        if (color == Color.BLACK) {
+            return "Black";
         }
+        if (color == Color.BLUE) {
+            return "Blue";
+        }
+        if (color == Color.cyan) {
+            return "Cyan";
+        }
+        if (color == Color.DARK_GRAY) {
+            return "DarkGrey";
+        }
+        if (color == Color.GRAY) {
+            return "Grey";
+        }
+        if (color == Color.GREEN) {
+            return "Green";
+        }
+        if (color == Color.LIGHT_GRAY) {
+            return "LightGrey";
+        }
+        if (color == Color.MAGENTA) {
+            return "Magenta";
+        }
+        if (color == Color.ORANGE) {
+            return "Orange";
+        }
+        if (color == Color.PINK) {
+            return "Pink";
+        }
+        if (color == Color.RED) {
+            return "Red";
+        }
+        if (color == Color.WHITE) {
+            return "White";
+        }
+        if (color == Color.YELLOW) {
+            return "Yellow";
+        }
+        return color.toString();
     }
 }

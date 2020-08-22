@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.sketch.flows;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
@@ -56,6 +58,14 @@ public abstract class FlowComponent {
         double height = DoubleParser.parse(params, "height").orElse(area.getHeight());
         zlevel = IntegerParser.parse(params, "zlevel").orElse(zlevel);
         area = new Area(bottomleft, width, height);
+    }
+    
+    public Map properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        map.put("name", name);
+        map.put("area", area);
+        map.put("zlevel", zlevel);
+        return map;
     }
     
     public String getName(){

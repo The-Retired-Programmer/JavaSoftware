@@ -22,6 +22,8 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 
@@ -61,6 +63,19 @@ public class SailingArea implements Displayable {
         northlimit = DoubleParser.parse(paramsobj, "northlimit").orElse(north);
         south = DoubleParser.parse(paramsobj, "south").orElse(SOUTH_DEFAULT);
         southlimit = DoubleParser.parse(paramsobj, "southlimit").orElse(south);
+    }
+    
+    public Map<String, Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        map.put("north", north);
+        map.put("northlimit", northlimit);
+        map.put("east", east);
+        map.put("eastlimit", eastlimit);
+        map.put("south", south);
+        map.put("southlimit", southlimit);
+        map.put("west", west);
+        map.put("westlimit", westlimit);
+        return map;
     }
     
     @Override

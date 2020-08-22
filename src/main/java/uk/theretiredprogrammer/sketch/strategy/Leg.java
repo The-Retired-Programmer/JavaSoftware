@@ -40,7 +40,12 @@ public class Leg {
         this.portrounding = portrounding;
         this.followingleg = followingleg;
     }
-    
+
+    @Override
+    public String toString() {
+        return startfrom + "->" + marklocation + (portrounding ? " to Port" : " to Starboard");
+    }
+
     public Leg getFollowingLeg() {
         return followingleg;
     }
@@ -64,5 +69,5 @@ public class Leg {
     Angle getAngleofLeg() {
         return startfrom.angleto(marklocation);
     }
-    
+
 }

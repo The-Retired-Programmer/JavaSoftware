@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.sketch.ui;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
@@ -41,5 +43,13 @@ public class DisplayParameters  {
         zoom = DoubleParser.parse(paramsobj, "zoom").orElse(ZOOM_DEFAULT);
         secondsperdisplay = IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1);
         speedup = DoubleParser.parse(paramsobj, "speedup").orElse(1.0);
+    }
+    
+    public Map properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        map.put("zoom", zoom);
+        map.put("secondsperdisplay", secondsperdisplay);
+        map.put("speedup", speedup);
+        return map;
     }
 }

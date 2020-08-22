@@ -18,7 +18,8 @@ package uk.theretiredprogrammer.sketch.course;
 import uk.theretiredprogrammer.sketch.strategy.Leg;
 import java.awt.Graphics2D;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -39,7 +40,7 @@ import uk.theretiredprogrammer.sketch.ui.Displayable;
 public class Course implements Displayable {
 
     private final Leg firstcourseleg;
-    private final Map<String, Mark> marks = new HashMap<>();
+    private final Map<String, Mark> marks = new LinkedHashMap<>();
 
     public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray markarray = parsedjson.getJsonArray("MARKS");
@@ -73,6 +74,21 @@ public class Course implements Displayable {
             i--;
         }
         firstcourseleg = following;
+    }
+    
+     public Map<String, Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        Leg leg = firstcourseleg;
+        int count = 1;
+        while (leg != null) {
+            map.put("Leg"+count++,leg);
+            leg = leg.getFollowingLeg();
+        }
+        return map;
+    }
+    
+    public Collection<Mark> getMarks() {
+        return marks.values();
     }
 
     public Leg getFirstCourseLeg() {

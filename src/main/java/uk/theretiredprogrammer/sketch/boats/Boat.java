@@ -26,7 +26,9 @@ import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.MARKROUNDING;
@@ -120,6 +122,27 @@ public abstract class Boat {
         upwindchannel = Channel.parse(paramsobj, "upwindchannel").orElse(upwindchannel);
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(downwindchannel);
     }
+    
+    public Map<String, Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        map.put("name", name);
+        map.put("heading", direction);
+        map.put("locataion", location);
+        map.put("colour", color);
+        map.put("trackcolour", trackcolor);
+        map.put("upwindsailonbesttack", upwindsailonbesttack);
+        map.put("upwindtackifheaded", upwindtackifheaded);
+        map.put("upwindbearawayifheaded", upwindbearawayifheaded);
+        map.put("upwindluffupiflifted", upwindluffupiflifted);
+        map.put("reachdownwind", reachdownwind);
+        map.put("downwindsailonbestgybe", downwindsailonbestgybe);
+        map.put("downwindbearawayifheaded", downwindbearawayifheaded);
+        map.put("downwindgybeiflifted", downwindgybeiflifted);
+        map.put("downwindluffupiflifted", downwindluffupiflifted);
+        map.put("upwindchannel", upwindchannel);
+        map.put("downwindchannel", downwindchannel);
+        return map;
+    }   
 
     public boolean isPort(Angle winddirection) {
         return direction.gteq(winddirection);

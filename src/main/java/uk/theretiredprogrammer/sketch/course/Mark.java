@@ -22,6 +22,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.BooleanParser;
@@ -42,7 +44,7 @@ public class Mark {
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
-    final String name;
+    public String name;
     final Location location;
     //
     private final boolean windwardlaylines;
@@ -70,6 +72,18 @@ public class Mark {
         laylinecolor = ColorParser.parse(paramsobj, "laylinecolour").orElse(Color.black);
         color = ColorParser.parse(paramsobj, "colour").orElse(Color.red);
     }
+    
+    public Map<String, Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        map.put("name", name);
+        map.put("locataion", location);
+        map.put("colour", color);
+        map.put("windwardlaylines", windwardlaylines);
+        map.put("downwindlaylines", downwindlaylines);
+        map.put("laylinelength", laylinelength);
+        map.put("laylinecolour", laylinecolor);
+        return map;
+    }  
 
     private final static Angle WINDWARDLAYLINEANGLE = new Angle(135);
     private final static Angle LEEWARDLAYLINEANGLE = new Angle(45);

@@ -1,26 +1,35 @@
 package uk.theretiredprogrammer.sketch.jfx;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 public class App extends Application {
     
-    public enum SplitPaneNodeName { FILESELECTOR, FILECONTENT, PROPERTIES};
+    private static final int FILECONTENTPANEOFFSET = 1;
+    private static final int PROPERTIESPANEOFFSET = 2;
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
     
     private SplitPane splitPane;
+    private Controller controller;
 
     @Override
     public void start(Stage stage) {
-        FileContentPane filecontentpane = new FileContentPane();
         splitPane = new SplitPane();
         splitPane.getItems().addAll(
-                new FileSelectorPane((p)-> filecontentpane.fileSelected(this, p)),
-                filecontentpane,
-                PropertiesPane.create()
+                new FileSelectorPane((p)-> fileSelected(p)),
+                new FileContentPane(),
+                 new PropertiesPane()
         );
         //
         var scene = new Scene(splitPane, 640, 480);
@@ -29,14 +38,29 @@ public class App extends Application {
         stage.show();
     }
     
-    public void replaceSplitPaneNode(SplitPaneNodeName nodename, Node replacementNode) {
-        int offset = nodename.ordinal();
+    
+    private void fileSelected(TreeItem<Path> p) {
+        ObservableList<Node> splitPanelNodes = splitPane.getItems();
+        FileContentPane filecontentnode = (FileContentPane) splitPanelNodes.get(FILECONTENTPANEOFFSET);
+        filecontentnode.fileSelected(this, p);
+        //
+        controller = new Controller(p.getValue(),null, null);
+        PropertiesPane propertiesnode = (PropertiesPane) splitPanelNodes.get(PROPERTIESPANEOFFSET);
+        propertiesnode.updateAllproperties(controller);
+    }
+    
+    public void replaceSplitPaneNode(Node replacementNode) throws IOException {
+        int offset = getoffsetofNode(replacementNode);
         ObservableList<Node> splitPanelNodes = splitPane.getItems();
         splitPanelNodes.remove(offset);
         splitPanelNodes.add(offset, replacementNode);
     }
-
-    public static void main(String[] args) {
-        launch(args);
+    
+    private int getoffsetofNode(Node node) throws IOException{
+        if (node instanceof FileContentPane) {
+            return FILECONTENTPANEOFFSET;
+        }
+        throw new IOException("Can't find target for provided replacement node");
+        
     }
 }

@@ -23,6 +23,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
@@ -98,6 +100,17 @@ public abstract class Flow implements Displayable, Timerable {
         shiftangle = Angle.parse(paramsobj, "shiftangle").orElse(shiftangle);
         shiftperiod = IntegerParser.parse(paramsobj, "shiftperiod").orElse(shiftperiod);
         randomshifts = BooleanParser.parse(paramsobj, "randomshifts").orElse(randomshifts);
+    }
+    
+    void properties(LinkedHashMap<String,Object> map) {
+        map.put("showflow", showflow);
+        map.put("showflowinterval", showflowinterval);
+        map.put("showflowcolor", showflowcolor);
+        map.put("swingangle", swingangle);
+        map.put("swingperiod", swingperiod);
+        map.put("shiftangle", shiftangle);
+        map.put("shiftperiod", shiftperiod);
+        map.put("randomshifts", randomshifts);
     }
 
     public FlowComponentSet getFlowComponentSet() {

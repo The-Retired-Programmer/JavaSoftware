@@ -43,8 +43,8 @@ public class FileSelectorPane extends TitledPane {
         this.setContent(new ScrollPane(directoryview));
     }
 
-    private PathTreeItem builditem(Path path) {
-        PathTreeItem node = new PathTreeItem(path);
+    private TreeItem<Path> builditem(Path path) {
+        TreeItem<Path> node = new TreeItem<>(path);
         if (Files.isDirectory(path)) {
             try {
                 for (Path child : Files.newDirectoryStream(path)) {

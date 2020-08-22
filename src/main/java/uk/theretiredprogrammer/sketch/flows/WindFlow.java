@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.sketch.flows;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -48,6 +50,12 @@ public class WindFlow extends Flow {
     
     private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
         super(controllersupplier, params, flowcomponents);
+    }
+    
+    public Map<String, Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        super.properties(map);
+        return map;
     }
     
 }

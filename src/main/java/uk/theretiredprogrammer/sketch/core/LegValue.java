@@ -59,4 +59,9 @@ public class LegValue {
     public String getMarkname() {
         return mark;
     }
+
+    @Override
+    public String toString() {
+        return mark + " to " + passing;
+    }
 }
