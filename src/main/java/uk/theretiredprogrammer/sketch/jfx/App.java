@@ -39,12 +39,12 @@ public class App extends Application {
     }
     
     
-    private void fileSelected(TreeItem<Path> p) {
+    private void fileSelected(TreeItem<PathWithShortName> p) {
         ObservableList<Node> splitPanelNodes = splitPane.getItems();
         FileContentPane filecontentnode = (FileContentPane) splitPanelNodes.get(FILECONTENTPANEOFFSET);
-        filecontentnode.fileSelected(this, p);
+        filecontentnode.fileSelected(this, p.getValue());
         //
-        controller = new Controller(p.getValue(),null, null);
+        controller = new Controller(p.getValue().getPath(),null, null);
         PropertiesPane propertiesnode = (PropertiesPane) splitPanelNodes.get(PROPERTIESPANEOFFSET);
         propertiesnode.updateAllproperties(controller);
     }

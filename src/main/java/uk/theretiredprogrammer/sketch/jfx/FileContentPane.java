@@ -17,10 +17,8 @@ package uk.theretiredprogrammer.sketch.jfx;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
-import javafx.scene.control.TreeItem;
 import javafx.scene.text.Text;
 
 /**
@@ -38,7 +36,7 @@ public class FileContentPane extends TitledPane {
         this.setContent(new ScrollPane(new Text(content)));
     }
     
-    public void fileSelected(App app, TreeItem<Path> path) {
+    public void fileSelected(App app, PathWithShortName path) {
         try {
             innerfileSelected(app,path);
         } catch (IOException ex) {
@@ -46,13 +44,13 @@ public class FileContentPane extends TitledPane {
         }
     }
     
-    private void innerfileSelected(App app, TreeItem<Path> path) throws IOException {
-        if (path == null || path.getValue() == null) {
+    private void innerfileSelected(App app, PathWithShortName path) throws IOException {
+        if (path == null) {
             app.replaceSplitPaneNode(new FileContentPane("No File Selected", "<empty>"));
         } else {
             try {
                 app.replaceSplitPaneNode(new FileContentPane(path.toString(),
-                        new String(Files.readAllBytes(path.getValue()))));
+                        new String(Files.readAllBytes(path.getPath()))));
             } catch (IOException ex) {
                 app.replaceSplitPaneNode(new FileContentPane("Error when reading file", "<empty>"));
             }

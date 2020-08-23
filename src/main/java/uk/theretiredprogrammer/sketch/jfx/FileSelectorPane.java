@@ -31,10 +31,10 @@ import javafx.scene.control.TreeView;
 public class FileSelectorPane extends TitledPane {
 
     public final static String FILEROOT = "/Users/richard/Race training Scenarios/Race Sketches/";
-    
-    public FileSelectorPane(Consumer<TreeItem<Path>> selectionlistener) {
-        var rootitem = builditem(Path.of(FILEROOT));
-        TreeView<Path> directoryview = new TreeView<>();
+
+    public FileSelectorPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
+        var rootitem = builditem(new PathWithShortName(Path.of(FILEROOT)));
+        TreeView<PathWithShortName> directoryview = new TreeView<>();
         directoryview.setRoot(rootitem);
         directoryview.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectionlistener.accept(newValue));
@@ -43,12 +43,12 @@ public class FileSelectorPane extends TitledPane {
         this.setContent(new ScrollPane(directoryview));
     }
 
-    private TreeItem<Path> builditem(Path path) {
-        TreeItem<Path> node = new TreeItem<>(path);
-        if (Files.isDirectory(path)) {
+    private TreeItem<PathWithShortName> builditem(PathWithShortName path) {
+        TreeItem<PathWithShortName> node = new TreeItem<>(path);
+        if (Files.isDirectory(path.getPath())) {
             try {
-                for (Path child : Files.newDirectoryStream(path)) {
-                    node.getChildren().add(builditem(child));
+                for (Path child : Files.newDirectoryStream(path.getPath())) {
+                    node.getChildren().add(builditem(new PathWithShortName(child)));
                 }
             } catch (IOException ex) {
                 // skip directory if problem
