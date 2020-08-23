@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
@@ -28,19 +29,24 @@ import javafx.scene.control.TreeView;
  *
  * @author richard
  */
-public class FileSelectorPane extends TitledPane {
+public class FileSelectorPane extends Accordion {
 
     public final static String FILEROOT = "/Users/richard/Race training Scenarios/Race Sketches/";
 
     public FileSelectorPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
-        var rootitem = builditem(new PathWithShortName(Path.of(FILEROOT)));
+        this.getPanes().addAll(
+                getFileSelectorTitledPane(FILEROOT, selectionlistener)
+        );
+    }
+
+    private TitledPane getFileSelectorTitledPane(String folder, Consumer<TreeItem<PathWithShortName>> selectionlistener) {
+        var rootitem = builditem(new PathWithShortName(Path.of(folder)));
         TreeView<PathWithShortName> directoryview = new TreeView<>();
         directoryview.setRoot(rootitem);
         directoryview.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> selectionlistener.accept(newValue));
         directoryview.setShowRoot(false);
-        this.setText(FILEROOT);
-        this.setContent(new ScrollPane(directoryview));
+        return new TitledPane(folder, new ScrollPane(directoryview));
     }
 
     private TreeItem<PathWithShortName> builditem(PathWithShortName path) {
