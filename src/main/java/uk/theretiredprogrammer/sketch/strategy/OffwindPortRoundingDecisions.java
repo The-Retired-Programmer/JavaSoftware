@@ -35,7 +35,7 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
 
     @Override
     final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.getLocation()).getAngle();
         if (atPortRoundingTurnPoint(legstrategy)) {
             return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy);
         }

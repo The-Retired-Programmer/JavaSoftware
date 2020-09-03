@@ -69,7 +69,7 @@ public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.location, leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 

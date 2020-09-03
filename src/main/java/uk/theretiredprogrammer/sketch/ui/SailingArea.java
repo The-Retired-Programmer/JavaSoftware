@@ -15,17 +15,16 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javafx.scene.paint.Color;
 import javax.json.JsonObject;
+import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
+import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyDouble;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 
 /**
  * The Information to describe the Simulation "Field of play
@@ -41,81 +40,93 @@ public class SailingArea implements Displayable {
     public static final double NORTH_DEFAULT = 500;
     public static final double SOUTH_DEFAULT = -500;
 
-    public final double east;
-    public final double west;
-    public final double north;
-    public final double south;
-    private final double eastlimit;
-    private final double westlimit;
-    private final double northlimit;
-    private final double southlimit;
+    private final PropertyDouble eastproperty = new PropertyDouble();
+//    public final double getEast() {
+//        return eastproperty.get();
+//    } 
+    private final PropertyDouble westproperty = new PropertyDouble();
+
+    private final PropertyDouble northproperty = new PropertyDouble();
+    private final PropertyDouble southproperty = new PropertyDouble();
+    private final PropertyDouble eastlimitproperty = new PropertyDouble();
+    private final PropertyDouble westlimitproperty = new PropertyDouble();
+    private final PropertyDouble northlimitproperty = new PropertyDouble();
+    private final PropertyDouble southlimitproperty = new PropertyDouble();
 
     public SailingArea(JsonObject parsedjson) throws IOException {
         JsonObject paramsobj = parsedjson.getJsonObject("SAILING AREA");
         if (paramsobj == null) {
             throw new IOException("Malformed Definition File - missing SAILING AREA object");
         }
-        east = DoubleParser.parse(paramsobj, "east").orElse(EAST_DEFAULT);
-        eastlimit = DoubleParser.parse(paramsobj, "eastlimit").orElse(east);
-        west = DoubleParser.parse(paramsobj, "west").orElse(WEST_DEFAULT);
-        westlimit = DoubleParser.parse(paramsobj, "westlimit").orElse(west);
-        north = DoubleParser.parse(paramsobj, "north").orElse(NORTH_DEFAULT);
-        northlimit = DoubleParser.parse(paramsobj, "northlimit").orElse(north);
-        south = DoubleParser.parse(paramsobj, "south").orElse(SOUTH_DEFAULT);
-        southlimit = DoubleParser.parse(paramsobj, "southlimit").orElse(south);
+        eastproperty.set(DoubleParser.parse(paramsobj, "east").orElse(EAST_DEFAULT));
+        eastlimitproperty.set(DoubleParser.parse(paramsobj, "eastlimit").orElse(eastproperty.get()));
+        westproperty.set(DoubleParser.parse(paramsobj, "west").orElse(WEST_DEFAULT));
+        westlimitproperty.set(DoubleParser.parse(paramsobj, "westlimit").orElse(westproperty.get()));
+        northproperty.set(DoubleParser.parse(paramsobj, "north").orElse(NORTH_DEFAULT));
+        northlimitproperty.set(DoubleParser.parse(paramsobj, "northlimit").orElse(northproperty.get()));
+        southproperty.set(DoubleParser.parse(paramsobj, "south").orElse(SOUTH_DEFAULT));
+        southlimitproperty.set(DoubleParser.parse(paramsobj, "southlimit").orElse(southproperty.get()));
     }
-    
+
     public Map<String, Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
-        map.put("north", north);
-        map.put("northlimit", northlimit);
-        map.put("east", east);
-        map.put("eastlimit", eastlimit);
-        map.put("south", south);
-        map.put("southlimit", southlimit);
-        map.put("west", west);
-        map.put("westlimit", westlimit);
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("north", northproperty);
+        map.put("northlimit", northlimitproperty);
+        map.put("east", eastproperty);
+        map.put("eastlimit", eastlimitproperty);
+        map.put("south", southproperty);
+        map.put("southlimit", southlimitproperty);
+        map.put("west", westproperty);
+        map.put("westlimit", westlimitproperty);
         return map;
     }
-    
+
+    public Area getArea() {
+        return new Area(new Location(westproperty.get(), southproperty.get()),
+                eastproperty.get() - westproperty.get(), northproperty.get() - southproperty.get());
+    }
+
     @Override
-     public void draw(Graphics2D g2D, double zoom) throws IOException {
-        // set transform
-        g2D.transform(new AffineTransform(zoom, 0, 0, -zoom, -west * zoom, north * zoom));
-        // if limits set then darken limit areas
-        if (westlimit > west) {
-            Shape shape = new Rectangle2D.Double(west, south,
-                    westlimit - west, north - south);
-            g2D.setColor(Color.darkGray);
-            g2D.draw(shape);
-            g2D.fill(shape);
+    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+        canvas.drawrectangle(
+                new Area(new Location(westlimitproperty.get(), southlimitproperty.get()),
+                        eastlimitproperty.get() - westlimitproperty.get(), northlimitproperty.get() - southlimitproperty.get()),
+                Color.LIGHTSEAGREEN
+        );
+        if (westlimitproperty.get() > westproperty.get()) {
+            canvas.drawrectangle(
+                    new Area(new Location(westproperty.get(), southlimitproperty.get()), westlimitproperty.get() - westproperty.get(), northlimitproperty.get() - southlimitproperty.get()),
+                    Color.OLIVEDRAB
+            );
         }
-        if (eastlimit < east) {
-            Shape shape = new Rectangle2D.Double(eastlimit, south,
-                    east - eastlimit, north - south);
-            g2D.setColor(Color.darkGray);
-            g2D.draw(shape);
-            g2D.fill(shape);
+        if (eastlimitproperty.get() < eastproperty.get()) {
+            canvas.drawrectangle(
+                    new Area(new Location(eastlimitproperty.get(), southlimitproperty.get()),
+                            eastproperty.get() - eastlimitproperty.get(), northlimitproperty.get() - southlimitproperty.get()),
+                    Color.OLIVEDRAB
+            );
         }
-        if (northlimit < north) {
-            Shape shape = new Rectangle2D.Double(west, northlimit,
-                    east - west, north - northlimit);
-            g2D.setColor(Color.darkGray);
-            g2D.draw(shape);
-            g2D.fill(shape);
+        if (northlimitproperty.get() < northproperty.get()) {
+            canvas.drawrectangle(
+                    new Area(new Location(westproperty.get(), northlimitproperty.get()),
+                            eastproperty.get() - westproperty.get(), northproperty.get() - northlimitproperty.get()),
+                    Color.OLIVEDRAB
+            );
         }
-        if (southlimit > south) {
-            Shape shape = new Rectangle2D.Double(west, south,
-                    east - west, southlimit - south);
-            g2D.setColor(Color.darkGray);
-            g2D.draw(shape);
-            g2D.fill(shape);
+        if (southlimitproperty.get() > southproperty.get()) {
+            canvas.drawrectangle(
+                    new Area(new Location(westproperty.get(), southproperty.get()),
+                            eastproperty.get() - westproperty.get(), southlimitproperty.get() - southproperty.get()),
+                    Color.OLIVEDRAB
+            );
         }
     }
 
-    public Dimension getGraphicDimension(double zoom) {
-        double width = east - west;
-        double depth = north - south;
-        return new Dimension((int) (width * zoom), (int) (depth * zoom));
+    public double getWidth(double zoom) {
+        return (eastproperty.get() - westproperty.get()) * zoom;
+    }
+
+    public double getHeight(double zoom) {
+        return (northproperty.get() - southproperty.get()) * zoom;
     }
 }

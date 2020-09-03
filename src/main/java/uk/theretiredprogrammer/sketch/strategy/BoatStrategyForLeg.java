@@ -52,7 +52,8 @@ public abstract class BoatStrategyForLeg {
             case GYBINGDOWNWIND -> {
                 return new BoatStrategyForGybingDownwindLeg(controller, boat, leg);
             }
-            default -> throw new IOException("Illegal/unknown LEGTYPE: " + legtype.toString());
+            default ->
+                throw new IOException("Illegal/unknown LEGTYPE: " + legtype.toString());
         }
     }
 
@@ -65,12 +66,12 @@ public abstract class BoatStrategyForLeg {
         if (legtowind.lteq(metrics.getUpwindrelative())) {
             return LegType.WINDWARD;
         }
-        if (boat.reachdownwind && legtowind.gteq(metrics.getDownwindrelative())) {
+        if (boat.getReachdownwind() && legtowind.gteq(metrics.getDownwindrelative())) {
             return LegType.GYBINGDOWNWIND;
         }
         return LegType.OFFWIND;
     }
-    
+
     static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
         DistancePolar tomark = new DistancePolar(location, marklocation);
         Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);

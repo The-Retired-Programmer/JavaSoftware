@@ -41,23 +41,16 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
         starboarddecisions = new GybingDownwindStarboardSailingDecisions();
         LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
         switch (followinglegtype) {
-            case WINDWARD:
-                roundingdecisions = leg.isPortRounding()
+            case WINDWARD -> roundingdecisions = leg.isPortRounding()
                         ? new LeewardReachingPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
                         : new LeewardReachingStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
-                break;
-            case OFFWIND:
-                roundingdecisions = leg.isPortRounding()
+            case OFFWIND -> roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
                         : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
-                break;
-            case NONE:
-                roundingdecisions = leg.isPortRounding()
+            case NONE -> roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
-                break;
-            default:
-                throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Gybing downwind to "
+            default -> throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Gybing downwind to "
                         + followinglegtype.toString());
         }
     }
@@ -65,7 +58,7 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
     @Override
     String nextBoatStrategyTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        Angle winddirection = controller.windflow.getFlow(boat.getLocation()).getAngle();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(controller, this);
         }
@@ -77,7 +70,7 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.location, leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 }

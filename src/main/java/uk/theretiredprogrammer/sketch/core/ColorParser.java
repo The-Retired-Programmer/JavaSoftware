@@ -15,9 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import java.awt.Color;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Optional;
+import javafx.scene.paint.Color;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonString;
@@ -51,10 +52,10 @@ public class ColorParser {
                     int r = values.getJsonNumber(0).intValueExact();
                     int g = values.getJsonNumber(1).intValueExact();
                     int b = values.getJsonNumber(2).intValueExact();
-                    int a = values.size() == 4
-                            ? values.getJsonNumber(3).intValueExact()
-                            : 255;
-                    return Optional.of(new Color(r, g, b, a));
+                    double a = values.size() == 4
+                            ? values.getJsonNumber(3).doubleValue()
+                            : 1.0;
+                    return Optional.of(Color.rgb(r, g, b, a));
                 }
             }
         } catch (ArithmeticException ex) {
@@ -63,78 +64,100 @@ public class ColorParser {
     }
 
     private static Color string2color(String value) {
-        return switch (value.toLowerCase()) {
-            case "black" ->
-                Color.BLACK;
-            case "blue" ->
-                Color.BLUE;
-            case "cyan" ->
-                Color.cyan;
-            case "darkgrey" ->
-                Color.DARK_GRAY;
-            case "grey" ->
-                Color.GRAY;
-            case "green" ->
-                Color.GREEN;
-            case "lightgrey" ->
-                Color.LIGHT_GRAY;
-            case "magenta" ->
-                Color.MAGENTA;
-            case "orange" ->
-                Color.ORANGE;
-            case "pink" ->
-                Color.PINK;
-            case "red" ->
-                Color.RED;
-            case "white" ->
-                Color.WHITE;
-            case "yellow" ->
-                Color.YELLOW;
-            default ->
-                null;
-        };
+        try {
+        return Color.valueOf(value.toLowerCase());
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
+//        return switch (value.toLowerCase()) {
+//            case "black" ->
+//                Color.BLACK;
+//            case "blue" ->
+//                Color.BLUE;
+//            case "cyan" ->
+//                Color.cyan;
+//            case "darkgrey" ->
+//                Color.DARK_GRAY;
+//            case "grey" ->
+//                Color.GRAY;
+//            case "green" ->
+//                Color.GREEN;
+//            case "lightgrey" ->
+//                Color.LIGHT_GRAY;
+//            case "magenta" ->
+//                Color.MAGENTA;
+//            case "orange" ->
+//                Color.ORANGE;
+//            case "pink" ->
+//                Color.PINK;
+//            case "red" ->
+//                Color.RED;
+//            case "white" ->
+//                Color.WHITE;
+//            case "yellow" ->
+//                Color.YELLOW;
+//            default ->
+//                null;
+//        };
+//    }
+//
     public static String color2String(Color color) {
-        if (color == Color.BLACK) {
-            return "Black";
-        }
-        if (color == Color.BLUE) {
-            return "Blue";
-        }
-        if (color == Color.cyan) {
-            return "Cyan";
-        }
-        if (color == Color.DARK_GRAY) {
-            return "DarkGrey";
-        }
-        if (color == Color.GRAY) {
-            return "Grey";
-        }
-        if (color == Color.GREEN) {
-            return "Green";
-        }
-        if (color == Color.LIGHT_GRAY) {
-            return "LightGrey";
-        }
-        if (color == Color.MAGENTA) {
-            return "Magenta";
-        }
-        if (color == Color.ORANGE) {
-            return "Orange";
-        }
-        if (color == Color.PINK) {
-            return "Pink";
-        }
-        if (color == Color.RED) {
-            return "Red";
-        }
-        if (color == Color.WHITE) {
-            return "White";
-        }
-        if (color == Color.YELLOW) {
-            return "Yellow";
+        final Field[] fields = Color.class.getFields(); // only want public
+        for (final Field field : fields) {
+            if (field.getType() == Color.class) {
+                try {
+                    final Color clr = (Color) field.get(null);
+                    if (color.equals(clr)) {
+                        return field.getName();
+                    }
+                } catch (IllegalAccessException ex) {
+                    return "Securty Manager does not allow access to field '"+ field.getName() + "'.";
+                }
+            }
         }
         return color.toString();
     }
+//        if (clr == Color.BLACK) {
+//            return "Black";
+//        }
+//        if (clr == Color.BLUE) {
+//            return "Blue";
+//        }
+//        if (clr == Color.cyan) {
+//            return "Cyan";
+//        }
+//        if (clr == Color.DARK_GRAY) {
+//            return "DarkGrey";
+//        }
+//        if (clr == Color.GRAY) {
+//            return "Grey";
+//        }
+//        if (clr == Color.GREEN) {
+//            return "Green";
+//        }
+//        if (clr == Color.LIGHT_GRAY) {
+//            return "LightGrey";
+//        }
+//        if (clr == Color.MAGENTA) {
+//            return "Magenta";
+//        }
+//        if (clr == Color.ORANGE) {
+//            return "Orange";
+//        }
+//        if (clr == Color.PINK) {
+//            return "Pink";
+//        }
+//        if (clr == Color.RED) {
+//            return "Red";
+//        }
+//        if (clr == Color.WHITE) {
+//            return "White";
+//        }
+//        if (clr == Color.YELLOW) {
+//            return "Yellow";
+//        }
+//        return clr.toString();
+//    }
 }

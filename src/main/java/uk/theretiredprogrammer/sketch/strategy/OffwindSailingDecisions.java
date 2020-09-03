@@ -27,11 +27,11 @@ class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
     String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.location).getAngle();
+        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.getLocation()).getAngle();
         boolean onPort = legstrategy.boat.isPort(winddirection);
-        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.location, onPort);
-        if (nextDirection.neq(legstrategy.boat.direction)) {
-            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.direction.gt(nextDirection));
+        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), onPort);
+        if (nextDirection.neq(legstrategy.boat.getDirection())) {
+            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.getDirection().gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

@@ -110,17 +110,17 @@ public class BoatTurnTest extends TurnTest {
         Angle targetangle = new Angle(finishangleint);
         setupForTurn("/boat-turn-calculation.json", configs);
         Boat boat = getUptospeed(secondstospeed);
-        Angle direction = boat.direction;
+        Angle direction = boat.getDirection();
         assertEquals(startangle, direction);
-        startturnlocation = boat.location;
+        startturnlocation = boat.getLocation();
         assertAll("startturnlocation",
                 () -> assertEquals(expectedstartturnlocation.getY(), startturnlocation.getY(), DELTA),
                 () -> assertEquals(expectedstartturnlocation.getX(), startturnlocation.getX(), DELTA)
         );
         boat = makeTurn(targetangle, turndirection);
-        direction = boat.direction;
+        direction = boat.getDirection();
         assertEquals(targetangle, direction);
-        endturnlocation = boat.location;
+        endturnlocation = boat.getLocation();
         assertAll("endturnlocation",
                 () -> assertEquals(expectedendturnlocation.getY(), endturnlocation.getY(), DELTA),
                 () -> assertEquals(expectedendturnlocation.getX(), endturnlocation.getX(), DELTA)
@@ -152,9 +152,9 @@ public class BoatTurnTest extends TurnTest {
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", -45));
-//        Angle direction = boat.direction;
-//        assertEquals(targetangle, direction);
-//        Location location = boat.location;
+//        Angle directionproperty = boat.directionproperty;
+//        assertEquals(targetangle, directionproperty);
+//        Location location = boat.getLocation();
 //        assertAll("location",
 //            () -> assertEquals(49.17, location.getY(), DELTA),
 //            () -> assertEquals(46.04, location.getX(), DELTA)
@@ -168,9 +168,9 @@ public class BoatTurnTest extends TurnTest {
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", -135));
-//        Angle direction = boat.direction;
-//        assertEquals(targetangle, direction);
-//        Location location = boat.location;
+//        Angle directionproperty = boat.directionproperty;
+//        assertEquals(targetangle, directionproperty);
+//        Location location = boat.getLocation();
 //        assertAll("location",
 //            () -> assertEquals(46.27, location.getY(), DELTA),
 //            () -> assertEquals(51.11, location.getX(), DELTA)
@@ -184,9 +184,9 @@ public class BoatTurnTest extends TurnTest {
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
 //                () -> this.setboatintvalue("heading", 135));
-//        Angle direction = boat.direction;
-//        assertEquals(targetangle, direction);
-//        Location location = boat.location;
+//        Angle directionproperty = boat.directionproperty;
+//        assertEquals(targetangle, directionproperty);
+//        Location location = boat.getLocation();
 //        assertAll("location",
 //            () -> assertEquals(51.04, location.getY(), DELTA),
 //            () -> assertEquals(53.96, location.getX(), DELTA)

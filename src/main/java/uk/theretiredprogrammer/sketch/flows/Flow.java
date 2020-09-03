@@ -15,17 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Supplier;
+import javafx.scene.paint.Color;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
@@ -36,6 +29,7 @@ import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.timerlog.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.WindSwingLogEntry;
@@ -75,7 +69,7 @@ public abstract class Flow implements Displayable, Timerable {
     public Flow(Supplier<Controller> controllersupplier, JsonObject paramsobj, FlowComponentSet flowset) throws IOException {
         showflow = BooleanParser.parse(paramsobj, "showflow").orElse(false);
         showflowinterval = DoubleParser.parse(paramsobj, "showflowinterval").orElse(100.0);
-        showflowcolor = ColorParser.parse(paramsobj, "showflowcolour").orElse(Color.black);
+        showflowcolor = ColorParser.parse(paramsobj, "showflowcolour").orElse(Color.BLACK);
         swingangle = Angle.parse(paramsobj, "swingangle").orElse(ANGLE0);
         swingperiod = IntegerParser.parse(paramsobj, "swingperiod").orElse(0);
         shiftangle = Angle.parse(paramsobj, "shiftangle").orElse(ANGLE0);
@@ -83,10 +77,9 @@ public abstract class Flow implements Displayable, Timerable {
         randomshifts = BooleanParser.parse(paramsobj, "randomshifts").orElse(false);
         //
         SailingArea sailingarea = controllersupplier.get().sailingarea;
-        this.area = new Area(new Location(sailingarea.west, sailingarea.south),
-                sailingarea.east - sailingarea.west, sailingarea.north - sailingarea.south);
-        wstepsize = area.getWidth() / WIDTHSTEPS;
+        this.area = sailingarea.getArea();
         hstepsize = area.getHeight() / HEIGHTSTEPS;
+        wstepsize = area.getWidth() / WIDTHSTEPS;
         this.flowset = flowset;
         setFlows();
     }
@@ -101,8 +94,8 @@ public abstract class Flow implements Displayable, Timerable {
         shiftperiod = IntegerParser.parse(paramsobj, "shiftperiod").orElse(shiftperiod);
         randomshifts = BooleanParser.parse(paramsobj, "randomshifts").orElse(randomshifts);
     }
-    
-    void properties(LinkedHashMap<String,Object> map) {
+
+    void properties(LinkedHashMap<String, Object> map) {
         map.put("showflow", showflow);
         map.put("showflowinterval", showflowinterval);
         map.put("showflowcolor", showflowcolor);
@@ -150,7 +143,7 @@ public abstract class Flow implements Displayable, Timerable {
         }
         return flowarray[w][h];
     }
-    
+
     public Angle getMeanFlowAngle(Location pos) throws IOException {
         return getFlowwithoutswing(pos).getAngle();
     }
@@ -163,11 +156,6 @@ public abstract class Flow implements Displayable, Timerable {
         return SpeedPolar.meanAngle(flowarray);
     }
 
-    /**
-     * Advance time. Recalculate the flow.
-     *
-     * @param simulationtime the new setTime
-     */
     @Override
     public void timerAdvance(int simulationtime, TimerLog timerlog) {
         if (swingperiod != 0) {
@@ -204,19 +192,13 @@ public abstract class Flow implements Displayable, Timerable {
         } else {
             shiftNow = shiftval; // apply the shift
         }
-        if (shifting){
+        if (shifting) {
             timerlog.add(new WindShiftLogEntry(shiftNow));
         }
     }
 
-    /**
-     * Draw the Flow arrows on the display canvas.
-     *
-     * @param g2D the 2D graphics object
-     * @param zoom the scale factor (pixels/metre)
-     */
     @Override
-    public void draw(Graphics2D g2D, double zoom) throws IOException {
+    public void draw(DisplaySurface canvas, double zoom) throws IOException {
         Location sw = area.getBottomleft();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();
@@ -228,7 +210,7 @@ public abstract class Flow implements Displayable, Timerable {
             while (x < eastedge) {
                 double y = southedge + showflowinterval;
                 while (y < northedge) {
-                    displayWindGraphic(g2D, zoom, x, y);
+                    displayWindGraphic(canvas, zoom, x, y);
                     y += showflowinterval;
                 }
                 x += showflowinterval;
@@ -236,45 +218,39 @@ public abstract class Flow implements Displayable, Timerable {
         }
     }
 
-    private void displayWindGraphic(Graphics2D g2D, double pixelsPerMetre, double x, double y) throws IOException {
-        GeneralPath p = new GeneralPath();
-        p.moveTo(0, 15);
-        p.lineTo(0, -15);
-        p.moveTo(4, 7);
-        p.lineTo(0, 15);
-        p.lineTo(-4, 7);
-        //
-        AffineTransform xform = g2D.getTransform();
-        g2D.translate(x, y);
-        g2D.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-        SpeedPolar flow = getFlow(new Location(x, y));
-        g2D.rotate(flow.getAngle().getRadians());
-        g2D.setColor(showflowcolor);
-        g2D.setStroke(new BasicStroke(1));
-        g2D.draw(p);
-        //
-        g2D.setFont(new Font("Sans Serif", Font.PLAIN, 10));
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMaximumFractionDigits(1);
-        nf.setMinimumFractionDigits(1);
-        String windspeedText = nf.format(flow.getSpeed());
-        if (flow.getAngle().isPositive()) {
-            g2D.translate(-2, 4);
-            g2D.rotate(-Math.PI / 2);
-        } else {
-            g2D.translate(+2, -15);
-            g2D.rotate(Math.PI / 2);
-        }
-        g2D.drawString(windspeedText, 0, 0);
-        g2D.setTransform(xform);
+    private void displayWindGraphic(DisplaySurface canvas, double zoom, double x, double y) throws IOException {
+//        GeneralPath p = new GeneralPath();
+//        p.moveTo(0, 15);
+//        p.lineTo(0, -15);
+//        p.moveTo(4, 7);
+//        p.lineTo(0, 15);
+//        p.lineTo(-4, 7);
+//        //
+//        AffineTransform xform = gc.getTransform();
+//        gc.translate(x, y);
+//        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
+//        SpeedPolar flow = getFlow(new Location(x, y));
+//        gc.rotate(flow.getAngle().getRadians());
+//        gc.setColor(showflowcolor);
+//        gc.setStroke(new BasicStroke(1));
+//        gc.draw(p);
+//        //
+//        gc.setFont(new Font("Sans Serif", Font.PLAIN, 10));
+//        NumberFormat nf = NumberFormat.getInstance();
+//        nf.setMaximumFractionDigits(1);
+//        nf.setMinimumFractionDigits(1);
+//        String windspeedText = nf.format(flow.getSpeed());
+//        if (flow.getAngle().isPositive()) {
+//            gc.translate(-2, 4);
+//            gc.rotate(-Math.PI / 2);
+//        } else {
+//            gc.translate(+2, -15);
+//            gc.rotate(Math.PI / 2);
+//        }
+//        gc.drawString(windspeedText, 0, 0);
+//        gc.setTransform(xform);
     }
 
-    /**
-     * Get the Flow at the current setTime, at the requested location.
-     *
-     * @param pos location
-     * @return the flow
-     */
     public SpeedPolar getFlow(Location pos) throws IOException {
         SpeedPolar f = getFlowwithoutswing(pos);
         if (swingperiod > 0) {

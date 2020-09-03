@@ -57,7 +57,7 @@ public class BoatStrategyForWindwardLeg extends BoatStrategyForLeg {
     @Override
     String nextBoatStrategyTimeInterval(Controller controller) throws IOException {
         Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
-        Angle winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        Angle winddirection = controller.windflow.getFlow(boat.getLocation()).getAngle();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(controller, this);
         }
@@ -69,7 +69,7 @@ public class BoatStrategyForWindwardLeg extends BoatStrategyForLeg {
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.location, leg.getEndLocation(), markMeanwinddirection);
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection);
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
 }

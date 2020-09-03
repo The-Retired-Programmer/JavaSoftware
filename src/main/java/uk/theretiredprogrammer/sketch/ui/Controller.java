@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -32,6 +30,7 @@ import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 
@@ -53,6 +52,7 @@ public class Controller {
     private boolean isRunning;
     private Timer timer;
     private TimeStepRunner runner;
+    private final Runnable updatedisplay;
     private final Consumer<Integer> displayupdaterequest;
     private Consumer<String> outwriter;
 
@@ -71,9 +71,10 @@ public class Controller {
         boatstrategies = new BoatStrategies(this);
     }
 
-    public Controller(Path path, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter) {
+    public Controller(Path path, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter, Runnable updatedisplay) {
         this.displayupdaterequest = displayupdaterequest;
         this.outwriter = outwriter;
+        this.updatedisplay = updatedisplay;
         try {
             createController(Files.newInputStream(path));
         } catch (JsonException | IOException ex) {
@@ -81,9 +82,10 @@ public class Controller {
         }
     }
 
-    public Controller(String resourcename, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter) {
+    public Controller(String resourcename, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter, Runnable updatedisplay) {
         this.displayupdaterequest = displayupdaterequest;
         this.outwriter = outwriter;
+        this.updatedisplay = updatedisplay;
         try {
             createController(this.getClass().getResourceAsStream(resourcename));
         } catch (JsonException | IOException ex) {
@@ -91,19 +93,24 @@ public class Controller {
         }
     }
 
-    public Dimension getGraphicDimension() {
-        return sailingarea.getGraphicDimension(displayparameters.zoom);
+    public double getWidth() {
+        return sailingarea.getWidth(displayparameters.getZoom());
     }
-
-    public void paint(Graphics2D g2D) {
+    
+    public double getHeight() {
+        return sailingarea.getHeight(displayparameters.getZoom());
+    } 
+    
+    public void paint(DisplaySurface canvas) {
+        canvas.clear();
         try {
-            sailingarea.draw(g2D, displayparameters.zoom);
-            windflow.draw(g2D, displayparameters.zoom);
-            if (waterflow != null) {
-                waterflow.draw(g2D, displayparameters.zoom);
-            }
-            course.draw(g2D, displayparameters.zoom);
-            boats.draw(g2D, displayparameters.zoom);
+            sailingarea.draw(canvas, displayparameters.getZoom());
+//            windflow.draw(group, displayparameters.zoom);
+//            if (waterflow != null) {
+//                waterflow.draw(group, displayparameters.zoom);
+//            }
+            course.draw(canvas, displayparameters.getZoom());
+            boats.draw(canvas, displayparameters.getZoom());
         } catch (IOException ex) {
             reportfailure(ex);
         }
@@ -116,7 +123,7 @@ public class Controller {
         if (isRunning) {
             return;
         }
-        int rate = (int) (displayparameters.secondsperdisplay * 1000 / displayparameters.speedup);
+        int rate = (int) (displayparameters.getSecondsperdisplay() * 1000 / displayparameters.getSpeedup());
         timer = new Timer();
         runner = new TimeStepRunner();
         timer.scheduleAtFixedRate(runner, 0, rate);
@@ -158,7 +165,7 @@ public class Controller {
         @Override
         public void run() {
             try {
-                int secondsperdisplay = displayparameters.secondsperdisplay;
+                int secondsperdisplay = displayparameters.getSecondsperdisplay();
                 while (secondsperdisplay > 0) {
                     timerlog.setTime(simulationtime);
                     windflow.timerAdvance(simulationtime, timerlog);
@@ -170,6 +177,8 @@ public class Controller {
                     simulationtime++;
                 }
                 displayupdaterequest.accept(simulationtime);
+                updatedisplay.run();
+                
             } catch (IOException ex) {
                 reportfailure(ex);
             }

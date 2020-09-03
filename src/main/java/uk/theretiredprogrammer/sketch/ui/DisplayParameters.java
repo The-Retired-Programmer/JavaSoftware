@@ -21,35 +21,49 @@ import java.util.Map;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
+import uk.theretiredprogrammer.sketch.core.PropertyDouble;
+import uk.theretiredprogrammer.sketch.core.PropertyInteger;
 
 /**
  * The Information to describe the Simulation "Field of play
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class DisplayParameters  {
-    
+public class DisplayParameters {
+
     public static final double ZOOM_DEFAULT = 1;
 
-    public final double zoom;
-    public final int secondsperdisplay;
-    public final double speedup;
+    private final PropertyDouble zoomproperty = new PropertyDouble();
+
+    public final double getZoom() {
+        return zoomproperty.get();
+    }
+    private final PropertyInteger secondsperdisplayproperty = new PropertyInteger();
+
+    public final int getSecondsperdisplay() {
+        return secondsperdisplayproperty.get();
+    }
+    private final PropertyDouble speedupproperty = new PropertyDouble();
+
+    public final double getSpeedup() {
+        return speedupproperty.get();
+    }
 
     public DisplayParameters(JsonObject parsedjson) throws IOException {
         JsonObject paramsobj = parsedjson.getJsonObject("DISPLAY");
         if (paramsobj == null) {
             throw new IOException("Malformed Definition File - missing DISPLAY object");
         }
-        zoom = DoubleParser.parse(paramsobj, "zoom").orElse(ZOOM_DEFAULT);
-        secondsperdisplay = IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1);
-        speedup = DoubleParser.parse(paramsobj, "speedup").orElse(1.0);
+        zoomproperty.set(DoubleParser.parse(paramsobj, "zoom").orElse(ZOOM_DEFAULT));
+        secondsperdisplayproperty.set(IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1));
+        speedupproperty.set(DoubleParser.parse(paramsobj, "speedup").orElse(1.0));
     }
-    
+
     public Map properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
-        map.put("zoom", zoom);
-        map.put("secondsperdisplay", secondsperdisplay);
-        map.put("speedup", speedup);
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("zoom", zoomproperty);
+        map.put("secondsperdisplay", secondsperdisplayproperty);
+        map.put("speedup", speedupproperty);
         return map;
     }
 }

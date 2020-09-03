@@ -15,14 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
-import java.awt.Color;
 import java.util.Map;
 import java.util.Map.Entry;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.ColorParser;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
@@ -71,9 +72,13 @@ public class PropertiesPane extends Accordion {
             for (Entry<String, Object> mapentry : properties.entrySet()) {
                 propertiestable.add(new Label(mapentry.getKey()), 0, row, 1, 1);
                 Object value = mapentry.getValue();
-                @SuppressWarnings("null")
-                String valuetext = value instanceof Color ? ColorParser.color2String((Color) value) : value.toString();
-                propertiestable.add(new Label(valuetext), 1, row++, 1, 1);
+                if (value instanceof Color) {
+                    propertiestable.add(new Label(ColorParser.color2String((Color) value)), 1, row++, 1, 1);
+                } else if (value instanceof PropertyItem) {
+                    propertiestable.add(((PropertyItem)value).createPropertySheetItem(), 1, row++, 1, 1);
+                } else {
+                    propertiestable.add(new Label(value.toString()), 1, row++, 1, 1);
+                }
             }
             this.setText(propertiessectionname);
             this.setContent(propertiestable);

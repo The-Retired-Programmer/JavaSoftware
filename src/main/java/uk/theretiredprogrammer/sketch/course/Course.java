@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.course;
 
 import uk.theretiredprogrammer.sketch.strategy.Leg;
-import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -29,6 +28,7 @@ import javax.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.ListOf;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.LegValue;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
 
@@ -96,9 +96,9 @@ public class Course implements Displayable {
     }
 
     @Override
-    public void draw(Graphics2D g2D, double zoom) throws IOException {
+    public void draw(DisplaySurface canvas, double zoom) throws IOException {
         for (Mark mark : marks.values()) {
-            mark.draw(g2D, zoom);
+            mark.draw(canvas, zoom);
         }
     }
 }

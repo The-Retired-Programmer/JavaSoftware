@@ -15,15 +15,16 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
-import java.awt.Graphics2D;
 import java.io.IOException;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 
 /**
  * The Element Class - represents the core class of every simulation object
  * class.
+ *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public interface Displayable {
 
-    public void draw(Graphics2D g2D, double zoom) throws IOException;
+    public void draw(DisplaySurface canvas, double zoom) throws IOException;
 }

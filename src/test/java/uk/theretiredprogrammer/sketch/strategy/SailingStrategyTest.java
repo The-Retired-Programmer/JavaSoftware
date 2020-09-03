@@ -44,7 +44,7 @@ public class SailingStrategyTest {
     private Angle winddirection;
 
     public Decision makeDecision(String filename, Supplier<String>... configs) throws IOException {
-        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s));
+        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s), () -> callback());
         boat = controller.boats.getBoat("Red");
         //
         for (var config : configs) {
@@ -54,7 +54,7 @@ public class SailingStrategyTest {
             }
         }
         Leg leg = controller.course.getFirstCourseLeg();
-        winddirection = controller.windflow.getFlow(boat.location).getAngle();
+        winddirection = controller.windflow.getFlow(boat.getLocation()).getAngle();
         BoatStrategyForLeg strategy = BoatStrategyForLeg.getLegStrategy(
                 controller, boat, leg);
         strategy.nextBoatStrategyTimeInterval(controller);
@@ -67,6 +67,10 @@ public class SailingStrategyTest {
 
     private void callbackint(int i) {
         fail("BAD - Callback(int) made -should not occur");
+    }
+
+    private void callback() {
+        fail("BAD - Callback() made -should not occur");
     }
 
     String setwindfrom(String name, int degrees) {

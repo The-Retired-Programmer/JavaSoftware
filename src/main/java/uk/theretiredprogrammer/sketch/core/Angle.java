@@ -49,7 +49,7 @@ public class Angle {
         }
         throw new IOException("Malformed Definition file - Double expected with " + key);
     }
-
+    
     private final double angle_degrees; // Range +-179.999.. to +180.0 degrees
 
     public Angle() {
@@ -218,5 +218,7 @@ public class Angle {
     public String toString() {
         return Double.toString(angle_degrees);
     }
+    
+    
 
 }

@@ -31,7 +31,7 @@ public abstract class FlowComponentTest {
     private Controller controller;
 
     public void initialiseFlow(String filename) throws IOException {
-        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s));
+        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s), ()->callback());
     }
 
     private void callbackstring(String s) {
@@ -40,6 +40,10 @@ public abstract class FlowComponentTest {
     
     private void callbackint(int i) {
         fail("BAD - Callback(int) made -should not occur");
+    }
+
+     private void callback() {
+        fail("BAD - Callback() made -should not occur");
     }
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {

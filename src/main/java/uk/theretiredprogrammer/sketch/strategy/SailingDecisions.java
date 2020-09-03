@@ -16,11 +16,7 @@
 package uk.theretiredprogrammer.sketch.strategy;
 
 import java.io.IOException;
-import java.util.Optional;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
-import uk.theretiredprogrammer.sketch.core.DistancePolar;
-import uk.theretiredprogrammer.sketch.core.Location;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -66,54 +62,54 @@ abstract class SailingDecisions {
     }
 
     boolean adjustPortDirectCourseToWindwardMarkOffset(BoatStrategyForLeg legstrategy, Angle winddirection) {
-        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, true);
+        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), true);
         Angle closehauled = legstrategy.boat.getPortCloseHauledCourse(winddirection);
         if (coursetomark.lt(closehauled)) {
             return false;
         }
-        return adjustCourse(legstrategy.boat.direction,
+        return adjustCourse(legstrategy.boat.getDirection(),
                 coursetomark.gteq(closehauled) ? coursetomark : closehauled, legstrategy.decision);
     }
 
     boolean adjustStarboardDirectCourseToWindwardMarkOffset(BoatStrategyForLeg legstrategy, Angle winddirection) {
-        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, false);
+        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), false);
         Angle closehauled = legstrategy.boat.getStarboardCloseHauledCourse(winddirection);
         if (coursetomark.gt(closehauled)) {
             return false;
         }
-        return adjustCourse(legstrategy.boat.direction,
+        return adjustCourse(legstrategy.boat.getDirection(),
                 coursetomark.lteq(closehauled) ? coursetomark : closehauled, legstrategy.decision);
     }
 
     boolean adjustPortDirectCourseToLeewardMarkOffset(BoatStrategyForLeg legstrategy, Angle winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, true);
+        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), true);
         Angle reaching = legstrategy.boat.getPortReachingCourse(winddirection);
         if (coursetomark.gt(reaching)) {
             return false;
         }
-        return adjustCourse(legstrategy.boat.direction,
+        return adjustCourse(legstrategy.boat.getDirection(),
                 coursetomark.lteq(reaching) ? coursetomark : reaching, legstrategy.decision);
     }
 
     boolean adjustStarboardDirectCourseToLeewardMarkOffset(BoatStrategyForLeg legstrategy, Angle winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, false);
+        Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), false);
         Angle reaching = legstrategy.boat.getStarboardReachingCourse(winddirection);
         if (coursetomark.lt(reaching)) {
             return false;
         }
-        return adjustCourse(legstrategy.boat.direction,
+        return adjustCourse(legstrategy.boat.getDirection(),
                 coursetomark.gteq(reaching) ? coursetomark : reaching, legstrategy.decision);
     }
 
     boolean adjustDirectCourseToDownwindMarkOffset(BoatStrategyForLeg legstrategy, Angle winddirection) {
         if (legstrategy.boat.isPort(winddirection)) {
-            Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, true);
-            return adjustCourse(legstrategy.boat.direction, coursetomark, legstrategy.decision);
+            Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), true);
+            return adjustCourse(legstrategy.boat.getDirection(), coursetomark, legstrategy.decision);
         } else {
-            Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.location, false);
-            return adjustCourse(legstrategy.boat.direction, coursetomark, legstrategy.decision);
+            Angle coursetomark = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), false);
+            return adjustCourse(legstrategy.boat.getDirection(), coursetomark, legstrategy.decision);
         }
     }
 

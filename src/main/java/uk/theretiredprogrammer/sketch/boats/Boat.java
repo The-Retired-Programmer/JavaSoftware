@@ -16,13 +16,6 @@
 package uk.theretiredprogrammer.sketch.boats;
 
 import uk.theretiredprogrammer.sketch.strategy.Decision;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import javafx.scene.paint.Color;
 import javax.json.JsonObject;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.SAILON;
@@ -38,13 +32,18 @@ import uk.theretiredprogrammer.sketch.core.ColorParser;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
+import uk.theretiredprogrammer.sketch.core.PropertyAngle;
 import uk.theretiredprogrammer.sketch.core.Channel;
 import static uk.theretiredprogrammer.sketch.core.Channel.CHANNELOFF;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyBoolean;
+import uk.theretiredprogrammer.sketch.core.PropertyColor;
+import uk.theretiredprogrammer.sketch.core.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.flows.Flow;
+import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -55,27 +54,74 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class Boat {
-    
+
     private final Supplier<Controller> controllersupplier;
     //
     public final String name;
-    public Angle direction;
-    public  Location location;
     //
-    private Color color;
+    private final PropertyAngle directionproperty = new PropertyAngle();
+
+    public final Angle getDirection() {
+        return directionproperty.getValue();
+    }
+
+    public final void setDirection(Angle newangle) {
+        directionproperty.setValue(newangle);
+    }
+    //
+    private final PropertyLocation locationproperty = new PropertyLocation();
+
+    public final Location getLocation() {
+        return locationproperty.getValue();
+    }
+
+    public final void setLocation(Location newlocation) {
+        locationproperty.setValue(newlocation);
+    }
+
+    //
+    private final PropertyColor color = new PropertyColor();
     private Color trackcolor;
-    public boolean upwindsailonbesttack;
-    public boolean upwindtackifheaded;
-    public boolean upwindbearawayifheaded;
-    public boolean upwindluffupiflifted;
-    public boolean reachdownwind;
-    public boolean downwindsailonbestgybe;
-    public boolean downwindbearawayifheaded;
-    public boolean downwindgybeiflifted;
-    public boolean downwindluffupiflifted;
+    //
+    private final PropertyBoolean upwindsailonbesttackproperty = new PropertyBoolean();
+    public final boolean getUpwindsailonbesttack() {
+        return upwindsailonbesttackproperty.get();
+    }
+    private final PropertyBoolean upwindtackifheadedproperty = new PropertyBoolean();
+    public final boolean getUpwindtackifheaded() {
+        return upwindtackifheadedproperty.get();
+    }
+    private final PropertyBoolean upwindbearawayifheadedproperty = new PropertyBoolean();
+    public final boolean getUpwindbearawayifheaded() {
+        return upwindbearawayifheadedproperty.get();
+    }
+    private final PropertyBoolean upwindluffupifliftedproperty = new PropertyBoolean();
+    public final boolean getUpwindluffupiflifted() {
+        return upwindluffupifliftedproperty.get();
+    }
+    private final PropertyBoolean reachdownwindproperty = new PropertyBoolean();
+    public final boolean getReachdownwind() {
+        return reachdownwindproperty.get();
+    }
+    private final PropertyBoolean downwindsailonbestgybeproperty = new PropertyBoolean();
+    public final boolean getDownwindsailonbestgybe() {
+        return downwindsailonbestgybeproperty.get();
+    }
+    private final PropertyBoolean downwindbearawayifheadedproperty = new PropertyBoolean();
+    public final boolean getDownwindbearawayifheaded() {
+        return downwindbearawayifheadedproperty.get();
+    }
+    private final PropertyBoolean downwindgybeifliftedproperty = new PropertyBoolean();
+    public final boolean getDownwindgybeiflifted() {
+        return downwindgybeifliftedproperty.get();
+    }
+    private final PropertyBoolean downwindluffupifliftedproperty = new PropertyBoolean();
+    public final boolean getDownwindluffupiflifted() {
+        return downwindluffupifliftedproperty.get();
+    }
     public Channel upwindchannel;
     public Channel downwindchannel;
-    private final Color sailcolor = Color.white;
+    private final Color sailcolor = Color.WHITE;
     public final BoatMetrics metrics;
     //
     private double boatspeed = 0;
@@ -86,19 +132,19 @@ public abstract class Boat {
         this.controllersupplier = controllersupplier;
         name = StringParser.parse(paramsobj, "name")
                 .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
-        direction = Angle.parse(paramsobj, "heading").orElse(ANGLE0);
-        location = Location.parse(paramsobj, "location").orElse(new Location(0, 0));
-        color = ColorParser.parse(paramsobj, "colour").orElse(Color.black);
-        trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(Color.black);
-        upwindsailonbesttack = BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(false);
-        upwindtackifheaded = BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(false);
-        upwindbearawayifheaded = BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(false);
-        upwindluffupiflifted = BooleanParser.parse(paramsobj, "upwindluffupiflifted").orElse(false);
-        reachdownwind = BooleanParser.parse(paramsobj, "reachdownwind").orElse(false);
-        downwindsailonbestgybe = BooleanParser.parse(paramsobj, "downwindsailonbestgybe").orElse(false);
-        downwindbearawayifheaded = BooleanParser.parse(paramsobj, "downwindbearawayifheaded").orElse(false);
-        downwindgybeiflifted = BooleanParser.parse(paramsobj, "downwindgybeiflifted").orElse(false);
-        downwindluffupiflifted = BooleanParser.parse(paramsobj, "downwindluffupiflifted").orElse(false);
+        directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(ANGLE0));
+        setLocation(Location.parse(paramsobj, "location").orElse(new Location(0, 0)));
+        color.set(ColorParser.parse(paramsobj, "colour").orElse(Color.BLACK));
+        trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(Color.BLACK);
+        upwindsailonbesttackproperty.set(BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(false));
+        upwindtackifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(false));
+        upwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(false));
+        upwindluffupifliftedproperty.set(BooleanParser.parse(paramsobj, "upwindluffupiflifted").orElse(false));
+        reachdownwindproperty.set(BooleanParser.parse(paramsobj, "reachdownwind").orElse(false));
+        downwindsailonbestgybeproperty.set(BooleanParser.parse(paramsobj, "downwindsailonbestgybe").orElse(false));
+        downwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "downwindbearawayifheaded").orElse(false));
+        downwindgybeifliftedproperty.set(BooleanParser.parse(paramsobj, "downwindgybeiflifted").orElse(false));
+        downwindluffupifliftedproperty.set(BooleanParser.parse(paramsobj, "downwindluffupiflifted").orElse(false));
         upwindchannel = Channel.parse(paramsobj, "upwindchannel").orElse(CHANNELOFF);
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(CHANNELOFF);
         this.metrics = metrics;
@@ -106,46 +152,46 @@ public abstract class Boat {
     }
 
     public void change(JsonObject paramsobj) throws IOException {
-        direction = Angle.parse(paramsobj, "heading").orElse(direction);
-        location = Location.parse(paramsobj, "location").orElse(location);
-        color = ColorParser.parse(paramsobj, "colour").orElse(color);
+        directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(directionproperty.getValue()));
+        setLocation(Location.parse(paramsobj, "location").orElse(locationproperty.getValue()));
+        color.set(ColorParser.parse(paramsobj, "colour").orElse(color.get()));
         trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(trackcolor);
-        upwindsailonbesttack = BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(upwindsailonbesttack);
-        upwindtackifheaded = BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(upwindtackifheaded);
-        upwindbearawayifheaded = BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(upwindbearawayifheaded);
-        upwindluffupiflifted = BooleanParser.parse(paramsobj, "upwindluffupiflifted").orElse(upwindluffupiflifted);
-        reachdownwind = BooleanParser.parse(paramsobj, "reachdownwind").orElse(reachdownwind);
-        downwindsailonbestgybe = BooleanParser.parse(paramsobj, "downwindsailonbestgybe").orElse(downwindsailonbestgybe);
-        downwindbearawayifheaded = BooleanParser.parse(paramsobj, "downwindbearawayifheaded").orElse(downwindbearawayifheaded);
-        downwindgybeiflifted = BooleanParser.parse(paramsobj, "downwindgybeiflifted").orElse(downwindgybeiflifted);
-        downwindluffupiflifted = BooleanParser.parse(paramsobj, "downwindluffupiflifted").orElse(downwindluffupiflifted);
+        upwindsailonbesttackproperty.set(BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(getUpwindsailonbesttack()));
+        upwindtackifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(getUpwindtackifheaded()));
+        upwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(getUpwindbearawayifheaded()));
+        upwindluffupifliftedproperty.set(BooleanParser.parse(paramsobj, "upwindluffupiflifted").orElse(getUpwindluffupiflifted()));
+        reachdownwindproperty.set(BooleanParser.parse(paramsobj, "reachdownwind").orElse(getReachdownwind()));
+        downwindsailonbestgybeproperty.set(BooleanParser.parse(paramsobj, "downwindsailonbestgybe").orElse(getDownwindsailonbestgybe()));
+        downwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "downwindbearawayifheaded").orElse(getDownwindbearawayifheaded()));
+        downwindgybeifliftedproperty.set(BooleanParser.parse(paramsobj, "downwindgybeiflifted").orElse(getDownwindgybeiflifted()));
+        downwindluffupifliftedproperty.set(BooleanParser.parse(paramsobj, "downwindluffupiflifted").orElse(getDownwindluffupiflifted()));
         upwindchannel = Channel.parse(paramsobj, "upwindchannel").orElse(upwindchannel);
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(downwindchannel);
     }
-    
+
     public Map<String, Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
-        map.put("heading", direction);
-        map.put("locataion", location);
+        map.put("heading", directionproperty);
+        map.put("location", locationproperty);
         map.put("colour", color);
         map.put("trackcolour", trackcolor);
-        map.put("upwindsailonbesttack", upwindsailonbesttack);
-        map.put("upwindtackifheaded", upwindtackifheaded);
-        map.put("upwindbearawayifheaded", upwindbearawayifheaded);
-        map.put("upwindluffupiflifted", upwindluffupiflifted);
-        map.put("reachdownwind", reachdownwind);
-        map.put("downwindsailonbestgybe", downwindsailonbestgybe);
-        map.put("downwindbearawayifheaded", downwindbearawayifheaded);
-        map.put("downwindgybeiflifted", downwindgybeiflifted);
-        map.put("downwindluffupiflifted", downwindluffupiflifted);
+        map.put("upwindsailonbesttack", upwindsailonbesttackproperty);
+        map.put("upwindtackifheaded", upwindtackifheadedproperty);
+        map.put("upwindbearawayifheaded", upwindbearawayifheadedproperty);
+        map.put("upwindluffupiflifted", upwindluffupifliftedproperty);
+        map.put("reachdownwind", reachdownwindproperty);
+        map.put("downwindsailonbestgybe", downwindsailonbestgybeproperty);
+        map.put("downwindbearawayifheaded", downwindbearawayifheadedproperty);
+        map.put("downwindgybeiflifted", downwindgybeifliftedproperty);
+        map.put("downwindluffupiflifted", downwindluffupifliftedproperty);
         map.put("upwindchannel", upwindchannel);
         map.put("downwindchannel", downwindchannel);
         return map;
-    }   
+    }
 
     public boolean isPort(Angle winddirection) {
-        return direction.gteq(winddirection);
+        return directionproperty.getValue().gteq(winddirection);
     }
 
     public Angle getStarboardCloseHauledCourse(Angle winddirection) {
@@ -165,70 +211,74 @@ public abstract class Boat {
     }
 
     public boolean isPortRear90Quadrant(Location location) {
-        return isQuadrant(location, this.direction.inverse(), this.direction.sub(ANGLE90));
+        return isQuadrant(location, this.directionproperty.getValue().inverse(), this.directionproperty.getValue().sub(ANGLE90));
     }
 
     public boolean isStarboardRear90Quadrant(Location location) {
-        return isQuadrant(location, this.direction.add(ANGLE90), this.direction.inverse());
+        return isQuadrant(location, this.directionproperty.getValue().add(ANGLE90), this.directionproperty.getValue().inverse());
     }
 
     public boolean isPortTackingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, this.direction.inverse(), getStarboardCloseHauledCourse(winddirection));
+        return isQuadrant(location, this.directionproperty.getValue().inverse(), getStarboardCloseHauledCourse(winddirection));
     }
 
     public boolean isStarboardTackingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, getPortCloseHauledCourse(winddirection), this.direction.inverse());
+        return isQuadrant(location, getPortCloseHauledCourse(winddirection), this.directionproperty.getValue().inverse());
     }
 
     public boolean isPortGybingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, this.direction.inverse(), getPortReachingCourse(winddirection));
+        return isQuadrant(location, this.directionproperty.getValue().inverse(), getPortReachingCourse(winddirection));
     }
 
     public boolean isStarboardGybingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, getStarboardReachingCourse(winddirection), this.direction.inverse());
+        return isQuadrant(location, getStarboardReachingCourse(winddirection), this.directionproperty.getValue().inverse());
     }
 
     private boolean isQuadrant(Location location, Angle min, Angle max) {
-        return this.location.angleto(location).between(min, max);
+        return getLocation().angleto(location).between(min, max);
     }
 
     public boolean moveUsingDecision() throws IOException {
         Controller controller = controllersupplier.get();
-        SpeedPolar windflow = controller.windflow.getFlow(location);
+        SpeedPolar windflow = controller.windflow.getFlow(getLocation());
         Flow waterFlow = controller.waterflow;
-        SpeedPolar waterflow = waterFlow != null ? waterFlow.getFlow(location) : new SpeedPolar(0, ANGLE0);
+        SpeedPolar waterflow = waterFlow != null ? waterFlow.getFlow(getLocation()) : new SpeedPolar(0, ANGLE0);
         Decision decision = controller.boatstrategies.getStrategy(this).decision;
         switch (decision.getAction()) {
-            case SAILON:
-                moveBoat(direction, windflow, waterflow);
+            case SAILON -> {
+                moveBoat(directionproperty.getValue(), windflow, waterflow);
                 return false;
-            case STOP:
+            }
+            case STOP -> {
                 return false;
-            case MARKROUNDING:
+            }
+            case MARKROUNDING -> {
                 return turn(decision, windflow, waterflow);
-            case TURN:
+            }
+            case TURN -> {
                 turn(decision, windflow, waterflow);
                 return false;
-            default:
+            }
+            default ->
                 throw new IOException("Illegal sailing Mode when moving boat");
         }
     }
 
     private boolean turn(Decision decision, SpeedPolar windflow, SpeedPolar waterflow) {
         Angle newdirection = decision.getAngle();
-        if (direction.absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
+        if (directionproperty.getValue().absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(newdirection, windflow, waterflow);
             decision.setSAILON();
             return true;
         }
-        moveBoat(direction.add(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
+        moveBoat(directionproperty.getValue().add(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
         return false;
     }
 
     /**
-     * Move the boat in the required direction.
+     * Move the boat in the required directionproperty.
      *
-     * @param nextdirection the required direction
+     * @param nextdirection the required directionproperty
      */
     void moveBoat(Angle nextdirection, SpeedPolar windflow, SpeedPolar waterflow) {
         // calculate the potential boat speed - based on wind speed and relative angle 
@@ -239,73 +289,69 @@ public abstract class Boat {
         // start by calculating the vector components of the boats movement
         DistancePolar move = new DistancePolar(boatspeed, nextdirection)
                 .subtract(new DistancePolar(waterflow.getSpeedMetresPerSecond(), waterflow.getAngle()));
-        location = move.polar2Location(location); // updated position calculated
-        track.add(location); // record it in track
-        direction = nextdirection; // and update the direction
+        setLocation(move.polar2Location(getLocation())); // updated position calculated
+        track.add(getLocation()); // record it in track
+        directionproperty.setValue(nextdirection); // and update the directionproperty
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
 
-    /**
-     * Draw the Boat on the display canvas.
-     *
-     * @param g2D the 2D graphics object
-     * @param zoom the scale factor (pixelsPerMetre)
-     */
-    public void draw(Graphics2D g2D, double zoom) throws IOException {
-        Angle relative = direction.angleDiff(controllersupplier.get().windflow.getFlow(location).getAngle());
-        boolean onStarboard = relative.gt(ANGLE0);
-        Angle absrelative = relative.abs();
-        Angle sailRotation = absrelative.lteq(new Angle(45)) ? ANGLE0 : absrelative.sub(new Angle(45)).mult(2.0 / 3);
-        double l;
-        double w;
-        if (zoom > 4) {
-            l = metrics.getLength() * zoom;
-            w = metrics.getWidth() * zoom;
-        } else {
-            l = 13; // create a visible object
-            w = 5; // create a visible object
-        }
-        GeneralPath p = new GeneralPath();
-        p.moveTo(-l * 0.5, w * 0.45); //go to transom quarter
-        p.curveTo(-l * 0.2, w * 0.55, l * 0.2, l * 0.1, l * 0.5, 0);
-        p.curveTo(l * 0.2, -l * 0.1, -l * 0.2, -w * 0.55, -l * 0.5, -w * 0.45);
-        p.closePath(); // and the port side
-        GeneralPath sail = new GeneralPath();
-        if (onStarboard) {
-            sail.moveTo(0.0, 0);
-            sail.curveTo(-l * 0.2, l * 0.1, -l * 0.4, w * 0.4, -l * 0.7, w * 0.4);
-            sailRotation = sailRotation.negate();
-        } else {
-            sail.moveTo(0, 0);
-            sail.curveTo(-l * 0.2, -l * 0.1, -l * 0.4, -w * 0.4, -l * 0.7, -w * 0.4);
-        }
-        //
-        AffineTransform xform = g2D.getTransform();
-        g2D.translate(location.getX(), location.getY());
-        g2D.scale(1 / zoom, 1 / zoom);
-        g2D.rotate(ANGLE90.sub(direction).getRadians());
-        g2D.setColor(color);
-        g2D.draw(p);
-        g2D.fill(p);
-        g2D.translate(l * 0.2, 0);
-        g2D.rotate(sailRotation.getRadians());
-        g2D.setColor(sailcolor);
-        g2D.setStroke(new BasicStroke(2));
-        g2D.draw(sail);
-        g2D.setTransform(xform);
-
-        double MetresPerPixel = 1 / zoom;
-        BasicStroke stroke = new BasicStroke((float) (MetresPerPixel));
-        BasicStroke heavystroke = new BasicStroke((float) (MetresPerPixel * 3));
-        g2D.setColor(trackcolor);
-        int count = 0;
-        synchronized (track) {
-            for (Location tp : track) {
-                g2D.setStroke(count % 60 == 0 ? heavystroke : stroke);
-                Shape s = new Line2D.Double(tp.getX(), tp.getY(), tp.getX(), tp.getY());
-                g2D.draw(s);
-                count++;
-            }
-        }
+    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+        canvas.drawboat(getLocation(), directionproperty.getValue(), color.get());
     }
+//        Angle relative = directionproperty.angleDiff(controllersupplier.getValue().windflow.getFlow(location).getAngle());
+//        boolean onStarboard = relative.gt(ANGLE0);
+//        Angle absrelative = relative.abs();
+//        Angle sailRotation = absrelative.lteq(new Angle(45)) ? ANGLE0 : absrelative.sub(new Angle(45)).mult(2.0 / 3);
+//        double l;
+//        double w;
+//        if (zoom > 4) {
+//            l = metrics.getLength() * zoom;
+//            w = metrics.getWidth() * zoom;
+//        } else {
+//            l = 13; // create a visible object
+//            w = 5; // create a visible object
+//        }
+//        GeneralPath p = new GeneralPath();
+//        p.moveTo(-l * 0.5, w * 0.45); //go to transom quarter
+//        p.curveTo(-l * 0.2, w * 0.55, l * 0.2, l * 0.1, l * 0.5, 0);
+//        p.curveTo(l * 0.2, -l * 0.1, -l * 0.2, -w * 0.55, -l * 0.5, -w * 0.45);
+//        p.closePath(); // and the port side
+//        GeneralPath sail = new GeneralPath();
+//        if (onStarboard) {
+//            sail.moveTo(0.0, 0);
+//            sail.curveTo(-l * 0.2, l * 0.1, -l * 0.4, w * 0.4, -l * 0.7, w * 0.4);
+//            sailRotation = sailRotation.negate();
+//        } else {
+//            sail.moveTo(0, 0);
+//            sail.curveTo(-l * 0.2, -l * 0.1, -l * 0.4, -w * 0.4, -l * 0.7, -w * 0.4);
+//        }
+//        //
+//        AffineTransform xform = gc.getTransform();
+//        gc.translate(location.getX(), location.getY());
+//        gc.scale(1 / zoom, 1 / zoom);
+//        gc.rotate(ANGLE90.sub(directionproperty).getRadians());
+//        gc.setColor(color);
+//        gc.draw(p);
+//        gc.fill(p);
+//        gc.translate(l * 0.2, 0);
+//        gc.rotate(sailRotation.getRadians());
+//        gc.setColor(sailcolor);
+//        gc.setStroke(new BasicStroke(2));
+//        gc.draw(sail);
+//        gc.setTransform(xform);
+//
+//        double MetresPerPixel = 1 / zoom;
+//        BasicStroke stroke = new BasicStroke((float) (MetresPerPixel));
+//        BasicStroke heavystroke = new BasicStroke((float) (MetresPerPixel * 3));
+//        gc.setColor(trackcolor);
+//        int count = 0;
+//        synchronized (track) {
+//            for (Location tp : track) {
+//                gc.setStroke(count % 60 == 0 ? heavystroke : stroke);
+//                Shape s = new Line2D.Double(tp.getX(), tp.getY(), tp.getX(), tp.getY());
+//                gc.draw(s);
+//                count++;
+//            }
+//        }
+//    }
 }

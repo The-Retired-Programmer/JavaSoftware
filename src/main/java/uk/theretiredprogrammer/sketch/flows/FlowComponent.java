@@ -43,11 +43,12 @@ public abstract class FlowComponent {
     private int zlevel;
 
     public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
-        SailingArea scenario = controllersupplier.get().sailingarea;
+        SailingArea sailingarea = controllersupplier.get().sailingarea;
+        Area sarea = sailingarea.getArea();
         name = StringParser.parse(paramsobj, "name").orElse("");
-        Location bottomleft = Location.parse(paramsobj, "location").orElse(new Location(scenario.west, scenario.south));
-        double width = DoubleParser.parse(paramsobj, "width").orElse(scenario.east - scenario.west);
-        double height = DoubleParser.parse(paramsobj, "height").orElse(scenario.north - scenario.south);
+        Location bottomleft = Location.parse(paramsobj, "location").orElse(sarea.getBottomleft());
+        double width = DoubleParser.parse(paramsobj, "width").orElse(sarea.getWidth());
+        double height = DoubleParser.parse(paramsobj, "height").orElse(sarea.getHeight());
         zlevel = IntegerParser.parse(paramsobj, "zlevel").orElse(0);
         area = new Area(bottomleft, width, height);
     }
