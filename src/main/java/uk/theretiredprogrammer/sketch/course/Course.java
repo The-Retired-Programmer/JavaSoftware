@@ -66,9 +66,9 @@ public class Course implements Displayable {
         Leg following = null;
         int i = legvalues.size() - 1;
         while (i >= 0) {
-            Location endmarklocation = marks.get(legvalues.get(i).getMarkname()).location;
+            Location endmarklocation = marks.get(legvalues.get(i).getMarkname()).getLocation();
             following = new Leg(controllersupplier,
-                    i == 0 ? start : marks.get(legvalues.get(i - 1).getMarkname()).location,
+                    i == 0 ? start : marks.get(legvalues.get(i - 1).getMarkname()).getLocation(),
                     endmarklocation, legvalues.get(i).isPortRounding(),
                     following);
             i--;

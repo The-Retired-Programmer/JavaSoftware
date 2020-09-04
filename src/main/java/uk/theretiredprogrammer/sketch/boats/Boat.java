@@ -80,42 +80,51 @@ public abstract class Boat {
     }
 
     //
-    private final PropertyColor color = new PropertyColor();
-    private Color trackcolor;
+    private final PropertyColor colourproperty = new PropertyColor();
+    private final PropertyColor trackcolorproperty = new PropertyColor();
     //
     private final PropertyBoolean upwindsailonbesttackproperty = new PropertyBoolean();
+
     public final boolean getUpwindsailonbesttack() {
         return upwindsailonbesttackproperty.get();
     }
     private final PropertyBoolean upwindtackifheadedproperty = new PropertyBoolean();
+
     public final boolean getUpwindtackifheaded() {
         return upwindtackifheadedproperty.get();
     }
     private final PropertyBoolean upwindbearawayifheadedproperty = new PropertyBoolean();
+
     public final boolean getUpwindbearawayifheaded() {
         return upwindbearawayifheadedproperty.get();
     }
     private final PropertyBoolean upwindluffupifliftedproperty = new PropertyBoolean();
+
     public final boolean getUpwindluffupiflifted() {
         return upwindluffupifliftedproperty.get();
     }
     private final PropertyBoolean reachdownwindproperty = new PropertyBoolean();
+
     public final boolean getReachdownwind() {
         return reachdownwindproperty.get();
     }
     private final PropertyBoolean downwindsailonbestgybeproperty = new PropertyBoolean();
+
     public final boolean getDownwindsailonbestgybe() {
         return downwindsailonbestgybeproperty.get();
     }
     private final PropertyBoolean downwindbearawayifheadedproperty = new PropertyBoolean();
+
     public final boolean getDownwindbearawayifheaded() {
         return downwindbearawayifheadedproperty.get();
     }
     private final PropertyBoolean downwindgybeifliftedproperty = new PropertyBoolean();
+
     public final boolean getDownwindgybeiflifted() {
         return downwindgybeifliftedproperty.get();
     }
     private final PropertyBoolean downwindluffupifliftedproperty = new PropertyBoolean();
+
     public final boolean getDownwindluffupiflifted() {
         return downwindluffupifliftedproperty.get();
     }
@@ -134,8 +143,8 @@ public abstract class Boat {
                 .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
         directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(ANGLE0));
         setLocation(Location.parse(paramsobj, "location").orElse(new Location(0, 0)));
-        color.set(ColorParser.parse(paramsobj, "colour").orElse(Color.BLACK));
-        trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(Color.BLACK);
+        colourproperty.set(ColorParser.parse(paramsobj, "colour").orElse(Color.BLACK));
+        trackcolorproperty.set(ColorParser.parse(paramsobj, "trackcolour").orElse(Color.BLACK));
         upwindsailonbesttackproperty.set(BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(false));
         upwindtackifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(false));
         upwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(false));
@@ -154,8 +163,8 @@ public abstract class Boat {
     public void change(JsonObject paramsobj) throws IOException {
         directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(directionproperty.getValue()));
         setLocation(Location.parse(paramsobj, "location").orElse(locationproperty.getValue()));
-        color.set(ColorParser.parse(paramsobj, "colour").orElse(color.get()));
-        trackcolor = ColorParser.parse(paramsobj, "trackcolour").orElse(trackcolor);
+        colourproperty.set(ColorParser.parse(paramsobj, "colour").orElse(colourproperty.get()));
+        trackcolorproperty.set(ColorParser.parse(paramsobj, "trackcolour").orElse(trackcolorproperty.get()));
         upwindsailonbesttackproperty.set(BooleanParser.parse(paramsobj, "upwindsailonbesttack").orElse(getUpwindsailonbesttack()));
         upwindtackifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindtackifheaded").orElse(getUpwindtackifheaded()));
         upwindbearawayifheadedproperty.set(BooleanParser.parse(paramsobj, "upwindbearawayifheaded").orElse(getUpwindbearawayifheaded()));
@@ -174,8 +183,8 @@ public abstract class Boat {
         map.put("name", name);
         map.put("heading", directionproperty);
         map.put("location", locationproperty);
-        map.put("colour", color);
-        map.put("trackcolour", trackcolor);
+        map.put("colour", colourproperty);
+        map.put("trackcolour", trackcolorproperty);
         map.put("upwindsailonbesttack", upwindsailonbesttackproperty);
         map.put("upwindtackifheaded", upwindtackifheadedproperty);
         map.put("upwindbearawayifheaded", upwindbearawayifheadedproperty);
@@ -296,7 +305,7 @@ public abstract class Boat {
     }
 
     public void draw(DisplaySurface canvas, double zoom) throws IOException {
-        canvas.drawboat(getLocation(), directionproperty.getValue(), color.get());
+        canvas.drawboat(getLocation(), directionproperty.getValue(), colourproperty.get());
     }
 //        Angle relative = directionproperty.angleDiff(controllersupplier.getValue().windflow.getFlow(location).getAngle());
 //        boolean onStarboard = relative.gt(ANGLE0);
@@ -330,12 +339,12 @@ public abstract class Boat {
 //        gc.translate(location.getX(), location.getY());
 //        gc.scale(1 / zoom, 1 / zoom);
 //        gc.rotate(ANGLE90.sub(directionproperty).getRadians());
-//        gc.setColor(color);
+//        gc.set(color);
 //        gc.draw(p);
 //        gc.fill(p);
 //        gc.translate(l * 0.2, 0);
 //        gc.rotate(sailRotation.getRadians());
-//        gc.setColor(sailcolor);
+//        gc.set(sailcolor);
 //        gc.setStroke(new BasicStroke(2));
 //        gc.draw(sail);
 //        gc.setTransform(xform);
@@ -343,7 +352,7 @@ public abstract class Boat {
 //        double MetresPerPixel = 1 / zoom;
 //        BasicStroke stroke = new BasicStroke((float) (MetresPerPixel));
 //        BasicStroke heavystroke = new BasicStroke((float) (MetresPerPixel * 3));
-//        gc.setColor(trackcolor);
+//        gc.set(trackcolor);
 //        int count = 0;
 //        synchronized (track) {
 //            for (Location tp : track) {
