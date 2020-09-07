@@ -15,11 +15,42 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import java.io.IOException;
+import java.util.Optional;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Area {
+    
+    public static Optional<Area> parse(JsonObject jobj, String key) throws IOException {
+        if (jobj == null) {
+            return Optional.empty();
+        }
+        JsonValue value = jobj.get(key);
+        if (value == null) {
+            return Optional.empty();
+        }
+        try {
+            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
+                JsonArray values = (JsonArray) value;
+                if (values.size() == 4) {
+                    return Optional.of(new Area(
+                            values.getJsonNumber(0).doubleValue(),
+                            values.getJsonNumber(1).doubleValue(),
+                            values.getJsonNumber(2).doubleValue(),
+                            values.getJsonNumber(3).doubleValue()
+                    ));
+                }
+            }
+        } catch (ArithmeticException ex) {
+        }
+        throw new IOException("Malformed Definition file - List of 4 numbers expected with " + key);
+    }
     
     private final Location bottomleft;
     private final double width;
@@ -29,6 +60,10 @@ public class Area {
         this.bottomleft = bottomleft;
         this.width = width;
         this.height = height;
+    }
+    
+    public Area(double left, double bottom, double width, double height){
+        this(new Location(left, bottom), width, height);
     }
     
     public Location getBottomleft(){

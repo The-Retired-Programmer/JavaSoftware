@@ -16,12 +16,8 @@
 package uk.theretiredprogrammer.sketch.core;
 
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.util.converter.NumberStringConverter;
 
 /**
  *

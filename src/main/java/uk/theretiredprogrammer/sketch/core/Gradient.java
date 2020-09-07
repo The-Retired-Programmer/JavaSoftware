@@ -17,6 +17,9 @@ package uk.theretiredprogrammer.sketch.core;
 
 import java.io.IOException;
 import java.util.Optional;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.ObservableList;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -46,22 +49,22 @@ public class Gradient {
             if (value.getValueType() == JsonValue.ValueType.ARRAY) {
                 JsonArray values = (JsonArray) value;
                 int count = -1;
-                double[] enteredspeeds = new double[values.size() - 1];
+                ObservableList<SimpleDoubleProperty> enteredspeeds = new SimpleListProperty<>();
                 for (JsonValue val : values) {
                     switch (val.getValueType()) {
-                        case STRING:
+                        case STRING -> {
                             if (count >= 0) {
                                 throw new IOException("Illegal parameter in gradient definition");
                             }
                             newtype = ((JsonString) val).getString();
-                            break;
-                        case NUMBER:
+                        }
+                        case NUMBER -> {
                             if (count < 0) {
                                 throw new IOException("Illegal parameter in gradient definition");
                             }
-                            enteredspeeds[count] = ((JsonNumber) val).intValueExact();
-                            break;
-                        default:
+                            enteredspeeds.add(new SimpleDoubleProperty(((JsonNumber) val).doubleValue()));
+                        }
+                        default ->
                             throw new IOException("Illegal parameter in gradient definition");
                     }
                     count++;
@@ -74,16 +77,30 @@ public class Gradient {
     }
 
     private final String type;
-    private final double[] speeds;
+    private final ObservableList<SimpleDoubleProperty> speeds;
 
     public Gradient() {
         this.type = "north";
-        this.speeds = new double[]{};
+        this.speeds = new SimpleListProperty<>();
     }
 
-    public Gradient(String type, double... speeds) {
+    public Gradient(String type, ObservableList<SimpleDoubleProperty> speeds) {
         this.type = type;
         this.speeds = speeds;
+    }
+
+    public ObservableList<SimpleDoubleProperty> getSpeeds() {
+        return speeds;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public ObservableList<String> getTypes() {
+        ObservableList<String> types = new SimpleListProperty<>();
+        types.addAll("north", "south", "east", "west");
+        return types;
     }
 
     public SpeedPolar getFlow(Location pos) {
@@ -92,15 +109,19 @@ public class Gradient {
 
     public Angle getMeanFlowDirection() throws IOException {
         switch (type) {
-            case "north":
+            case "north" -> {
                 return ANGLE0;
-            case "south":
+            }
+            case "south" -> {
                 return ANGLE180;
-            case "east":
+            }
+            case "east" -> {
                 return ANGLE90;
-            case "west":
+            }
+            case "west" -> {
                 return ANGLE90MINUS;
-            default:
+            }
+            default ->
                 throw new IOException("Illegal gradient direction");
         }
     }

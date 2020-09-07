@@ -18,6 +18,9 @@ package uk.theretiredprogrammer.sketch.core;
 import java.util.function.UnaryOperator;
 import javafx.scene.Node;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.text.Font;
+import static javafx.scene.text.FontWeight.NORMAL;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -26,14 +29,14 @@ import javafx.scene.control.TextFormatter;
 public abstract class PropertyItem {
 
     public abstract Node createPropertySheetItem();
-    
+
     UnaryOperator<TextFormatter.Change> doubleFilter = change -> {
         if (change.getControlNewText().matches("-?([0-9]*)(\\.[0-9]*)?")) {
             return change;
         }
         return null;
     };
-    
+
     UnaryOperator<TextFormatter.Change> integerFilter = change -> {
         if (change.getControlNewText().matches("-?([0-9]*)?")) {
             return change;
@@ -41,4 +44,9 @@ public abstract class PropertyItem {
         return null;
     };
 
+    Text createTextFor(String input) {
+        Text text = new Text(input);
+        text.setFont(Font.font("System", NORMAL, 28));
+        return text;
+    }
 }

@@ -52,6 +52,7 @@ public class PropertyInteger extends PropertyItem {
     @Override
     public Node createPropertySheetItem() {
         TextField intfield = new TextField(Integer.toString(integerproperty.get()));
+        intfield.setPrefColumnCount(5);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
         intfield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(integerproperty);

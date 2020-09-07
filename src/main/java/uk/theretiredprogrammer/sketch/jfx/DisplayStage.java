@@ -25,6 +25,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -38,22 +39,24 @@ public class DisplayStage {
     private final Controller controller;
     private final DisplaySurface canvas;
     private final Text timetext;
+    private final TextFlow displaylog;
 
     public DisplayStage(Path path) {
-        this.controller = new Controller(path, (i) -> updatetime(i), (s) -> writedecisionlog(s), () -> updatedisplay());;
+        this.controller = new Controller(path, (i) -> updatetime(i), (s) -> writedecisionlog(s), () -> updatedisplay());
         Group group = new Group();
-        //group.minHeight(controller.getHeight());
-        //group.minWidth(controller.getWidth());
         canvas = new DisplaySurface(controller.sailingarea.getArea(), controller.displayparameters.getZoom());
         updatedisplay(canvas);
         group.getChildren().add(canvas);
         ScrollPane scrollpane = new ScrollPane(group);
         PropertiesPane propertiespane = new PropertiesPane();
         propertiespane.updateAllproperties(controller);
+        displaylog = new TextFlow();
+        ScrollPane scrolllogpane = new ScrollPane(displaylog);
         SplitPane splitpane = new SplitPane();
         splitpane.getItems().addAll(
                 scrollpane,
-                propertiespane
+                propertiespane,
+                scrolllogpane
         );
         //
         Button startbutton = new Button("Start");
@@ -73,8 +76,22 @@ public class DisplayStage {
         });
         timetext = new Text("      ");
         //
+        Button decisionlogbutton = new Button("Show Decision Log");
+        decisionlogbutton.setDisable(false);
+        decisionlogbutton.setOnAction(actionEvent -> {
+            displaylog.getChildren().clear();
+            controller.displaylog();
+        });
+        Button filtereddecisionlogbutton = new Button("Show Filtered Decision Log");
+        filtereddecisionlogbutton.setDisable(false);
+        filtereddecisionlogbutton.setOnAction(actionEvent -> {
+            displaylog.getChildren().clear();
+            controller.displayfilteredlog("SELECTED");
+        });
+        //
         ToolBar toolbar = new ToolBar();
-        toolbar.getItems().addAll(startbutton, pausebutton, resetbutton, timetext);
+        toolbar.getItems().addAll(startbutton, pausebutton, resetbutton, timetext,
+                decisionlogbutton, filtereddecisionlogbutton);
         //
         VBox vbox = new VBox();
         vbox.getChildren().addAll(toolbar, splitpane);
@@ -112,6 +129,6 @@ public class DisplayStage {
     }
 
     private void writedecisionlog(String s) {
-        // platform.runLater( ... );
+        displaylog.getChildren().add(new Text(s+"\n"));
     }
 }

@@ -17,10 +17,12 @@ package uk.theretiredprogrammer.sketch.flows;
 
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Gradient;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyGradient;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,28 +34,35 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class GradientFlowComponent extends FlowComponent{
     
-    private Gradient gradient;
+    @Override
+    public final String getFlowType() {
+        return "Gradient Flow";
+    }
+    
+    private final PropertyGradient gradientproperty = new PropertyGradient();
 
-    /**
-     * Constructor
-     *
-     * @param name the name
-     * @param scenario the field of play
-     */
     public GradientFlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
         super(controllersupplier, paramsobj);
-        gradient = Gradient.parse(paramsobj, "gradient").orElse(new Gradient());
+        gradientproperty.set(Gradient.parse(paramsobj, "gradient").orElse(new Gradient()));
     }
     
     @Override
     public void change(JsonObject params) throws IOException {
         super.change(params);
-        gradient = Gradient.parse(params, "gradient").orElse(gradient);
+        gradientproperty.set(Gradient.parse(params, "gradient").orElse(gradientproperty.get()));
+    }
+    
+    @Override
+    public LinkedHashMap<String,Object> properties() {
+        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+        super.properties(map);
+        map.put("gradient", gradientproperty);
+        return map;
     }
 
     @Override
     public SpeedPolar getFlow(Location pos) throws IOException {
         testLocationWithinArea(pos);
-        return gradient.getFlow(pos);
+        return gradientproperty.get().getFlow(pos);
     }
 }

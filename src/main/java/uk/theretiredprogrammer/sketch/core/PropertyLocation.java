@@ -20,7 +20,9 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
 
 /**
@@ -76,16 +78,17 @@ public class PropertyLocation extends PropertyItem {
 
     @Override
     public Node createPropertySheetItem() {
-        HBox content = new HBox();
         TextField xfield = new TextField(Double.toString(xproperty.get()));
+        xfield.setPrefColumnCount(7);
         TextFormatter<Number> xtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
         xfield.setTextFormatter(xtextformatter);
         xtextformatter.valueProperty().bindBidirectional(xproperty);
         TextField yfield = new TextField(Double.toString(yproperty.get()));
+        yfield.setPrefColumnCount(7);
         TextFormatter<Number> ytextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
         yfield.setTextFormatter(ytextformatter);
         ytextformatter.valueProperty().bindBidirectional(yproperty);
-        content.getChildren().addAll(new Text("["), xfield, new Text(","), yfield, new Text("]"));
+        TextFlow content = new TextFlow(createTextFor("["), xfield, createTextFor(","), yfield, createTextFor("]"));
         return content;
     }
 }

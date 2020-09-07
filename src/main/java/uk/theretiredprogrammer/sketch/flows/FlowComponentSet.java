@@ -17,10 +17,10 @@ package uk.theretiredprogrammer.sketch.flows;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
@@ -28,9 +28,13 @@ import uk.theretiredprogrammer.sketch.core.SpeedPolar;
  *
  * @author richard
  */
-public class FlowComponentSet  {
+public class FlowComponentSet {
     
     private final List<FlowComponent> flows = new ArrayList<>();
+    
+    public List<FlowComponent> getComponents() {
+        return flows;
+    }
     
     public void change(JsonObject params, String name) throws IOException {
         for (FlowComponent flow : flows) {
@@ -41,9 +45,9 @@ public class FlowComponentSet  {
     }
     
     public void change(JsonObject params) throws IOException {
-        change(params,0);
+        change(params, 0);
     }
-        
+    
     public void change(JsonObject params, int zlevel) throws IOException {        
         for (FlowComponent flow : flows) {
             if (flow.getZlevel() == zlevel) {
@@ -52,12 +56,16 @@ public class FlowComponentSet  {
         }
     }
     
-    public void add(FlowComponent flow){
+    void properties(LinkedHashMap<String, Object> map) {
+        flows.forEach((fc -> fc.properties(map)));
+    }
+    
+    public void add(FlowComponent flow) {
         flows.add(flow);
     }
     
     public SpeedPolar getFlow(Location pos) throws IOException {
-        int zlevel  = -1;
+        int zlevel = -1;
         FlowComponent flowtouse = null;
         for (FlowComponent flow : flows) {
             if (flow.getArea().isWithinArea(pos)) {
@@ -68,7 +76,7 @@ public class FlowComponentSet  {
             }
         }
         if (flowtouse == null) {
-            throw new IOException("Undefined flow component as location "+pos);
+            throw new IOException("Undefined flow component as location " + pos);
         }
         return flowtouse.getFlow(pos);
     }

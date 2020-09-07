@@ -52,6 +52,7 @@ public class PropertyAngle extends PropertyItem {
     @Override
     public Node createPropertySheetItem() {
         TextField doublefield = new TextField(Double.toString(angleproperty.get()));
+        doublefield.setPrefColumnCount(7);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
         doublefield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(angleproperty);

@@ -47,9 +47,11 @@ public class WindFlow extends Flow {
         JsonObject windshiftparams = parsedjson.getJsonObject("WIND-SHIFTS");
         return new WindFlow(controllersupplier, windshiftparams, flowcomponents);
     }
+    private final FlowComponentSet flowcomponents;
     
     private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
         super(controllersupplier, params, flowcomponents);
+        this.flowcomponents = flowcomponents;
     }
     
     public Map<String, Object> properties() {
@@ -57,5 +59,4 @@ public class WindFlow extends Flow {
         super.properties(map);
         return map;
     }
-    
 }

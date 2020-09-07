@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
+import java.io.IOException;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -22,6 +23,7 @@ import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
  *
@@ -136,6 +138,47 @@ public class DisplaySurface extends Canvas {
 //                count++;
 //            }
 //        }
+    
+    
+    public void displayWindGraphic(Location location, SpeedPolar flow, Color colour) {
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.setStroke(colour);
+        DistancePolar directionstroke = new DistancePolar(10/zoom, flow.getAngle());
+        Location pt = directionstroke.polar2Location(location);
+        gc.strokeLine(transformX(location.getX()),transformY(location.getY()),
+                transformX(pt.getX()),transformY(pt.getY()));
+        
+//        GeneralPath p = new GeneralPath();
+//        p.moveTo(0, 15);
+//        p.lineTo(0, -15);
+//        p.moveTo(4, 7);
+//        p.lineTo(0, 15);
+//        p.lineTo(-4, 7);
+//        //
+//        AffineTransform xform = gc.getTransform();
+//        gc.translate(x, y);
+//        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
+//        SpeedPolar flow = getFlow(new Location(x, y));
+//        gc.rotate(flow.getAngle().getRadians());
+//        gc.setColor(showflowcolor);
+//        gc.setStroke(new BasicStroke(1));
+//        gc.draw(p);
+//        //
+//        gc.setFont(new Font("Sans Serif", Font.PLAIN, 10));
+//        NumberFormat nf = NumberFormat.getInstance();
+//        nf.setMaximumFractionDigits(1);
+//        nf.setMinimumFractionDigits(1);
+//        String windspeedText = nf.format(flow.getSpeed());
+//        if (flow.getAngle().isPositive()) {
+//            gc.translate(-2, 4);
+//            gc.rotate(-Math.PI / 2);
+//        } else {
+//            gc.translate(+2, -15);
+//            gc.rotate(Math.PI / 2);
+//        }
+//        gc.drawString(windspeedText, 0, 0);
+//        gc.setTransform(xform);
+    }
 
     private double transformX(double x) {
         return scale(x - offsetx);

@@ -52,6 +52,7 @@ public class PropertyDouble extends PropertyItem {
     @Override
     public Node createPropertySheetItem() {
         TextField doublefield = new TextField(Double.toString(doubleproperty.get()));
+        doublefield.setPrefColumnCount(10);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
         doublefield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(doubleproperty);

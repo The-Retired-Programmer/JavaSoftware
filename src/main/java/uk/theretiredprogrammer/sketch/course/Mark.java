@@ -73,7 +73,7 @@ public class Mark {
     public Map<String, Object> properties() {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("name", name);
-        map.put("locataion", locationproperty);
+        map.put("location", locationproperty);
         map.put("colour", colourproperty);
         map.put("windwardlaylines", windwardlaylinesproperty);
         map.put("downwindlaylines", downwindlaylinesproperty);

@@ -105,10 +105,10 @@ public class Controller {
         canvas.clear();
         try {
             sailingarea.draw(canvas, displayparameters.getZoom());
-//            windflow.draw(group, displayparameters.zoom);
-//            if (waterflow != null) {
-//                waterflow.draw(group, displayparameters.zoom);
-//            }
+            windflow.draw(canvas, displayparameters.getZoom());
+            if (waterflow != null) {
+                waterflow.draw(canvas, displayparameters.getZoom());
+            }
             course.draw(canvas, displayparameters.getZoom());
             boats.draw(canvas, displayparameters.getZoom());
         } catch (IOException ex) {

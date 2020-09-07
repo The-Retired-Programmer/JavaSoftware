@@ -43,10 +43,17 @@ public class PropertiesPane extends Accordion {
                 new PropertiesSection("Sailing Area", controller.sailingarea.properties()),
                 new PropertiesSection("Wind Flow", controller.windflow.properties())
         );
+        controller.windflow.getFlowComponentSet().getComponents().forEach(component -> {
+            int level = component.getZlevel();
+            this.getPanes().add(new PropertiesSection("Wind Component - " + level, component.properties()));
+        });
         WaterFlow waterflow = controller.waterflow;
         if (waterflow != null) {
             this.getPanes().add(
                     new PropertiesSection("Water Flow", waterflow.properties())
+            );
+            controller.waterflow.getFlowComponentSet().getComponents().forEach(component -> 
+                this.getPanes().add(new PropertiesSection("Water Component", component.properties()))
             );
         }
         this.getPanes().add(
