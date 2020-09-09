@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
+import jakarta.json.Json;
 import java.io.IOException;
 import java.util.function.Supplier;
-import javax.json.Json;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.strategy.Decision;

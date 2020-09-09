@@ -15,11 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.util.Optional;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 
 /**
@@ -113,5 +114,9 @@ public class SpeedPolar extends Polar<SpeedPolar> {
     
     public static Angle meanAngle(SpeedPolar[][] array) {
         return Polar.meanAngle(array);
+    }
+    
+    public JsonArray toJson() {
+        return Json.createArrayBuilder().add(speed).add(getAngle().getDegrees()).build();
     }
 }

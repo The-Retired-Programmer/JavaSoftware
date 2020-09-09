@@ -15,13 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import java.util.function.Supplier;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import uk.theretiredprogrammer.sketch.boats.Boat;
-import static javax.json.JsonValue.FALSE;
-import static javax.json.JsonValue.TRUE;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

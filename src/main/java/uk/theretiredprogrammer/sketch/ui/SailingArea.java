@@ -15,11 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javafx.scene.paint.Color;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.Location;
@@ -35,8 +35,8 @@ public class SailingArea implements Displayable {
 
     // dimensions of the visible "playing surface" in metres
     // (default is a 1km square with 0,0 in centre).
-    public static final double EAST_DEFAULT = -500;
-    public static final double WEST_DEFAULT = 500;
+    public static final double EAST_DEFAULT = 500;
+    public static final double WEST_DEFAULT = -500;
     public static final double NORTH_DEFAULT = 500;
     public static final double SOUTH_DEFAULT = -500;
 

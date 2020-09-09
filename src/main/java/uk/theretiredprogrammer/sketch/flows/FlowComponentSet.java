@@ -15,11 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;

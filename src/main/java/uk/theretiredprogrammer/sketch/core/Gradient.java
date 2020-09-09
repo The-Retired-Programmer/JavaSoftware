@@ -15,16 +15,18 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
+import static jakarta.json.JsonValue.ValueType.NUMBER;
+import static jakarta.json.JsonValue.ValueType.STRING;
 import java.io.IOException;
 import java.util.Optional;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE180;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;

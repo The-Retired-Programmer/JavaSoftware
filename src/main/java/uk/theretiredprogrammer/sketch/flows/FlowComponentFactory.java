@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.function.Supplier;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,16 +32,19 @@ public class FlowComponentFactory {
             return null;
         }
         switch (paramobj.getString("type", "MISSING")){
-            case "testflow":
+            case "testflow" -> {
                 return new TestFlowComponent(controllersupplier, paramobj);
-            case "complexflow":
+            }
+            case "complexflow" -> {
                 return new ComplexFlowComponent(controllersupplier, paramobj);
-            case "constantflow":
+            }
+            case "constantflow" -> {
                 return new ConstantFlowComponent(controllersupplier, paramobj);
-            case "gradientflow":
+            }
+            case "gradientflow" -> {
                 return new GradientFlowComponent(controllersupplier, paramobj);
-            default:
-                throw new IOException("Missing or Unknown type parameter in flow definition");
+            }
+            default -> throw new IOException("Missing or Unknown type parameter in flow definition");
         }
     }
 }

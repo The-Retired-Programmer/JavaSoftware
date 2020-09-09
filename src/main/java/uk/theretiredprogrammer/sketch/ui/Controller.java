@@ -15,17 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
+import jakarta.json.JsonException;
+import jakarta.json.JsonObject;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
@@ -33,6 +29,7 @@ import uk.theretiredprogrammer.sketch.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
+import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
 /**
  *
@@ -56,27 +53,16 @@ public class Controller {
     private final Consumer<Integer> displayupdaterequest;
     private Consumer<String> outwriter;
 
-    private void createController(InputStream is) throws JsonException, IOException {
-        simulationtime = 0;
-        JsonObject parsedjson;
-        try ( JsonReader rdr = Json.createReader(is)) {
-            parsedjson = rdr.readObject();
-        }
-        sailingarea = new SailingArea(parsedjson);
-        displayparameters = new DisplayParameters(parsedjson);
-        waterflow = WaterFlow.create(() -> this, parsedjson);
-        windflow = WindFlow.create(() -> this, parsedjson);
-        course = new Course(() -> this, parsedjson);
-        boats = new Boats(() -> this, parsedjson);
-        boatstrategies = new BoatStrategies(this);
-    }
-
     public Controller(Path path, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter, Runnable updatedisplay) {
         this.displayupdaterequest = displayupdaterequest;
         this.outwriter = outwriter;
         this.updatedisplay = updatedisplay;
         try {
-            createController(Files.newInputStream(path));
+            ConfigFileController configfilecontroller = new ConfigFileController(path);
+            if (configfilecontroller.needsUpgrade()) {
+                configfilecontroller.upgrade();
+            }
+            createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
             reportfailure(ex);
         }
@@ -87,20 +73,35 @@ public class Controller {
         this.outwriter = outwriter;
         this.updatedisplay = updatedisplay;
         try {
-            createController(this.getClass().getResourceAsStream(resourcename));
+            ConfigFileController configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
+            if (configfilecontroller.needsUpgrade()) {
+                configfilecontroller.upgrade();
+            }
+            createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
             reportfailure(ex);
         }
+    }
+    
+     private void createObjectProperties(JsonObject parsedjson) throws IOException {
+        simulationtime = 0;
+        sailingarea = new SailingArea(parsedjson);
+        displayparameters = new DisplayParameters(parsedjson);
+        waterflow = WaterFlow.create(() -> this, parsedjson);
+        windflow = WindFlow.create(() -> this, parsedjson);
+        course = new Course(() -> this, parsedjson);
+        boats = new Boats(() -> this, parsedjson);
+        boatstrategies = new BoatStrategies(this);
     }
 
     public double getWidth() {
         return sailingarea.getWidth(displayparameters.getZoom());
     }
-    
+
     public double getHeight() {
         return sailingarea.getHeight(displayparameters.getZoom());
-    } 
-    
+    }
+
     public void paint(DisplaySurface canvas) {
         canvas.clear();
         try {
@@ -178,7 +179,7 @@ public class Controller {
                 }
                 displayupdaterequest.accept(simulationtime);
                 updatedisplay.run();
-                
+
             } catch (IOException ex) {
                 reportfailure(ex);
             }

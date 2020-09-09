@@ -15,11 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.util.Optional;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 
 /**
  * A location is a relative position from a logical origin
@@ -66,9 +66,6 @@ public class Location {
      */
     private final double y;
 
-    /**
-     * Constructors.
-     */
 
     public Location(double x, double y) {
         this.x = x;

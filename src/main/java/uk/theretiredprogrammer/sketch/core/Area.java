@@ -15,18 +15,20 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.util.Optional;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonValue;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Area {
-    
+
     public static Optional<Area> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
             return Optional.empty();
@@ -51,35 +53,70 @@ public class Area {
         }
         throw new IOException("Malformed Definition file - List of 4 numbers expected with " + key);
     }
-    
+
     private final Location bottomleft;
     private final double width;
     private final double height;
-    
-    public Area(Location bottomleft, double width, double height){
+
+    public Area(Location bottomleft, double width, double height) {
         this.bottomleft = bottomleft;
         this.width = width;
         this.height = height;
     }
-    
-    public Area(double left, double bottom, double width, double height){
+
+    public Area(double left, double bottom, double width, double height) {
         this(new Location(left, bottom), width, height);
     }
-    
-    public Location getBottomleft(){
+
+    public Location getBottomleft() {
         return bottomleft;
     }
-    
+
     public double getWidth() {
         return width;
     }
-    
-    public double getHeight(){
+
+    public double getHeight() {
         return height;
     }
-    
+
     public boolean isWithinArea(Location location) {
         return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width
                 && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height;
+    }
+
+    public JsonArray toJson() {
+        return Json.createArrayBuilder().add(bottomleft.getX())
+                .add(bottomleft.getY()).add(width).add(height).build();
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + bottomleft.hashCode();
+        hash = 67 * hash + (int) (Double.doubleToLongBits(width) ^ (Double.doubleToLongBits(width) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(height) ^ (Double.doubleToLongBits(height) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Area other = (Area) obj;
+        if (!this.bottomleft.equals(other.bottomleft)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.width) != Double.doubleToLongBits(other.width)) {
+            return false;
+        }
+        return Double.doubleToLongBits(this.height) == Double.doubleToLongBits(other.height);
     }
 }

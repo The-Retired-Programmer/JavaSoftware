@@ -15,12 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.course;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import javafx.scene.paint.Color;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.BooleanParser;
 import uk.theretiredprogrammer.sketch.core.ColorParser;
 import uk.theretiredprogrammer.sketch.core.Location;

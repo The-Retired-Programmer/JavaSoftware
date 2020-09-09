@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonValue;
 import java.io.IOException;
-import javax.json.JsonArray;
-import javax.json.JsonValue;
 
 /**
  * A leg is a mark name and passing (port / starboard)

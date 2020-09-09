@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
+import jakarta.json.JsonObject;
 import uk.theretiredprogrammer.sketch.strategy.Decision;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import javafx.scene.paint.Color;
-import javax.json.JsonObject;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.core.BooleanParser;

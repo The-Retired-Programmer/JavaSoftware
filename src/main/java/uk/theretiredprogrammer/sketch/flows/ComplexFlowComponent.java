@@ -15,10 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
@@ -41,10 +41,10 @@ public class ComplexFlowComponent extends FlowComponent {
         return "Complex Flow";
     }
 
-    private PropertySpeedPolar nwflowproperty = new PropertySpeedPolar();
-    private PropertySpeedPolar neflowproperty = new PropertySpeedPolar();
-    private PropertySpeedPolar seflowproperty = new PropertySpeedPolar();
-    private PropertySpeedPolar swflowproperty = new PropertySpeedPolar();
+    private final PropertySpeedPolar nwflowproperty = new PropertySpeedPolar();
+    private final PropertySpeedPolar neflowproperty = new PropertySpeedPolar();
+    private final PropertySpeedPolar seflowproperty = new PropertySpeedPolar();
+    private final PropertySpeedPolar swflowproperty = new PropertySpeedPolar();
 
     public ComplexFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
         super(controllersupplier, paramsobj);

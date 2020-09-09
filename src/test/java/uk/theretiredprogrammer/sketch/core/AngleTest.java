@@ -15,8 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import javax.json.Json;
-import javax.json.JsonObject;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

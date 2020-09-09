@@ -15,11 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.util.Optional;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 /**
  *

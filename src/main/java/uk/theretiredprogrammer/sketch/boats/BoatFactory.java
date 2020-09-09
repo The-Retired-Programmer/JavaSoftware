@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.function.Supplier;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -31,10 +31,10 @@ public class BoatFactory {
             return null;
         }
         switch (paramobj.getString("type", "MISSING")){
-            case "laser2":
+            case "laser2" -> {
                 return new Laser2(controllersupplier, paramobj);
-            default:
-                throw new IOException("Missing or Unknown class parameter in boat definition");
+            }
+            default -> throw new IOException("Missing or Unknown class parameter in boat definition");
         }
     }
 

@@ -15,14 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonString;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Optional;
 import javafx.scene.paint.Color;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
 
 /**
  *

@@ -15,10 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
+import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
