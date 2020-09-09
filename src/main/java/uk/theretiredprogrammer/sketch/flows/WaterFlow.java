@@ -31,7 +31,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
 public class WaterFlow extends Flow {
     
     public static WaterFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray waterarray = parsedjson.getJsonArray("WATER");
+        JsonArray waterarray = parsedjson.getJsonArray("water");
         if (waterarray != null) {
             FlowComponentSet flowcomponents = new FlowComponentSet();
             for (JsonValue waterv : waterarray) {
@@ -39,7 +39,7 @@ public class WaterFlow extends Flow {
                     JsonObject water = (JsonObject) waterv;
                     flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, water));
                 } else {
-                    throw new IOException("Malformed Definition File - WATER array contains items other that water objects");
+                    throw new IOException("Malformed Definition File - <water> array contains items other that <water> objects");
                 }
             }
             return new WaterFlow(controllersupplier, null, flowcomponents);

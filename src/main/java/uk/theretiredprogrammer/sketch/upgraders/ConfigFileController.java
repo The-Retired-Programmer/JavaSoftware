@@ -30,7 +30,7 @@ import java.nio.file.Path;
  */
 public class ConfigFileController {
 
-    private final static int CURRENTVERSION = 0;
+    private final static int CURRENTVERSION = 1;
     private JsonObject parsedjson;
     int fromversion = 0;
     private Path path;

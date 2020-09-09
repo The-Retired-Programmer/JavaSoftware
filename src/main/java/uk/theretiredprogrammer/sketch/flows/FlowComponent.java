@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
+import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
@@ -29,7 +30,6 @@ import uk.theretiredprogrammer.sketch.core.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.ui.Controller;
-import uk.theretiredprogrammer.sketch.ui.SailingArea;
 
 /**
  * Abstract Class describing a Flow Model. A Flow Model represents variable
@@ -38,20 +38,18 @@ import uk.theretiredprogrammer.sketch.ui.SailingArea;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class FlowComponent {
+    
+    static final SpeedPolar ZEROFLOW = new SpeedPolar(0.0, ANGLE0); 
 
     private final String name;
     private final PropertyArea areaproperty = new PropertyArea();
     private final PropertyInteger zlevelproperty = new PropertyInteger();
 
     public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
-        SailingArea sailingarea = controllersupplier.get().sailingarea;
-        Area sarea = sailingarea.getArea();
+        Area  darea = controllersupplier.get().displayparameters.getDisplayarea();
         name = StringParser.parse(paramsobj, "name").orElse("");
-        Location bottomleft = Location.parse(paramsobj, "location").orElse(sarea.getBottomleft());
-        double width = DoubleParser.parse(paramsobj, "width").orElse(sarea.getWidth());
-        double height = DoubleParser.parse(paramsobj, "height").orElse(sarea.getHeight());
         zlevelproperty.set(IntegerParser.parse(paramsobj, "zlevel").orElse(0));
-        areaproperty.set(new Area(bottomleft, width, height));
+        areaproperty.set(Area.parse(paramsobj, "area").orElse(darea));
     }
 
     public void change(JsonObject params) throws IOException {

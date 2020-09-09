@@ -64,7 +64,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
     public void layline5() throws IOException {
         System.out.println("layline 5");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setwindfrom(45),
+                () -> setwindflow(4, 45),
                 () -> setboatlocationvalue("location", 50, 13));
         Angle target = new Angle(-135);
         this.assertSailing(decision, target, target.add(DELTAANGLE));
@@ -74,7 +74,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
     public void layline6() throws IOException {
         System.out.println("layline 6");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setwindfrom(45),
+                () -> setwindflow(4, 45),
                 () -> setboatdirectionvalue("heading", -135),
                 () -> setboatlocationvalue("location", 48, 12));
         assertTURN(decision, 135, false);

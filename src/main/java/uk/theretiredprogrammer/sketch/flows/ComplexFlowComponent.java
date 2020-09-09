@@ -19,9 +19,6 @@ import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
@@ -48,43 +45,19 @@ public class ComplexFlowComponent extends FlowComponent {
 
     public ComplexFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
         super(controllersupplier, paramsobj);
-        nwflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "northwestspeed").orElse(0.0),
-                Angle.parse(paramsobj, "northwestfrom").orElse(ANGLE0)
-        ));
-        neflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "northeastspeed").orElse(0.0),
-                Angle.parse(paramsobj, "northeastfrom").orElse(ANGLE0)
-        ));
-        seflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "southeastspeed").orElse(0.0),
-                Angle.parse(paramsobj, "southeastfrom").orElse(ANGLE0)
-        ));
-        swflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "southwestspeed").orElse(0.0),
-                Angle.parse(paramsobj, "southwestfrom").orElse(ANGLE0)
-        ));
+        nwflowproperty.set(SpeedPolar.parse(paramsobj, "northwestflow").orElse(ZEROFLOW));
+        neflowproperty.set(SpeedPolar.parse(paramsobj, "northeastflow").orElse(ZEROFLOW));
+        swflowproperty.set(SpeedPolar.parse(paramsobj, "southwestflow").orElse(ZEROFLOW));
+        seflowproperty.set(SpeedPolar.parse(paramsobj, "southeastflow").orElse(ZEROFLOW));
     }
 
     @Override
     public void change(JsonObject paramsobj) throws IOException {
         super.change(paramsobj);
-        nwflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "northwestspeed").orElse(nwflowproperty.getSpeed()),
-                Angle.parse(paramsobj, "northwestfrom").orElse(nwflowproperty.getAngle())
-        ));
-        neflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "northeastspeed").orElse(neflowproperty.getSpeed()),
-                Angle.parse(paramsobj, "northeastfrom").orElse(neflowproperty.getAngle())
-        ));
-        seflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "southeastspeed").orElse(seflowproperty.getSpeed()),
-                Angle.parse(paramsobj, "southeastfrom").orElse(seflowproperty.getAngle())
-        ));
-        swflowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "southwestspeed").orElse(swflowproperty.getSpeed()),
-                Angle.parse(paramsobj, "southwestfrom").orElse(swflowproperty.getAngle())
-        ));
+        nwflowproperty.set(SpeedPolar.parse(paramsobj, "northwestflow").orElse(nwflowproperty.get()));
+        neflowproperty.set(SpeedPolar.parse(paramsobj, "northeastflow").orElse(neflowproperty.get()));
+        swflowproperty.set(SpeedPolar.parse(paramsobj, "southwestflow").orElse(swflowproperty.get()));
+        seflowproperty.set(SpeedPolar.parse(paramsobj, "southeastflow").orElse(seflowproperty.get()));
     }
     
     @Override

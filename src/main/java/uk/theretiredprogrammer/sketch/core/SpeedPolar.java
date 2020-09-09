@@ -44,8 +44,8 @@ public class SpeedPolar extends Polar<SpeedPolar> {
                 JsonArray values = (JsonArray) value;
                 if (values.size() == 2) {
                     return Optional.of(new SpeedPolar(
-                            values.getJsonNumber(1).doubleValue(),
-                            new Angle(values.getJsonNumber(0).doubleValue())
+                            values.getJsonNumber(0).doubleValue(),
+                            new Angle(values.getJsonNumber(1).doubleValue())
                     ));
                 }
             }

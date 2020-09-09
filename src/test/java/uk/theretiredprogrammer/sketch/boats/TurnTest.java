@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.boats;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
 import java.io.IOException;
 import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -97,9 +98,10 @@ public class TurnTest {
         }
     }
 
-    String setwindfrom(String name, int degrees) {
+    String setwindflow(String name, double speed, double degrees) {
         try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
+            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), name);
             controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
@@ -107,9 +109,10 @@ public class TurnTest {
         }
     }
 
-    String setwindfrom(int zlevel, int degrees) {
+    String setwindflow(int zlevel, double speed, double degrees) {
         try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
+            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), zlevel);
             controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
@@ -117,31 +120,7 @@ public class TurnTest {
         }
     }
 
-    String setwindfrom(int degrees) {
-        return setwindfrom(0, degrees);
-    }
-
-    String setwindspeed(String name, double speed) {
-        try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), name);
-            controller.windflow.setFlows();
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
-    }
-
-    String setwindspeed(int zlevel, double speed) {
-        try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("speed", speed).build(), zlevel);
-            controller.windflow.setFlows();
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
-    }
-
-    String setwindspeed(double speed) {
-        return setwindspeed(0, speed);
+    String setwindflow(double speed, double degrees) {
+        return setwindflow(0, speed, degrees);
     }
 }

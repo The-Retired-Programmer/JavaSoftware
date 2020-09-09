@@ -47,7 +47,7 @@ public class BoatTurnTest extends TurnTest {
         System.out.println("tacking radius calculation - 15kt");
         runturntest(45, -45, PORT, 12, new Location(67.05, 67.05), new Location(66.07, 71.10),
                 () -> this.setboatintvalue("heading", 45),
-                () -> this.setwindspeed(15));
+                () -> this.setwindflow(15.0, 0.0));
         testradiusY(2.18);
     }
 
@@ -64,7 +64,7 @@ public class BoatTurnTest extends TurnTest {
         System.out.println("bearaway radius calculation - 15kt");
         runturntest(-45, -135, PORT, 12, new Location(32.95, 67.05), new Location(23.22, 63.60),
                 () -> this.setboatintvalue("heading", -45),
-                () -> this.setwindspeed(15));
+                () -> this.setwindflow(15.0, 0.0));
         testradiusX(4.45);
     }
 
@@ -81,7 +81,7 @@ public class BoatTurnTest extends TurnTest {
         System.out.println("gybing radius calculation - 15kt");
         runturntest(-135, 135, PORT, 12, new Location(14.83, 14.83), new Location(18.17, 2.21),
                 () -> this.setboatintvalue("heading", -135),
-                () -> this.setwindspeed(15));
+                () -> this.setwindflow(15.0, 0.0));
         testradiusY(6.56);
     }
 
@@ -98,7 +98,7 @@ public class BoatTurnTest extends TurnTest {
         System.out.println("luffup radius calculation - 15kt");
         runturntest(135, 45, PORT, 12, new Location(85.17, 14.83), new Location(99.33, 17.96),
                 () -> this.setboatintvalue("heading", 135),
-                () -> this.setwindspeed(15));
+                () -> this.setwindflow(15.0, 0.0));
         testradiusX(7.80);
     }
 

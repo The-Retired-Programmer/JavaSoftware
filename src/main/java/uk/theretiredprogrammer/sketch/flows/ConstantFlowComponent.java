@@ -20,9 +20,6 @@ import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -39,29 +36,23 @@ public class ConstantFlowComponent extends FlowComponent {
     public final String getFlowType() {
         return "Constant Flow";
     }
-    
+
     private final PropertySpeedPolar flowproperty = new PropertySpeedPolar();
 
     public ConstantFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
         super(controllersupplier, paramsobj);
-        flowproperty.set(new SpeedPolar(
-                DoubleParser.parse(paramsobj, "speed").orElse(0.0),
-                Angle.parse(paramsobj, "from").orElse(ANGLE0)
-        ));
+        flowproperty.set(SpeedPolar.parse(paramsobj, "flow").orElse(ZEROFLOW));
     }
 
     @Override
     public void change(JsonObject params) throws IOException {
         super.change(params);
-        flowproperty.set(new SpeedPolar(
-                DoubleParser.parse(params, "speed").orElse(flowproperty.getSpeed()),
-                Angle.parse(params, "from").orElse(flowproperty.getAngle())
-        ));
+        flowproperty.set(SpeedPolar.parse(params, "flow").orElse(flowproperty.get()));
     }
-    
+
     @Override
-    public LinkedHashMap<String,Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+    public LinkedHashMap<String, Object> properties() {
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         super.properties(map);
         map.put("flow", flowproperty);
         return map;

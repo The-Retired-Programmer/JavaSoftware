@@ -44,19 +44,14 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <release>14</release>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
                     <mainClass>uk.theretiredprogrammer.sketch.jfx.App</mainClass>
+                    <options>
+                        <option>--enable-preview</option>
+                    </options>
                 </configuration>
                 <executions>
                     <execution>
@@ -97,6 +92,23 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>14</release>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--enable-preview</argLine>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -35,7 +35,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test2() throws IOException {
         System.out.println("don't luff to closehauled (on starboard) - sailon");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(5));
+                () -> setwindflow(4, 5));
         assertSAILON(decision);
     }
 
@@ -43,7 +43,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test3() throws IOException {
         System.out.println("luff to closehauled (on startboard) - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(5),
+                () -> setwindflow(4, 5),
                 () -> setboatparam("upwindluffupiflifted", true));
         assertTURN(decision, -40, true);
     }
@@ -52,7 +52,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test4() throws IOException {
         System.out.println("bearaway to closehauled (stay on starboard) - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(-5),
+                () -> setwindflow(4, -5),
                 () -> setboatparam("upwindbearawayifheaded", true));
         assertTURN(decision, -50, false);
     }
@@ -61,7 +61,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test5() throws IOException {
         System.out.println("tack if headed (to port) - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(-5),
+                () -> setwindflow(4, -5),
                 () -> setboatparam("upwindtackifheaded", true));
         assertTURN(decision, 40, true);
     }
@@ -71,7 +71,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
         System.out.println("still best tack (starboard) - sailon");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
                 () -> setboatintvalue("heading", -40),
-                () -> setwindfrom(5),
+                () -> setwindflow(4, 5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertSAILON(decision);
     }
@@ -81,7 +81,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
         System.out.println("still best tack (starboard), bearway to closehauled - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
                 () -> setboatintvalue("heading", -35),
-                () -> setwindfrom(5),
+                () -> setwindflow(4, 5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertTURN(decision, -40, false);
     }
@@ -90,7 +90,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test8() throws IOException {
         System.out.println("still best tack (starboard), luff to closehauled - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(5),
+                () -> setwindflow(4, 5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertTURN(decision, -40, true);
     }
@@ -100,7 +100,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
         System.out.println("tack onto best tack (port), from closehauled - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
                 () -> setboatintvalue("heading", -50),
-                () -> setwindfrom(-5),
+                () -> setwindflow(4, -5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertTURN(decision, 40, true);
     }
@@ -109,7 +109,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
     public void test10() throws IOException {
         System.out.println("tack onto best tack (starboard), above closehauled - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
-                () -> setwindfrom(-5),
+                () -> setwindflow(4, -5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertTURN(decision, 40, true);
     }
@@ -119,7 +119,7 @@ public class WindwardSailingStrategy_StarboardTack_Test extends SailingStrategyT
         System.out.println("tack onto best tack (port), below closehauled - turn");
         Decision decision = makeDecision("/upwind-starboardtack-portrounding.json",
                 () -> setboatintvalue("heading", -55),
-                () -> setwindfrom(-5),
+                () -> setwindflow(4, -5),
                 () -> setboatparamstrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
         assertTURN(decision, 40, true);
     }

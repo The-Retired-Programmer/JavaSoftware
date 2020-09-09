@@ -37,7 +37,6 @@ import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
  */
 public class Controller {
 
-    public SailingArea sailingarea;
     public DisplayParameters displayparameters;
     public WindFlow windflow;
     public WaterFlow waterflow;
@@ -82,10 +81,9 @@ public class Controller {
             reportfailure(ex);
         }
     }
-    
-     private void createObjectProperties(JsonObject parsedjson) throws IOException {
+
+    private void createObjectProperties(JsonObject parsedjson) throws IOException {
         simulationtime = 0;
-        sailingarea = new SailingArea(parsedjson);
         displayparameters = new DisplayParameters(parsedjson);
         waterflow = WaterFlow.create(() -> this, parsedjson);
         windflow = WindFlow.create(() -> this, parsedjson);
@@ -95,17 +93,17 @@ public class Controller {
     }
 
     public double getWidth() {
-        return sailingarea.getWidth(displayparameters.getZoom());
+        return displayparameters.getWidth(displayparameters.getZoom());
     }
 
     public double getHeight() {
-        return sailingarea.getHeight(displayparameters.getZoom());
+        return displayparameters.getHeight(displayparameters.getZoom());
     }
 
     public void paint(DisplaySurface canvas) {
         canvas.clear();
         try {
-            sailingarea.draw(canvas, displayparameters.getZoom());
+            displayparameters.draw(canvas, displayparameters.getZoom());
             windflow.draw(canvas, displayparameters.getZoom());
             if (waterflow != null) {
                 waterflow.draw(canvas, displayparameters.getZoom());

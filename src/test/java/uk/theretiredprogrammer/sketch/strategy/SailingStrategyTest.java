@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.strategy;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
 import static java.lang.Boolean.FALSE;
@@ -73,9 +74,10 @@ public class SailingStrategyTest {
         fail("BAD - Callback() made -should not occur");
     }
 
-    String setwindfrom(String name, int degrees) {
+    String setwindflow(String name, double speed, double degrees) {
         try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), name);
+            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), name);
             controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
@@ -83,9 +85,10 @@ public class SailingStrategyTest {
         }
     }
 
-    String setwindfrom(int zlevel, int degrees) {
+    String setwindflow(int zlevel, double speed, double degrees) {
         try {
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("from", degrees).build(), zlevel);
+            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
+            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), zlevel);
             controller.windflow.setFlows();
             return null;
         } catch (IOException ex) {
@@ -93,8 +96,8 @@ public class SailingStrategyTest {
         }
     }
 
-    String setwindfrom(int degrees) {
-        return setwindfrom(0, degrees);
+    String setwindflow(double speed, double degrees) {
+        return setwindflow(0, speed, degrees);
     }
 
     String setboatparam(String name, boolean value) {

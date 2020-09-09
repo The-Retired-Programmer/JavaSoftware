@@ -31,9 +31,9 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
 public class WindFlow extends Flow {
     
     public static WindFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray windarray = parsedjson.getJsonArray("WIND");
+        JsonArray windarray = parsedjson.getJsonArray("wind");
         if (windarray == null) {
-            throw new IOException("Malformed Definition File - missing WIND array");
+            throw new IOException("Malformed Definition File - missing <wind> array");
         }
         FlowComponentSet flowcomponents = new FlowComponentSet();
         for (JsonValue windv : windarray) {
@@ -41,17 +41,15 @@ public class WindFlow extends Flow {
                 JsonObject wind = (JsonObject) windv;
                 flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, wind));
             } else {
-                throw new IOException("Malformed Definition File - WIND array contains items other that wind objects");
+                throw new IOException("Malformed Definition File - <wind> array contains items other that wind objects");
             }
         }
-        JsonObject windshiftparams = parsedjson.getJsonObject("WIND-SHIFTS");
+        JsonObject windshiftparams = parsedjson.getJsonObject("windshifts");
         return new WindFlow(controllersupplier, windshiftparams, flowcomponents);
     }
-    private final FlowComponentSet flowcomponents;
     
     private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
         super(controllersupplier, params, flowcomponents);
-        this.flowcomponents = flowcomponents;
     }
     
     public Map<String, Object> properties() {

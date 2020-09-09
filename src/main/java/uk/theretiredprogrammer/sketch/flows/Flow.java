@@ -39,7 +39,6 @@ import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.timerlog.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.WindSwingLogEntry;
 import uk.theretiredprogrammer.sketch.ui.Controller;
-import uk.theretiredprogrammer.sketch.ui.SailingArea;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
 import uk.theretiredprogrammer.sketch.ui.Timerable;
 
@@ -81,8 +80,7 @@ public abstract class Flow implements Displayable, Timerable {
         shiftperiodproperty.set(IntegerParser.parse(paramsobj, "shiftperiod").orElse(0));
         randomshiftsproperty.set(BooleanParser.parse(paramsobj, "randomshifts").orElse(false));
         //
-        SailingArea sailingarea = controllersupplier.get().sailingarea;
-        this.area = sailingarea.getArea();
+        this.area = controllersupplier.get().displayparameters.getSailingArea();
         hstepsize = area.getHeight() / HEIGHTSTEPS;
         wstepsize = area.getWidth() / WIDTHSTEPS;
         this.flowset = flowset;

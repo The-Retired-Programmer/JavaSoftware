@@ -38,9 +38,9 @@ public class Boats implements Displayable, Timerable {
     private final Map<String, Boat> boats = new HashMap<>();
 
     public Boats(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray boatarray = parsedjson.getJsonArray("BOATS");
+        JsonArray boatarray = parsedjson.getJsonArray("boats");
         if (boatarray == null) {
-            throw new IOException("Malformed Definition File - missing BOATS array");
+            throw new IOException("Malformed Definition File - missing <boats> array");
         }
         for (JsonValue boatv : boatarray) {
             if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
@@ -48,7 +48,7 @@ public class Boats implements Displayable, Timerable {
                 Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
                 boats.put(boat.name, boat);
             } else {
-                throw new IOException("Malformed Definition File - BOATS array contains items other that boat objects");
+                throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
             }
         }
         

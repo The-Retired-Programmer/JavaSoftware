@@ -43,7 +43,7 @@ public class Course implements Displayable {
     private final Map<String, Mark> marks = new LinkedHashMap<>();
 
     public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray markarray = parsedjson.getJsonArray("MARKS");
+        JsonArray markarray = parsedjson.getJsonArray("marks");
         if (markarray != null) {
             for (JsonValue markv : markarray) {
                 if (markv.getValueType() == JsonValue.ValueType.OBJECT) {
@@ -51,14 +51,14 @@ public class Course implements Displayable {
                     Mark mark = new Mark(controllersupplier, markparms);
                     marks.put(mark.name, mark);
                 } else {
-                    throw new IOException("Malformed Definition File - MARKS array contains items other that mark objects");
+                    throw new IOException("Malformed Definition File - <marks> array contains items other that mark objects");
                 }
             }
         }
         //
-        JsonObject courseobj = parsedjson.getJsonObject("COURSE");
+        JsonObject courseobj = parsedjson.getJsonObject("course");
         if (courseobj == null) {
-            throw new IOException("Malformed Definition File - missing COURSE object");
+            throw new IOException("Malformed Definition File - missing C<course object");
         }
         Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
         List<LegValue> legvalues = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))

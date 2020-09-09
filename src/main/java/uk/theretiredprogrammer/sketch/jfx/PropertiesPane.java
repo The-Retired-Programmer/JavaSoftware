@@ -40,7 +40,6 @@ public class PropertiesPane extends Accordion {
         this.getPanes().clear();
         this.getPanes().addAll(
                 new PropertiesSection("Display", controller.displayparameters.properties()),
-                new PropertiesSection("Sailing Area", controller.sailingarea.properties()),
                 new PropertiesSection("Wind Flow", controller.windflow.properties())
         );
         controller.windflow.getFlowComponentSet().getComponents().forEach(component -> {

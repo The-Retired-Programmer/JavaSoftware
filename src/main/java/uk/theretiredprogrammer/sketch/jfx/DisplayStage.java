@@ -44,7 +44,7 @@ public class DisplayStage {
     public DisplayStage(Path path) {
         this.controller = new Controller(path, (i) -> updatetime(i), (s) -> writedecisionlog(s), () -> updatedisplay());
         Group group = new Group();
-        canvas = new DisplaySurface(controller.sailingarea.getArea(), controller.displayparameters.getZoom());
+        canvas = new DisplaySurface(controller.displayparameters.getSailingArea(), controller.displayparameters.getZoom());
         updatedisplay(canvas);
         group.getChildren().add(canvas);
         ScrollPane scrollpane = new ScrollPane(group);
@@ -129,6 +129,6 @@ public class DisplayStage {
     }
 
     private void writedecisionlog(String s) {
-        displaylog.getChildren().add(new Text(s+"\n"));
+        displaylog.getChildren().add(new Text(s + "\n"));
     }
 }
