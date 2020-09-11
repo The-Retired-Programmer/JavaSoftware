@@ -27,7 +27,8 @@ import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 
 /**
  * The Information to describe the Simulation "Field of play
@@ -101,7 +102,7 @@ public class DisplayParameters implements Displayable {
     }
 
     @Override
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         canvas.drawrectangle(getDisplayArea(), Color.OLIVEDRAB);
         canvas.drawrectangle(getSailingArea(), Color.LIGHTSEAGREEN);
     }

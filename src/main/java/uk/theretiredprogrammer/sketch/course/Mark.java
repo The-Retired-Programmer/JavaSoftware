@@ -32,15 +32,17 @@ import uk.theretiredprogrammer.sketch.core.PropertyColor;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.StringParser;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.ui.Displayable;
 
 /**
  * The Mark Class - represent course marks.
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Mark {
+public class Mark implements Displayable {
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
@@ -85,7 +87,8 @@ public class Mark {
     private final static Angle WINDWARDLAYLINEANGLE = new Angle(135);
     private final static Angle LEEWARDLAYLINEANGLE = new Angle(45);
 
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    @Override
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         Controller controller = controllersupplier.get();
         Angle windAngle = controller.windflow.getFlow(getLocation()).getAngle();
         canvas.drawmark(getLocation(), SIZE, 6, colourproperty.get());
@@ -108,7 +111,7 @@ public class Mark {
 //        }
     }
 
-    private void pixelLine(DisplaySurface canvas, Location laylineBase, DistancePolar line,
+    private void pixelLine(SketchWindow canvas, Location laylineBase, DistancePolar line,
             Color laylineColour, double zoom) {
 //        BasicStroke stroke = new BasicStroke((float) (1f / zoom));
 //        gc.setStroke(stroke);

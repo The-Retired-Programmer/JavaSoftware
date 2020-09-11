@@ -22,11 +22,13 @@ import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+import javafx.scene.canvas.Canvas;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
@@ -100,7 +102,7 @@ public class Controller {
         return displayparameters.getHeight(displayparameters.getZoom());
     }
 
-    public void paint(DisplaySurface canvas) {
+    public void paint(SketchPane canvas) {
         canvas.clear();
         try {
             displayparameters.draw(canvas, displayparameters.getZoom());

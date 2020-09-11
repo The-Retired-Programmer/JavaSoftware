@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
@@ -67,7 +67,7 @@ public class Boats implements Displayable, Timerable {
     }
 
     @Override
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         for (var boat : boats.values()) {
             boat.draw(canvas, zoom);
         }

@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.ListOf;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.LegValue;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
 
@@ -96,7 +96,7 @@ public class Course implements Displayable {
     }
 
     @Override
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         for (Mark mark : marks.values()) {
             mark.draw(canvas, zoom);
         }

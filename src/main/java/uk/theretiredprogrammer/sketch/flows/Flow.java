@@ -34,7 +34,7 @@ import uk.theretiredprogrammer.sketch.core.PropertyColor;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.timerlog.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.WindSwingLogEntry;
@@ -201,7 +201,7 @@ public abstract class Flow implements Displayable, Timerable {
     }
 
     @Override
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         Location sw = area.getBottomleft();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();
@@ -222,7 +222,7 @@ public abstract class Flow implements Displayable, Timerable {
         }
     }
 
-//    private void displayWindGraphic(DisplaySurface canvas, double zoom, double x, double y) throws IOException {
+//    private void displayWindGraphic(SketchWindow canvas, double zoom, double x, double y) throws IOException {
 //        GeneralPath p = new GeneralPath();
 //        p.moveTo(0, 15);
 //        p.lineTo(0, -15);

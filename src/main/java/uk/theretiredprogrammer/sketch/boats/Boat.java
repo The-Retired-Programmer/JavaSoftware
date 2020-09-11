@@ -43,7 +43,7 @@ import uk.theretiredprogrammer.sketch.core.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.flows.Flow;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -304,7 +304,7 @@ public abstract class Boat {
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
 
-    public void draw(DisplaySurface canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas, double zoom) throws IOException {
         canvas.drawboat(getLocation(), directionproperty.getValue(), colourproperty.get());
     }
 //        Angle relative = directionproperty.angleDiff(controllersupplier.getValue().windflow.getFlow(location).getAngle());

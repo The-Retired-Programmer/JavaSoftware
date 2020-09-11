@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.ui;
 
 import java.io.IOException;
-import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
+import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 
 /**
  * The Element Class - represents the core class of every simulation object
@@ -26,5 +26,5 @@ import uk.theretiredprogrammer.sketch.jfx.DisplaySurface;
  */
 public interface Displayable {
 
-    public void draw(DisplaySurface canvas, double zoom) throws IOException;
+    public void draw(SketchPane canvas, double zoom) throws IOException;
 }
