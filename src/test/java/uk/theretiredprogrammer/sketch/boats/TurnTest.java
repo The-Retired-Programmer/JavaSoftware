@@ -36,7 +36,10 @@ public class TurnTest {
     private Decision decision;
 
     Boat setupForTurn(String filename, Supplier<String>... configs) throws IOException {
-        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s), ()->callback());
+        controller = new Controller(filename)
+                .setOnSketchChange(() ->fail("BAD - Callback() made -should not occur"))
+                .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
+                .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
         boat = controller.boats.getBoat("Red");
         //
         for (var config : configs) {
@@ -64,18 +67,6 @@ public class TurnTest {
             boat.moveUsingDecision();
         }
         return boat;
-    }
-
-    private void callbackstring(String s) {
-        fail("BAD - Callback(String) made -should not occur");
-    }
-    
-    private void callbackint(int i) {
-        fail("BAD - Callback(int) made -should not occur");
-    }
-    
-    private void callback() {
-        fail("BAD - Callback() made -should not occur");
     }
 
     public String setboatintvalue(String name, int value) {

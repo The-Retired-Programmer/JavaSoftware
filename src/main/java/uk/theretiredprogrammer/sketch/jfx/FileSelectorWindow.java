@@ -25,6 +25,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -45,7 +46,8 @@ public class FileSelectorWindow {
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
-        SketchWindow.create(p.getValue().getPath());
+        Path path = p.getValue().getPath();
+        SketchWindow.create(path.getFileName().toString(),new Controller(path));
     }
 
     private class FileSelectorPane extends Accordion {

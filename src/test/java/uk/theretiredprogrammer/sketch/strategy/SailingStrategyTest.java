@@ -45,7 +45,10 @@ public class SailingStrategyTest {
     private Angle winddirection;
 
     public Decision makeDecision(String filename, Supplier<String>... configs) throws IOException {
-        controller = new Controller(filename, (i) -> callbackint(i), (s) -> callbackstring(s), () -> callback());
+        controller = new Controller(filename)
+                .setOnSketchChange(() ->fail("BAD - Callback() made -should not occur"))
+                .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
+                .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
         boat = controller.boats.getBoat("Red");
         //
         for (var config : configs) {
@@ -60,18 +63,6 @@ public class SailingStrategyTest {
                 controller, boat, leg);
         strategy.nextBoatStrategyTimeInterval(controller);
         return strategy.decision;
-    }
-
-    private void callbackstring(String s) {
-        fail("BAD - Callback(String) made -should not occur");
-    }
-
-    private void callbackint(int i) {
-        fail("BAD - Callback(int) made -should not occur");
-    }
-
-    private void callback() {
-        fail("BAD - Callback() made -should not occur");
     }
 
     String setwindflow(String name, double speed, double degrees) {

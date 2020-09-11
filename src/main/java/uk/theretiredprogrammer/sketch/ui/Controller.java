@@ -50,14 +50,11 @@ public class Controller {
     private boolean isRunning;
     private Timer timer;
     private TimeStepRunner runner;
-    private final Runnable updatedisplay;
-    private final Consumer<Integer> displayupdaterequest;
-    private Consumer<String> outwriter;
+    private Runnable updatedisplay = () ->{};
+    private Consumer<Integer> updatetime = (t) -> {};
+    private Consumer<String> showdecisionLine = (l)-> {};
 
-    public Controller(Path path, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter, Runnable updatedisplay) {
-        this.displayupdaterequest = displayupdaterequest;
-        this.outwriter = outwriter;
-        this.updatedisplay = updatedisplay;
+    public Controller(Path path) {
         try {
             ConfigFileController configfilecontroller = new ConfigFileController(path);
             if (configfilecontroller.needsUpgrade()) {
@@ -69,10 +66,7 @@ public class Controller {
         }
     }
 
-    public Controller(String resourcename, Consumer<Integer> displayupdaterequest, Consumer<String> outwriter, Runnable updatedisplay) {
-        this.displayupdaterequest = displayupdaterequest;
-        this.outwriter = outwriter;
-        this.updatedisplay = updatedisplay;
+    public Controller(String resourcename) {
         try {
             ConfigFileController configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
             if (configfilecontroller.needsUpgrade()) {
@@ -82,6 +76,21 @@ public class Controller {
         } catch (JsonException | IOException ex) {
             reportfailure(ex);
         }
+    }
+    
+    public Controller setOnSketchChange(Runnable updatesketch){
+        this.updatedisplay = updatesketch;
+        return this;
+    }
+    
+    public Controller setOnTimeChange(Consumer<Integer> updatetime){
+        this.updatetime = updatetime;
+        return this;
+    }
+    
+    public Controller setShowDecisionLine(Consumer<String> showdecisionLine){
+        this.showdecisionLine = showdecisionLine;
+        return this;
     }
 
     private void createObjectProperties(JsonObject parsedjson) throws IOException {
@@ -152,11 +161,11 @@ public class Controller {
     }
 
     public void displaylog() {
-        timerlog.write2output(outwriter);
+        timerlog.write2output(showdecisionLine);
     }
 
     public void displayfilteredlog(String boatname) {
-        timerlog.writefiltered2output(outwriter, boatname);
+        timerlog.writefiltered2output(showdecisionLine, boatname);
     }
 
     private TimerLog timerlog = new TimerLog();
@@ -177,7 +186,7 @@ public class Controller {
                     secondsperdisplay--;
                     simulationtime++;
                 }
-                displayupdaterequest.accept(simulationtime);
+                updatetime.accept(simulationtime);
                 updatedisplay.run();
 
             } catch (IOException ex) {

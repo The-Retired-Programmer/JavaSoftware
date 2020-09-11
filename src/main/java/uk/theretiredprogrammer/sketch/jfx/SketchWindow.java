@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
-import java.nio.file.Path;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -42,34 +41,27 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class SketchWindow {
     
-    public static SketchWindow create(Path path) {
-        return new SketchWindow(path);
+    public static SketchWindow create(String title, Controller controller) {
+        return new SketchWindow(title, controller);
     }
     
     private final Controller controller;
     private final SketchPane canvas;
     private final Text timetext;
-    //private final TextFlow displaylog;
-    private final Path path;
-
-    private SketchWindow(Path path) {
-        this.path = path;
-        this.controller = new Controller(path, (i) -> updatetime(i), (s) -> writedecisionlog(s), () -> updatedisplay());
+    private final String title;
+    private DecisionDisplayWindow decisiondisplaywindow = null;
+    
+    private SketchWindow(String title, Controller controller) {
+        this.title = title;
+        this.controller = controller;
         Group group = new Group();
         canvas = new SketchPane(controller.displayparameters.getSailingArea(), controller.displayparameters.getZoom());
-        updatedisplay(canvas);
+        controller
+                .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
+                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)));
+        controller.paint(canvas);
         group.getChildren().add(canvas);
         ScrollPane scrollpane = new ScrollPane(group);
-//        PropertiesPane propertiespane = new PropertiesPane();
-//        propertiespane.updateAllproperties(controller);
-//        displaylog = new TextFlow();
-//        ScrollPane scrolllogpane = new ScrollPane(displaylog);
-//        SplitPane splitpane = new SplitPane();
-//        splitpane.getItems().addAll(
-//                scrollpane,
-//                propertiespane,
-//                scrolllogpane
-//        );
         //
         Button startbutton = new Button("Start");
         startbutton.setDisable(false);
@@ -91,20 +83,28 @@ public class SketchWindow {
         Button propertiesbutton = new Button("Show Properties");
         propertiesbutton.setDisable(false);
         propertiesbutton.setOnAction(actionEvent -> {
-            displayproperties();
+            PropertiesWindow.create(title, controller);
         });
         //
         Button decisionlogbutton = new Button("Show Decision Log");
         decisionlogbutton.setDisable(false);
         decisionlogbutton.setOnAction(actionEvent -> {
-//            displaylog.getChildren().clear();
-//            controller.displaylog();
+            if (decisiondisplaywindow == null) {
+                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+            }
+            decisiondisplaywindow.clear();
+            controller.displaylog();
         });
         Button filtereddecisionlogbutton = new Button("Show Filtered Decision Log");
         filtereddecisionlogbutton.setDisable(false);
         filtereddecisionlogbutton.setOnAction(actionEvent -> {
-//            displaylog.getChildren().clear();
-//            controller.displayfilteredlog("SELECTED");
+            if (decisiondisplaywindow == null) {
+                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+            }
+            decisiondisplaywindow.clear();
+            controller.displayfilteredlog("SELECTED");
         });
         //
         ToolBar toolbar = new ToolBar();
@@ -121,26 +121,10 @@ public class SketchWindow {
         displaystage.initStyle(StageStyle.DECORATED);
         displaystage.setTitle("");
         displaystage.show();
-        displaystage.setTitle(path.getFileName().toString());
+        displaystage.setTitle(title);
         displaystage.show();
     }
     
-    private void displayproperties() {
-        PropertiesWindow.create(controller, path);
-    }
-
-    public void updatedisplay() {
-        updatedisplay(canvas);
-    }
-
-    private void updatedisplay(SketchPane canvas) {
-        Platform.runLater(() -> controller.paint(canvas));
-    }
-
-    private void updatetime(int seconds) {
-        Platform.runLater(() -> updteTime(seconds));
-    }
-
     private void updteTime(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;
@@ -149,10 +133,6 @@ public class SketchWindow {
             ss = "0" + ss;
         }
         timetext.setText(Integer.toString(mins) + ":" + ss);
-    }
-
-    private void writedecisionlog(String s) {
-//        displaylog.getChildren().add(new Text(s + "\n"));
     }
 
     public class SketchPane extends Canvas {

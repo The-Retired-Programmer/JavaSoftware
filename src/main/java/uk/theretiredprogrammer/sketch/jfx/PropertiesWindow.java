@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
-import java.nio.file.Path;
 import java.util.Map;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
@@ -33,15 +32,15 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class PropertiesWindow {
     
-    public static PropertiesWindow create(Controller controller, Path path) {
-        return new PropertiesWindow(controller, path);
+    public static PropertiesWindow create(String title, Controller controller) {
+        return new PropertiesWindow(title, controller);
     }
 
-    private PropertiesWindow(Controller controller, Path path) {
+    private PropertiesWindow(String title, Controller controller) {
         PropertiesPane propertiespane = new PropertiesPane();
         propertiespane.updateAllproperties(controller);
         //
-        new WindowBuilder().setTitle(path.getFileName().toString())
+        new WindowBuilder().setTitle(title)
                 .setContent(propertiespane)
                 .show();
     }
