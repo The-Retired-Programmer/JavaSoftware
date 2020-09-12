@@ -26,13 +26,11 @@ import uk.theretiredprogrammer.sketch.core.ColorParser;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
-import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.PropertyColor;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.StringParser;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
@@ -48,12 +46,13 @@ public class Mark implements Displayable {
 
     public String name;
     private final PropertyLocation locationproperty = new PropertyLocation();
+
     Location getLocation() {
         return locationproperty.get();
     }
     //
     private final PropertyBoolean windwardlaylinesproperty = new PropertyBoolean();
-    private final PropertyBoolean downwindlaylinesproperty = new PropertyBoolean(); 
+    private final PropertyBoolean downwindlaylinesproperty = new PropertyBoolean();
     private final PropertyDouble laylinelengthproperty = new PropertyDouble();
     private final PropertyColor laylinecolorproperty = new PropertyColor();
     private final PropertyColor colourproperty = new PropertyColor();
@@ -84,39 +83,18 @@ public class Mark implements Displayable {
         return map;
     }
 
-    private final static Angle WINDWARDLAYLINEANGLE = new Angle(135);
-    private final static Angle LEEWARDLAYLINEANGLE = new Angle(45);
-
     @Override
     public void draw(SketchPane canvas, double zoom) throws IOException {
         Controller controller = controllersupplier.get();
-        Angle windAngle = controller.windflow.getFlow(getLocation()).getAngle();
         canvas.drawmark(getLocation(), SIZE, 6, colourproperty.get());
-        // now draw the laylines - this are scale independent and set to 1 pixel line
-//        if (windwardlaylines) {
-//            pixelLine(gc, location,
-//                    new DistancePolar(laylinelength, windAngle.add(WINDWARDLAYLINEANGLE)),
-//                    laylinecolor, zoom);
-//            pixelLine(gc, location,
-//                    new DistancePolar(laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE)),
-//                    laylinecolor, zoom);
-//        }
-//        if (downwindlaylines) {
-//            pixelLine(gc, location,
-//                    new DistancePolar(laylinelength, windAngle.add(LEEWARDLAYLINEANGLE)),
-//                    laylinecolor, zoom);
-//            pixelLine(gc, location,
-//                    new DistancePolar(laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE)),
-//                    laylinecolor, zoom);
-//        }
-    }
-
-    private void pixelLine(SketchWindow canvas, Location laylineBase, DistancePolar line,
-            Color laylineColour, double zoom) {
-//        BasicStroke stroke = new BasicStroke((float) (1f / zoom));
-//        gc.setStroke(stroke);
-//        gc.setColor(laylineColour);
-//        Location end = line.polar2Location(laylineBase);
-//        gc.draw(new Line2D.Double(laylineBase.getX(), laylineBase.getY(), end.getX(), end.getY()));
+        Angle windAngle = controller.windflow.getFlow(getLocation()).getAngle();
+        if (windwardlaylinesproperty.get()) {
+            canvas.drawwindwardlaylines(getLocation(), windAngle,
+                    laylinelengthproperty.get(), laylinecolorproperty.get());
+        }
+        if (downwindlaylinesproperty.get()) {
+            canvas.drawleewardlaylines(getLocation(), windAngle,
+                    laylinelengthproperty.get(), laylinecolorproperty.get());
+        }
     }
 }

@@ -17,17 +17,10 @@ package uk.theretiredprogrammer.sketch.jfx;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ToolBar;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
@@ -39,92 +32,59 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  *
  * @author richard
  */
-public class SketchWindow {
-    
+public class SketchWindow extends AbstractWindow {
+
     public static SketchWindow create(String title, Controller controller) {
         return new SketchWindow(title, controller);
     }
-    
-    private final Controller controller;
+
     private final SketchPane canvas;
     private final Text timetext;
-    private final String title;
+    private final Text statusbar;
     private DecisionDisplayWindow decisiondisplaywindow = null;
-    
+
     private SketchWindow(String title, Controller controller) {
-        this.title = title;
-        this.controller = controller;
+        timetext = new Text("      ");
+        statusbar = new Text();
         Group group = new Group();
         canvas = new SketchPane(controller.displayparameters.getSailingArea(), controller.displayparameters.getZoom());
         controller
                 .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
-                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)));
-        controller.paint(canvas);
+                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
+                .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbar.setText(s)));
         group.getChildren().add(canvas);
-        ScrollPane scrollpane = new ScrollPane(group);
+        controller.paint(canvas);
         //
-        Button startbutton = new Button("Start");
-        startbutton.setDisable(false);
-        startbutton.setOnAction(actionEvent -> {
-            controller.start();
-        });
-        Button pausebutton = new Button("Pause");
-        pausebutton.setDisable(false);
-        pausebutton.setOnAction(actionEvent -> {
-            controller.stop();
-        });
-        Button resetbutton = new Button("Reset");
-        resetbutton.setDisable(false);
-        resetbutton.setOnAction(actionEvent -> {
-            controller.reset();
-        });
-        timetext = new Text("      ");
-        //
-        Button propertiesbutton = new Button("Show Properties");
-        propertiesbutton.setDisable(false);
-        propertiesbutton.setOnAction(actionEvent -> {
-            PropertiesWindow.create(title, controller);
-        });
-        //
-        Button decisionlogbutton = new Button("Show Decision Log");
-        decisionlogbutton.setDisable(false);
-        decisionlogbutton.setOnAction(actionEvent -> {
-            if (decisiondisplaywindow == null) {
-                decisiondisplaywindow = DecisionDisplayWindow.create(title);
-                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-            }
-            decisiondisplaywindow.clear();
-            controller.displaylog();
-        });
-        Button filtereddecisionlogbutton = new Button("Show Filtered Decision Log");
-        filtereddecisionlogbutton.setDisable(false);
-        filtereddecisionlogbutton.setOnAction(actionEvent -> {
-            if (decisiondisplaywindow == null) {
-                decisiondisplaywindow = DecisionDisplayWindow.create(title);
-                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-            }
-            decisiondisplaywindow.clear();
-            controller.displayfilteredlog("SELECTED");
-        });
-        //
-        ToolBar toolbar = new ToolBar();
-        toolbar.getItems().addAll(startbutton, pausebutton, resetbutton, timetext,
-                propertiesbutton, decisionlogbutton, filtereddecisionlogbutton);
-        Text statusbar = new Text("");
-        //
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(toolbar, scrollpane, statusbar);
-        Scene scene = new Scene(vbox, 300, 300);
-        //
-        Stage displaystage = new Stage();
-        displaystage.setScene(scene);
-        displaystage.initStyle(StageStyle.DECORATED);
-        displaystage.setTitle("");
-        displaystage.show();
-        displaystage.setTitle(title);
-        displaystage.show();
+        new WindowBuilder()
+                .setTitle(title)
+                .addtoToolbar(
+                        toolbarButton("Start", actionEvent -> controller.start()),
+                        toolbarButton("Pause", actionEvent -> controller.stop()),
+                        toolbarButton("Rest", actionEvent -> controller.reset()),
+                        toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller)),
+                        toolbarButton("Show Decision Log", actionEvent -> {
+                            if (decisiondisplaywindow == null) {
+                                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+                            }
+                            decisiondisplaywindow.clear();
+                            controller.displaylog();
+                        }),
+                        toolbarButton("Show Filtered Decision Log", actionEvent -> {
+                            if (decisiondisplaywindow == null) {
+                                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+                            }
+                            decisiondisplaywindow.clear();
+                            controller.displayfilteredlog("SELECTED");
+                        }),
+                        timetext
+                )
+                .setScrollableContent(group)
+                .setStatusbar(statusbar)
+                .show();
     }
-    
+
     private void updteTime(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;
@@ -174,6 +134,36 @@ public class SketchWindow {
             double x = transformX(location.getX()) - d / 2;
             double y = transformY(location.getY()) - d / 2;
             gc.fillOval(x, y, d, d);
+        }
+
+        public void drawwindwardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
+            final Angle WINDWARDLAYLINEANGLE = new Angle(135);
+            GraphicsContext gc = getGraphicsContext2D();
+            pixelLine(gc, location,
+                    new DistancePolar(laylinelength, windAngle.add(WINDWARDLAYLINEANGLE)),
+                    laylinecolour, zoom);
+            pixelLine(gc, location,
+                    new DistancePolar(laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE)),
+                    laylinecolour, zoom);
+        }
+
+        public void drawleewardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
+            final Angle LEEWARDLAYLINEANGLE = new Angle(45);
+            GraphicsContext gc = getGraphicsContext2D();
+            pixelLine(gc, location,
+                    new DistancePolar(laylinelength, windAngle.add(LEEWARDLAYLINEANGLE)),
+                    laylinecolour, zoom);
+            pixelLine(gc, location,
+                    new DistancePolar(laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE)),
+                    laylinecolour, zoom);
+        }
+
+        private void pixelLine(GraphicsContext gc, Location laylineBase, DistancePolar line,
+                Color laylinecolour, double zoom) {
+            gc.setStroke(laylinecolour);
+            Location pt = line.polar2Location(laylineBase);
+            gc.strokeLine(transformX(laylineBase.getX()), transformY(laylineBase.getY()),
+                    transformX(pt.getX()), transformY(pt.getY()));
         }
 
         public void drawboat(Location location, Angle direction, Color fill) {

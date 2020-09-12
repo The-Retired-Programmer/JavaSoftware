@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.jfx;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -33,15 +34,15 @@ public class WindowBuilder {
     private final ToolBar toolbar;
     private Node contentnode;
     private String title;
-    private final Text statusbar;
+    private Node statusbar;
 
     public WindowBuilder() {
         toolbar = new ToolBar();
-        statusbar = new Text("");
+        statusbar = null;
     }
     
-    public WindowBuilder addtoToolbar(Button ... buttons) {
-        toolbar.getItems().addAll(buttons);
+    public WindowBuilder addtoToolbar(Node ... nodes) {
+        toolbar.getItems().addAll(nodes);
         return this;
     }
     
@@ -55,9 +56,22 @@ public class WindowBuilder {
         return this;
     }
     
+    public WindowBuilder setScrollableContent(Node contentnode) {
+        this.contentnode = new ScrollPane(contentnode);
+        return this;
+    }
+    
+    public WindowBuilder setStatusbar(Node statusbar) {
+        this.statusbar = statusbar;
+        return this;
+    }
+    
     public Stage show(Stage stage) {
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(toolbar, contentnode, statusbar);
+        vbox.getChildren().addAll(toolbar, contentnode);
+        if (statusbar != null) {
+            vbox.getChildren().add(statusbar);
+        }
         Scene scene = new Scene(vbox, 300, 300);
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
@@ -68,9 +82,5 @@ public class WindowBuilder {
     
     public Stage show() {
         return show(new Stage());
-    }
-    
-    public void writetoStatusbar(String string) {
-        statusbar.setText(string);
     }
 }

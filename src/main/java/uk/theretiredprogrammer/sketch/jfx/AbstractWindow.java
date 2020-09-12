@@ -15,33 +15,20 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 
 /**
  *
  * @author richard
  */
-public class DecisionDisplayWindow {
-
-    public static DecisionDisplayWindow create(String title) {
-        return new DecisionDisplayWindow(title);
-    }
-
-    private final TextFlow textarea;
-
-    private DecisionDisplayWindow(String title) {
-        textarea = new TextFlow();
-        new WindowBuilder().setTitle(title)
-                .setScrollableContent(textarea)
-                .show();
-    }
-
-    public void clear() {
-        textarea.getChildren().clear();
-    }
-
-    public void writeline(String line) {
-        textarea.getChildren().add(new Text(line + "\n"));
+public abstract class AbstractWindow {
+    
+    Button toolbarButton(String buttontext, EventHandler<ActionEvent> action) {
+        Button button = new Button(buttontext);
+        button.setDisable(false);
+        button.setOnAction(action);
+        return button;
     }
 }

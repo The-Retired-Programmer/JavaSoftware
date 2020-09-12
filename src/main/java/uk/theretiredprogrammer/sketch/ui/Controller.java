@@ -22,12 +22,10 @@ import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
-import javafx.scene.canvas.Canvas;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
@@ -46,51 +44,67 @@ public class Controller {
     public Boats boats;
     public BoatStrategies boatstrategies;
     //
+    private ConfigFileController configfilecontroller;
     private int simulationtime;
     private boolean isRunning;
     private Timer timer;
     private TimeStepRunner runner;
-    private Runnable updatedisplay = () ->{};
-    private Consumer<Integer> updatetime = (t) -> {};
-    private Consumer<String> showdecisionLine = (l)-> {};
+    private Runnable sketchchangeaction = () ->{};
+    private Consumer<Integer> timechangeaction = (t) -> {};
+    private Consumer<String> showdecisionline = (l)-> {};
+    private Consumer<String> writetostatusline = (m)-> {};
 
     public Controller(Path path) {
         try {
-            ConfigFileController configfilecontroller = new ConfigFileController(path);
+            configfilecontroller = new ConfigFileController(path);
             if (configfilecontroller.needsUpgrade()) {
                 configfilecontroller.upgrade();
             }
             createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
-            reportfailure(ex);
+            writetostatusline.accept(ex.getLocalizedMessage());
         }
     }
 
     public Controller(String resourcename) {
         try {
-            ConfigFileController configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
+            configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
             if (configfilecontroller.needsUpgrade()) {
                 configfilecontroller.upgrade();
             }
             createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
-            reportfailure(ex);
+            writetostatusline.accept(ex.getLocalizedMessage());
         }
     }
     
-    public Controller setOnSketchChange(Runnable updatesketch){
-        this.updatedisplay = updatesketch;
+    public Controller setOnSketchChange(Runnable sketchchangeaction){
+        this.sketchchangeaction = sketchchangeaction;
         return this;
     }
     
-    public Controller setOnTimeChange(Consumer<Integer> updatetime){
-        this.updatetime = updatetime;
+    public Controller setOnTimeChange(Consumer<Integer> timechangeaction){
+        this.timechangeaction = timechangeaction;
         return this;
     }
     
-    public Controller setShowDecisionLine(Consumer<String> showdecisionLine){
-        this.showdecisionLine = showdecisionLine;
+    public Controller setShowDecisionLine(Consumer<String> showdecisionline){
+        this.showdecisionline = showdecisionline;
         return this;
+    }
+    
+    public Controller setWritetoStatusLine(Consumer<String> writetostatusline){
+        this.writetostatusline = writetostatusline;
+        return this;
+    }
+    
+    private void resetObjectProperties() {
+        try {
+            createObjectProperties(configfilecontroller.getParsedConfigFile());
+        } catch (IOException ex) {
+            writetostatusline.accept(ex.getLocalizedMessage());
+        }
+        sketchchangeaction.run();
     }
 
     private void createObjectProperties(JsonObject parsedjson) throws IOException {
@@ -122,7 +136,7 @@ public class Controller {
             course.draw(canvas, displayparameters.getZoom());
             boats.draw(canvas, displayparameters.getZoom());
         } catch (IOException ex) {
-            reportfailure(ex);
+            writetostatusline.accept(ex.getLocalizedMessage());
         }
     }
 
@@ -154,18 +168,15 @@ public class Controller {
     public void reset() {
         stop();
         timerlog.clear();
-    }
-
-    private void reportfailure(Exception ex) {
-        System.out.println(ex.getLocalizedMessage());
+        resetObjectProperties();
     }
 
     public void displaylog() {
-        timerlog.write2output(showdecisionLine);
+        timerlog.write2output(showdecisionline);
     }
 
     public void displayfilteredlog(String boatname) {
-        timerlog.writefiltered2output(showdecisionLine, boatname);
+        timerlog.writefiltered2output(showdecisionline, boatname);
     }
 
     private TimerLog timerlog = new TimerLog();
@@ -186,11 +197,11 @@ public class Controller {
                     secondsperdisplay--;
                     simulationtime++;
                 }
-                updatetime.accept(simulationtime);
-                updatedisplay.run();
+                timechangeaction.accept(simulationtime);
+                sketchchangeaction.run();
 
             } catch (IOException ex) {
-                reportfailure(ex);
+                writetostatusline.accept(ex.getLocalizedMessage());
             }
         }
     }
