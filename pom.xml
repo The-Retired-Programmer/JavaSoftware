@@ -75,6 +75,7 @@
                         <configuration>
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</option>
+                                <option>--enable-preview</option>
                             </options>
                         </configuration>
                     </execution>

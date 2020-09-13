@@ -117,14 +117,6 @@ public class Controller {
         boatstrategies = new BoatStrategies(this);
     }
 
-    public double getWidth() {
-        return displayparameters.getWidth(displayparameters.getZoom());
-    }
-
-    public double getHeight() {
-        return displayparameters.getHeight(displayparameters.getZoom());
-    }
-
     public void paint(SketchPane canvas) {
         canvas.clear();
         try {

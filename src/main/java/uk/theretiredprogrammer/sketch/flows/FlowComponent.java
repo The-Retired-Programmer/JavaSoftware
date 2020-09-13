@@ -46,7 +46,7 @@ public abstract class FlowComponent {
     private final PropertyInteger zlevelproperty = new PropertyInteger();
 
     public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
-        Area  darea = controllersupplier.get().displayparameters.getDisplayarea();
+        Area  darea = controllersupplier.get().displayparameters.getDisplayArea();
         name = StringParser.parse(paramsobj, "name").orElse("");
         zlevelproperty.set(IntegerParser.parse(paramsobj, "zlevel").orElse(0));
         areaproperty.set(Area.parse(paramsobj, "area").orElse(darea));

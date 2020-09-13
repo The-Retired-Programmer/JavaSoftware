@@ -305,7 +305,9 @@ public abstract class Boat {
     }
 
     public void draw(SketchPane canvas, double zoom) throws IOException {
-        canvas.drawboat(getLocation(), directionproperty.getValue(), colourproperty.get());
+        canvas.drawboat(getLocation(), directionproperty.getValue(), colourproperty.get(),
+                controllersupplier.get().windflow.getFlow(getLocation()).getAngle(),
+                metrics.length, metrics.width, sailcolor);
     }
 //        Angle relative = directionproperty.angleDiff(controllersupplier.getValue().windflow.getFlow(location).getAngle());
 //        boolean onStarboard = relative.gt(ANGLE0);

@@ -22,6 +22,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import uk.theretiredprogrammer.sketch.core.Angle;
+import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
+import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.Location;
@@ -47,7 +49,7 @@ public class SketchWindow extends AbstractWindow {
         timetext = new Text("      ");
         statusbar = new Text();
         Group group = new Group();
-        canvas = new SketchPane(controller.displayparameters.getSailingArea(), controller.displayparameters.getZoom());
+        canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
         controller
                 .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
                 .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
@@ -98,128 +100,108 @@ public class SketchWindow extends AbstractWindow {
     public class SketchPane extends Canvas {
 
         private final double zoom;
-        private final double offsetx;
-        private final double offsety;
+        private final GraphicsContext gc;
 
         public SketchPane(Area canvasarea, double zoom) {
             this.zoom = zoom;
             setWidth(canvasarea.getWidth() * zoom);
             setHeight(canvasarea.getHeight() * zoom);
-            offsetx = canvasarea.getBottomleft().getX();
-            offsety = canvasarea.getBottomleft().getY() + canvasarea.getHeight();
+            gc = getGraphicsContext2D();
+            gc.scale(zoom, -zoom);
+            gc.translate(-canvasarea.getBottomleft().getX(), -canvasarea.getHeight() - canvasarea.getBottomleft().getY());
         }
 
         public void clear() {
-            GraphicsContext gc = getGraphicsContext2D();
-            gc.clearRect(0, 0, getWidth(), getHeight());
+            GraphicsContext gc1 = getGraphicsContext2D();
+            gc1.clearRect(0, 0, getWidth(), getHeight());
         }
 
         public void drawrectangle(Area area, Color fill) {
-            GraphicsContext gc = getGraphicsContext2D();
             gc.setFill(fill);
-            double x = transformX(area.getBottomleft().getX());
-            double y = transformY(area.getBottomleft().getY() + area.getHeight());
-            double w = scale(area.getWidth());
-            double h = scale(area.getHeight());
-            gc.fillRect(x, y, w, h);
+            gc.fillRect(area.getBottomleft().getX(), area.getBottomleft().getY(),
+                    area.getWidth(), area.getHeight());
         }
 
-        public void drawmark(Location location, double diameter, double scaledminimum, Color fill) {
-            GraphicsContext gc = getGraphicsContext2D();
+        public void drawmark(Location location, double diameter, double minimumDiameterPixels, Color fill) {
             gc.setFill(fill);
-            double d = scale(diameter);
-            if (d < scaledminimum) {
-                d = scaledminimum;
+            double minimumDiameter = minimumDiameterPixels / zoom;
+            if (diameter < minimumDiameter) {
+                diameter = minimumDiameter;
             }
-            double x = transformX(location.getX()) - d / 2;
-            double y = transformY(location.getY()) - d / 2;
-            gc.fillOval(x, y, d, d);
+//            double x = transformX(location.getX()) - d / 2;
+//            double y = transformY(location.getY()) - d / 2;
+            gc.fillOval(location.getX() - diameter / 2, location.getY() - diameter / 2,
+                    diameter, diameter);
         }
 
         public void drawwindwardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
             final Angle WINDWARDLAYLINEANGLE = new Angle(135);
-            GraphicsContext gc = getGraphicsContext2D();
-            pixelLine(gc, location,
+            pixelLine(location,
                     new DistancePolar(laylinelength, windAngle.add(WINDWARDLAYLINEANGLE)),
                     laylinecolour, zoom);
-            pixelLine(gc, location,
+            pixelLine(location,
                     new DistancePolar(laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE)),
                     laylinecolour, zoom);
         }
 
         public void drawleewardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
             final Angle LEEWARDLAYLINEANGLE = new Angle(45);
-            GraphicsContext gc = getGraphicsContext2D();
-            pixelLine(gc, location,
+            pixelLine(location,
                     new DistancePolar(laylinelength, windAngle.add(LEEWARDLAYLINEANGLE)),
                     laylinecolour, zoom);
-            pixelLine(gc, location,
+            pixelLine(location,
                     new DistancePolar(laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE)),
                     laylinecolour, zoom);
         }
 
-        private void pixelLine(GraphicsContext gc, Location laylineBase, DistancePolar line,
+        private void pixelLine(Location laylineBase, DistancePolar line,
                 Color laylinecolour, double zoom) {
             gc.setStroke(laylinecolour);
             Location pt = line.polar2Location(laylineBase);
-            gc.strokeLine(transformX(laylineBase.getX()), transformY(laylineBase.getY()),
-                    transformX(pt.getX()), transformY(pt.getY()));
+            gc.strokeLine(laylineBase.getX(), laylineBase.getY(),
+                    pt.getX(), pt.getY());
+//            gc.strokeLine(transformX(laylineBase.getX()), transformY(laylineBase.getY()),
+//                    transformX(pt.getX()), transformY(pt.getY()));
         }
 
-        public void drawboat(Location location, Angle direction, Color fill) {
-            GraphicsContext gc = getGraphicsContext2D();
+        public void drawboat(Location location, Angle direction, Color fill, Angle winddirection,
+                double length, double width, Color sailcolour) {
+            Angle relative = direction.angleDiff(winddirection);
+            boolean onStarboard = relative.lt(ANGLE0);
+            Angle absrelative = relative.abs();
+            Angle sailRotation = absrelative.lteq(new Angle(45)) ? ANGLE0 : absrelative.sub(new Angle(45)).mult(2.0 / 3);
+            sailRotation = sailRotation.negateif(!onStarboard);
+            if (zoom < 5) { // create a visible object
+                length = 17 / zoom;
+                width = 7 / zoom;
+            }
+            //
+            gc.save();
+            gc.translate(location.getX(), location.getY());
+            gc.rotate(ANGLE90.sub(direction).getDegrees());
+            //
             gc.setFill(fill);
-            double d = 6;
-            double x = transformX(location.getX()) - d / 2;
-            double y = transformY(location.getY()) - d / 2;
-            gc.fillOval(x, y, d, d);
-            gc.setStroke(fill);
-            DistancePolar directionstroke = new DistancePolar(5, direction);
-            Location pt = directionstroke.polar2Location(location);
-            gc.strokeLine(transformX(location.getX()), transformY(location.getY()),
-                    transformX(pt.getX()), transformY(pt.getY()));
-        }
-        //        Angle relative = direction.angleDiff(controllersupplier.get().windflow.getFlow(location).getAngle());
-//        boolean onStarboard = relative.gt(ANGLE0);
-//        Angle absrelative = relative.abs();
-//        Angle sailRotation = absrelative.lteq(new Angle(45)) ? ANGLE0 : absrelative.sub(new Angle(45)).mult(2.0 / 3);
-//        double l;
-//        double w;
-//        if (zoom > 4) {
-//            l = metrics.getLength() * zoom;
-//            w = metrics.getWidth() * zoom;
-//        } else {
-//            l = 13; // create a visible object
-//            w = 5; // create a visible object
-//        }
-//        GeneralPath p = new GeneralPath();
-//        p.moveTo(-l * 0.5, w * 0.45); //go to transom quarter
-//        p.curveTo(-l * 0.2, w * 0.55, l * 0.2, l * 0.1, l * 0.5, 0);
-//        p.curveTo(l * 0.2, -l * 0.1, -l * 0.2, -w * 0.55, -l * 0.5, -w * 0.45);
-//        p.closePath(); // and the port side
-//        GeneralPath sail = new GeneralPath();
-//        if (onStarboard) {
-//            sail.moveTo(0.0, 0);
-//            sail.curveTo(-l * 0.2, l * 0.1, -l * 0.4, w * 0.4, -l * 0.7, w * 0.4);
-//            sailRotation = sailRotation.negate();
-//        } else {
-//            sail.moveTo(0, 0);
-//            sail.curveTo(-l * 0.2, -l * 0.1, -l * 0.4, -w * 0.4, -l * 0.7, -w * 0.4);
-//        }
-//        //
-//        AffineTransform xform = gc.getTransform();
-//        gc.translate(location.getX(), location.getY());
-//        gc.scale(1 / zoom, 1 / zoom);
-//        gc.rotate(ANGLE90.sub(direction).getRadians());
-//        gc.setColor(color);
-//        gc.draw(p);
-//        gc.fill(p);
-//        gc.translate(l * 0.2, 0);
-//        gc.rotate(sailRotation.getRadians());
-//        gc.setColor(sailcolor);
-//        gc.setStroke(new BasicStroke(2));
-//        gc.draw(sail);
-//        gc.setTransform(xform);
+            gc.beginPath();
+            gc.moveTo(-length * 0.5, width * 0.45); //go to transom quarter
+            gc.bezierCurveTo(-length * 0.2, width * 0.55, length * 0.2, length * 0.1, length * 0.5, 0);
+            gc.bezierCurveTo(length * 0.2, -length * 0.1, -length * 0.2, -width * 0.55, -length * 0.5, -width * 0.45);
+            gc.closePath(); // and the port side
+            gc.fill();
+            //
+            gc.setStroke(sailcolour);
+            gc.setLineWidth(2 / zoom);
+            gc.translate(length * 0.2, 0);
+            gc.rotate(sailRotation.getDegrees());
+            gc.beginPath();
+            if (onStarboard) {
+                gc.moveTo(0, 0);
+                gc.bezierCurveTo(-length * 0.2, -length * 0.1, -length * 0.4, -width * 0.4, -length * 0.7, -width * 0.4);
+            } else {
+                gc.moveTo(0.0, 0);
+                gc.bezierCurveTo(-length * 0.2, length * 0.1, -length * 0.4, width * 0.4, -length * 0.7, width * 0.4);
+            }
+            gc.stroke();
+            gc.restore();
 //
 //        double MetresPerPixel = 1 / zoom;
 //        BasicStroke stroke = new BasicStroke((float) (MetresPerPixel));
@@ -234,14 +216,15 @@ public class SketchWindow extends AbstractWindow {
 //                count++;
 //            }
 //        }
+        }
 
         public void displayWindGraphic(Location location, SpeedPolar flow, Color colour) {
-            GraphicsContext gc = getGraphicsContext2D();
             gc.setStroke(colour);
+            gc.setLineWidth(1 / zoom);
             DistancePolar directionstroke = new DistancePolar(10 / zoom, flow.getAngle());
             Location pt = directionstroke.polar2Location(location);
-            gc.strokeLine(transformX(location.getX()), transformY(location.getY()),
-                    transformX(pt.getX()), transformY(pt.getY()));
+            gc.strokeLine(location.getX(), location.getY(),
+                    pt.getX(), pt.getY());
 
 //        GeneralPath p = new GeneralPath();
 //        p.moveTo(0, 15);
@@ -273,18 +256,6 @@ public class SketchWindow extends AbstractWindow {
 //        }
 //        gc.drawString(windspeedText, 0, 0);
 //        gc.setTransform(xform);
-        }
-
-        private double transformX(double x) {
-            return scale(x - offsetx);
-        }
-
-        private double transformY(double y) {
-            return scale(offsety - y);
-        }
-
-        private double scale(double value) {
-            return value * zoom;
         }
     }
 }

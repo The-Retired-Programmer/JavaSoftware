@@ -60,15 +60,7 @@ public class DisplayParameters implements Displayable {
 
     private final PropertyArea sailingareaproperty = new PropertyArea();
 
-    public final Area getSailingarea() {
-        return sailingareaproperty.get();
-    }
-
     private final PropertyArea displayareaproperty = new PropertyArea();
-
-    public final Area getDisplayarea() {
-        return displayareaproperty.get();
-    }
 
     public DisplayParameters(JsonObject parsedjson) throws IOException {
         JsonObject paramsobj = parsedjson.getJsonObject("display");
