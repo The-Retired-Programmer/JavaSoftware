@@ -109,59 +109,35 @@ public class SketchWindow extends AbstractWindow {
             gc = getGraphicsContext2D();
             gc.scale(zoom, -zoom);
             gc.translate(-canvasarea.getBottomleft().getX(), -canvasarea.getHeight() - canvasarea.getBottomleft().getY());
+            drawrectangle(canvasarea, Color.OLIVEDRAB);
         }
 
         public void clear() {
-            GraphicsContext gc1 = getGraphicsContext2D();
-            gc1.clearRect(0, 0, getWidth(), getHeight());
+            getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
         }
 
-        public void drawrectangle(Area area, Color fill) {
-            gc.setFill(fill);
-            gc.fillRect(area.getBottomleft().getX(), area.getBottomleft().getY(),
-                    area.getWidth(), area.getHeight());
+        public void drawfieldofplay(Area sailingarea) {
+            drawrectangle(sailingarea, Color.LIGHTSEAGREEN);
         }
 
         public void drawmark(Location location, double diameter, double minimumDiameterPixels, Color fill) {
-            gc.setFill(fill);
             double minimumDiameter = minimumDiameterPixels / zoom;
             if (diameter < minimumDiameter) {
                 diameter = minimumDiameter;
             }
-//            double x = transformX(location.getX()) - d / 2;
-//            double y = transformY(location.getY()) - d / 2;
-            gc.fillOval(location.getX() - diameter / 2, location.getY() - diameter / 2,
-                    diameter, diameter);
+            drawcircle(location, diameter, fill);
         }
 
         public void drawwindwardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
             final Angle WINDWARDLAYLINEANGLE = new Angle(135);
-            pixelLine(location,
-                    new DistancePolar(laylinelength, windAngle.add(WINDWARDLAYLINEANGLE)),
-                    laylinecolour, zoom);
-            pixelLine(location,
-                    new DistancePolar(laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE)),
-                    laylinecolour, zoom);
+            drawLine(location, laylinelength, windAngle.add(WINDWARDLAYLINEANGLE), 1, laylinecolour);
+            drawLine(location, laylinelength, windAngle.sub(WINDWARDLAYLINEANGLE), 1, laylinecolour);
         }
 
         public void drawleewardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
             final Angle LEEWARDLAYLINEANGLE = new Angle(45);
-            pixelLine(location,
-                    new DistancePolar(laylinelength, windAngle.add(LEEWARDLAYLINEANGLE)),
-                    laylinecolour, zoom);
-            pixelLine(location,
-                    new DistancePolar(laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE)),
-                    laylinecolour, zoom);
-        }
-
-        private void pixelLine(Location laylineBase, DistancePolar line,
-                Color laylinecolour, double zoom) {
-            gc.setStroke(laylinecolour);
-            Location pt = line.polar2Location(laylineBase);
-            gc.strokeLine(laylineBase.getX(), laylineBase.getY(),
-                    pt.getX(), pt.getY());
-//            gc.strokeLine(transformX(laylineBase.getX()), transformY(laylineBase.getY()),
-//                    transformX(pt.getX()), transformY(pt.getY()));
+            drawLine(location, laylinelength, windAngle.add(LEEWARDLAYLINEANGLE), 1, laylinecolour);
+            drawLine(location, laylinelength, windAngle.sub(LEEWARDLAYLINEANGLE), 1, laylinecolour);
         }
 
         public void drawboat(Location location, Angle direction, Color fill, Angle winddirection,
@@ -219,12 +195,7 @@ public class SketchWindow extends AbstractWindow {
         }
 
         public void displayWindGraphic(Location location, SpeedPolar flow, Color colour) {
-            gc.setStroke(colour);
-            gc.setLineWidth(1 / zoom);
-            DistancePolar directionstroke = new DistancePolar(10 / zoom, flow.getAngle());
-            Location pt = directionstroke.polar2Location(location);
-            gc.strokeLine(location.getX(), location.getY(),
-                    pt.getX(), pt.getY());
+            drawLine(location, 10 / zoom, flow.getAngle(), 1, colour);
 
 //        GeneralPath p = new GeneralPath();
 //        p.moveTo(0, 15);
@@ -256,6 +227,30 @@ public class SketchWindow extends AbstractWindow {
 //        }
 //        gc.drawString(windspeedText, 0, 0);
 //        gc.setTransform(xform);
+        }
+
+        // drawing primatives
+        private void drawrectangle(Area area, Color fill) {
+            gc.setFill(fill);
+            gc.fillRect(area.getBottomleft().getX(), area.getBottomleft().getY(),
+                    area.getWidth(), area.getHeight());
+        }
+
+        private void drawcircle(Location pt, double diameter, Color fill) {
+            gc.setFill(fill);
+            gc.fillOval(pt.getX() - diameter / 2, pt.getY() - diameter / 2,
+                    diameter, diameter);
+        }
+
+        private void drawLine(Location fromPoint, Location toPoint, int width, Color colour) {
+            gc.setStroke(colour);
+            gc.setLineWidth(width / zoom);
+            gc.strokeLine(fromPoint.getX(), fromPoint.getY(), toPoint.getX(), toPoint.getY());
+        }
+
+        private void drawLine(Location fromPoint, double linelength, Angle angle, int width, Color colour) {
+            DistancePolar line = new DistancePolar(linelength, angle);
+            drawLine(fromPoint, line.polar2Location(fromPoint), width, colour);
         }
     }
 }

@@ -67,9 +67,9 @@ public class Boats implements Displayable, Timerable {
     }
 
     @Override
-    public void draw(SketchPane canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas) throws IOException {
         for (var boat : boats.values()) {
-            boat.draw(canvas, zoom);
+            boat.draw(canvas);
         }
     }
 }

@@ -201,7 +201,7 @@ public abstract class Flow implements Displayable, Timerable {
     }
 
     @Override
-    public void draw(SketchPane canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas) throws IOException {
         Location sw = area.getBottomleft();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();

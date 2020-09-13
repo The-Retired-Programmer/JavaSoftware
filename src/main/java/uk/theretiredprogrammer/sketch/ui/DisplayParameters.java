@@ -94,16 +94,7 @@ public class DisplayParameters implements Displayable {
     }
 
     @Override
-    public void draw(SketchPane canvas, double zoom) throws IOException {
-        canvas.drawrectangle(getDisplayArea(), Color.OLIVEDRAB);
-        canvas.drawrectangle(getSailingArea(), Color.LIGHTSEAGREEN);
-    }
-
-    public double getWidth(double zoom) {
-        return (getDisplayArea().getWidth()) * zoom;
-    }
-
-    public double getHeight(double zoom) {
-        return (getDisplayArea().getHeight()) * zoom;
+    public void draw(SketchPane canvas) throws IOException {
+        canvas.drawfieldofplay(getSailingArea());
     }
 }

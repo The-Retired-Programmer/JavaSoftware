@@ -304,7 +304,7 @@ public abstract class Boat {
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
 
-    public void draw(SketchPane canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas) throws IOException {
         canvas.drawboat(getLocation(), directionproperty.getValue(), colourproperty.get(),
                 controllersupplier.get().windflow.getFlow(getLocation()).getAngle(),
                 metrics.length, metrics.width, sailcolor);

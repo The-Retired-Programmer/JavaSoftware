@@ -84,7 +84,7 @@ public class Mark implements Displayable {
     }
 
     @Override
-    public void draw(SketchPane canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas) throws IOException {
         Controller controller = controllersupplier.get();
         canvas.drawmark(getLocation(), SIZE, 6, colourproperty.get());
         Angle windAngle = controller.windflow.getFlow(getLocation()).getAngle();

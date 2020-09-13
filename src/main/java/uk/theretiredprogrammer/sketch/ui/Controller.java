@@ -120,13 +120,13 @@ public class Controller {
     public void paint(SketchPane canvas) {
         canvas.clear();
         try {
-            displayparameters.draw(canvas, displayparameters.getZoom());
-            windflow.draw(canvas, displayparameters.getZoom());
+            displayparameters.draw(canvas);
+            windflow.draw(canvas);
             if (waterflow != null) {
-                waterflow.draw(canvas, displayparameters.getZoom());
+                waterflow.draw(canvas);
             }
-            course.draw(canvas, displayparameters.getZoom());
-            boats.draw(canvas, displayparameters.getZoom());
+            course.draw(canvas);
+            boats.draw(canvas);
         } catch (IOException ex) {
             writetostatusline.accept(ex.getLocalizedMessage());
         }

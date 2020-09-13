@@ -26,5 +26,5 @@ import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
  */
 public interface Displayable {
 
-    public void draw(SketchPane canvas, double zoom) throws IOException;
+    public void draw(SketchPane canvas) throws IOException;
 }

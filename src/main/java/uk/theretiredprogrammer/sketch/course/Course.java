@@ -96,9 +96,9 @@ public class Course implements Displayable {
     }
 
     @Override
-    public void draw(SketchPane canvas, double zoom) throws IOException {
+    public void draw(SketchPane canvas) throws IOException {
         for (Mark mark : marks.values()) {
-            mark.draw(canvas, zoom);
+            mark.draw(canvas);
         }
     }
 }
