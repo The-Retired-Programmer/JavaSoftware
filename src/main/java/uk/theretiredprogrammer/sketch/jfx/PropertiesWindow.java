@@ -41,7 +41,6 @@ public class PropertiesWindow extends AbstractWindow{
         super(PropertiesWindow.class, parent);
         setTitle(title);
         setContent(new PropertiesPane(controller));
-        setOnCloseAction((e) -> closeIncludingChildren());
         show();
     }
 

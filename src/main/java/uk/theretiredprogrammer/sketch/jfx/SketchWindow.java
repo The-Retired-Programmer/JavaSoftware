@@ -82,7 +82,6 @@ public class SketchWindow extends AbstractWindow {
         controller.paint(canvas);
         setScrollableContent(group);
         setStatusbar(statusbar);
-        setOnCloseAction((e) -> closeIncludingChildren());
         show();
     }
 

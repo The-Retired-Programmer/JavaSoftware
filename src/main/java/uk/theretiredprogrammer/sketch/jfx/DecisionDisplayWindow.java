@@ -34,7 +34,6 @@ public class DecisionDisplayWindow extends AbstractWindow {
         super(DecisionDisplayWindow.class, parent);
         setTitle(title);
         setScrollableContent(textarea = new TextFlow());
-        setOnCloseAction((e) -> closeIncludingChildren());
         show();
     }
 

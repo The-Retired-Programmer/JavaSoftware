@@ -57,6 +57,7 @@ public abstract class AbstractWindow {
         this.clazz = clazz;
     }
     
+    @SuppressWarnings("LeakingThisInConstructor")
     AbstractWindow(Class clazz, AbstractWindow parent){
         this(clazz);
         parentwindow = parent;
@@ -112,6 +113,7 @@ public abstract class AbstractWindow {
         stage.setTitle(title);
         stage.setOnCloseRequest(e -> {
                     saveWindowSizePreferences(stage, clazz);
+                    closeIncludingChildren();
                     if (closeaction != null) {
                         closeaction.accept(e);
                     }

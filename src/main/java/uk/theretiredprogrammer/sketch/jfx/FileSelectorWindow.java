@@ -42,7 +42,6 @@ public class FileSelectorWindow extends AbstractWindow {
         setDefaultWindowSize(100, 100, 400, 650);
         setTitle("Race Training SKETCH Application - File Selector");
         setContent(new FileSelectorPane((p) -> fileSelected(p)));
-        setOnCloseAction((e) -> closeIncludingChildren());
         show();
     }
 
