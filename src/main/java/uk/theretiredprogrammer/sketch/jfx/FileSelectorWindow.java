@@ -38,8 +38,7 @@ public class FileSelectorWindow extends AbstractWindow {
     }
 
     private FileSelectorWindow(Stage stage) {
-        setStage(stage);
-        setClass(FileSelectorWindow.class);
+        super(FileSelectorWindow.class, stage);
         setDefaultWindowSize(100, 100, 400, 650);
         setTitle("Race Training SKETCH Application - File Selector");
         setContent(new FileSelectorPane((p) -> fileSelected(p)));

@@ -41,28 +41,31 @@ public abstract class AbstractWindow {
     private AbstractWindow parentwindow = null;
     private final List<AbstractWindow> childwindows = new ArrayList<>();
 
-    private  Stage stage = new Stage();
-    private Class clazz;
+    private Stage stage = new Stage();
+    private  final Class clazz;
     private final ToolBar toolbar = new ToolBar();;
     private  Node statusbar;
-    private int x;
-    private int y;
-    private int w;
-    private int h;
+    private int x = 100;
+    private int y =100;
+    private int w = 500;
+    private int h =500;
     private String title;
     private Node contentnode;
     private Consumer<WindowEvent> closeaction;
-
-    void setParentWindow(AbstractWindow parent) {
+    
+    AbstractWindow(Class clazz){
+        this.clazz = clazz;
+    }
+    
+    AbstractWindow(Class clazz, AbstractWindow parent){
+        this(clazz);
         parentwindow = parent;
         parent.childwindows.add(this);
     }
-
-    void setStage(Stage stage) {
+    
+    AbstractWindow(Class clazz, Stage stage){
+        this(clazz);
         this.stage = stage;
-    }
-    void setClass(Class clazz) {
-        this.clazz = clazz;
     }
     
     void setDefaultWindowSize(int x, int y, int w, int h){

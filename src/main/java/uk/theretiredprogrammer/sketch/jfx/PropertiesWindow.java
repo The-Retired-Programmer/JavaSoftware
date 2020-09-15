@@ -38,12 +38,10 @@ public class PropertiesWindow extends AbstractWindow{
     }
 
     private PropertiesWindow(String title, Controller controller, AbstractWindow parent) {
-        setParentWindow(parent);
+        super(PropertiesWindow.class, parent);
+        setTitle(title);
         PropertiesPane propertiespane = new PropertiesPane();
         propertiespane.updateAllproperties(controller);
-        //
-        setClass(PropertiesWindow.class);
-        setTitle(title);
         setContent(propertiespane);
         setOnCloseAction((e) -> closeIncludingChildren());
         show();

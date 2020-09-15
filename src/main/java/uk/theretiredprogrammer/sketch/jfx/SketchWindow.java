@@ -46,19 +46,7 @@ public class SketchWindow extends AbstractWindow {
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
     private SketchWindow(String title, Controller controller, AbstractWindow parent) {
-        setParentWindow(parent);
-        timetext = new Text("      ");
-        statusbar = new Text();
-        Group group = new Group();
-        canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
-        controller
-                .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
-                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
-                .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbar.setText(s)));
-        group.getChildren().add(canvas);
-        controller.paint(canvas);
-        //
-        setClass(SketchWindow.class);
+        super(SketchWindow.class, parent);
         setTitle(title);
         addtoToolbar(
                 toolbarButton("Start", actionEvent -> controller.start()),
@@ -81,8 +69,17 @@ public class SketchWindow extends AbstractWindow {
                     decisiondisplaywindow.clear();
                     controller.displayfilteredlog("SELECTED");
                 }),
-                timetext
+                timetext = new Text("      ")
         );
+        statusbar = new Text();
+        Group group = new Group();
+        canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
+        controller
+                .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
+                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
+                .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbar.setText(s)));
+        group.getChildren().add(canvas);
+        controller.paint(canvas);
         setScrollableContent(group);
         setStatusbar(statusbar);
         setOnCloseAction((e) -> closeIncludingChildren());
