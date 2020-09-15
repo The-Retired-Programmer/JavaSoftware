@@ -36,8 +36,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class SketchWindow extends AbstractWindow {
 
-    public static SketchWindow create(String title, Controller controller) {
-        return new SketchWindow(title, controller);
+    public static SketchWindow create(String title, Controller controller, AbstractWindow parent) {
+        return new SketchWindow(title, controller, parent);
     }
 
     private final SketchPane canvas;
@@ -45,7 +45,9 @@ public class SketchWindow extends AbstractWindow {
     private final Text statusbar;
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
-    private SketchWindow(String title, Controller controller) {
+    private SketchWindow(String title, Controller controller, AbstractWindow parent) {
+        super();
+        setParentWindow(parent);
         timetext = new Text("      ");
         statusbar = new Text();
         Group group = new Group();
@@ -57,16 +59,16 @@ public class SketchWindow extends AbstractWindow {
         group.getChildren().add(canvas);
         controller.paint(canvas);
         //
-        new WindowBuilder()
+        new WindowBuilder(SketchWindow.class)
                 .setTitle(title)
                 .addtoToolbar(
                         toolbarButton("Start", actionEvent -> controller.start()),
                         toolbarButton("Pause", actionEvent -> controller.stop()),
                         toolbarButton("Rest", actionEvent -> controller.reset()),
-                        toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller)),
+                        toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller, SketchWindow.this)),
                         toolbarButton("Show Decision Log", actionEvent -> {
                             if (decisiondisplaywindow == null) {
-                                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                                decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
                                 controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
                             }
                             decisiondisplaywindow.clear();
@@ -74,7 +76,7 @@ public class SketchWindow extends AbstractWindow {
                         }),
                         toolbarButton("Show Filtered Decision Log", actionEvent -> {
                             if (decisiondisplaywindow == null) {
-                                decisiondisplaywindow = DecisionDisplayWindow.create(title);
+                                decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
                                 controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
                             }
                             decisiondisplaywindow.clear();
@@ -84,9 +86,10 @@ public class SketchWindow extends AbstractWindow {
                 )
                 .setScrollableContent(group)
                 .setStatusbar(statusbar)
-                .show();
+                .setOnCloseAction((e) -> closeIncludingChildren())
+                .show(getStage());
     }
-
+    
     private void updteTime(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;

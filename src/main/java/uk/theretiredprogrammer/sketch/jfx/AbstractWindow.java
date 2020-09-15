@@ -15,16 +15,48 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 /**
  *
  * @author richard
  */
 public abstract class AbstractWindow {
-    
+
+    private AbstractWindow parentwindow = null;
+    private final List<AbstractWindow> childwindows = new ArrayList<>();
+
+    private final Stage stage;
+
+    AbstractWindow() {
+        this(new Stage());
+    }
+
+    AbstractWindow(Stage stage) {
+        this.stage = stage;
+    }
+
+    Stage getStage() {
+        return stage;
+    }
+
+    void setParentWindow(AbstractWindow parent) {
+        parentwindow = parent;
+        parent.childwindows.add(this);
+    }
+
+    void closeIncludingChildren() {
+        childwindows.forEach((window) -> window.getStage().close());
+        if (parentwindow != null) {
+            parentwindow.childwindows.remove(this);
+        }
+    }
+
     Button toolbarButton(String buttontext, EventHandler<ActionEvent> action) {
         Button button = new Button(buttontext);
         button.setDisable(false);

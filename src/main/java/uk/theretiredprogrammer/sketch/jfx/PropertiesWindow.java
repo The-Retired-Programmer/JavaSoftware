@@ -31,19 +31,23 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  *
  * @author richard
  */
-public class PropertiesWindow {
+public class PropertiesWindow extends AbstractWindow{
     
-    public static PropertiesWindow create(String title, Controller controller) {
-        return new PropertiesWindow(title, controller);
+    public static PropertiesWindow create(String title, Controller controller, AbstractWindow parent) {
+        return new PropertiesWindow(title, controller, parent);
     }
 
-    private PropertiesWindow(String title, Controller controller) {
+    private PropertiesWindow(String title, Controller controller, AbstractWindow parent) {
+        super();
+        setParentWindow(parent);
         PropertiesPane propertiespane = new PropertiesPane();
         propertiespane.updateAllproperties(controller);
         //
-        new WindowBuilder().setTitle(title)
+        new WindowBuilder(PropertiesWindow.class)
+                .setTitle(title)
                 .setContent(propertiespane)
-                .show();
+                .setOnCloseAction((e) -> closeIncludingChildren())
+                .show(getStage());
     }
 
     private class PropertiesPane extends Accordion {

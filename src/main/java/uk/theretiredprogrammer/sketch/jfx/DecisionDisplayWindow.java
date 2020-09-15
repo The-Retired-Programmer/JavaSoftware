@@ -22,19 +22,23 @@ import javafx.scene.text.TextFlow;
  *
  * @author richard
  */
-public class DecisionDisplayWindow {
+public class DecisionDisplayWindow extends AbstractWindow {
 
-    public static DecisionDisplayWindow create(String title) {
-        return new DecisionDisplayWindow(title);
+    public static DecisionDisplayWindow create(String title, AbstractWindow parent) {
+        return new DecisionDisplayWindow(title, parent);
     }
 
     private final TextFlow textarea;
 
-    private DecisionDisplayWindow(String title) {
+    private DecisionDisplayWindow(String title, AbstractWindow parent) {
+        super();
+        setParentWindow(parent);
         textarea = new TextFlow();
-        new WindowBuilder().setTitle(title)
+        new WindowBuilder(DecisionDisplayWindow.class)
+                .setTitle(title)
                 .setScrollableContent(textarea)
-                .show();
+                .setOnCloseAction((e) -> closeIncludingChildren())
+                .show(getStage());
     }
 
     public void clear() {

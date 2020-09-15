@@ -15,15 +15,17 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
+import java.util.function.Consumer;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -35,13 +37,28 @@ public class WindowBuilder {
     private Node contentnode;
     private String title;
     private Node statusbar;
-
-    public WindowBuilder() {
+    private final Class clazz;
+    private int x = 100;
+    private int y = 100;
+    private int w = 500;
+    private int h = 500;
+    private Consumer<WindowEvent> closeaction;
+    
+    public WindowBuilder(Class clazz) {
+        this.clazz = clazz;
         toolbar = new ToolBar();
         statusbar = null;
     }
     
-    public WindowBuilder addtoToolbar(Node ... nodes) {
+    public WindowBuilder setDefaultWindowSize(int x, int y, int w, int h){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        return this;
+    }
+    
+    public WindowBuilder addtoToolbar(Node... nodes) {
         toolbar.getItems().addAll(nodes);
         return this;
     }
@@ -66,21 +83,80 @@ public class WindowBuilder {
         return this;
     }
     
+   public WindowBuilder setOnCloseAction(Consumer<WindowEvent> closeaction) {
+       this.closeaction = closeaction;
+       return this;
+   }
+    
     public Stage show(Stage stage) {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(toolbar, contentnode);
         if (statusbar != null) {
             vbox.getChildren().add(statusbar);
         }
-        Scene scene = new Scene(vbox, 300, 300);
+        Scene scene = new Scene(vbox);
+        applyWindowSizePreferences(stage, clazz, x, y, w, h);
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
+        stage.setOnCloseRequest(e -> {
+                    saveWindowSizePreferences(stage, clazz);
+                    if (closeaction != null) {
+                        closeaction.accept(e);
+                    }
+                });
         stage.show();
         return stage;
     }
     
-    public Stage show() {
-        return show(new Stage());
+    private static final String WINDOW_WIDTH = "windowWidth";
+    private static final String WINDOW_HEIGHT = "windowHeight";
+    private static final String WINDOW_X_POS = "windowXPos";
+    private static final String WINDOW_Y_POS = "windowYPos";
+    private static final String WINDOW_MAXIMIZED = "windowMaximized";
+
+    private void applyWindowSizePreferences(Stage stage, Class clazz, int x, int y, int w, int h) {
+        String windowname = clazz.getSimpleName();
+        try {
+            Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
+            if (packagePreferences.nodeExists(windowname)) {
+                Preferences stagePreferences = packagePreferences.node(windowname);
+                boolean wasMaximized = stagePreferences.getBoolean(WINDOW_MAXIMIZED, false);
+                if (wasMaximized) {
+                    stage.setMaximized(true);
+                } else {
+                    stage.setX(stagePreferences.getDouble(WINDOW_X_POS, x));
+                    stage.setY(stagePreferences.getDouble(WINDOW_Y_POS, y));
+                    stage.setWidth(stagePreferences.getDouble(WINDOW_WIDTH, w));
+                    stage.setHeight(stagePreferences.getDouble(WINDOW_HEIGHT, h));
+                }
+            } else {
+                stage.setX(x);
+                stage.setY(y);
+                stage.setWidth(w);
+                stage.setHeight(h);
+            }
+        } catch (BackingStoreException ex) {
+            System.out.println("Could not access preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+        }
+    }
+
+    private void saveWindowSizePreferences(Stage stage, Class clazz) {
+        String windowname = clazz.getSimpleName();
+        try {
+            Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
+            if (stage.isMaximized()) {
+                stagePreferences.putBoolean(WINDOW_MAXIMIZED, true);
+            } else {
+                stagePreferences.putBoolean(WINDOW_MAXIMIZED, false);
+                stagePreferences.putDouble(WINDOW_X_POS, stage.getX());
+                stagePreferences.putDouble(WINDOW_Y_POS, stage.getY());
+                stagePreferences.putDouble(WINDOW_WIDTH, stage.getWidth());
+                stagePreferences.putDouble(WINDOW_HEIGHT, stage.getHeight());
+            }
+            stagePreferences.flush();
+        } catch (final BackingStoreException ex) {
+            System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+        }
     }
 }

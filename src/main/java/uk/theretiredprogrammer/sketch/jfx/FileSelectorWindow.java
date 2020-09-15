@@ -31,23 +31,26 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  *
  * @author richard
  */
-public class FileSelectorWindow {
+public class FileSelectorWindow extends AbstractWindow {
     
     public static FileSelectorWindow create(Stage stage){
         return new FileSelectorWindow(stage);
     }
 
     private FileSelectorWindow(Stage stage) {
+        super(stage);
         FileSelectorPane fileselector = new FileSelectorPane((p) -> fileSelected(p));
-        new WindowBuilder()
+        new WindowBuilder(FileSelectorWindow.class)
+                .setDefaultWindowSize(100, 100, 400, 650)
                 .setTitle("Race Training SKETCH Application - File Selector")
                 .setContent(fileselector)
+                .setOnCloseAction((e) -> closeIncludingChildren())
                 .show(stage);
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
         Path path = p.getValue().getPath();
-        SketchWindow.create(path.getFileName().toString(),new Controller(path));
+        SketchWindow.create(path.getFileName().toString(),new Controller(path), this);
     }
 
     private class FileSelectorPane extends Accordion {
