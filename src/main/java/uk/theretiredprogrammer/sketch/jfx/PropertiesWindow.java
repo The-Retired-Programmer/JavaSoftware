@@ -38,16 +38,15 @@ public class PropertiesWindow extends AbstractWindow{
     }
 
     private PropertiesWindow(String title, Controller controller, AbstractWindow parent) {
-        super();
         setParentWindow(parent);
         PropertiesPane propertiespane = new PropertiesPane();
         propertiespane.updateAllproperties(controller);
         //
-        new WindowBuilder(PropertiesWindow.class)
-                .setTitle(title)
-                .setContent(propertiespane)
-                .setOnCloseAction((e) -> closeIncludingChildren())
-                .show(getStage());
+        setClass(PropertiesWindow.class);
+        setTitle(title);
+        setContent(propertiespane);
+        setOnCloseAction((e) -> closeIncludingChildren());
+        show();
     }
 
     private class PropertiesPane extends Accordion {

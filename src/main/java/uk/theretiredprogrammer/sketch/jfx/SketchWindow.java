@@ -46,7 +46,6 @@ public class SketchWindow extends AbstractWindow {
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
     private SketchWindow(String title, Controller controller, AbstractWindow parent) {
-        super();
         setParentWindow(parent);
         timetext = new Text("      ");
         statusbar = new Text();
@@ -59,37 +58,37 @@ public class SketchWindow extends AbstractWindow {
         group.getChildren().add(canvas);
         controller.paint(canvas);
         //
-        new WindowBuilder(SketchWindow.class)
-                .setTitle(title)
-                .addtoToolbar(
-                        toolbarButton("Start", actionEvent -> controller.start()),
-                        toolbarButton("Pause", actionEvent -> controller.stop()),
-                        toolbarButton("Rest", actionEvent -> controller.reset()),
-                        toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller, SketchWindow.this)),
-                        toolbarButton("Show Decision Log", actionEvent -> {
-                            if (decisiondisplaywindow == null) {
-                                decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
-                                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-                            }
-                            decisiondisplaywindow.clear();
-                            controller.displaylog();
-                        }),
-                        toolbarButton("Show Filtered Decision Log", actionEvent -> {
-                            if (decisiondisplaywindow == null) {
-                                decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
-                                controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-                            }
-                            decisiondisplaywindow.clear();
-                            controller.displayfilteredlog("SELECTED");
-                        }),
-                        timetext
-                )
-                .setScrollableContent(group)
-                .setStatusbar(statusbar)
-                .setOnCloseAction((e) -> closeIncludingChildren())
-                .show(getStage());
+        setClass(SketchWindow.class);
+        setTitle(title);
+        addtoToolbar(
+                toolbarButton("Start", actionEvent -> controller.start()),
+                toolbarButton("Pause", actionEvent -> controller.stop()),
+                toolbarButton("Rest", actionEvent -> controller.reset()),
+                toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller, SketchWindow.this)),
+                toolbarButton("Show Decision Log", actionEvent -> {
+                    if (decisiondisplaywindow == null) {
+                        decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
+                        controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+                    }
+                    decisiondisplaywindow.clear();
+                    controller.displaylog();
+                }),
+                toolbarButton("Show Filtered Decision Log", actionEvent -> {
+                    if (decisiondisplaywindow == null) {
+                        decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
+                        controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+                    }
+                    decisiondisplaywindow.clear();
+                    controller.displayfilteredlog("SELECTED");
+                }),
+                timetext
+        );
+        setScrollableContent(group);
+        setStatusbar(statusbar);
+        setOnCloseAction((e) -> closeIncludingChildren());
+        show();
     }
-    
+
     private void updteTime(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;

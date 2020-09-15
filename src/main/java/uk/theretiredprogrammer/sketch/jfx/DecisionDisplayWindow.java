@@ -31,14 +31,12 @@ public class DecisionDisplayWindow extends AbstractWindow {
     private final TextFlow textarea;
 
     private DecisionDisplayWindow(String title, AbstractWindow parent) {
-        super();
         setParentWindow(parent);
-        textarea = new TextFlow();
-        new WindowBuilder(DecisionDisplayWindow.class)
-                .setTitle(title)
-                .setScrollableContent(textarea)
-                .setOnCloseAction((e) -> closeIncludingChildren())
-                .show(getStage());
+        setClass(DecisionDisplayWindow.class);
+        setTitle(title);
+        setScrollableContent(textarea = new TextFlow());
+        setOnCloseAction((e) -> closeIncludingChildren());
+        show();
     }
 
     public void clear() {

@@ -38,14 +38,13 @@ public class FileSelectorWindow extends AbstractWindow {
     }
 
     private FileSelectorWindow(Stage stage) {
-        super(stage);
-        FileSelectorPane fileselector = new FileSelectorPane((p) -> fileSelected(p));
-        new WindowBuilder(FileSelectorWindow.class)
-                .setDefaultWindowSize(100, 100, 400, 650)
-                .setTitle("Race Training SKETCH Application - File Selector")
-                .setContent(fileselector)
-                .setOnCloseAction((e) -> closeIncludingChildren())
-                .show(stage);
+        setStage(stage);
+        setClass(FileSelectorWindow.class);
+        setDefaultWindowSize(100, 100, 400, 650);
+        setTitle("Race Training SKETCH Application - File Selector");
+        setContent(new FileSelectorPane((p) -> fileSelected(p)));
+        setOnCloseAction((e) -> closeIncludingChildren());
+        show();
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
