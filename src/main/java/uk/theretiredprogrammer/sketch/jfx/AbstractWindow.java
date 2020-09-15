@@ -42,64 +42,65 @@ public abstract class AbstractWindow {
     private final List<AbstractWindow> childwindows = new ArrayList<>();
 
     private Stage stage = new Stage();
-    private  final Class clazz;
-    private final ToolBar toolbar = new ToolBar();;
-    private  Node statusbar;
+    private final Class clazz;
+    private final ToolBar toolbar = new ToolBar();
+    ;
+    private Node statusbar;
     private int x = 100;
-    private int y =100;
+    private int y = 100;
     private int w = 500;
-    private int h =500;
+    private int h = 500;
     private String title;
     private Node contentnode;
     private Consumer<WindowEvent> closeaction;
-    
-    AbstractWindow(Class clazz){
+
+    AbstractWindow(Class clazz) {
         this.clazz = clazz;
     }
-    
+
     @SuppressWarnings("LeakingThisInConstructor")
-    AbstractWindow(Class clazz, AbstractWindow parent){
+    AbstractWindow(Class clazz, AbstractWindow parent) {
         this(clazz);
         parentwindow = parent;
         parent.childwindows.add(this);
     }
-    
-    AbstractWindow(Class clazz, Stage stage){
+
+    AbstractWindow(Class clazz, Stage stage) {
         this(clazz);
         this.stage = stage;
     }
-    
-    void setDefaultWindowSize(int x, int y, int w, int h){
+
+    void setDefaultWindowSize(int x, int y, int w, int h) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
     }
-    
+
     void addtoToolbar(Node... nodes) {
         toolbar.getItems().addAll(nodes);
     }
-    
+
     void setTitle(String title) {
         this.title = title;
     }
-    
+
     void setContent(Node contentnode) {
         this.contentnode = contentnode;
     }
-    
+
     void setScrollableContent(Node contentnode) {
         this.contentnode = new ScrollPane(contentnode);
     }
-    
+
     void setStatusbar(Node statusbar) {
         this.statusbar = statusbar;
     }
-    
-   void setOnCloseAction(Consumer<WindowEvent> closeaction) {
-       this.closeaction = closeaction;
-   }
-    
+
+    void setOnCloseAction(Consumer<WindowEvent> closeaction) {
+        this.closeaction = closeaction;
+    }
+
     Stage show() {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(toolbar, contentnode);
@@ -111,17 +112,20 @@ public abstract class AbstractWindow {
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
-        stage.setOnCloseRequest(e -> {
-                    saveWindowSizePreferences(stage, clazz);
-                    closeIncludingChildren();
-                    if (closeaction != null) {
-                        closeaction.accept(e);
-                    }
-                });
+        if (closeaction != null) {
+            stage.setOnCloseRequest(e -> {
+                closeaction.accept(e);
+                closeRequest();
+            });
+        }
+        stage.setOnHiding(e -> {
+            saveWindowSizePreferences(stage, clazz);
+            closeChildren();
+        });
         stage.show();
         return stage;
     }
-    
+
     private static final String WINDOW_WIDTH = "windowWidth";
     private static final String WINDOW_HEIGHT = "windowHeight";
     private static final String WINDOW_X_POS = "windowXPos";
@@ -172,14 +176,19 @@ public abstract class AbstractWindow {
             System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
         }
     }
-    
-    void closeIncludingChildren() {
-        childwindows.forEach((window) -> window.stage.close());
+
+    private void closeChildren() {
+        childwindows.forEach(window -> {
+            window.stage.close();
+        });
+    }
+
+    private void closeRequest() {
         if (parentwindow != null) {
             parentwindow.childwindows.remove(this);
         }
     }
-    
+
     Button toolbarButton(String buttontext, EventHandler<ActionEvent> action) {
         Button button = new Button(buttontext);
         button.setDisable(false);
