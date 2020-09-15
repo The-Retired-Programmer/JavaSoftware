@@ -40,16 +40,14 @@ public class PropertiesWindow extends AbstractWindow{
     private PropertiesWindow(String title, Controller controller, AbstractWindow parent) {
         super(PropertiesWindow.class, parent);
         setTitle(title);
-        PropertiesPane propertiespane = new PropertiesPane();
-        propertiespane.updateAllproperties(controller);
-        setContent(propertiespane);
+        setContent(new PropertiesPane(controller));
         setOnCloseAction((e) -> closeIncludingChildren());
         show();
     }
 
     private class PropertiesPane extends Accordion {
 
-        public void updateAllproperties(Controller controller) {
+        public PropertiesPane(Controller controller) {
             this.getPanes().clear();
             this.getPanes().addAll(
                     new PropertiesSection("Display", controller.displayparameters.properties()),
