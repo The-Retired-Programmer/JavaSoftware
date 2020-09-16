@@ -33,13 +33,13 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class PropertiesWindow extends AbstractWindow{
     
-    public static PropertiesWindow create(String title, Controller controller, AbstractWindow parent) {
-        return new PropertiesWindow(title, controller, parent);
+    public static PropertiesWindow create(String fn, Controller controller, AbstractWindow parent) {
+        return new PropertiesWindow(fn, controller, parent);
     }
 
-    private PropertiesWindow(String title, Controller controller, AbstractWindow parent) {
+    private PropertiesWindow(String fn, Controller controller, AbstractWindow parent) {
         super(PropertiesWindow.class, parent);
-        setTitle(title);
+        setTitle("SKETCH Properties Viewer - "+fn);
         setContent(new PropertiesPane(controller));
         show();
     }

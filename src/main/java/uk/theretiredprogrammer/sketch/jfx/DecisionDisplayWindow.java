@@ -24,15 +24,15 @@ import javafx.scene.text.TextFlow;
  */
 public class DecisionDisplayWindow extends AbstractWindow {
 
-    public static DecisionDisplayWindow create(String title, AbstractWindow parent) {
-        return new DecisionDisplayWindow(title, parent);
+    public static DecisionDisplayWindow create(String fn, AbstractWindow parent) {
+        return new DecisionDisplayWindow(fn, parent);
     }
 
     private final TextFlow textarea;
 
-    private DecisionDisplayWindow(String title, AbstractWindow parent) {
+    private DecisionDisplayWindow(String fn, AbstractWindow parent) {
         super(DecisionDisplayWindow.class, parent);
-        setTitle(title);
+        setTitle("SKETCH Decisions Viewer - " + fn);
         setScrollableContent(textarea = new TextFlow());
         show();
     }

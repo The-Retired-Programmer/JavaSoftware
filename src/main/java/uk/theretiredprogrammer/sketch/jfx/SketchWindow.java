@@ -36,8 +36,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class SketchWindow extends AbstractWindow {
 
-    public static SketchWindow create(String title, Controller controller, AbstractWindow parent) {
-        return new SketchWindow(title, controller, parent);
+    public static SketchWindow create(String fn, Controller controller, AbstractWindow parent) {
+        return new SketchWindow(fn, controller, parent);
     }
 
     private final SketchPane canvas;
@@ -45,17 +45,17 @@ public class SketchWindow extends AbstractWindow {
     private final Text statusbar;
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
-    private SketchWindow(String title, Controller controller, AbstractWindow parent) {
+    private SketchWindow(String fn, Controller controller, AbstractWindow parent) {
         super(SketchWindow.class, parent);
-        setTitle(title);
+        setTitle("SKETCH Scenario Viewer - "+fn);
         addtoToolbar(
                 toolbarButton("Start", actionEvent -> controller.start()),
                 toolbarButton("Pause", actionEvent -> controller.stop()),
                 toolbarButton("Rest", actionEvent -> controller.reset()),
-                toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(title, controller, SketchWindow.this)),
+                toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
                 toolbarButton("Show Decision Log", actionEvent -> {
                     if (decisiondisplaywindow == null) {
-                        decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
+                        decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
                         controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
                     }
                     decisiondisplaywindow.clear();
@@ -63,7 +63,7 @@ public class SketchWindow extends AbstractWindow {
                 }),
                 toolbarButton("Show Filtered Decision Log", actionEvent -> {
                     if (decisiondisplaywindow == null) {
-                        decisiondisplaywindow = DecisionDisplayWindow.create(title, SketchWindow.this);
+                        decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
                         controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
                     }
                     decisiondisplaywindow.clear();

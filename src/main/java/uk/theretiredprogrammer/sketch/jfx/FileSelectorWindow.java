@@ -41,14 +41,14 @@ public class FileSelectorWindow extends AbstractWindow {
     private FileSelectorWindow(Stage stage) {
         super(FileSelectorWindow.class, stage);
         setDefaultWindowSize(100, 100, 400, 650);
-        setTitle("Race Training SKETCH Application - File Selector");
+        setTitle("SKETCH Scenario Selector");
         setContent(new FileSelectorPane((p) -> fileSelected(p)));
         show();
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
-        Path path = p.getValue().getPath();
-        SketchWindow.create(path.getFileName().toString(), new Controller(path), this);
+        PathWithShortName pn = p.getValue();
+        SketchWindow.create(pn.toString(), new Controller(pn.getPath()), this);
     }
 
     private class FileSelectorPane extends Accordion {
