@@ -35,9 +35,8 @@ public class PathWithShortName {
     
     @Override
     public String toString() {
-        return path.getFileName().toString();
+        String fn = path.getFileName().toString();
+        int pt = fn.lastIndexOf(".");
+        return pt == -1 ? fn : fn.substring(0, pt);
     }
-    
-    
-    
 }

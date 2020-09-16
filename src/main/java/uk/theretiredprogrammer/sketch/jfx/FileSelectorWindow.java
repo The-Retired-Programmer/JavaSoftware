@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.jfx;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Consumer;
@@ -32,8 +33,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  * @author richard
  */
 public class FileSelectorWindow extends AbstractWindow {
-    
-    public static FileSelectorWindow create(Stage stage){
+
+    public static FileSelectorWindow create(Stage stage) {
         return new FileSelectorWindow(stage);
     }
 
@@ -47,7 +48,7 @@ public class FileSelectorWindow extends AbstractWindow {
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
         Path path = p.getValue().getPath();
-        SketchWindow.create(path.getFileName().toString(),new Controller(path), this);
+        SketchWindow.create(path.getFileName().toString(), new Controller(path), this);
     }
 
     private class FileSelectorPane extends Accordion {
@@ -74,8 +75,10 @@ public class FileSelectorWindow extends AbstractWindow {
             TreeItem<PathWithShortName> node = new TreeItem<>(path);
             if (Files.isDirectory(path.getPath())) {
                 try {
-                    for (Path child : Files.newDirectoryStream(path.getPath())) {
-                        node.getChildren().add(builditem(new PathWithShortName(child)));
+                    try ( DirectoryStream<Path> jsonfilepaths = Files.newDirectoryStream(path.getPath(), "*.json")) {
+                        for (Path child : jsonfilepaths) {
+                            node.getChildren().add(builditem(new PathWithShortName(child)));
+                        }
                     }
                 } catch (IOException ex) {
                     // skip directory if problem
