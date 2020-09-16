@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
@@ -34,6 +37,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class FileSelectorWindow extends AbstractWindow {
 
+    private final List<Path> recentFileList;
+
     public static FileSelectorWindow create(Stage stage) {
         return new FileSelectorWindow(stage);
     }
@@ -41,14 +46,34 @@ public class FileSelectorWindow extends AbstractWindow {
     private FileSelectorWindow(Stage stage) {
         super(FileSelectorWindow.class, stage);
         setDefaultWindowSize(100, 100, 400, 650);
+        recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         setTitle("SKETCH Scenario Selector");
         setContent(new FileSelectorPane((p) -> fileSelected(p)));
+        this.setOnCloseAction((e) -> SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class));
         show();
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
         PathWithShortName pn = p.getValue();
+        updateRecentFileList(pn);
         SketchWindow.create(pn.toString(), new Controller(pn.getPath()), this);
+    }
+    
+    private void updateRecentFileList(PathWithShortName pn) {
+        try {
+            for (int index = 0; index < recentFileList.size(); index++) {
+                if (Files.isSameFile(recentFileList.get(index), pn.getPath())) {
+                    recentFileList.remove(index);
+                    index--;
+                }
+            }
+        } catch (IOException ex) {
+            // skip if problems
+        }
+        while (recentFileList.size() > 9 ){
+            recentFileList.remove(9);
+        }
+        recentFileList.add(0,pn.getPath());
     }
 
     private class FileSelectorPane extends Accordion {
@@ -57,12 +82,31 @@ public class FileSelectorWindow extends AbstractWindow {
 
         public FileSelectorPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
             this.getPanes().addAll(
+                    getRecentFilesTitledPane(selectionlistener),
                     getFileSelectorTitledPane(FILEROOT, selectionlistener)
             );
         }
 
+        private TitledPane getRecentFilesTitledPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
+            var rootitem = buidListItem(recentFileList);
+            TreeView<PathWithShortName> recentsview = new TreeView<>();
+            recentsview.setRoot(rootitem);
+            recentsview.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> selectionlistener.accept(newValue));
+            recentsview.setShowRoot(false);
+            return new TitledPane("Recently Opened Scenarios", new ScrollPane(recentsview));
+        }
+
+        private TreeItem<PathWithShortName> buidListItem(List<Path> list) {
+            TreeItem<PathWithShortName> node = new TreeItem<>();
+            list.forEach(child -> {
+                node.getChildren().add(new TreeItem(new PathWithShortName(child)));
+            });
+            return node;
+        }
+
         private TitledPane getFileSelectorTitledPane(String folder, Consumer<TreeItem<PathWithShortName>> selectionlistener) {
-            var rootitem = builditem(new PathWithShortName(Path.of(folder)));
+            var rootitem = buidDirectoryItem(new PathWithShortName(Path.of(folder)));
             TreeView<PathWithShortName> directoryview = new TreeView<>();
             directoryview.setRoot(rootitem);
             directoryview.getSelectionModel().selectedItemProperty().addListener(
@@ -71,13 +115,13 @@ public class FileSelectorWindow extends AbstractWindow {
             return new TitledPane(folder, new ScrollPane(directoryview));
         }
 
-        private TreeItem<PathWithShortName> builditem(PathWithShortName path) {
+        private TreeItem<PathWithShortName> buidDirectoryItem(PathWithShortName path) {
             TreeItem<PathWithShortName> node = new TreeItem<>(path);
             if (Files.isDirectory(path.getPath())) {
                 try {
                     try ( DirectoryStream<Path> jsonfilepaths = Files.newDirectoryStream(path.getPath(), "*.json")) {
                         for (Path child : jsonfilepaths) {
-                            node.getChildren().add(builditem(new PathWithShortName(child)));
+                            node.getChildren().add(buidDirectoryItem(new PathWithShortName(child)));
                         }
                     }
                 } catch (IOException ex) {

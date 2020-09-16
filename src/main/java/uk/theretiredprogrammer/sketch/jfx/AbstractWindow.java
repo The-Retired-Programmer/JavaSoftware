@@ -18,8 +18,6 @@ package uk.theretiredprogrammer.sketch.jfx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -108,7 +106,7 @@ public abstract class AbstractWindow {
             vbox.getChildren().add(statusbar);
         }
         Scene scene = new Scene(vbox);
-        applyWindowSizePreferences(stage, clazz, x, y, w, h);
+        SketchPreferences.applyWindowSizePreferences(stage, clazz, x, y, w, h);
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
@@ -119,62 +117,11 @@ public abstract class AbstractWindow {
             });
         }
         stage.setOnHiding(e -> {
-            saveWindowSizePreferences(stage, clazz);
+            SketchPreferences.saveWindowSizePreferences(stage, clazz);
             closeChildren();
         });
         stage.show();
         return stage;
-    }
-
-    private static final String WINDOW_WIDTH = "windowWidth";
-    private static final String WINDOW_HEIGHT = "windowHeight";
-    private static final String WINDOW_X_POS = "windowXPos";
-    private static final String WINDOW_Y_POS = "windowYPos";
-    private static final String WINDOW_MAXIMIZED = "windowMaximized";
-
-    private void applyWindowSizePreferences(Stage stage, Class clazz, int x, int y, int w, int h) {
-        String windowname = clazz.getSimpleName();
-        try {
-            Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
-            if (packagePreferences.nodeExists(windowname)) {
-                Preferences stagePreferences = packagePreferences.node(windowname);
-                boolean wasMaximized = stagePreferences.getBoolean(WINDOW_MAXIMIZED, false);
-                if (wasMaximized) {
-                    stage.setMaximized(true);
-                } else {
-                    stage.setX(stagePreferences.getDouble(WINDOW_X_POS, x));
-                    stage.setY(stagePreferences.getDouble(WINDOW_Y_POS, y));
-                    stage.setWidth(stagePreferences.getDouble(WINDOW_WIDTH, w));
-                    stage.setHeight(stagePreferences.getDouble(WINDOW_HEIGHT, h));
-                }
-            } else {
-                stage.setX(x);
-                stage.setY(y);
-                stage.setWidth(w);
-                stage.setHeight(h);
-            }
-        } catch (BackingStoreException ex) {
-            System.out.println("Could not access preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
-        }
-    }
-
-    private void saveWindowSizePreferences(Stage stage, Class clazz) {
-        String windowname = clazz.getSimpleName();
-        try {
-            Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
-            if (stage.isMaximized()) {
-                stagePreferences.putBoolean(WINDOW_MAXIMIZED, true);
-            } else {
-                stagePreferences.putBoolean(WINDOW_MAXIMIZED, false);
-                stagePreferences.putDouble(WINDOW_X_POS, stage.getX());
-                stagePreferences.putDouble(WINDOW_Y_POS, stage.getY());
-                stagePreferences.putDouble(WINDOW_WIDTH, stage.getWidth());
-                stagePreferences.putDouble(WINDOW_HEIGHT, stage.getHeight());
-            }
-            stagePreferences.flush();
-        } catch (final BackingStoreException ex) {
-            System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
-        }
     }
 
     private void closeChildren() {
