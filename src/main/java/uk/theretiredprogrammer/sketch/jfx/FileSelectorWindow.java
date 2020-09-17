@@ -19,15 +19,17 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
@@ -37,7 +39,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class FileSelectorWindow extends AbstractWindow {
 
-    private final List<Path> recentFileList;
+    private ObservableList<PathWithShortName> recentFileList;
+    private final Text statusbar = new Text("");
 
     public static FileSelectorWindow create(Stage stage) {
         return new FileSelectorWindow(stage);
@@ -48,61 +51,81 @@ public class FileSelectorWindow extends AbstractWindow {
         setDefaultWindowSize(100, 100, 400, 650);
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         setTitle("SKETCH Scenario Selector");
-        setContent(new FileSelectorPane((p) -> fileSelected(p)));
+        setContent(new FileSelectorPane((p) -> recentSelected(p), (p) -> fileSelected(p)));
+        this.setStatusbar(statusbar);
         this.setOnCloseAction((e) -> SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class));
         show();
     }
 
     private void fileSelected(TreeItem<PathWithShortName> p) {
-        PathWithShortName pn = p.getValue();
-        updateRecentFileList(pn);
-        SketchWindow.create(pn.toString(), new Controller(pn.getPath()), this);
+        selected(p.getValue());
     }
     
-    private void updateRecentFileList(PathWithShortName pn) {
+    private boolean firstcall  = true;
+
+    private void recentSelected(PathWithShortName pn) {
+        if (firstcall) {
+            firstcall = false;
+            selected(pn);
+            firstcall = true;
+        }
+    }
+    
+    private void selected(PathWithShortName pn) {
+        statusbar.setText("");
+        Controller controller;
         try {
-            for (int index = 0; index < recentFileList.size(); index++) {
-                if (Files.isSameFile(recentFileList.get(index), pn.getPath())) {
-                    recentFileList.remove(index);
-                    index--;
+            controller = new Controller(pn.getPath());
+        } catch (IOException ex) {
+            statusbar.setText(pn.toString() + ": " + ex.getLocalizedMessage());
+            return;
+        }
+        updateRecentFileList(pn);
+        SketchWindow.create(pn.toString(), controller, this);
+    }
+
+    private void updateRecentFileList(PathWithShortName pn) {
+        if (recentFileList.size() > 0) {
+            List<Integer> removethese = new ArrayList<>();
+            try {
+                for (int i = 0; i < recentFileList.size(); i++) {
+                    if (Files.isSameFile(recentFileList.get(i).getPath(), pn.getPath())) {
+                        removethese.add(i);
+                    }
+                }
+            } catch (IOException ex) {
+            }
+            if (!removethese.isEmpty()) {
+                for (int i = removethese.size() - 1; i > -1; i--) {
+                    recentFileList.remove((int) removethese.get(i));
                 }
             }
-        } catch (IOException ex) {
-            // skip if problems
+            if (recentFileList.size() > 9) {
+                for (int i = recentFileList.size() - 1; i > 8; i--) {
+                    recentFileList.remove(i);
+                }
+            }
         }
-        while (recentFileList.size() > 9 ){
-            recentFileList.remove(9);
-        }
-        recentFileList.add(0,pn.getPath());
+        recentFileList.add(0, pn);
     }
 
     private class FileSelectorPane extends Accordion {
 
         public final static String FILEROOT = "/Users/richard/Race training Scenarios/Race Sketches/";
 
-        public FileSelectorPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
+        public FileSelectorPane(Consumer<PathWithShortName> recentselectionlistener,
+                Consumer<TreeItem<PathWithShortName>> fileselectionlistener) {
             this.getPanes().addAll(
-                    getRecentFilesTitledPane(selectionlistener),
-                    getFileSelectorTitledPane(FILEROOT, selectionlistener)
+                    getRecentFilesTitledPane(recentselectionlistener),
+                    getFileSelectorTitledPane(FILEROOT, fileselectionlistener)
             );
         }
 
-        private TitledPane getRecentFilesTitledPane(Consumer<TreeItem<PathWithShortName>> selectionlistener) {
-            var rootitem = buidListItem(recentFileList);
-            TreeView<PathWithShortName> recentsview = new TreeView<>();
-            recentsview.setRoot(rootitem);
+        private TitledPane getRecentFilesTitledPane(Consumer<PathWithShortName> selectionlistener) {
+            ListView<PathWithShortName> recentsview = new ListView<>(recentFileList);
             recentsview.getSelectionModel().selectedItemProperty().addListener(
                     (observable, oldValue, newValue) -> selectionlistener.accept(newValue));
-            recentsview.setShowRoot(false);
             return new TitledPane("Recently Opened Scenarios", new ScrollPane(recentsview));
-        }
-
-        private TreeItem<PathWithShortName> buidListItem(List<Path> list) {
-            TreeItem<PathWithShortName> node = new TreeItem<>();
-            list.forEach(child -> {
-                node.getChildren().add(new TreeItem(new PathWithShortName(child)));
-            });
-            return node;
         }
 
         private TitledPane getFileSelectorTitledPane(String folder, Consumer<TreeItem<PathWithShortName>> selectionlistener) {

@@ -16,10 +16,11 @@
 package uk.theretiredprogrammer.sketch.jfx;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 
 /**
@@ -81,8 +82,8 @@ public class SketchPreferences {
     }
 
     // recent File List
-    static List<Path> getRecentFileList(Class clazz) {
-        List<Path> result = new ArrayList<>();
+    static ObservableList<PathWithShortName> getRecentFileList(Class clazz) {
+        ObservableList<PathWithShortName> result = FXCollections.observableArrayList();
         try {
             Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
             if (packagePreferences.nodeExists("RecentFileList")) {
@@ -90,7 +91,7 @@ public class SketchPreferences {
                 for (int index = 0; index < 10; index++) {
                     String path = recentPreferences.get(Integer.toString(index), "DOES/NOT/EXIST");
                     if (!path.equals("DOES/NOT/EXIST")) {
-                        result.add(index, Path.of(path));
+                        result.add(index, new PathWithShortName(Path.of(path)));
                     }
                 }
             }
@@ -100,14 +101,14 @@ public class SketchPreferences {
         return result;
     }
 
-    static void saveRecentFileList(List<Path> recents, Class clazz) {
+    static void saveRecentFileList(ObservableList<PathWithShortName> recents, Class clazz) {
         try {
             Preferences recentPreferences = Preferences.userNodeForPackage(clazz).node("RecentFileList");
             recentPreferences.clear();
-            List<Path> recent10 = recents.subList(0, (recents.size() > 10 ? 10 : recents.size()));
+            List<PathWithShortName> recent10 = recents.subList(0, (recents.size() > 10 ? 10 : recents.size()));
             int index = 0;
-            for (Path path : recent10) {
-                recentPreferences.put(Integer.toString(index), path.toString());
+            for (PathWithShortName pn : recent10) {
+                recentPreferences.put(Integer.toString(index), pn.getPath().toString());
                 index++;
             }
             recentPreferences.flush();

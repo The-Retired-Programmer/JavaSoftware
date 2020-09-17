@@ -54,7 +54,7 @@ public class Controller {
     private Consumer<String> showdecisionline = (l)-> {};
     private Consumer<String> writetostatusline = (m)-> {};
 
-    public Controller(Path path) {
+    public Controller(Path path) throws IOException {
         try {
             configfilecontroller = new ConfigFileController(path);
             if (configfilecontroller.needsUpgrade()) {
@@ -62,11 +62,11 @@ public class Controller {
             }
             createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
-            writetostatusline.accept(ex.getLocalizedMessage());
+            throw new IOException("Failed to load, upgrade or parse the config file\n" + ex.getLocalizedMessage());
         }
     }
 
-    public Controller(String resourcename) {
+    public Controller(String resourcename) throws IOException {
         try {
             configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
             if (configfilecontroller.needsUpgrade()) {
@@ -74,7 +74,7 @@ public class Controller {
             }
             createObjectProperties(configfilecontroller.getParsedConfigFile());
         } catch (JsonException | IOException ex) {
-            writetostatusline.accept(ex.getLocalizedMessage());
+            throw new IOException("Failed to load, upgrade or parse the config file\n" + ex.getLocalizedMessage());
         }
     }
     
