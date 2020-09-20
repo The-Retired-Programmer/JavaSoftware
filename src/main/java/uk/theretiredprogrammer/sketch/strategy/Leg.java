@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,6 +33,7 @@ public class Leg {
     private final boolean portrounding;
     private final Leg followingleg;
     private final Supplier<Controller> controllersupplier;
+    private final PropertyString legproperty = new PropertyString();
 
     public Leg(Supplier<Controller> controllersupplier, Location startfrom, Location marklocation, boolean portrounding, Leg followingleg) {
         this.controllersupplier = controllersupplier;
@@ -39,11 +41,16 @@ public class Leg {
         this.marklocation = marklocation;
         this.portrounding = portrounding;
         this.followingleg = followingleg;
+        this.legproperty.set(this.toString());
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return startfrom + "->" + marklocation + (portrounding ? " to Port" : " to Starboard");
+    }
+
+    public PropertyString getProperty() {
+        return legproperty;
     }
 
     public Leg getFollowingLeg() {

@@ -14,11 +14,13 @@
     },
     "WIND": [
         {
+            "name": "northly",
             "type": "constantflow",
             "speed": 4,
             "from": 0
         },
         {
+            "name": "north+10",
             "type": "constantflow",
             "zlevel": 1,
             "speed": 8,
@@ -28,6 +30,7 @@
             "height": 15
         },
         {
+            "name": "north-15",
             "type": "constantflow",
             "zlevel": 2,
             "speed": 12,

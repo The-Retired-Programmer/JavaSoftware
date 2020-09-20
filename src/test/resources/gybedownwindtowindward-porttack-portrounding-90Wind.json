@@ -14,6 +14,7 @@
     },
     "WIND": [
         {
+            "name": "eastly",
             "type": "testflow",
             "speed": 4,
             "from": 90,

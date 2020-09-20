@@ -157,7 +157,7 @@ public abstract class BoatStrategyForLeg {
     abstract String nextBoatStrategyTimeInterval(Controller controller) throws IOException;
 
     BoatStrategyForLeg nextTimeInterval(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
-        String boatname = boat.name;
+        String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
             String reason = nextBoatStrategyTimeInterval(controller);
             timerlog.add(new BoatLogEntry(boat));

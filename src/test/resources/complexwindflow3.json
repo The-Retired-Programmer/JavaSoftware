@@ -15,6 +15,7 @@
     },
     "WIND": [
         {
+            "name": "northly",
             "type": "complexflow",
             "northwestspeed": 4,
             "northwestfrom": 0,

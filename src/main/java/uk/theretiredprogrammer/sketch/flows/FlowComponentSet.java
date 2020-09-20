@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
@@ -29,6 +30,16 @@ import uk.theretiredprogrammer.sketch.core.SpeedPolar;
  * @author richard
  */
 public class FlowComponentSet {
+
+    private static final List<String> flowtypes = new ArrayList<>();
+    
+    static void registerFlowType(String flowtype) {
+        flowtypes.add(flowtype);
+    }
+    
+    static List<String> getFlowTypes(){
+        return flowtypes;
+    }
     
     private final List<FlowComponent> flows = new ArrayList<>();
     
@@ -56,7 +67,7 @@ public class FlowComponentSet {
         }
     }
     
-    void properties(LinkedHashMap<String, Object> map) {
+    void properties(LinkedHashMap<String, PropertyItem> map) {
         flows.forEach((fc -> fc.properties(map)));
     }
     

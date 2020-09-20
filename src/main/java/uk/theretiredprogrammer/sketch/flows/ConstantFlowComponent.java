@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,11 +34,13 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class ConstantFlowComponent extends FlowComponent {
 
-    @Override
-    public final String getFlowType() {
-        return "Constant Flow";
+    private final static String CONSTANTFLOWTYPE = "Constant Flow";
+
+    static {
+        FlowComponentSet.registerFlowType(CONSTANTFLOWTYPE);
     }
 
+    private final PropertyString flowtypeproperty = new PropertyString(CONSTANTFLOWTYPE);
     private final PropertySpeedPolar flowproperty = new PropertySpeedPolar();
 
     public ConstantFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
@@ -51,9 +55,10 @@ public class ConstantFlowComponent extends FlowComponent {
     }
 
     @Override
-    public LinkedHashMap<String, Object> properties() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+    public LinkedHashMap<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
+        map.put("flowtype", flowtypeproperty);
         map.put("flow", flowproperty);
         return map;
     }

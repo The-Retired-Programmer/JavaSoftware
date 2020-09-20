@@ -20,14 +20,17 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.strategy.Leg;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.ListOf;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.LegValue;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
@@ -40,7 +43,7 @@ import uk.theretiredprogrammer.sketch.ui.Displayable;
 public class Course implements Displayable {
 
     private final Leg firstcourseleg;
-    private final Map<String, Mark> marks = new LinkedHashMap<>();
+    private final ObservableList<Mark> marks = FXCollections.observableArrayList();
 
     public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray markarray = parsedjson.getJsonArray("marks");
@@ -49,7 +52,7 @@ public class Course implements Displayable {
                 if (markv.getValueType() == JsonValue.ValueType.OBJECT) {
                     JsonObject markparms = (JsonObject) markv;
                     Mark mark = new Mark(controllersupplier, markparms);
-                    marks.put(mark.name, mark);
+                    marks.add(mark);
                 } else {
                     throw new IOException("Malformed Definition File - <marks> array contains items other that mark objects");
                 }
@@ -66,29 +69,47 @@ public class Course implements Displayable {
         Leg following = null;
         int i = legvalues.size() - 1;
         while (i >= 0) {
-            Location endmarklocation = marks.get(legvalues.get(i).getMarkname()).getLocation();
+            Location endmarklocation = getMark(legvalues.get(i).getMarkname()).getLocation();
             following = new Leg(controllersupplier,
-                    i == 0 ? start : marks.get(legvalues.get(i - 1).getMarkname()).getLocation(),
+                    i == 0 ? start : getMark(legvalues.get(i - 1).getMarkname()).getLocation(),
                     endmarklocation, legvalues.get(i).isPortRounding(),
                     following);
             i--;
         }
         firstcourseleg = following;
     }
-    
-     public Map<String, Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+
+    @Override
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         Leg leg = firstcourseleg;
         int count = 1;
         while (leg != null) {
-            map.put("Leg"+count++,leg);
+            map.put("Leg" + count++, leg.getProperty());
             leg = leg.getFollowingLeg();
         }
         return map;
     }
-    
-    public Collection<Mark> getMarks() {
-        return marks.values();
+
+    public final Mark getMark(String name) {
+        for (Mark mark : marks) {
+            if (mark.getName().equals(name)) {
+                return mark;
+            }
+        }
+        return null;
+    }
+
+    public void addMark(Mark mark) {
+        marks.add(mark);
+    }
+
+    public List<Mark> getMarks() {
+        return marks;
+    }
+
+    public void setOnMarksChange(ListChangeListener<Mark> ml) {
+        marks.addListener(ml);
     }
 
     public Leg getFirstCourseLeg() {
@@ -97,7 +118,7 @@ public class Course implements Displayable {
 
     @Override
     public void draw(SketchPane canvas) throws IOException {
-        for (Mark mark : marks.values()) {
+        for (Mark mark : marks) {
             mark.draw(canvas);
         }
     }

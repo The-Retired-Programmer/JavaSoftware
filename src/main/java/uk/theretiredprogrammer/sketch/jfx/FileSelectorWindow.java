@@ -29,7 +29,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
@@ -40,7 +39,6 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
 public class FileSelectorWindow extends AbstractWindow {
 
     private ObservableList<PathWithShortName> recentFileList;
-    private final Text statusbar = new Text("");
 
     public static FileSelectorWindow create(Stage stage) {
         return new FileSelectorWindow(stage);
@@ -52,7 +50,6 @@ public class FileSelectorWindow extends AbstractWindow {
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         setTitle("SKETCH Scenario Selector");
         setContent(new FileSelectorPane((p) -> recentSelected(p), (p) -> fileSelected(p)));
-        this.setStatusbar(statusbar);
         this.setOnCloseAction((e) -> SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class));
         show();
     }
@@ -72,12 +69,12 @@ public class FileSelectorWindow extends AbstractWindow {
     }
     
     private void selected(PathWithShortName pn) {
-        statusbar.setText("");
+        statusbarClear();
         Controller controller;
         try {
             controller = new Controller(pn.getPath());
         } catch (IOException ex) {
-            statusbar.setText(pn.toString() + ": " + ex.getLocalizedMessage());
+            statusbarDisplay(pn.toString() + ": " + ex.getLocalizedMessage());
             return;
         }
         updateRecentFileList(pn);

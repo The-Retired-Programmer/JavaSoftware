@@ -42,7 +42,6 @@ public class SketchWindow extends AbstractWindow {
 
     private final SketchPane canvas;
     private final Text timetext;
-    private final Text statusbar;
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
     private SketchWindow(String fn, Controller controller, AbstractWindow parent) {
@@ -71,17 +70,15 @@ public class SketchWindow extends AbstractWindow {
                 }),
                 timetext = new Text("      ")
         );
-        statusbar = new Text();
         Group group = new Group();
         canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
         controller
                 .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
                 .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
-                .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbar.setText(s)));
+                .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbarDisplay(s)));
         group.getChildren().add(canvas);
         controller.paint(canvas);
         setScrollableContent(group);
-        setStatusbar(statusbar);
         show();
     }
 

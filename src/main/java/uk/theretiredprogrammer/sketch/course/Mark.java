@@ -29,7 +29,9 @@ import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.PropertyColor;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -44,7 +46,11 @@ public class Mark implements Displayable {
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
-    public String name;
+    private final PropertyString nameproperty = new PropertyString();
+    public String getName() {
+        return nameproperty.get();
+    }
+    
     private final PropertyLocation locationproperty = new PropertyLocation();
 
     Location getLocation() {
@@ -61,8 +67,8 @@ public class Mark implements Displayable {
 
     public Mark(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
         this.controllersupplier = controllersupplier;
-        name = StringParser.parse(paramsobj, "name")
-                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
+        nameproperty.set(StringParser.parse(paramsobj, "name")
+                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter")));
         locationproperty.set(Location.parse(paramsobj, "location").orElse(new Location(0, 0)));
         windwardlaylinesproperty.set(BooleanParser.parse(paramsobj, "windwardlaylines").orElse(false));
         downwindlaylinesproperty.set(BooleanParser.parse(paramsobj, "downwindlaylines").orElse(false));
@@ -71,9 +77,10 @@ public class Mark implements Displayable {
         colourproperty.set(ColorParser.parse(paramsobj, "colour").orElse(Color.RED));
     }
 
-    public Map<String, Object> properties() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("name", name);
+    @Override
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
+        map.put("name", nameproperty);
         map.put("location", locationproperty);
         map.put("colour", colourproperty);
         map.put("windwardlaylines", windwardlaylinesproperty);

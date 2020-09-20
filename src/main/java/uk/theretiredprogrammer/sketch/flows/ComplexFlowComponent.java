@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Location;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
@@ -33,11 +35,13 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class ComplexFlowComponent extends FlowComponent {
     
-    @Override
-    public final String getFlowType() {
-        return "Complex Flow";
+    private final static String COMPLEXFLOWTYPE = "Complex Flow";
+    
+    static {
+        FlowComponentSet.registerFlowType(COMPLEXFLOWTYPE);
     }
-
+    
+    private final PropertyString flowtypeproperty = new PropertyString(COMPLEXFLOWTYPE);
     private final PropertySpeedPolar nwflowproperty = new PropertySpeedPolar();
     private final PropertySpeedPolar neflowproperty = new PropertySpeedPolar();
     private final PropertySpeedPolar seflowproperty = new PropertySpeedPolar();
@@ -61,9 +65,10 @@ public class ComplexFlowComponent extends FlowComponent {
     }
     
     @Override
-    public LinkedHashMap<String,Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+    public LinkedHashMap<String,PropertyItem> properties() {
+        LinkedHashMap<String,PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
+        map.put("flowtype", flowtypeproperty);
         map.put("northwestflow", nwflowproperty);
         map.put("northeastflow", neflowproperty);
         map.put("southwestflow", swflowproperty);

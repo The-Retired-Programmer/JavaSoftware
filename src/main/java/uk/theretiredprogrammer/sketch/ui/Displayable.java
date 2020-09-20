@@ -16,6 +16,8 @@
 package uk.theretiredprogrammer.sketch.ui;
 
 import java.io.IOException;
+import java.util.Map;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 
 /**
@@ -27,4 +29,6 @@ import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 public interface Displayable {
 
     public void draw(SketchPane canvas) throws IOException;
+    
+    public Map<String, PropertyItem> properties();
 }

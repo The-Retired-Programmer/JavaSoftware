@@ -15,15 +15,19 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
+import jakarta.json.Json;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
+import uk.theretiredprogrammer.sketch.course.Mark;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
@@ -115,6 +119,12 @@ public class Controller {
         course = new Course(() -> this, parsedjson);
         boats = new Boats(() -> this, parsedjson);
         boatstrategies = new BoatStrategies(this);
+    }
+    
+    public void addNewMark() throws IOException{
+        JsonObject jobj = Json.createObjectBuilder().add("name", "<new>").build();
+        Mark newmark = new Mark(()->this, jobj);
+        course.addMark(newmark);
     }
 
     public void paint(SketchPane canvas) {

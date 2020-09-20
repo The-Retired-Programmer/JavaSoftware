@@ -33,6 +33,7 @@ import uk.theretiredprogrammer.sketch.core.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.PropertyColor;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
@@ -98,7 +99,7 @@ public abstract class Flow implements Displayable, Timerable {
         randomshiftsproperty.set(BooleanParser.parse(paramsobj, "randomshifts").orElse(randomshiftsproperty.get()));
     }
 
-    void properties(LinkedHashMap<String, Object> map) {
+    void properties(LinkedHashMap<String, PropertyItem> map) {
         map.put("showflow", showflowproperty);
         map.put("showflowinterval", showflowintervalproperty);
         map.put("showflowcolor", showflowcolorproperty);

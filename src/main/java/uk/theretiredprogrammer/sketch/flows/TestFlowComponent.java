@@ -24,7 +24,9 @@ import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyAngle;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,11 +34,13 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class TestFlowComponent extends FlowComponent {
 
-    @Override
-    public final String getFlowType() {
-        return "Test Flow";
+    private final static String TESTFLOWTYPE = "Test Flow";
+
+    static {
+        FlowComponentSet.registerFlowType(TESTFLOWTYPE);
     }
 
+    private final PropertyString flowtypeproperty = new PropertyString(TESTFLOWTYPE);
     private final PropertySpeedPolar flowproperty = new PropertySpeedPolar();
     private final PropertyAngle meanproperty = new PropertyAngle();
 
@@ -54,9 +58,10 @@ public class TestFlowComponent extends FlowComponent {
     }
 
     @Override
-    public LinkedHashMap<String, Object> properties() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+    public LinkedHashMap<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
+        map.put("flowtype", flowtypeproperty);
         map.put("flow", flowproperty);
         map.put("mean", meanproperty);
         return map;

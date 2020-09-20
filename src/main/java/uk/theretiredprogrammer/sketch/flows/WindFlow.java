@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -29,7 +30,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  * @author richard
  */
 public class WindFlow extends Flow {
-    
+
     public static WindFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray windarray = parsedjson.getJsonArray("wind");
         if (windarray == null) {
@@ -47,13 +48,14 @@ public class WindFlow extends Flow {
         JsonObject windshiftparams = parsedjson.getJsonObject("windshifts");
         return new WindFlow(controllersupplier, windshiftparams, flowcomponents);
     }
-    
+
     private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
         super(controllersupplier, params, flowcomponents);
     }
-    
-    public Map<String, Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+
+    @Override
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
         return map;
     }

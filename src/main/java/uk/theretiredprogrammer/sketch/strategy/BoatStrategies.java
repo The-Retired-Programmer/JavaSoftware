@@ -33,19 +33,19 @@ public class BoatStrategies {
     public BoatStrategies(Controller controller) throws IOException {
         Leg firstleg = controller.course.getFirstCourseLeg();
         for (var boat : controller.boats.getBoats()) {
-            boatstrategies.put(boat.name, BoatStrategyForLeg.getLegStrategy(controller, boat, firstleg));
+            boatstrategies.put(boat.getName(), BoatStrategyForLeg.getLegStrategy(controller, boat, firstleg));
         }
     }
 
     public BoatStrategyForLeg getStrategy(Boat boat) {
-        return boatstrategies.get(boat.name);
+        return boatstrategies.get(boat.getName());
     }
 
     public void timerAdvance(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
         for (var boatstrategy : boatstrategies.values()) {
             BoatStrategyForLeg newstrategy = boatstrategy.nextTimeInterval(controller, simulationtime, timerlog);
-            if (newstrategy != null ) {
-                boatstrategies.put(boatstrategy.boat.name, newstrategy);
+            if (newstrategy != null) {
+                boatstrategies.put(boatstrategy.boat.getName(), newstrategy);
             }
         }
     }

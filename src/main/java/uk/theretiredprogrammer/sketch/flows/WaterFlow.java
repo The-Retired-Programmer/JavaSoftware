@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -29,7 +30,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  * @author richard
  */
 public class WaterFlow extends Flow {
-    
+
     public static WaterFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray waterarray = parsedjson.getJsonArray("water");
         if (waterarray != null) {
@@ -46,13 +47,14 @@ public class WaterFlow extends Flow {
         }
         return null;
     }
-    
-    private WaterFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException{
+
+    private WaterFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
         super(controllersupplier, params, flowcomponents);
     }
-    
-    public Map<String,Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+
+    @Override
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
         return map;
     }

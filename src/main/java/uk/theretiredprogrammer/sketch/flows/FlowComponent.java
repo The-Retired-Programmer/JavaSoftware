@@ -27,6 +27,8 @@ import uk.theretiredprogrammer.sketch.core.IntegerParser;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -41,41 +43,33 @@ public abstract class FlowComponent {
     
     static final SpeedPolar ZEROFLOW = new SpeedPolar(0.0, ANGLE0); 
 
-    private final String name;
+    private final PropertyString nameproperty = new PropertyString();
+    public String getName(){
+        return nameproperty.get();
+    }
     private final PropertyArea areaproperty = new PropertyArea();
     private final PropertyInteger zlevelproperty = new PropertyInteger();
 
     public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
         Area  darea = controllersupplier.get().displayparameters.getDisplayArea();
-        name = StringParser.parse(paramsobj, "name").orElse("");
+        nameproperty.set(StringParser.parse(paramsobj, "name")
+                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter")));
         zlevelproperty.set(IntegerParser.parse(paramsobj, "zlevel").orElse(0));
         areaproperty.set(Area.parse(paramsobj, "area").orElse(darea));
     }
 
     public void change(JsonObject params) throws IOException {
-        Location bottomleft = Location.parse(params, "location").orElse(areaproperty.getLocation());
-        double width = DoubleParser.parse(params, "width").orElse(areaproperty.getWidth());
-        double height = DoubleParser.parse(params, "height").orElse(areaproperty.getHeight());
         zlevelproperty.set(IntegerParser.parse(params, "zlevel").orElse(zlevelproperty.get()));
-        areaproperty.set(new Area(bottomleft, width, height));
+        areaproperty.set(Area.parse(params, "area").orElse(areaproperty.get()));
     }
     
-    void properties(LinkedHashMap<String,Object> map) {
-        if (name != null && !name.isEmpty()) {
-            map.put("name", name);
-        }
-        map.put("type", getFlowType());
+    void properties(LinkedHashMap<String,PropertyItem> map) {
+        map.put("name", nameproperty);
         map.put("area", areaproperty);
         map.put("zlevel", zlevelproperty);
     }
     
-    public abstract LinkedHashMap<String,Object> properties();
-    
-    public String getName(){
-        return name;
-    }
-    
-    public abstract String getFlowType();
+    public abstract LinkedHashMap<String,PropertyItem> properties();
     
     public Area getArea() {
         return areaproperty.get();

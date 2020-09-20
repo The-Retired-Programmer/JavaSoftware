@@ -23,6 +23,8 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Gradient;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyGradient;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -32,30 +34,33 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class GradientFlowComponent extends FlowComponent{
-    
-    @Override
-    public final String getFlowType() {
-        return "Gradient Flow";
+public class GradientFlowComponent extends FlowComponent {
+
+    private final static String GRADIENTFLOWTYPE = "Gradient Flow";
+
+    static {
+        FlowComponentSet.registerFlowType(GRADIENTFLOWTYPE);
     }
-    
+
+    private final PropertyString flowtypeproperty = new PropertyString(GRADIENTFLOWTYPE);
     private final PropertyGradient gradientproperty = new PropertyGradient();
 
-    public GradientFlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
+    public GradientFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
         super(controllersupplier, paramsobj);
         gradientproperty.set(Gradient.parse(paramsobj, "gradient").orElse(new Gradient()));
     }
-    
+
     @Override
     public void change(JsonObject params) throws IOException {
         super.change(params);
         gradientproperty.set(Gradient.parse(params, "gradient").orElse(gradientproperty.get()));
     }
-    
+
     @Override
-    public LinkedHashMap<String,Object> properties() {
-        LinkedHashMap<String,Object> map = new LinkedHashMap<>();
+    public LinkedHashMap<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
+        map.put("flowtype", flowtypeproperty);
         map.put("gradient", gradientproperty);
         return map;
     }

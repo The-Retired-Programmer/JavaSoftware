@@ -39,7 +39,9 @@ import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.PropertyColor;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.flows.Flow;
@@ -57,7 +59,12 @@ public abstract class Boat {
 
     private final Supplier<Controller> controllersupplier;
     //
-    public final String name;
+    private final PropertyString nameproperty = new PropertyString();
+
+    public final String getName() {
+        return nameproperty.get();
+    }
+    
     //
     private final PropertyAngle directionproperty = new PropertyAngle();
 
@@ -139,8 +146,8 @@ public abstract class Boat {
 
     public Boat(Supplier<Controller> controllersupplier, JsonObject paramsobj, BoatMetrics metrics) throws IOException {
         this.controllersupplier = controllersupplier;
-        name = StringParser.parse(paramsobj, "name")
-                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter"));
+        nameproperty.set(StringParser.parse(paramsobj, "name")
+                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter")));
         directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(ANGLE0));
         setLocation(Location.parse(paramsobj, "location").orElse(new Location(0, 0)));
         colourproperty.set(ColorParser.parse(paramsobj, "colour").orElse(Color.BLACK));
@@ -178,9 +185,9 @@ public abstract class Boat {
         downwindchannel = Channel.parse(paramsobj, "downwindchannel").orElse(downwindchannel);
     }
 
-    public Map<String, Object> properties() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("name", name);
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
+        map.put("name", nameproperty);
         map.put("heading", directionproperty);
         map.put("location", locationproperty);
         map.put("colour", colourproperty);
@@ -194,8 +201,8 @@ public abstract class Boat {
         map.put("downwindbearawayifheaded", downwindbearawayifheadedproperty);
         map.put("downwindgybeiflifted", downwindgybeifliftedproperty);
         map.put("downwindluffupiflifted", downwindluffupifliftedproperty);
-        map.put("upwindchannel", upwindchannel);
-        map.put("downwindchannel", downwindchannel);
+        //map.put("upwindchannel", upwindchannel);
+        //map.put("downwindchannel", downwindchannel);
         return map;
     }
 

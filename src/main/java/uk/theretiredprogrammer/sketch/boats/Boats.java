@@ -20,9 +20,11 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.ui.Controller;
@@ -35,7 +37,7 @@ import uk.theretiredprogrammer.sketch.ui.Timerable;
  */
 public class Boats implements Displayable, Timerable {
 
-    private final Map<String, Boat> boats = new HashMap<>();
+    private final ObservableMap<String, Boat> boats = FXCollections.observableHashMap();
 
     public Boats(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray boatarray = parsedjson.getJsonArray("boats");
@@ -46,7 +48,7 @@ public class Boats implements Displayable, Timerable {
             if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
                 JsonObject boatparams = (JsonObject) boatv;
                 Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
-                boats.put(boat.name, boat);
+                boats.put(boat.getName(), boat);
             } else {
                 throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
             }
@@ -71,5 +73,10 @@ public class Boats implements Displayable, Timerable {
         for (var boat : boats.values()) {
             boat.draw(canvas);
         }
+    }
+
+    @Override
+    public Map<String, PropertyItem> properties() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

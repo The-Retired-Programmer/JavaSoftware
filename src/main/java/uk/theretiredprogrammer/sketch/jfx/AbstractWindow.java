@@ -26,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -43,7 +44,7 @@ public abstract class AbstractWindow {
     private final Class clazz;
     private final ToolBar toolbar = new ToolBar();
     ;
-    private Node statusbar;
+    private final Text statusbar = new Text("");
     private int x = 100;
     private int y = 100;
     private int w = 500;
@@ -91,20 +92,13 @@ public abstract class AbstractWindow {
         this.contentnode = new ScrollPane(contentnode);
     }
 
-    void setStatusbar(Node statusbar) {
-        this.statusbar = statusbar;
-    }
-
     void setOnCloseAction(Consumer<WindowEvent> closeaction) {
         this.closeaction = closeaction;
     }
 
     Stage show() {
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(toolbar, contentnode);
-        if (statusbar != null) {
-            vbox.getChildren().add(statusbar);
-        }
+        vbox.getChildren().addAll(toolbar, contentnode, statusbar);
         Scene scene = new Scene(vbox);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, x, y, w, h);
         stage.setScene(scene);
@@ -123,7 +117,15 @@ public abstract class AbstractWindow {
         stage.show();
         return stage;
     }
-
+    
+    void statusbarDisplay(String message) {
+        statusbar.setText(message);
+    }
+    
+    void statusbarClear() {
+        statusbar.setText("");
+    }
+    
     private void closeChildren() {
         childwindows.forEach(window -> {
             window.stage.close();
