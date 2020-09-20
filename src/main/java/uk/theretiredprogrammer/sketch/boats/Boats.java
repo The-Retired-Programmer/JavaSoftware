@@ -19,11 +19,12 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
@@ -37,7 +38,7 @@ import uk.theretiredprogrammer.sketch.ui.Timerable;
  */
 public class Boats implements Displayable, Timerable {
 
-    private final ObservableMap<String, Boat> boats = FXCollections.observableHashMap();
+    private final ObservableList<Boat> boats = FXCollections.observableArrayList();
 
     public Boats(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray boatarray = parsedjson.getJsonArray("boats");
@@ -48,29 +49,42 @@ public class Boats implements Displayable, Timerable {
             if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
                 JsonObject boatparams = (JsonObject) boatv;
                 Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
-                boats.put(boat.getName(), boat);
+                boats.add(boat);
             } else {
                 throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
             }
         }
-        
+
+    }
+
+    public final Boat getBoat(String name) {
+        for (Boat boat : boats) {
+            if (boat.getName().equals(name)) {
+                return boat;
+            }
+        }
+        return null;
     }
     
-    public Boat getBoat(String name){
-        return boats.get(name);
+    public void addBoat(Boat boat) {
+        boats.add(boat);
+    }
+
+    public List<Boat> getBoats() {
+        return boats;
     }
     
-    public Collection<Boat> getBoats() {
-        return boats.values();
+    public void setOnBoatsChange(ListChangeListener<Boat> ml) {
+        boats.addListener(ml);
     }
 
     @Override
-    public void timerAdvance(int simulationtime, TimerLog timerlog ) throws IOException {
+    public void timerAdvance(int simulationtime, TimerLog timerlog) throws IOException {
     }
 
     @Override
     public void draw(SketchPane canvas) throws IOException {
-        for (var boat : boats.values()) {
+        for (var boat : boats) {
             boat.draw(canvas);
         }
     }

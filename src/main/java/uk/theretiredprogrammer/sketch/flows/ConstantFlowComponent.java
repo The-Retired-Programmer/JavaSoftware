@@ -34,7 +34,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final static String CONSTANTFLOWTYPE = "Constant Flow";
+    private final static String CONSTANTFLOWTYPE = "constantflow";
 
     static {
         FlowComponentSet.registerFlowType(CONSTANTFLOWTYPE);

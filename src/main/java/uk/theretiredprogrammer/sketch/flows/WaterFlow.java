@@ -33,8 +33,8 @@ public class WaterFlow extends Flow {
 
     public static WaterFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray waterarray = parsedjson.getJsonArray("water");
+        FlowComponentSet flowcomponents = new FlowComponentSet();
         if (waterarray != null) {
-            FlowComponentSet flowcomponents = new FlowComponentSet();
             for (JsonValue waterv : waterarray) {
                 if (waterv.getValueType() == JsonValue.ValueType.OBJECT) {
                     JsonObject water = (JsonObject) waterv;
@@ -43,13 +43,12 @@ public class WaterFlow extends Flow {
                     throw new IOException("Malformed Definition File - <water> array contains items other that <water> objects");
                 }
             }
-            return new WaterFlow(controllersupplier, null, flowcomponents);
         }
-        return null;
+        return new WaterFlow(controllersupplier, flowcomponents);
     }
 
-    private WaterFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
-        super(controllersupplier, params, flowcomponents);
+    private WaterFlow(Supplier<Controller> controllersupplier, FlowComponentSet flowcomponents) throws IOException {
+        super(controllersupplier, null, flowcomponents);
     }
 
     @Override

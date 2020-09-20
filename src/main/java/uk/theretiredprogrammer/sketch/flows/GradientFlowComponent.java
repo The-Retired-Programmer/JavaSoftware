@@ -36,7 +36,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class GradientFlowComponent extends FlowComponent {
 
-    private final static String GRADIENTFLOWTYPE = "Gradient Flow";
+    private final static String GRADIENTFLOWTYPE = "gradientflow";
 
     static {
         FlowComponentSet.registerFlowType(GRADIENTFLOWTYPE);

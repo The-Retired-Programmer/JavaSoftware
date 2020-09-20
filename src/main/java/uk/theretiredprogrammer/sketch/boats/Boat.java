@@ -258,7 +258,7 @@ public abstract class Boat {
         Controller controller = controllersupplier.get();
         SpeedPolar windflow = controller.windflow.getFlow(getLocation());
         Flow waterFlow = controller.waterflow;
-        SpeedPolar waterflow = waterFlow != null ? waterFlow.getFlow(getLocation()) : new SpeedPolar(0, ANGLE0);
+        SpeedPolar waterflow = waterFlow.getFlow(getLocation());
         Decision decision = controller.boatstrategies.getStrategy(this).decision;
         switch (decision.getAction()) {
             case SAILON -> {

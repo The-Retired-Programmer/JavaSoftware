@@ -18,16 +18,18 @@ package uk.theretiredprogrammer.sketch.ui;
 import jakarta.json.Json;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+import uk.theretiredprogrammer.sketch.boats.Boat;
+import uk.theretiredprogrammer.sketch.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.course.Course;
 import uk.theretiredprogrammer.sketch.course.Mark;
+import uk.theretiredprogrammer.sketch.flows.FlowComponent;
+import uk.theretiredprogrammer.sketch.flows.FlowComponentFactory;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
@@ -53,10 +55,14 @@ public class Controller {
     private boolean isRunning;
     private Timer timer;
     private TimeStepRunner runner;
-    private Runnable sketchchangeaction = () ->{};
-    private Consumer<Integer> timechangeaction = (t) -> {};
-    private Consumer<String> showdecisionline = (l)-> {};
-    private Consumer<String> writetostatusline = (m)-> {};
+    private Runnable sketchchangeaction = () -> {
+    };
+    private Consumer<Integer> timechangeaction = (t) -> {
+    };
+    private Consumer<String> showdecisionline = (l) -> {
+    };
+    private Consumer<String> writetostatusline = (m) -> {
+    };
 
     public Controller(Path path) throws IOException {
         try {
@@ -81,27 +87,27 @@ public class Controller {
             throw new IOException("Failed to load, upgrade or parse the config file\n" + ex.getLocalizedMessage());
         }
     }
-    
-    public Controller setOnSketchChange(Runnable sketchchangeaction){
+
+    public Controller setOnSketchChange(Runnable sketchchangeaction) {
         this.sketchchangeaction = sketchchangeaction;
         return this;
     }
-    
-    public Controller setOnTimeChange(Consumer<Integer> timechangeaction){
+
+    public Controller setOnTimeChange(Consumer<Integer> timechangeaction) {
         this.timechangeaction = timechangeaction;
         return this;
     }
-    
-    public Controller setShowDecisionLine(Consumer<String> showdecisionline){
+
+    public Controller setShowDecisionLine(Consumer<String> showdecisionline) {
         this.showdecisionline = showdecisionline;
         return this;
     }
-    
-    public Controller setWritetoStatusLine(Consumer<String> writetostatusline){
+
+    public Controller setWritetoStatusLine(Consumer<String> writetostatusline) {
         this.writetostatusline = writetostatusline;
         return this;
     }
-    
+
     private void resetObjectProperties() {
         try {
             createObjectProperties(configfilecontroller.getParsedConfigFile());
@@ -120,11 +126,40 @@ public class Controller {
         boats = new Boats(() -> this, parsedjson);
         boatstrategies = new BoatStrategies(this);
     }
-    
-    public void addNewMark() throws IOException{
-        JsonObject jobj = Json.createObjectBuilder().add("name", "<new>").build();
-        Mark newmark = new Mark(()->this, jobj);
+
+    public void addNewMark() throws IOException {
+        JsonObject jobj = Json.createObjectBuilder()
+                .add("name", "<new>")
+                .build();
+        Mark newmark = new Mark(() -> this, jobj);
         course.addMark(newmark);
+    }
+
+    public void addNewBoat() throws IOException {
+        JsonObject jobj = Json.createObjectBuilder()
+                .add("name", "<new>")
+                .add("type", "laser2")
+                .build();
+        Boat newboat = BoatFactory.createboatelement(() -> this, jobj);
+        boats.addBoat(newboat);
+    }
+
+    public void addNewWindFlowComponent() throws IOException {
+        JsonObject jobj = Json.createObjectBuilder()
+                .add("name", "<new>")
+                .add("type", "constantflow")
+                .build();
+        FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
+        windflow.getFlowComponentSet().add(newflow);
+    }
+
+    public void addNewWaterFlowComponent() throws IOException {
+        JsonObject jobj = Json.createObjectBuilder()
+                .add("name", "<new>")
+                .add("type", "constantflow")
+                .build();
+        FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
+        waterflow.getFlowComponentSet().add(newflow);
     }
 
     public void paint(SketchPane canvas) {
@@ -132,9 +167,7 @@ public class Controller {
         try {
             displayparameters.draw(canvas);
             windflow.draw(canvas);
-            if (waterflow != null) {
-                waterflow.draw(canvas);
-            }
+            waterflow.draw(canvas);
             course.draw(canvas);
             boats.draw(canvas);
         } catch (IOException ex) {
@@ -192,9 +225,7 @@ public class Controller {
                 while (secondsperdisplay > 0) {
                     timerlog.setTime(simulationtime);
                     windflow.timerAdvance(simulationtime, timerlog);
-                    if (waterflow != null) {
-                        waterflow.timerAdvance(simulationtime, timerlog);
-                    }
+                    waterflow.timerAdvance(simulationtime, timerlog);
                     boatstrategies.timerAdvance(Controller.this, simulationtime, timerlog);
                     secondsperdisplay--;
                     simulationtime++;

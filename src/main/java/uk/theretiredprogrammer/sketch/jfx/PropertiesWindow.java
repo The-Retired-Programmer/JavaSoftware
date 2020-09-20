@@ -24,9 +24,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import uk.theretiredprogrammer.sketch.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.course.Mark;
+import uk.theretiredprogrammer.sketch.flows.FlowComponent;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
@@ -45,13 +47,20 @@ public class PropertiesWindow extends AbstractWindow {
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(controller));
         this.addtoToolbar(
-                toolbarButton("Add Boat", actionEvent -> {
-                }),
-                toolbarButton("Add WindFlowComponent", actionEvent -> {
-                }),
-                toolbarButton("Add Mark", actionEvent -> addnewmark(controller))
+                toolbarButton("Add Boat", actionEvent -> addnewboat(controller)),
+                toolbarButton("Add Mark", actionEvent -> addnewmark(controller)),
+                toolbarButton("Add WindFlowComponent", actionEvent -> addnewwindflow(controller)),
+                toolbarButton("Add WaterFlowComponent", actionEvent -> addnewwaterflow(controller))
         );
         show();
+    }
+
+    private void addnewboat(Controller controller) {
+        try {
+            controller.addNewBoat();
+        } catch (IOException ex) {
+            statusbarDisplay("failed to create new Boat: " + ex.getLocalizedMessage());
+        }
     }
 
     private void addnewmark(Controller controller) {
@@ -59,6 +68,22 @@ public class PropertiesWindow extends AbstractWindow {
             controller.addNewMark();
         } catch (IOException ex) {
             statusbarDisplay("failed to create new Mark: " + ex.getLocalizedMessage());
+        }
+    }
+
+    private void addnewwindflow(Controller controller) {
+        try {
+            controller.addNewWindFlowComponent();
+        } catch (IOException ex) {
+            statusbarDisplay("failed to create new Wind Flow: " + ex.getLocalizedMessage());
+        }
+    }
+
+    private void addnewwaterflow(Controller controller) {
+        try {
+            controller.addNewWaterFlowComponent();
+        } catch (IOException ex) {
+            statusbarDisplay("failed to create new Water Flow: " + ex.getLocalizedMessage());
         }
     }
 
@@ -70,34 +95,50 @@ public class PropertiesWindow extends AbstractWindow {
 
         private void refreshcontent(Controller controller) {
             this.getPanes().clear();
-            this.getPanes().addAll(
-                    new PropertiesSection(controller.displayparameters.properties(), "Display"),
-                    new PropertiesSection(controller.windflow.properties(), "Wind Flow")
+            this.getPanes().add(new PropertiesSection(controller.displayparameters.properties(), "Display"));
+            this.getPanes().add(new PropertiesSection(controller.windflow.properties(), "Wind Flow"));
+            createAllWindComponentPropertiesSection(controller);
+            createAllWaterComponentPropertiesSection(controller);
+            this.getPanes().add(new PropertiesSection(controller.course.properties(), "Course"));
+            createAllMarksPropertiesSection(controller);
+            createAllBoatsPropertiesSection(controller);
+        }
+
+        private void createAllWindComponentPropertiesSection(Controller controller) {
+            controller.windflow.getComponents().forEach(
+                    component -> this.getPanes().add(new WindComponentsPropertiesSection(component))
             );
-            controller.windflow.getFlowComponentSet().getComponents().forEach(component -> {
-                this.getPanes().add(new PropertiesSection(component.properties(), "Wind Component - ", "name"));
-            });
-            WaterFlow waterflow = controller.waterflow;
-            if (waterflow != null) {
-                this.getPanes().add(
-                        new PropertiesSection(waterflow.properties(), "Water Flow")
-                );
-                controller.waterflow.getFlowComponentSet().getComponents().forEach(component
-                        -> this.getPanes().add(new PropertiesSection(component.properties(), "Water Component - ", "name"))
-                );
-            }
-            this.getPanes().add(
-                    new PropertiesSection(controller.course.properties(), "Course")
-            );
-            createAllMarkPropertiesSection(controller);
-            controller.boats.getBoats().forEach(boat -> {
-                this.getPanes().add(
-                        new PropertiesSection(boat.properties(), "Boat - ", "name")
-                );
+            controller.windflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
+                @Override
+                public void onChanged(ListChangeListener.Change change) {
+                    refreshcontent(controller);
+                }
             });
         }
 
-        private void createAllMarkPropertiesSection(Controller controller) {
+        private void createAllWaterComponentPropertiesSection(Controller controller) {
+            controller.waterflow.getComponents().forEach(
+                    component -> this.getPanes().add(new WaterComponentsPropertiesSection(component))
+            );
+            controller.waterflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
+                @Override
+                public void onChanged(ListChangeListener.Change change) {
+                    refreshcontent(controller);
+                }
+            });
+        }
+
+        private void createAllBoatsPropertiesSection(Controller controller) {
+            controller.boats.getBoats().forEach(boat -> this.getPanes().add(new BoatPropertiesSection(boat)));
+            controller.boats.setOnBoatsChange(new ListChangeListener() {
+                @Override
+                public void onChanged(ListChangeListener.Change change) {
+                    refreshcontent(controller);
+                }
+            });
+        }
+
+        private void createAllMarksPropertiesSection(Controller controller) {
             controller.course.getMarks().forEach(mark -> this.getPanes().add(new MarkPropertiesSection(mark)));
             controller.course.setOnMarksChange(new ListChangeListener() {
                 @Override
@@ -105,6 +146,27 @@ public class PropertiesWindow extends AbstractWindow {
                     refreshcontent(controller);
                 }
             });
+        }
+    }
+
+    private class WindComponentsPropertiesSection extends PropertiesSection {
+
+        public WindComponentsPropertiesSection(FlowComponent component) {
+            super(component.properties(), "Wind Component - ", "name");
+        }
+    }
+
+    private class WaterComponentsPropertiesSection extends PropertiesSection {
+
+        public WaterComponentsPropertiesSection(FlowComponent component) {
+            super(component.properties(), "Water Component - ", "name");
+        }
+    }
+
+    private class BoatPropertiesSection extends PropertiesSection {
+
+        public BoatPropertiesSection(Boat boat) {
+            super(boat.properties(), "Boat - ", "name");
         }
     }
 

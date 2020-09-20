@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.flows;
 import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.function.Supplier;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.Angle;
@@ -112,6 +113,10 @@ public abstract class Flow implements Displayable, Timerable {
 
     public FlowComponentSet getFlowComponentSet() {
         return flowset;
+    }
+    
+    public List<FlowComponent> getComponents() {
+        return flowset.getComponents();
     }
 
     public final void setFlows() throws IOException {

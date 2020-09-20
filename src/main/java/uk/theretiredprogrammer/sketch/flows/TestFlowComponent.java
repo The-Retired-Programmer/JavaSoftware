@@ -34,7 +34,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class TestFlowComponent extends FlowComponent {
 
-    private final static String TESTFLOWTYPE = "Test Flow";
+    private final static String TESTFLOWTYPE = "testflow";
 
     static {
         FlowComponentSet.registerFlowType(TESTFLOWTYPE);

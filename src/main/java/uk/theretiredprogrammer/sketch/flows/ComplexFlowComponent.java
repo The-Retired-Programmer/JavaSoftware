@@ -35,7 +35,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class ComplexFlowComponent extends FlowComponent {
     
-    private final static String COMPLEXFLOWTYPE = "Complex Flow";
+    private final static String COMPLEXFLOWTYPE = "complexflow";
     
     static {
         FlowComponentSet.registerFlowType(COMPLEXFLOWTYPE);
