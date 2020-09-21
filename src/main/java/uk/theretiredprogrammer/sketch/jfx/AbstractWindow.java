@@ -25,6 +25,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -97,9 +98,14 @@ public abstract class AbstractWindow {
     }
 
     Stage show() {
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(toolbar, contentnode, statusbar);
-        Scene scene = new Scene(vbox);
+        BorderPane borderpane = new BorderPane();
+        borderpane.setTop(toolbar);
+        borderpane.setCenter(contentnode);
+        borderpane.setBottom(statusbar);
+        Scene scene = new Scene(borderpane);
+//        VBox vbox = new VBox();
+//        vbox.getChildren().addAll(toolbar, contentnode, statusbar);
+//        Scene scene = new Scene(vbox);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, x, y, w, h);
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
