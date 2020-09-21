@@ -21,6 +21,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.text.Font;
 import static javafx.scene.text.FontWeight.NORMAL;
 import javafx.scene.text.Text;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -28,7 +29,7 @@ import javafx.scene.text.Text;
  */
 public abstract class PropertyItem {
 
-    public abstract Node createPropertySheetItem();
+    public abstract Node createPropertySheetItem(Controller controller);
 
     UnaryOperator<TextFormatter.Change> doubleFilter = change -> {
         if (change.getControlNewText().matches("-?([0-9]*)(\\.[0-9]*)?")) {

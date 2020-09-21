@@ -42,19 +42,17 @@ public class Boats implements Displayable, Timerable {
 
     public Boats(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray boatarray = parsedjson.getJsonArray("boats");
-        if (boatarray == null) {
-            throw new IOException("Malformed Definition File - missing <boats> array");
-        }
-        for (JsonValue boatv : boatarray) {
-            if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
-                JsonObject boatparams = (JsonObject) boatv;
-                Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
-                boats.add(boat);
-            } else {
-                throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
+        if (boatarray != null) {
+            for (JsonValue boatv : boatarray) {
+                if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
+                    JsonObject boatparams = (JsonObject) boatv;
+                    Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
+                    boats.add(boat);
+                } else {
+                    throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
+                }
             }
         }
-
     }
 
     public final Boat getBoat(String name) {
@@ -65,7 +63,7 @@ public class Boats implements Displayable, Timerable {
         }
         return null;
     }
-    
+
     public void addBoat(Boat boat) {
         boats.add(boat);
     }
@@ -73,7 +71,7 @@ public class Boats implements Displayable, Timerable {
     public List<Boat> getBoats() {
         return boats;
     }
-    
+
     public void setOnBoatsChange(ListChangeListener<Boat> ml) {
         boats.addListener(ml);
     }

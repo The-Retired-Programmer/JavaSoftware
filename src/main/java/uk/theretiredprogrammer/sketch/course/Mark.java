@@ -53,7 +53,7 @@ public class Mark implements Displayable {
     
     private final PropertyLocation locationproperty = new PropertyLocation();
 
-    Location getLocation() {
+   public  Location getLocation() {
         return locationproperty.get();
     }
     //

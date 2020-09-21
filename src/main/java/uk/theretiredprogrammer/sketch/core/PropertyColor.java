@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.core;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -34,7 +35,7 @@ public class PropertyColor extends PropertyItem {
     public final void set(Color colour) {
         this.colour = colour;
     }
-    
+
     public final Color getValue() {
         return colour;
     }
@@ -44,7 +45,7 @@ public class PropertyColor extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         ColorPicker picker = new ColorPicker();
         picker.setValue(colour);
         picker.setOnAction(actionEvent -> {

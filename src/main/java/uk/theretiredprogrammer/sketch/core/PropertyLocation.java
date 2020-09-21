@@ -24,6 +24,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -77,7 +78,7 @@ public class PropertyLocation extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         TextField xfield = new TextField(Double.toString(xproperty.get()));
         xfield.setPrefColumnCount(7);
         TextFormatter<Number> xtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);

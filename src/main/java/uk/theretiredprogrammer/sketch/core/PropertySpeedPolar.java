@@ -21,6 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -58,7 +59,7 @@ public class PropertySpeedPolar extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         TextField speedfield = new TextField(Double.toString(speedproperty.get()));
         speedfield.setPrefColumnCount(6);
         TextFormatter<Number> speedformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);

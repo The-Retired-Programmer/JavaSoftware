@@ -31,6 +31,7 @@ import uk.theretiredprogrammer.sketch.core.ListOf;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.LegValue;
 import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.core.PropertyLocation;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
@@ -44,6 +45,7 @@ public class Course implements Displayable {
 
     private final Leg firstcourseleg;
     private final ObservableList<Mark> marks = FXCollections.observableArrayList();
+    private final PropertyLocation startproperty = new PropertyLocation();
 
     public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray markarray = parsedjson.getJsonArray("marks");
@@ -60,28 +62,31 @@ public class Course implements Displayable {
         }
         //
         JsonObject courseobj = parsedjson.getJsonObject("course");
-        if (courseobj == null) {
-            throw new IOException("Malformed Definition File - missing C<course object");
+        if (courseobj != null) {
+            Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
+            startproperty.set(start);
+            List<LegValue> legvalues = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))
+                    .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
+            Leg following = null;
+            int i = legvalues.size() - 1;
+            while (i >= 0) {
+                Mark endmark = getMark(legvalues.get(i).getMarkname());
+                following = new Leg(controllersupplier,
+                        i == 0 ? start : getMark(legvalues.get(i - 1).getMarkname()).getLocation(),
+                        endmark, legvalues.get(i).isPortRounding(),
+                        following);
+                i--;
+            }
+            firstcourseleg = following;
+        } else {
+            firstcourseleg = null;
         }
-        Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
-        List<LegValue> legvalues = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))
-                .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
-        Leg following = null;
-        int i = legvalues.size() - 1;
-        while (i >= 0) {
-            Location endmarklocation = getMark(legvalues.get(i).getMarkname()).getLocation();
-            following = new Leg(controllersupplier,
-                    i == 0 ? start : getMark(legvalues.get(i - 1).getMarkname()).getLocation(),
-                    endmarklocation, legvalues.get(i).isPortRounding(),
-                    following);
-            i--;
-        }
-        firstcourseleg = following;
     }
 
     @Override
     public Map<String, PropertyItem> properties() {
         LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
+        map.put("start", startproperty);
         Leg leg = firstcourseleg;
         int count = 1;
         while (leg != null) {
@@ -106,6 +111,12 @@ public class Course implements Displayable {
 
     public List<Mark> getMarks() {
         return marks;
+    }
+
+    public ObservableList<String> getMarknames() {
+        ObservableList<String> marknames = FXCollections.observableArrayList();
+        marks.forEach(mark -> marknames.add(mark.getName()));
+        return marknames;
     }
 
     public void setOnMarksChange(ListChangeListener<Mark> ml) {

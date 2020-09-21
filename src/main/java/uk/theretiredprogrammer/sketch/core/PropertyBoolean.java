@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.core;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -48,7 +49,7 @@ public class PropertyBoolean extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         CheckBox booleanfield = new CheckBox();
         booleanfield.setSelected(booleanproperty.get());
         booleanfield.selectedProperty().bindBidirectional(booleanproperty);

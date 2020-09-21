@@ -19,7 +19,6 @@ import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
@@ -27,7 +26,6 @@ import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow;
 import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 
 /**
@@ -38,8 +36,7 @@ import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
 public class DisplayParameters implements Displayable {
 
     public static final double ZOOM_DEFAULT = 1;
-    // dimensions of the displayarea in metres
-    // (default is a 1km square with 0,0 in centre).
+
     public static final Area DISPLAYAREADEFAULT = new Area(new Location(-500, -500), 1000, 1000);
 
     private final PropertyDouble zoomproperty = new PropertyDouble();
@@ -60,19 +57,23 @@ public class DisplayParameters implements Displayable {
 
     private final PropertyArea sailingareaproperty = new PropertyArea();
 
+    public Area getSailingArea() {
+        return sailingareaproperty.getValue();
+    }
+
     private final PropertyArea displayareaproperty = new PropertyArea();
+
+    public Area getDisplayArea() {
+        return displayareaproperty.getValue();
+    }
 
     public DisplayParameters(JsonObject parsedjson) throws IOException {
         JsonObject paramsobj = parsedjson.getJsonObject("display");
-        if (paramsobj == null) {
-            throw new IOException("Malformed Definition File - missing <display> object");
-        }
         zoomproperty.set(DoubleParser.parse(paramsobj, "zoom").orElse(ZOOM_DEFAULT));
         secondsperdisplayproperty.set(IntegerParser.parse(paramsobj, "secondsperdisplay").orElse(1));
         speedupproperty.set(DoubleParser.parse(paramsobj, "speedup").orElse(1.0));
         displayareaproperty.set(Area.parse(paramsobj, "displayarea").orElse(DISPLAYAREADEFAULT));
         sailingareaproperty.set(Area.parse(paramsobj, "sailingarea").orElse(displayareaproperty.get()));
-
     }
 
     public Map properties() {
@@ -83,14 +84,6 @@ public class DisplayParameters implements Displayable {
         map.put("displayarea", displayareaproperty);
         map.put("sailingarea", sailingareaproperty);
         return map;
-    }
-
-    public Area getDisplayArea() {
-        return displayareaproperty.getValue();
-    }
-
-    public Area getSailingArea() {
-        return sailingareaproperty.getValue();
     }
 
     @Override

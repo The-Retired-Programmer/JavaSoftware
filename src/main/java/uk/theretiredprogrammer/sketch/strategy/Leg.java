@@ -18,8 +18,10 @@ package uk.theretiredprogrammer.sketch.strategy;
 import java.io.IOException;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
+import uk.theretiredprogrammer.sketch.core.LegValue;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyString;
+import uk.theretiredprogrammer.sketch.core.PropertyLegValue;
+import uk.theretiredprogrammer.sketch.course.Mark;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -33,15 +35,15 @@ public class Leg {
     private final boolean portrounding;
     private final Leg followingleg;
     private final Supplier<Controller> controllersupplier;
-    private final PropertyString legproperty = new PropertyString();
+    private final PropertyLegValue legproperty = new PropertyLegValue();
 
-    public Leg(Supplier<Controller> controllersupplier, Location startfrom, Location marklocation, boolean portrounding, Leg followingleg) {
+    public Leg(Supplier<Controller> controllersupplier, Location startfrom, Mark mark, boolean portrounding, Leg followingleg) throws IOException {
         this.controllersupplier = controllersupplier;
         this.startfrom = startfrom;
-        this.marklocation = marklocation;
+        this.marklocation = mark.getLocation();
         this.portrounding = portrounding;
         this.followingleg = followingleg;
-        this.legproperty.set(this.toString());
+        this.legproperty.set(new LegValue(mark.getName(), portrounding ? "port" : "starboard"));
     }
 
     @Override
@@ -49,7 +51,7 @@ public class Leg {
         return startfrom + "->" + marklocation + (portrounding ? " to Port" : " to Starboard");
     }
 
-    public PropertyString getProperty() {
+    public PropertyLegValue getProperty() {
         return legproperty;
     }
 
@@ -76,5 +78,4 @@ public class Leg {
     Angle getAngleofLeg() {
         return startfrom.angleto(marklocation);
     }
-
 }

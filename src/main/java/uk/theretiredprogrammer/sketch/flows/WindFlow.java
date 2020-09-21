@@ -33,16 +33,15 @@ public class WindFlow extends Flow {
 
     public static WindFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
         JsonArray windarray = parsedjson.getJsonArray("wind");
-        if (windarray == null) {
-            throw new IOException("Malformed Definition File - missing <wind> array");
-        }
         FlowComponentSet flowcomponents = new FlowComponentSet();
-        for (JsonValue windv : windarray) {
-            if (windv.getValueType() == JsonValue.ValueType.OBJECT) {
-                JsonObject wind = (JsonObject) windv;
-                flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, wind));
-            } else {
-                throw new IOException("Malformed Definition File - <wind> array contains items other that wind objects");
+        if (windarray != null) {
+            for (JsonValue windv : windarray) {
+                if (windv.getValueType() == JsonValue.ValueType.OBJECT) {
+                    JsonObject wind = (JsonObject) windv;
+                    flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, wind));
+                } else {
+                    throw new IOException("Malformed Definition File - <wind> array contains items other that wind objects");
+                }
             }
         }
         JsonObject windshiftparams = parsedjson.getJsonObject("windshifts");

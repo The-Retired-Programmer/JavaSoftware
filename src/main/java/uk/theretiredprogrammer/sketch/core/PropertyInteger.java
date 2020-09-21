@@ -20,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -50,7 +51,7 @@ public class PropertyInteger extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         TextField intfield = new TextField(Integer.toString(integerproperty.get()));
         intfield.setPrefColumnCount(5);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);

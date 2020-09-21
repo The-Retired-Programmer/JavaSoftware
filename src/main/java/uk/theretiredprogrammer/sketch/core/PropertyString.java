@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.core;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -55,7 +56,7 @@ public class PropertyString extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         TextField stringfield = new TextField(stringproperty.get());
         stringfield.textProperty().bindBidirectional(stringproperty);
         return stringfield;

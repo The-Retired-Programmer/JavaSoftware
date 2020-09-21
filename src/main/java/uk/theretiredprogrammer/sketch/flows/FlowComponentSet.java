@@ -71,7 +71,7 @@ public class FlowComponentSet {
     }
 
     void properties(LinkedHashMap<String, PropertyItem> map) {
-        flows.forEach((fc -> fc.properties(map)));
+        flows.forEach(fc -> fc.properties(map));
     }
 
     public void add(FlowComponent flow) {

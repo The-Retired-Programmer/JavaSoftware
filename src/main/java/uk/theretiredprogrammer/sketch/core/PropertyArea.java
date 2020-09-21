@@ -20,8 +20,8 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -79,7 +79,7 @@ public class PropertyArea extends PropertyItem {
     public final void setLocationY(double newY) {
         yproperty.set(newY);
     }
-    
+
     public SimpleDoubleProperty PropertyWidth() {
         return widthproperty;
     }
@@ -91,7 +91,7 @@ public class PropertyArea extends PropertyItem {
     public final void setWidth(double newwidth) {
         widthproperty.set(newwidth);
     }
-    
+
     public SimpleDoubleProperty PropertyHeight() {
         return heightproperty;
     }
@@ -103,16 +103,16 @@ public class PropertyArea extends PropertyItem {
     public final void setHeight(double newheight) {
         heightproperty.set(newheight);
     }
-    
-    public final Location getLocation(){
+
+    public final Location getLocation() {
         return new Location(xproperty.get(), yproperty.get());
     }
-    
+
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         HBox content = new HBox();
         TextField xfield = new TextField(Double.toString(xproperty.get()));
-         xfield.setPrefColumnCount(7);
+        xfield.setPrefColumnCount(7);
         TextFormatter<Number> xtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
         xfield.setTextFormatter(xtextformatter);
         xtextformatter.valueProperty().bindBidirectional(xproperty);

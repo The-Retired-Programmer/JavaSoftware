@@ -18,6 +18,8 @@ package uk.theretiredprogrammer.sketch.core;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import java.io.IOException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * A leg is a mark name and passing (port / starboard)
@@ -52,8 +54,18 @@ public class LegValue {
         }
     }
 
+    public String getRoundingdirection() {
+        return passing;
+    }
+
     public boolean isPortRounding() {
         return passing.equals("port");
+    }
+
+    public static ObservableList<String> getRoundingdirections() {
+        ObservableList<String> values = FXCollections.observableArrayList();
+        values.addAll("port", "starboard");
+        return values;
     }
 
     public String getMarkname() {

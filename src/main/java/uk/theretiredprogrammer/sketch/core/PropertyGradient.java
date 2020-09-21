@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
  *
@@ -53,7 +54,7 @@ public class PropertyGradient extends PropertyItem {
     }
 
     @Override
-    public Node createPropertySheetItem() {
+    public Node createPropertySheetItem(Controller controller) {
         ComboBox typefield = new ComboBox(get().getTypes());
         typefield.valueProperty().bindBidirectional(typeproperty);
         HBox hbox = new HBox();

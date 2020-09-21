@@ -50,10 +50,25 @@ public class FileSelectorWindow extends AbstractWindow {
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         setTitle("SKETCH Scenario Selector");
         setContent(new FileSelectorPane((p) -> recentSelected(p), (p) -> fileSelected(p)));
+        addtoToolbar(
+                toolbarButton("New Config File", actionEvent -> newConfigfile())
+        );
         this.setOnCloseAction((e) -> SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class));
         show();
     }
-
+    
+    private void newConfigfile() {
+        statusbarClear();
+        Controller controller;
+        try {
+            controller = new Controller("newtemplate.json");
+        } catch (IOException ex) {
+            statusbarDisplay("<new>: " + ex.getLocalizedMessage());
+            return;
+        }
+        SketchWindow.create("<new>", controller, this);
+    }
+    
     private void fileSelected(TreeItem<PathWithShortName> p) {
         selected(p.getValue());
     }

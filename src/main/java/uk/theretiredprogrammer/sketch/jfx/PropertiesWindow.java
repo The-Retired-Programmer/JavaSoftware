@@ -29,7 +29,6 @@ import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.course.Mark;
 import uk.theretiredprogrammer.sketch.flows.FlowComponent;
-import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -95,18 +94,18 @@ public class PropertiesWindow extends AbstractWindow {
 
         private void refreshcontent(Controller controller) {
             this.getPanes().clear();
-            this.getPanes().add(new PropertiesSection(controller.displayparameters.properties(), "Display"));
-            this.getPanes().add(new PropertiesSection(controller.windflow.properties(), "Wind Flow"));
+            this.getPanes().add(new PropertiesSection(controller.displayparameters.properties(), "Display", controller));
+            this.getPanes().add(new PropertiesSection(controller.windflow.properties(), "Wind Flow", controller));
             createAllWindComponentPropertiesSection(controller);
             createAllWaterComponentPropertiesSection(controller);
-            this.getPanes().add(new PropertiesSection(controller.course.properties(), "Course"));
+            this.getPanes().add(new PropertiesSection(controller.course.properties(), "Course", controller));
             createAllMarksPropertiesSection(controller);
             createAllBoatsPropertiesSection(controller);
         }
 
         private void createAllWindComponentPropertiesSection(Controller controller) {
             controller.windflow.getComponents().forEach(
-                    component -> this.getPanes().add(new WindComponentsPropertiesSection(component))
+                    component -> this.getPanes().add(new WindComponentsPropertiesSection(component, controller))
             );
             controller.windflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
                 @Override
@@ -118,7 +117,7 @@ public class PropertiesWindow extends AbstractWindow {
 
         private void createAllWaterComponentPropertiesSection(Controller controller) {
             controller.waterflow.getComponents().forEach(
-                    component -> this.getPanes().add(new WaterComponentsPropertiesSection(component))
+                    component -> this.getPanes().add(new WaterComponentsPropertiesSection(component, controller))
             );
             controller.waterflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
                 @Override
@@ -129,7 +128,7 @@ public class PropertiesWindow extends AbstractWindow {
         }
 
         private void createAllBoatsPropertiesSection(Controller controller) {
-            controller.boats.getBoats().forEach(boat -> this.getPanes().add(new BoatPropertiesSection(boat)));
+            controller.boats.getBoats().forEach(boat -> this.getPanes().add(new BoatPropertiesSection(boat, controller)));
             controller.boats.setOnBoatsChange(new ListChangeListener() {
                 @Override
                 public void onChanged(ListChangeListener.Change change) {
@@ -139,7 +138,7 @@ public class PropertiesWindow extends AbstractWindow {
         }
 
         private void createAllMarksPropertiesSection(Controller controller) {
-            controller.course.getMarks().forEach(mark -> this.getPanes().add(new MarkPropertiesSection(mark)));
+            controller.course.getMarks().forEach(mark -> this.getPanes().add(new MarkPropertiesSection(mark, controller)));
             controller.course.setOnMarksChange(new ListChangeListener() {
                 @Override
                 public void onChanged(ListChangeListener.Change change) {
@@ -151,55 +150,55 @@ public class PropertiesWindow extends AbstractWindow {
 
     private class WindComponentsPropertiesSection extends PropertiesSection {
 
-        public WindComponentsPropertiesSection(FlowComponent component) {
-            super(component.properties(), "Wind Component - ", "name");
+        public WindComponentsPropertiesSection(FlowComponent component, Controller controller) {
+            super(component.properties(), "Wind Component - ", "name", controller);
         }
     }
 
     private class WaterComponentsPropertiesSection extends PropertiesSection {
 
-        public WaterComponentsPropertiesSection(FlowComponent component) {
-            super(component.properties(), "Water Component - ", "name");
+        public WaterComponentsPropertiesSection(FlowComponent component, Controller controller) {
+            super(component.properties(), "Water Component - ", "name", controller);
         }
     }
 
     private class BoatPropertiesSection extends PropertiesSection {
 
-        public BoatPropertiesSection(Boat boat) {
-            super(boat.properties(), "Boat - ", "name");
+        public BoatPropertiesSection(Boat boat, Controller controller) {
+            super(boat.properties(), "Boat - ", "name", controller);
         }
     }
 
     private class MarkPropertiesSection extends PropertiesSection {
 
-        public MarkPropertiesSection(Mark mark) {
-            super(mark.properties(), "Mark - ", "name");
+        public MarkPropertiesSection(Mark mark, Controller controller) {
+            super(mark.properties(), "Mark - ", "name", controller);
         }
     }
 
     private class PropertiesSection extends TitledPane {
 
-        public PropertiesSection(Map<String, PropertyItem> properties, String title) {
+        public PropertiesSection(Map<String, PropertyItem> properties, String title, Controller controller) {
             this.setText(title);
-            this.setContent(new ScrollPane(createpropertiescontent(properties)));
+            this.setContent(new ScrollPane(createpropertiescontent(properties, controller)));
         }
 
-        public PropertiesSection(Map<String, PropertyItem> properties, String titleroot, String propertyname) {
+        public PropertiesSection(Map<String, PropertyItem> properties, String titleroot, String propertyname, Controller controller) {
             this.textProperty().bind(
                     new SimpleStringProperty(titleroot)
                             .concat(((PropertyString) properties.get(propertyname)).PropertyString())
             );
-            this.setContent(new ScrollPane(createpropertiescontent(properties)));
+            this.setContent(new ScrollPane(createpropertiescontent(properties, controller)));
         }
 
-        private GridPane createpropertiescontent(Map<String, PropertyItem> properties) {
+        private GridPane createpropertiescontent(Map<String, PropertyItem> properties, Controller controller) {
             GridPane propertiestable = new GridPane();
             int row = 0;
             for (Map.Entry<String, PropertyItem> mapentry : properties.entrySet()) {
                 propertiestable.add(new Label(mapentry.getKey()), 0, row, 1, 1);
                 Object value = mapentry.getValue();
                 if (value instanceof PropertyItem propertyItem) {
-                    propertiestable.add(propertyItem.createPropertySheetItem(), 1, row++, 1, 1);
+                    propertiestable.add(propertyItem.createPropertySheetItem(controller), 1, row++, 1, 1);
                 } else {
                     propertiestable.add(new Label(value.toString()), 1, row++, 1, 1);
                 }
