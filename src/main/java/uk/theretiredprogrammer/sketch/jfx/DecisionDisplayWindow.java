@@ -33,6 +33,7 @@ public class DecisionDisplayWindow extends AbstractWindow {
     private DecisionDisplayWindow(String fn, AbstractWindow parent) {
         super(DecisionDisplayWindow.class, parent);
         setTitle("SKETCH Decisions Viewer - " + fn);
+        setDefaultWindowWidth(400);
         setScrollableContent(textarea = new TextFlow());
         show();
     }

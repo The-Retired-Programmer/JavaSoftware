@@ -46,12 +46,13 @@ public class FileSelectorWindow extends AbstractWindow {
 
     private FileSelectorWindow(Stage stage) {
         super(FileSelectorWindow.class, stage);
-        setDefaultWindowSize(100, 100, 400, 650);
+        setDefaultWindowWidth(400);
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         setTitle("SKETCH Scenario Selector");
         setContent(new FileSelectorPane((p) -> recentSelected(p), (p) -> fileSelected(p)));
         addtoToolbar(
-                toolbarButton("New Config File", actionEvent -> newConfigfile())
+                toolbarButton("New Config File", actionEvent -> newConfigfile()),
+                toolbarButton("Reset Windows", actionEvent -> resetWindows())
         );
         this.setOnCloseAction((e) -> SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class));
         show();

@@ -43,6 +43,7 @@ public class PropertiesWindow extends AbstractWindow {
 
     private PropertiesWindow(String fn, Controller controller, AbstractWindow parent) {
         super(PropertiesWindow.class, parent);
+        setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(controller));
         this.addtoToolbar(

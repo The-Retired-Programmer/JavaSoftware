@@ -47,6 +47,7 @@ public class SketchWindow extends AbstractWindow {
     private SketchWindow(String fn, Controller controller, AbstractWindow parent) {
         super(SketchWindow.class, parent);
         setTitle("SKETCH Scenario Viewer - "+fn);
+        setDefaultWindow();
         addtoToolbar(
                 toolbarButton("Start", actionEvent -> controller.start()),
                 toolbarButton("Pause", actionEvent -> controller.stop()),

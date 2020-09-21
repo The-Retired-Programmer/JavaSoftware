@@ -21,6 +21,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Rectangle2D;
 import javafx.stage.Stage;
 
 /**
@@ -36,7 +37,7 @@ public class SketchPreferences {
     private static final String WINDOW_Y_POS = "windowYPos";
     private static final String WINDOW_MAXIMIZED = "windowMaximized";
 
-    static void applyWindowSizePreferences(Stage stage, Class clazz, int x, int y, int w, int h) {
+    static void applyWindowSizePreferences(Stage stage, Class clazz, Rectangle2D windowsize) {
         String windowname = clazz.getSimpleName();
         try {
             Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
@@ -46,16 +47,16 @@ public class SketchPreferences {
                 if (wasMaximized) {
                     stage.setMaximized(true);
                 } else {
-                    stage.setX(stagePreferences.getDouble(WINDOW_X_POS, x));
-                    stage.setY(stagePreferences.getDouble(WINDOW_Y_POS, y));
-                    stage.setWidth(stagePreferences.getDouble(WINDOW_WIDTH, w));
-                    stage.setHeight(stagePreferences.getDouble(WINDOW_HEIGHT, h));
+                    stage.setX(stagePreferences.getDouble(WINDOW_X_POS, windowsize.getMinX()));
+                    stage.setY(stagePreferences.getDouble(WINDOW_Y_POS, windowsize.getMinY()));
+                    stage.setWidth(stagePreferences.getDouble(WINDOW_WIDTH, windowsize.getWidth()));
+                    stage.setHeight(stagePreferences.getDouble(WINDOW_HEIGHT, windowsize.getHeight()));
                 }
             } else {
-                stage.setX(x);
-                stage.setY(y);
-                stage.setWidth(w);
-                stage.setHeight(h);
+                stage.setX(windowsize.getMinX());
+                stage.setY(windowsize.getMinY());
+                stage.setWidth(windowsize.getWidth());
+                stage.setHeight(windowsize.getHeight());
             }
         } catch (BackingStoreException ex) {
             System.out.println("Could not access preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
@@ -75,6 +76,17 @@ public class SketchPreferences {
                 stagePreferences.putDouble(WINDOW_WIDTH, stage.getWidth());
                 stagePreferences.putDouble(WINDOW_HEIGHT, stage.getHeight());
             }
+            stagePreferences.flush();
+        } catch (final BackingStoreException ex) {
+            System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+        }
+    }
+    
+    static void clearWindowSizePreferences(Class clazz) {
+        String windowname = clazz.getSimpleName();
+        try {
+            Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
+            stagePreferences.removeNode();
             stagePreferences.flush();
         } catch (final BackingStoreException ex) {
             System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
