@@ -45,7 +45,7 @@ import uk.theretiredprogrammer.sketch.core.PropertyString;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.StringParser;
 import uk.theretiredprogrammer.sketch.flows.Flow;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

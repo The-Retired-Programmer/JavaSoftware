@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 
 /**
  * The Information to describe the Simulation "Field of play

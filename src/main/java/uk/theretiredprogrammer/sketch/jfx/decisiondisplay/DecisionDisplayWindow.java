@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.jfx;
+package uk.theretiredprogrammer.sketch.jfx.decisiondisplay;
 
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import uk.theretiredprogrammer.sketch.jfx.AbstractWindow;
 
 /**
  *
@@ -34,7 +35,7 @@ public class DecisionDisplayWindow extends AbstractWindow {
         super(DecisionDisplayWindow.class, parent);
         setTitle("SKETCH Decisions Viewer - " + fn);
         setDefaultWindowWidth(400);
-        setScrollableContent(textarea = new TextFlow());
+        setContent(textarea = new TextFlow(), SCROLLABLE);
         show();
     }
 

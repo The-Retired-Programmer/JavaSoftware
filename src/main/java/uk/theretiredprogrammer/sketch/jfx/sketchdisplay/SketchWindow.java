@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.jfx;
+package uk.theretiredprogrammer.sketch.jfx.sketchdisplay;
 
 import javafx.application.Platform;
 import javafx.scene.Group;
@@ -28,6 +28,11 @@ import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
+import uk.theretiredprogrammer.sketch.jfx.AbstractWindow;
+import uk.theretiredprogrammer.sketch.jfx.UI;
+import uk.theretiredprogrammer.sketch.jfx.decisiondisplay.DecisionDisplayWindow;
+import uk.theretiredprogrammer.sketch.jfx.propertiesdisplay.PropertiesWindow;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
@@ -46,14 +51,14 @@ public class SketchWindow extends AbstractWindow {
 
     private SketchWindow(String fn, Controller controller, AbstractWindow parent) {
         super(SketchWindow.class, parent);
-        setTitle("SKETCH Scenario Viewer - "+fn);
+        setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();
         addtoToolbar(
-                toolbarButton("Start", actionEvent -> controller.start()),
-                toolbarButton("Pause", actionEvent -> controller.stop()),
-                toolbarButton("Rest", actionEvent -> controller.reset()),
-                toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
-                toolbarButton("Show Decision Log", actionEvent -> {
+                UI.toolbarButton("Start", actionEvent -> controller.start()),
+                UI.toolbarButton("Pause", actionEvent -> controller.stop()),
+                UI.toolbarButton("Rest", actionEvent -> controller.reset()),
+                UI.toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                UI.toolbarButton("Show Decision Log", actionEvent -> {
                     if (decisiondisplaywindow == null) {
                         decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
                         controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
@@ -61,7 +66,7 @@ public class SketchWindow extends AbstractWindow {
                     decisiondisplaywindow.clear();
                     controller.displaylog();
                 }),
-                toolbarButton("Show Filtered Decision Log", actionEvent -> {
+                UI.toolbarButton("Show Filtered Decision Log", actionEvent -> {
                     if (decisiondisplaywindow == null) {
                         decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
                         controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
@@ -79,7 +84,7 @@ public class SketchWindow extends AbstractWindow {
                 .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbarDisplay(s)));
         group.getChildren().add(canvas);
         controller.paint(canvas);
-        setScrollableContent(group);
+        setContent(group, SCROLLABLE);
         show();
     }
 

@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.jfx;
 
+import uk.theretiredprogrammer.sketch.jfx.fileselectordisplay.PathWithShortName;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
@@ -37,7 +38,7 @@ public class SketchPreferences {
     private static final String WINDOW_Y_POS = "windowYPos";
     private static final String WINDOW_MAXIMIZED = "windowMaximized";
 
-    static void applyWindowSizePreferences(Stage stage, Class clazz, Rectangle2D windowsize) {
+    public static void applyWindowSizePreferences(Stage stage, Class clazz, Rectangle2D windowsize) {
         String windowname = clazz.getSimpleName();
         try {
             Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
@@ -63,7 +64,7 @@ public class SketchPreferences {
         }
     }
 
-    static void saveWindowSizePreferences(Stage stage, Class clazz) {
+    public static void saveWindowSizePreferences(Stage stage, Class clazz) {
         String windowname = clazz.getSimpleName();
         try {
             Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
@@ -82,7 +83,7 @@ public class SketchPreferences {
         }
     }
     
-    static void clearWindowSizePreferences(Class clazz) {
+    public static void clearWindowSizePreferences(Class clazz) {
         String windowname = clazz.getSimpleName();
         try {
             Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
@@ -94,14 +95,15 @@ public class SketchPreferences {
     }
 
     // recent File List
-    static ObservableList<PathWithShortName> getRecentFileList(Class clazz) {
+    public static ObservableList<PathWithShortName> getRecentFileList(Class clazz) {
         ObservableList<PathWithShortName> result = FXCollections.observableArrayList();
         try {
             Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
             if (packagePreferences.nodeExists("RecentFileList")) {
-                Preferences recentPreferences = packagePreferences.node("RecentFileList");
-                for (int index = 0; index < 10; index++) {
-                    String path = recentPreferences.get(Integer.toString(index), "DOES/NOT/EXIST");
+                Preferences recentsPreferences = packagePreferences.node("RecentFileList");
+                int count = recentsPreferences.keys().length;
+                for (int index = 0; index < count; index++) {
+                    String path = recentsPreferences.get(String.format("%03d", index), "DOES/NOT/EXIST");
                     if (!path.equals("DOES/NOT/EXIST")) {
                         result.add(index, new PathWithShortName(Path.of(path)));
                     }
@@ -113,14 +115,13 @@ public class SketchPreferences {
         return result;
     }
 
-    static void saveRecentFileList(ObservableList<PathWithShortName> recents, Class clazz) {
+    public static void saveRecentFileList(ObservableList<PathWithShortName> recents, Class clazz) {
         try {
             Preferences recentPreferences = Preferences.userNodeForPackage(clazz).node("RecentFileList");
             recentPreferences.clear();
-            List<PathWithShortName> recent10 = recents.subList(0, (recents.size() > 10 ? 10 : recents.size()));
             int index = 0;
-            for (PathWithShortName pn : recent10) {
-                recentPreferences.put(Integer.toString(index), pn.getPath().toString());
+            for (PathWithShortName pn : recents) {
+                recentPreferences.put(String.format("%03d", index), pn.getPath().toString());
                 index++;
             }
             recentPreferences.flush();
@@ -128,5 +129,40 @@ public class SketchPreferences {
             System.out.println("Could not flush preferences for RecentFileList\n" + ex.getLocalizedMessage());
         }
     }
+    
+    // recent Folders List
+    public static ObservableList<PathWithShortName> getFoldersList(Class clazz) {
+        ObservableList<PathWithShortName> result = FXCollections.observableArrayList();
+        try {
+            Preferences packagePreferences = Preferences.userNodeForPackage(clazz);
+            if (packagePreferences.nodeExists("FoldersList")) {
+                Preferences foldersPreferences = packagePreferences.node("FoldersList");
+                int count = foldersPreferences.keys().length;
+                for (int index = 0; index < count; index++) {
+                    String path = foldersPreferences.get(String.format("%03d", index), "DOES/NOT/EXIST");
+                    if (!path.equals("DOES/NOT/EXIST")) {
+                        result.add(new PathWithShortName(Path.of(path)));
+                    }
+                }
+            }
+        } catch (BackingStoreException ex) {
+            System.out.println("Could not access preferences for FoldersList\n" + ex.getLocalizedMessage());
+        }
+        return result;
+    }
 
+    public static void saveFoldersList(ObservableList<PathWithShortName> folders, Class clazz) {
+        try {
+            Preferences foldersPreferences = Preferences.userNodeForPackage(clazz).node("FoldersList");
+            foldersPreferences.clear();
+            int index = 0;
+            for (PathWithShortName pn : folders) {
+                foldersPreferences.put(String.format("%03d", index), pn.getPath().toString());
+                index++;
+            }
+            foldersPreferences.flush();
+        } catch (final BackingStoreException ex) {
+            System.out.println("Could not flush preferences for FoldersList\n" + ex.getLocalizedMessage());
+        }
+    }
 }

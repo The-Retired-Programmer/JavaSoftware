@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.LegValue;
 import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.PropertyLocation;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 import uk.theretiredprogrammer.sketch.ui.Displayable;
 
@@ -43,11 +43,14 @@ import uk.theretiredprogrammer.sketch.ui.Displayable;
  */
 public class Course implements Displayable {
 
-    private final Leg firstcourseleg;
+    private Leg firstcourseleg;
+    private final ObservableList<LegValue> legvalues = FXCollections.observableArrayList();
     private final ObservableList<Mark> marks = FXCollections.observableArrayList();
     private final PropertyLocation startproperty = new PropertyLocation();
+    private final Supplier<Controller> controllersupplier;
 
     public Course(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
+        this.controllersupplier = controllersupplier;
         JsonArray markarray = parsedjson.getJsonArray("marks");
         if (markarray != null) {
             for (JsonValue markv : markarray) {
@@ -65,8 +68,9 @@ public class Course implements Displayable {
         if (courseobj != null) {
             Location start = Location.parse(courseobj, "start").orElse(new Location(0, 0));
             startproperty.set(start);
-            List<LegValue> legvalues = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))
+            List<LegValue> legvs = ListOf.<LegValue>parse(courseobj, "legs", (jval) -> LegValue.parseElement(jval))
                     .orElseThrow(() -> new IOException("Malformed Definition file - <legs> is a mandatory parameter"));
+            legvalues.addAll(legvs);
             Leg following = null;
             int i = legvalues.size() - 1;
             while (i >= 0) {
@@ -94,6 +98,28 @@ public class Course implements Displayable {
             leg = leg.getFollowingLeg();
         }
         return map;
+    }
+
+    public void addLeg() throws IOException {
+        if (marks.isEmpty()) {
+            throw new IOException("No marks defined - so leg cannot be defined");
+        }
+        LegValue leg = new LegValue(marks.get(0).getName(), "port");
+        //
+        if (firstcourseleg == null) {
+            legvalues.add(leg);
+            firstcourseleg = new Leg(controllersupplier, startproperty.get(),
+                    getMark(leg.getMarkname()), leg.isPortRounding(), null);
+        } else {
+            Leg l = firstcourseleg;
+            while (l.getFollowingLeg() != null) {
+                l = l.getFollowingLeg();
+            }
+            Leg newl = new Leg(controllersupplier, l.getEndLocation(),
+                    getMark(leg.getMarkname()), leg.isPortRounding(), null);
+            l.setFollowingLeg(newl);
+            legvalues.add(leg);
+        }
     }
 
     public final Mark getMark(String name) {
@@ -125,6 +151,10 @@ public class Course implements Displayable {
 
     public Leg getFirstCourseLeg() {
         return firstcourseleg;
+    }
+
+    public void setOnLegValuesChange(ListChangeListener<LegValue> ml) {
+        legvalues.addListener(ml);
     }
 
     @Override

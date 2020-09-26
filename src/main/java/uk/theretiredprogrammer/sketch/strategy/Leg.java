@@ -33,7 +33,7 @@ public class Leg {
     private final Location startfrom;
     private final Location marklocation;
     private final boolean portrounding;
-    private final Leg followingleg;
+    private Leg followingleg;
     private final Supplier<Controller> controllersupplier;
     private final PropertyLegValue legproperty = new PropertyLegValue();
 
@@ -57,6 +57,10 @@ public class Leg {
 
     public Leg getFollowingLeg() {
         return followingleg;
+    }
+
+    public void setFollowingLeg(Leg leg) {
+        followingleg = leg;
     }
 
     boolean isPortRounding() {

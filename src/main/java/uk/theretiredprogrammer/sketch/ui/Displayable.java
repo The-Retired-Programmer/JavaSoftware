@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.ui;
 import java.io.IOException;
 import java.util.Map;
 import uk.theretiredprogrammer.sketch.core.PropertyItem;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 
 /**
  * The Element Class - represents the core class of every simulation object

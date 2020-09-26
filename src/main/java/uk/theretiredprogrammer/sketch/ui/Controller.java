@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.sketch.flows.FlowComponent;
 import uk.theretiredprogrammer.sketch.flows.FlowComponentFactory;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.jfx.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
@@ -160,6 +160,10 @@ public class Controller {
                 .build();
         FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
         waterflow.getFlowComponentSet().add(newflow);
+    }
+    
+    public void addNewLeg() throws IOException {
+        course.addLeg();
     }
 
     public void paint(SketchPane canvas) {

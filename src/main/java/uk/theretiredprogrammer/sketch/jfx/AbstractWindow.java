@@ -18,12 +18,9 @@ package uk.theretiredprogrammer.sketch.jfx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -39,9 +36,11 @@ import javafx.stage.WindowEvent;
  */
 public abstract class AbstractWindow {
     
+    public static final boolean SCROLLABLE = true;
+
     private AbstractWindow parentwindow = null;
     private final List<AbstractWindow> childwindows = new ArrayList<>();
-    
+
     private Stage stage = new Stage();
     private final Class clazz;
     private final ToolBar toolbar = new ToolBar();
@@ -51,30 +50,31 @@ public abstract class AbstractWindow {
     private Node contentnode;
     private Consumer<WindowEvent> closeaction;
     private Rectangle2D windowsize;
-    
-    AbstractWindow(Class clazz) {
+    private boolean scrollable = false;
+
+    public AbstractWindow(Class clazz) {
         this.clazz = clazz;
     }
-    
+
     @SuppressWarnings("LeakingThisInConstructor")
-    AbstractWindow(Class clazz, AbstractWindow parent) {
+    public AbstractWindow(Class clazz, AbstractWindow parent) {
         this(clazz);
         parentwindow = parent;
         parent.childwindows.add(this);
     }
-    
-    AbstractWindow(Class clazz, Stage stage) {
+
+    public AbstractWindow(Class clazz, Stage stage) {
         this(clazz);
         this.stage = stage;
     }
-    
+
     private static final double MINWINDOWWIDTH = 50;
-    
-    void setDefaultWindow() {
+
+    public final void setDefaultWindow() {
         windowsize = Screen.getPrimary().getVisualBounds();
     }
-    
-    void setDefaultWindowLeftOffsetAndWidth(double leftoffset, double width) {
+
+    public final void setDefaultWindowLeftOffsetAndWidth(double leftoffset, double width) {
         Rectangle2D screenbounds = Screen.getPrimary().getVisualBounds();
         if (leftoffset + width > screenbounds.getWidth()) {
             if (width > screenbounds.getWidth()) {
@@ -90,8 +90,8 @@ public abstract class AbstractWindow {
                 screenbounds.getHeight()
         );
     }
-    
-    void setDefaultWindowLeftAndRightOffsets(double leftoffset, double rightoffset) {
+
+    public final void setDefaultWindowLeftAndRightOffsets(double leftoffset, double rightoffset) {
         Rectangle2D screenbounds = Screen.getPrimary().getVisualBounds();
         double offset = leftoffset + rightoffset;
         if (offset + MINWINDOWWIDTH > screenbounds.getWidth()) {
@@ -110,12 +110,12 @@ public abstract class AbstractWindow {
                 screenbounds.getHeight()
         );
     }
-    
-    void setDefaultWindowWidth(double width) {
+
+    public final void setDefaultWindowWidth(double width) {
         setDefaultWindowLeftOffsetAndWidth(0, width);
     }
-    
-    void setDefaultWindowLeftOffset(double leftoffset) {
+
+    public final void setDefaultWindowLeftOffset(double leftoffset) {
         Rectangle2D screenbounds = Screen.getPrimary().getVisualBounds();
         if (leftoffset + MINWINDOWWIDTH > screenbounds.getWidth()) {
             if (MINWINDOWWIDTH > screenbounds.getWidth()) {
@@ -131,31 +131,34 @@ public abstract class AbstractWindow {
                 screenbounds.getHeight()
         );
     }
-    
-    void addtoToolbar(Node... nodes) {
+
+    public final void addtoToolbar(Node... nodes) {
         toolbar.getItems().addAll(nodes);
     }
-    
-    void setTitle(String title) {
+
+    public final void setTitle(String title) {
         this.title = title;
     }
-    
-    void setContent(Node contentnode) {
+
+    public final void setContent(Node contentnode) {
         this.contentnode = contentnode;
+        this.scrollable = false;
     }
     
-    void setScrollableContent(Node contentnode) {
-        this.contentnode = new ScrollPane(contentnode);
+    public final void setContent(Node contentnode, boolean scrollable) {
+        this.contentnode = contentnode;
+        this.scrollable = scrollable;
     }
-    
-    void setOnCloseAction(Consumer<WindowEvent> closeaction) {
+
+
+    public final void setOnCloseAction(Consumer<WindowEvent> closeaction) {
         this.closeaction = closeaction;
     }
-    
-    Stage show() {
+
+    public final Stage show() {
         BorderPane borderpane = new BorderPane();
         borderpane.setTop(toolbar);
-        borderpane.setCenter(contentnode);
+        borderpane.setCenter(scrollable ? new ScrollPane(contentnode) : contentnode);
         borderpane.setBottom(statusbar);
         Scene scene = new Scene(borderpane);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
@@ -175,37 +178,30 @@ public abstract class AbstractWindow {
         stage.show();
         return stage;
     }
-    
-    void resetWindows() {
+
+    public final void resetWindows() {
         SketchPreferences.clearWindowSizePreferences(clazz);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
         childwindows.forEach(window -> window.resetWindows());
     }
-    
-    void statusbarDisplay(String message) {
+
+    public final void statusbarDisplay(String message) {
         statusbar.setText(message);
     }
-    
-    void statusbarClear() {
-        statusbar.setText("");
+
+    public final void statusbarDisplay() {
+        statusbarDisplay("");
     }
-    
+
     private void closeChildren() {
         childwindows.forEach(window -> {
             window.stage.close();
         });
     }
-    
+
     private void closeRequest() {
         if (parentwindow != null) {
             parentwindow.childwindows.remove(this);
         }
-    }
-    
-    Button toolbarButton(String buttontext, EventHandler<ActionEvent> action) {
-        Button button = new Button(buttontext);
-        button.setDisable(false);
-        button.setOnAction(action);
-        return button;
     }
 }

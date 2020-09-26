@@ -2,6 +2,7 @@ package uk.theretiredprogrammer.sketch.jfx;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import uk.theretiredprogrammer.sketch.jfx.fileselectordisplay.FileSelectorWindow;
 
 public class App extends Application {
 
