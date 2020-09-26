@@ -46,9 +46,12 @@ public class FileSelectorWindow extends AbstractWindow {
         //
         setDefaultWindowWidth(400);
         setTitle("SKETCH Scenario Selector");
-        setContent(new FileSelectorPane());
+        FileSelectorPane fileselectorpane = new FileSelectorPane();
+        setContent(fileselectorpane);
         addtoToolbar(
                 UI.toolbarButton("folder_add.png", "Add Scenario Folder", ev -> folders.choose(stage)),
+                UI.toolbarButton("folder_delete.png", "Remove Scenario Folder",
+                        ev -> folders.remove(fileselectorpane)),
                 UI.toolbarButton("page_add.png", "New Scenario", ev -> newConfigfile()),
                 UI.toolbarButton("link_delete.png", "Clear Recent Scenarios List", ev -> recents.clear()),
                 new Separator(),

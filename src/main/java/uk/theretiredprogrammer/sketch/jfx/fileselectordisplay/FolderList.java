@@ -33,6 +33,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Window;
 import uk.theretiredprogrammer.sketch.jfx.SketchPreferences;
 import uk.theretiredprogrammer.sketch.jfx.UI;
+import uk.theretiredprogrammer.sketch.jfx.fileselectordisplay.FileSelectorWindow.FileSelectorPane;
 
 /**
  *
@@ -103,6 +104,13 @@ public class FolderList {
         File directory = dc.showDialog(parent);
         if (directory != null) {
             foldersList.add(new PathWithShortName(Path.of(directory.getAbsolutePath())));
+        }
+    }
+
+    public void remove(FileSelectorPane fileselectorpane) {
+        TitledPane expandedpane = fileselectorpane.getExpandedPane();
+        if (expandedpane != null) {
+            foldersList.removeIf((pn) -> pn.toString().equals(expandedpane.getText()));
         }
     }
 
