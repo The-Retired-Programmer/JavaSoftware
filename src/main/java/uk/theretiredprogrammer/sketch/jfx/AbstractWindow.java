@@ -21,9 +21,12 @@ import java.util.function.Consumer;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -43,6 +46,7 @@ public abstract class AbstractWindow {
 
     private Stage stage = new Stage();
     private final Class clazz;
+    private final MenuBar menubar = new MenuBar();
     private final ToolBar toolbar = new ToolBar();
     ;
     private final Text statusbar = new Text("");
@@ -131,6 +135,10 @@ public abstract class AbstractWindow {
                 screenbounds.getHeight()
         );
     }
+    
+    public final void addtoMenubar(Menu... nodes) {
+        menubar.getMenus().addAll(nodes);
+    }
 
     public final void addtoToolbar(Node... nodes) {
         toolbar.getItems().addAll(nodes);
@@ -157,7 +165,7 @@ public abstract class AbstractWindow {
 
     public final Stage show() {
         BorderPane borderpane = new BorderPane();
-        borderpane.setTop(toolbar);
+        borderpane.setTop(new VBox(menubar, toolbar));
         borderpane.setCenter(scrollable ? new ScrollPane(contentnode) : contentnode);
         borderpane.setBottom(statusbar);
         Scene scene = new Scene(borderpane);

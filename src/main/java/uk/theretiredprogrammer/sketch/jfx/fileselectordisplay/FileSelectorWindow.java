@@ -48,6 +48,21 @@ public class FileSelectorWindow extends AbstractWindow {
         setTitle("SKETCH Scenario Selector");
         FileSelectorPane fileselectorpane = new FileSelectorPane();
         setContent(fileselectorpane);
+        addtoMenubar(
+                UI.menu("Scenarios",
+                        UI.menuitem("New", ev -> newConfigfile())
+                ),
+                UI.menu("Folders",
+                        UI.menuitem("Add", ev -> folders.choose(stage)),
+                        UI.menuitem("Remove", ev -> folders.remove(fileselectorpane))
+                ),
+                UI.menu("Recent Scenarios List",
+                        UI.menuitem("Clear List", ev -> recents.clear())
+                ),
+                UI.menu("Windows",
+                        UI.menuitem("Reset Positions and Sizes", ev -> resetWindows())
+                )
+        );
         addtoToolbar(
                 UI.toolbarButton("folder_add.png", "Add Scenario Folder", ev -> folders.choose(stage)),
                 UI.toolbarButton("folder_delete.png", "Remove Scenario Folder",

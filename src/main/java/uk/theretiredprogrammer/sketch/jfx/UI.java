@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -43,6 +44,12 @@ public class UI {
         button.setOnAction(action);
         button.setTooltip(new Tooltip(tooltip));
         return button;
+    }
+
+    public static Menu menu(String name, MenuItem... menuitems) {
+        Menu menu = new Menu(name);
+        menu.getItems().addAll(menuitems);
+        return menu;
     }
 
     public static MenuItem menuitem(String itemtext, EventHandler<ActionEvent> action) {
