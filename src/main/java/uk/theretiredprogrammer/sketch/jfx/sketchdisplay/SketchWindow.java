@@ -53,34 +53,32 @@ public class SketchWindow extends AbstractWindow {
         super(SketchWindow.class, parent);
         setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();
+        addtoMenubar(
+                UI.menu("Control",
+                        UI.menuitem("Start", actionEvent -> controller.start()),
+                        UI.menuitem("Pause", actionEvent -> controller.stop()),
+                        UI.menuitem("Reset", actionEvent -> controller.reset())
+                ),
+                UI.menu("Window Management",
+                        UI.menuitem("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                        UI.menuitem("Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
+                        UI.menuitem("Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn))
+                )
+        );
         addtoToolbar(
-                UI.toolbarButton("Start", actionEvent -> controller.start()),
-                UI.toolbarButton("Pause", actionEvent -> controller.stop()),
-                UI.toolbarButton("Rest", actionEvent -> controller.reset()),
-                UI.toolbarButton("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
-                UI.toolbarButton("Show Decision Log", actionEvent -> {
-                    if (decisiondisplaywindow == null) {
-                        decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
-                        controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-                    }
-                    decisiondisplaywindow.clear();
-                    controller.displaylog();
-                }),
-                UI.toolbarButton("Show Filtered Decision Log", actionEvent -> {
-                    if (decisiondisplaywindow == null) {
-                        decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
-                        controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
-                    }
-                    decisiondisplaywindow.clear();
-                    controller.displayfilteredlog("SELECTED");
-                }),
+                UI.toolbarButton("control_play_blue.png", "Start", actionEvent -> controller.start()),
+                UI.toolbarButton("control_pause_blue.png", "Pause", actionEvent -> controller.stop()),
+                UI.toolbarButton("control_rewind_blue.png","Reset", actionEvent -> controller.reset()),
+                UI.toolbarButton("table.png","Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                UI.toolbarButton("script.png","Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
+                UI.toolbarButton("script_code.png","Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn)),
                 timetext = new Text("      ")
         );
         Group group = new Group();
         canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
         controller
                 .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
-                .setOnTimeChange((seconds) -> Platform.runLater(() -> updteTime(seconds)))
+                .setOnTimeChange((seconds) -> Platform.runLater(() -> updateTimeField(seconds)))
                 .setWritetoStatusLine((s) -> Platform.runLater(() -> statusbarDisplay(s)));
         group.getChildren().add(canvas);
         controller.paint(canvas);
@@ -88,7 +86,25 @@ public class SketchWindow extends AbstractWindow {
         show();
     }
 
-    private void updteTime(int seconds) {
+    private void showDecisionLog(Controller controller, String fn) {
+        setupDecisionLogWindow(controller, fn);
+        controller.displaylog();
+    }
+
+    private void showFilteredDecisionLog(Controller controller, String fn) {
+        setupDecisionLogWindow(controller, fn);
+        controller.displayfilteredlog("SELECTED");
+    }
+
+    private void setupDecisionLogWindow(Controller controller, String fn) {
+        if (decisiondisplaywindow == null) {
+            decisiondisplaywindow = DecisionDisplayWindow.create(fn, SketchWindow.this);
+            controller.setShowDecisionLine((l) -> decisiondisplaywindow.writeline(l));
+        }
+        decisiondisplaywindow.clear();
+    }
+
+    private void updateTimeField(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;
         String ss = Integer.toString(secs);

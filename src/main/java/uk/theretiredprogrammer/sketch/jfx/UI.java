@@ -31,13 +31,6 @@ import javafx.scene.image.ImageView;
  */
 public class UI {
 
-    public static Button toolbarButton(String buttontext, EventHandler<ActionEvent> action) {
-        Button button = new Button(buttontext);
-        button.setDisable(false);
-        button.setOnAction(action);
-        return button;
-    }
-
     public static Button toolbarButton(String imagename, String tooltip, EventHandler<ActionEvent> action) {
         Button button = new Button("", image(imagename));
         button.setDisable(false);

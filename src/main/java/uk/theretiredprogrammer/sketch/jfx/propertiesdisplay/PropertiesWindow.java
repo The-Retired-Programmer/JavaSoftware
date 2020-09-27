@@ -35,12 +35,18 @@ public class PropertiesWindow extends AbstractWindow {
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(controller));
+        addtoMenubar(
+                UI.menu("Add Element",
+                        UI.menuitem("Add Boat", actionEvent -> addnewboat(controller)),
+                        UI.menuitem("Add Mark", actionEvent -> addnewmark(controller)),
+                        UI.menuitem("Add WindFlowComponent", actionEvent -> addnewwindflow(controller)),
+                        UI.menuitem("Add WaterFlowComponent", actionEvent -> addnewwaterflow(controller)),
+                        UI.menuitem("Add Course Leg", actionEvent -> addNewLeg(controller))
+                )
+        );
         addtoToolbar(
-                UI.toolbarButton("Add Boat", actionEvent -> addnewboat(controller)),
-                UI.toolbarButton("Add Mark", actionEvent -> addnewmark(controller)),
-                UI.toolbarButton("Add WindFlowComponent", actionEvent -> addnewwindflow(controller)),
-                UI.toolbarButton("Add WaterFlowComponent", actionEvent -> addnewwaterflow(controller)),
-                UI.toolbarButton("Add Course Leg", actionEvent -> addNewLeg(controller))
+                UI.toolbarButton("shape_flip_horizontal.png", "Add Boat", actionEvent -> addnewboat(controller)),
+                UI.toolbarButton("pencil.png", "Add Mark", actionEvent -> addnewmark(controller))
         );
         show();
     }
@@ -76,7 +82,7 @@ public class PropertiesWindow extends AbstractWindow {
             statusbarDisplay("failed to create new Water Flow: " + ex.getLocalizedMessage());
         }
     }
-    
+
     private void addNewLeg(Controller controller) {
         try {
             controller.addNewLeg();
