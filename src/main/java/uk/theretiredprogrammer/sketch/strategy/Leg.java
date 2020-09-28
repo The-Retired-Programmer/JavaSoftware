@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.LegValue;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyLegValue;
+import uk.theretiredprogrammer.sketch.properties.PropertyLegValue;
 import uk.theretiredprogrammer.sketch.course.Mark;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 

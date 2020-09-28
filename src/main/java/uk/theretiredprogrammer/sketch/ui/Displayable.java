@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.sketch.ui;
 
 import java.io.IOException;
 import java.util.Map;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 
 /**

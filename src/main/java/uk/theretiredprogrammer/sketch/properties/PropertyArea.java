@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core;
+package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
@@ -23,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.sketch.core.Area;
+import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core;
+package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
+import uk.theretiredprogrammer.sketch.core.ColorParser;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

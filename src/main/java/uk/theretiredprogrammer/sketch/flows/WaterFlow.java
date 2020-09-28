@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

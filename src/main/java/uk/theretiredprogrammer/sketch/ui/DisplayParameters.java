@@ -25,10 +25,10 @@ import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.DoubleParser;
 import uk.theretiredprogrammer.sketch.core.IntegerParser;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.PropertyInteger;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyArea;
+import uk.theretiredprogrammer.sketch.properties.PropertyDouble;
+import uk.theretiredprogrammer.sketch.properties.PropertyInteger;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 
 /**

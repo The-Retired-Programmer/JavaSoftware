@@ -25,7 +25,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**

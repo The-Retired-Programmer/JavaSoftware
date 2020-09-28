@@ -23,8 +23,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
-import uk.theretiredprogrammer.sketch.core.PropertyString;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

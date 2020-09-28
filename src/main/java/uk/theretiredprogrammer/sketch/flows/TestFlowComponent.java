@@ -23,10 +23,10 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyAngle;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
-import uk.theretiredprogrammer.sketch.core.PropertySpeedPolar;
-import uk.theretiredprogrammer.sketch.core.PropertyString;
+import uk.theretiredprogrammer.sketch.properties.PropertyAngle;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertySpeedPolar;
+import uk.theretiredprogrammer.sketch.properties.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**

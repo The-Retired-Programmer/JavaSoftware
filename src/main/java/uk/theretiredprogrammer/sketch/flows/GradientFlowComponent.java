@@ -22,9 +22,9 @@ import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Gradient;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.PropertyGradient;
-import uk.theretiredprogrammer.sketch.core.PropertyItem;
-import uk.theretiredprogrammer.sketch.core.PropertyString;
+import uk.theretiredprogrammer.sketch.properties.PropertyGradient;
+import uk.theretiredprogrammer.sketch.properties.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyString;
 import uk.theretiredprogrammer.sketch.ui.Controller;
 
 /**
