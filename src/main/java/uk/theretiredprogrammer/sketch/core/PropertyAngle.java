@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -58,5 +60,10 @@ public class PropertyAngle extends PropertyItem {
         doublefield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(angleproperty);
         return doublefield;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return Json.createValue(get());
     }
 }

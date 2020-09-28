@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -134,5 +136,15 @@ public class PropertyArea extends PropertyItem {
         content.getChildren().addAll(createTextFor("["), xfield, createTextFor(","), yfield, createTextFor("] "),
                 wfield, createTextFor("x"), hfield);
         return content;
+    }
+    
+    @Override
+    public JsonValue toJson() {
+        return Json.createArrayBuilder()
+                .add(xproperty.get())
+                .add(yproperty.get())
+                .add(widthproperty.get())
+                .add(heightproperty.get())
+                .build();
     }
 }

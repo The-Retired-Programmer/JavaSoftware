@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.ui;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.PropertyInteger;
+import uk.theretiredprogrammer.sketch.core.PropertyItem;
 import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 
 /**
@@ -75,9 +78,15 @@ public class DisplayParameters implements Displayable {
         displayareaproperty.set(Area.parse(paramsobj, "displayarea").orElse(DISPLAYAREADEFAULT));
         sailingareaproperty.set(Area.parse(paramsobj, "sailingarea").orElse(displayareaproperty.get()));
     }
+    
+    public JsonObject toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
+        return job.build();
+    }
 
-    public Map properties() {
-        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+    public Map<String, PropertyItem> properties() {
+        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         map.put("zoom", zoomproperty);
         map.put("secondsperdisplay", secondsperdisplayproperty);
         map.put("speedup", speedupproperty);

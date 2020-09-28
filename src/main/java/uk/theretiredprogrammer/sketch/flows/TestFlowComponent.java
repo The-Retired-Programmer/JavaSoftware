@@ -61,7 +61,7 @@ public class TestFlowComponent extends FlowComponent {
     public LinkedHashMap<String, PropertyItem> properties() {
         LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
-        map.put("flowtype", flowtypeproperty);
+        map.put("type", flowtypeproperty);
         map.put("flow", flowproperty);
         map.put("mean", meanproperty);
         return map;

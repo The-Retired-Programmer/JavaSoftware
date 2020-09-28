@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import uk.theretiredprogrammer.sketch.strategy.Decision;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +66,8 @@ public abstract class Boat {
     public final String getName() {
         return nameproperty.get();
     }
+    
+    private final PropertyString typeproperty = new PropertyString();
     
     //
     private final PropertyAngle directionproperty = new PropertyAngle();
@@ -148,6 +152,8 @@ public abstract class Boat {
         this.controllersupplier = controllersupplier;
         nameproperty.set(StringParser.parse(paramsobj, "name")
                 .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter")));
+        typeproperty.set(StringParser.parse(paramsobj, "type")
+                .orElseThrow(() -> new IOException("Malformed Definition file - <type> is a mandatory parameter")));
         directionproperty.setValue(Angle.parse(paramsobj, "heading").orElse(ANGLE0));
         setLocation(Location.parse(paramsobj, "location").orElse(new Location(0, 0)));
         colourproperty.set(ColorParser.parse(paramsobj, "colour").orElse(Color.BLACK));
@@ -188,6 +194,7 @@ public abstract class Boat {
     public Map<String, PropertyItem> properties() {
         LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
         map.put("name", nameproperty);
+        map.put("type", typeproperty);
         map.put("heading", directionproperty);
         map.put("location", locationproperty);
         map.put("colour", colourproperty);
@@ -204,6 +211,12 @@ public abstract class Boat {
         //map.put("upwindchannel", upwindchannel);
         //map.put("downwindchannel", downwindchannel);
         return map;
+    }
+    
+    public JsonObject toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
+        return job.build();
     }
 
     public boolean isPort(Angle winddirection) {

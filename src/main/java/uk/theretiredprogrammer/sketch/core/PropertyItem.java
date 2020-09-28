@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonValue;
 import java.util.function.UnaryOperator;
 import javafx.scene.Node;
 import javafx.scene.control.TextFormatter;
@@ -30,6 +31,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
 public abstract class PropertyItem {
 
     public abstract Node createPropertySheetItem(Controller controller);
+    
+    public abstract JsonValue toJson();
 
     UnaryOperator<TextFormatter.Change> doubleFilter = change -> {
         if (change.getControlNewText().matches("-?([0-9]*)(\\.[0-9]*)?")) {

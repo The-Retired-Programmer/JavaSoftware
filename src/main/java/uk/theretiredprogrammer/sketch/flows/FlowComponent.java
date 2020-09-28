@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.function.Supplier;
@@ -67,6 +69,12 @@ public abstract class FlowComponent {
         map.put("name", nameproperty);
         map.put("area", areaproperty);
         map.put("zlevel", zlevelproperty);
+    }
+    
+    public JsonObject toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
+        return job.build();
     }
     
     public abstract LinkedHashMap<String,PropertyItem> properties();

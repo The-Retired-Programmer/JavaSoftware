@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -54,5 +55,10 @@ public class PropertyBoolean extends PropertyItem {
         booleanfield.setSelected(booleanproperty.get());
         booleanfield.selectedProperty().bindBidirectional(booleanproperty);
         return booleanfield;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return get() ? JsonValue.TRUE : JsonValue.FALSE;
     }
 }

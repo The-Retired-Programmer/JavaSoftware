@@ -15,6 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.jfx.sketchdisplay;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
@@ -68,10 +74,12 @@ public class SketchWindow extends AbstractWindow {
         addtoToolbar(
                 UI.toolbarButton("control_play_blue.png", "Start", actionEvent -> controller.start()),
                 UI.toolbarButton("control_pause_blue.png", "Pause", actionEvent -> controller.stop()),
-                UI.toolbarButton("control_rewind_blue.png","Reset", actionEvent -> controller.reset()),
-                UI.toolbarButton("table.png","Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
-                UI.toolbarButton("script.png","Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
-                UI.toolbarButton("script_code.png","Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn)),
+                UI.toolbarButton("control_rewind_blue.png", "Reset", actionEvent -> controller.reset()),
+                UI.toolbarButton("table_save.png", "Save Properties", actionEvent -> save(controller,
+                        "/Users/richard/SKETCHSAVE/save.json")),
+                UI.toolbarButton("table.png", "Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                UI.toolbarButton("script.png", "Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
+                UI.toolbarButton("script_code.png", "Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn)),
                 timetext = new Text("      ")
         );
         Group group = new Group();
@@ -84,6 +92,21 @@ public class SketchWindow extends AbstractWindow {
         controller.paint(canvas);
         setContent(group, SCROLLABLE);
         show();
+    }
+
+    private boolean save(Controller controller, String fn) {
+        Path path = Path.of(fn);
+        JsonObject jobj = controller.toJson();
+        if (path != null) {
+            //Files.move(path, path.resolveSibling(path.getFileName() + ".v" + fromversion));
+            try ( JsonWriter jsonWriter = Json.createWriter(Files.newOutputStream(path))) {
+                jsonWriter.write(jobj);
+            } catch (IOException ex) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private void showDecisionLog(Controller controller, String fn) {

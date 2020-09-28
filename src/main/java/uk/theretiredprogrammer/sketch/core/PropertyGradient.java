@@ -15,6 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -71,5 +74,13 @@ public class PropertyGradient extends PropertyItem {
         doublefield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(bindto);
         return doublefield;
+    }
+    
+    @Override
+    public JsonValue toJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder()
+                .add(typeproperty.get());
+        speedsproperty.forEach(speed-> jab.add(speed.doubleValue()));
+        return jab.build();
     }
 }

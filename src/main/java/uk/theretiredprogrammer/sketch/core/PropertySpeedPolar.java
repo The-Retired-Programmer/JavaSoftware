@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -74,5 +76,13 @@ public class PropertySpeedPolar extends PropertyItem {
         //
         TextFlow flow = new TextFlow(speedfield, createTextFor("@"), anglefield, createTextFor("˚"));
         return flow;
+    }
+    
+    @Override
+    public JsonValue toJson() {
+        return Json.createArrayBuilder()
+                .add(speedproperty.get())
+                .add(angleproperty.get())
+                .build();
     }
 }

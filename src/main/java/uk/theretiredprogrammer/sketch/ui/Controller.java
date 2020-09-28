@@ -19,6 +19,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -44,6 +45,7 @@ import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 public class Controller {
 
     public DisplayParameters displayparameters;
+    private MetaParameters metaparameters;
     public WindFlow windflow;
     public WaterFlow waterflow;
     public Course course;
@@ -120,11 +122,28 @@ public class Controller {
     private void createObjectProperties(JsonObject parsedjson) throws IOException {
         simulationtime = 0;
         displayparameters = new DisplayParameters(parsedjson);
+        metaparameters = new MetaParameters(parsedjson);
         waterflow = WaterFlow.create(() -> this, parsedjson);
         windflow = WindFlow.create(() -> this, parsedjson);
         course = new Course(() -> this, parsedjson);
         boats = new Boats(() -> this, parsedjson);
         boatstrategies = new BoatStrategies(this);
+    }
+    
+    
+    public JsonObject toJson() {
+        return Json.createObjectBuilder()
+                .add("type", "sketch-v1")
+                .add("meta", metaparameters.toJson())
+                .add("display", displayparameters.toJson())
+                .add("windshifts",windflow.shiftsToJson())
+                .add("wind", windflow.flowcomponentsToJson())
+                .add("watershifts",waterflow.shiftsToJson())
+                .add("water", waterflow.flowcomponentsToJson())
+                .add("course", course.toJson())
+                .add("marks",course.marksToJson())
+                .add("boats", boats.toJson())
+                .build();
     }
 
     public void addNewMark() throws IOException {
@@ -161,7 +180,7 @@ public class Controller {
         FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
         waterflow.getFlowComponentSet().add(newflow);
     }
-    
+
     public void addNewLeg() throws IOException {
         course.addLeg();
     }
@@ -179,9 +198,6 @@ public class Controller {
         }
     }
 
-    /**
-     * Start running the simulation.
-     */
     public void start() {
         if (isRunning) {
             return;
@@ -193,9 +209,6 @@ public class Controller {
         isRunning = true;
     }
 
-    /**
-     * Terminate the simulation.
-     */
     public void stop() {
         if (!isRunning) {
             return;
@@ -236,7 +249,6 @@ public class Controller {
                 }
                 timechangeaction.accept(simulationtime);
                 sketchchangeaction.run();
-
             } catch (IOException ex) {
                 writetostatusline.accept(ex.getLocalizedMessage());
             }

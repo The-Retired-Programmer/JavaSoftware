@@ -15,11 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.course;
 
+import jakarta.json.Json;
 import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.strategy.Leg;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +102,21 @@ public class Course implements Displayable {
             leg = leg.getFollowingLeg();
         }
         return map;
+    }
+    
+    public JsonObject toJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        legvalues.forEach(lv -> jab.add(lv.toJson()));
+        return Json.createObjectBuilder()
+            .add("start", startproperty.toJson())
+            .add("legs", jab)
+            .build();
+    }
+    
+    public JsonArray marksToJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        marks.forEach(mark -> jab.add(mark.toJson()));
+        return jab.build();
     }
 
     public void addLeg() throws IOException {

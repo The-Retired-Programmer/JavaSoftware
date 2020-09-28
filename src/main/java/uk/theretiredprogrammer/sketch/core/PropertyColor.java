@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
@@ -52,5 +54,10 @@ public class PropertyColor extends PropertyItem {
             set(picker.getValue());
         });
         return picker;
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return Json.createValue(ColorParser.color2String(colour));
     }
 }

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
@@ -58,5 +60,10 @@ public class PropertyInteger extends PropertyItem {
         intfield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(integerproperty);
         return intfield;
+    }
+    
+    @Override
+    public JsonValue toJson() {
+        return Json.createValue(get());
     }
 }

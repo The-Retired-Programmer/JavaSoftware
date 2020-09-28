@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
+import jakarta.json.Json;
 import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.io.IOException;
@@ -53,6 +55,12 @@ public class Boats implements Displayable, Timerable {
                 }
             }
         }
+    }
+    
+    public JsonArray toJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        boats.forEach(boat-> jab.add(boat.toJson()));
+        return jab.build();
     }
 
     public final Boat getBoat(String name) {

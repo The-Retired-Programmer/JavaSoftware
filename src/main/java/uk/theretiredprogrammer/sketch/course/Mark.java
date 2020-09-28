@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.course;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,6 +90,12 @@ public class Mark implements Displayable {
         map.put("laylinelength", laylinelengthproperty);
         map.put("laylinecolour", laylinecolorproperty);
         return map;
+    }
+    
+    public JsonObject toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
+        return job.build();
     }
 
     @Override

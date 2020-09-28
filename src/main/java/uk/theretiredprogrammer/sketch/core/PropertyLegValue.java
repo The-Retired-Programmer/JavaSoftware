@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
@@ -62,5 +64,13 @@ public class PropertyLegValue extends PropertyItem {
         hbox.getChildren().add(roundingfield);
         //
         return hbox;
+    }
+    
+    @Override
+    public JsonValue toJson() {
+        return Json.createArrayBuilder()
+                .add(marknameproperty.get())
+                .add(roundingproperty.get())
+                .build();
     }
 }

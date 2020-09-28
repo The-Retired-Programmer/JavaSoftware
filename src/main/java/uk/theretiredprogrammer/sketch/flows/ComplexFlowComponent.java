@@ -68,7 +68,7 @@ public class ComplexFlowComponent extends FlowComponent {
     public LinkedHashMap<String,PropertyItem> properties() {
         LinkedHashMap<String,PropertyItem> map = new LinkedHashMap<>();
         super.properties(map);
-        map.put("flowtype", flowtypeproperty);
+        map.put("type", flowtypeproperty);
         map.put("northwestflow", nwflowproperty);
         map.put("northeastflow", neflowproperty);
         map.put("southwestflow", swflowproperty);

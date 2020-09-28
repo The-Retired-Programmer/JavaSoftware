@@ -15,7 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -109,6 +113,18 @@ public abstract class Flow implements Displayable, Timerable {
         map.put("shiftangle", shiftangleproperty);
         map.put("shiftperiod", shiftperiodproperty);
         map.put("randomshifts", randomshiftsproperty);
+    }
+    
+    public JsonObject shiftsToJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
+        return job.build();
+    }
+    
+    public JsonArray flowcomponentsToJson() {
+        JsonArrayBuilder jab = Json.createArrayBuilder();
+        getComponents().forEach(c -> jab.add(c.toJson()));
+        return jab.build();
     }
 
     public FlowComponentSet getFlowComponentSet() {
