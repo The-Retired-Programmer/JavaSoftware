@@ -27,24 +27,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class LocationTest {
-    
+
     private final static double DELTA = 0.0000001;
-    
+
     public LocationTest() {
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
     }
-    
+
     @AfterAll
     public static void tearDownClass() {
     }
-    
+
     @BeforeEach
     public void setUp() {
     }
-    
+
     @AfterEach
     public void tearDown() {
     }
@@ -61,7 +61,7 @@ public class LocationTest {
         assertEquals(5.0, instance.to(new Location(7.0, 24.0)), DELTA);
         assertEquals(5.0, instance.to(new Location(7.0, 16.0)), DELTA);
     }
-    
+
     @Test
     public void testAngleto() {
         System.out.println("angleto");

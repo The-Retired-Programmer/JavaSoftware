@@ -23,35 +23,35 @@ package uk.theretiredprogrammer.sketch.core;
 abstract class Polar<P extends Polar> {
 
     private final Angle angle;
-    
+
     abstract P create(double dimension, Angle angle);
-    
+
     abstract double getDimension();
-    
-    Polar(Angle angle){
+
+    Polar(Angle angle) {
         this.angle = angle;
     }
-    
+
     public P add(P p) {
         double dimension = getDimension();
         double pdimension = p.getDimension();
         double x = dimension * Math.sin(angle.getRadians()) + pdimension * Math.sin(p.getAngle().getRadians());
-        double y = dimension* Math.cos(angle.getRadians()) + pdimension * Math.cos(p.getAngle().getRadians());
+        double y = dimension * Math.cos(angle.getRadians()) + pdimension * Math.cos(p.getAngle().getRadians());
         //
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle( Math.toDegrees(Math.atan2(x, y)))); 
+                new Angle(Math.toDegrees(Math.atan2(x, y))));
     }
 
     public P subtract(P p) {
         double dimension = getDimension();
         double pdimension = p.getDimension();
         double x = dimension * Math.sin(angle.getRadians()) - pdimension * Math.sin(p.getAngle().getRadians());
-        double y = dimension* Math.cos(angle.getRadians()) - pdimension * Math.cos(p.getAngle().getRadians());
+        double y = dimension * Math.cos(angle.getRadians()) - pdimension * Math.cos(p.getAngle().getRadians());
         //
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle( Math.toDegrees(Math.atan2(x, y))));
+                new Angle(Math.toDegrees(Math.atan2(x, y))));
     }
 
     public P mult(double multiplier) {
@@ -59,7 +59,7 @@ abstract class Polar<P extends Polar> {
                 ? create(-getDimension() * multiplier, angle.inverse())
                 : create(getDimension() * multiplier, angle);
     }
-    
+
     public Angle angleDiff(Angle angle) {
         return this.angle.angleDiff(angle);
     }
@@ -71,7 +71,7 @@ abstract class Polar<P extends Polar> {
     public Angle getAngle() {
         return angle;
     }
-    
+
     public static Angle meanAngle(Polar[][] array) {
         double x = 0;
         double y = 0;

@@ -24,19 +24,19 @@ import org.junit.jupiter.api.Test;
  * @author richard
  */
 public class UpgraderControllerTest {
-    
+
     @Test
     public void testConstructorActionTest0() throws IOException {
         System.out.println("Test0 -> bank bend");
         upgradeTest(Path.of("/Users/richard/Race training Scenarios/UnitTests/Test0.json"));
     }
-    
+
     @Test
     public void testConstructorActionTest1() throws IOException {
         System.out.println("Test1 -> swinging");
         upgradeTest(Path.of("/Users/richard/Race training Scenarios/UnitTests/Test1.json"));
     }
-    
+
     private void upgradeTest(Path path) throws IOException {
         ConfigFileController uc = new ConfigFileController(path);
         if (uc.needsUpgrade()) {

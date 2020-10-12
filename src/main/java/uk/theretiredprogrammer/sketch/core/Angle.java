@@ -49,7 +49,7 @@ public class Angle {
         }
         throw new IOException("Malformed Definition file - Double expected with " + key);
     }
-    
+
     private final double angle_degrees; // Range +-179.999.. to +180.0 degrees
 
     public Angle() {
@@ -151,8 +151,8 @@ public class Angle {
     public final boolean lteq(Angle a) {
         return normalise(angle_degrees - a.angle_degrees) <= 0;
     }
-    
-    public final boolean between(Angle min, Angle max){
+
+    public final boolean between(Angle min, Angle max) {
         return this.gteq(min) && this.lteq(max);
     }
 
@@ -218,7 +218,5 @@ public class Angle {
     public String toString() {
         return Double.toString(angle_degrees);
     }
-    
-    
 
 }

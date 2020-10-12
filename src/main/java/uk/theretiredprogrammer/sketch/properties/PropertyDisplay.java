@@ -59,7 +59,7 @@ public class PropertyDisplay extends PropertyMap {
 
     public Area getSailingarea() {
         Area area = sailingarea.get("PropertyDisplay sailingarea");
-        return area.equals(AREAZERO)? getDisplayarea(): area;
+        return area.equals(AREAZERO) ? getDisplayarea() : area;
     }
 
     public Area getDisplayarea() {

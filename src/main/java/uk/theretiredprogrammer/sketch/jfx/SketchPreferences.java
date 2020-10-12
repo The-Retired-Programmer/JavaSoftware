@@ -82,7 +82,7 @@ public class SketchPreferences {
             System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
         }
     }
-    
+
     public static void clearWindowSizePreferences(Class clazz) {
         String windowname = clazz.getSimpleName();
         try {
@@ -129,7 +129,7 @@ public class SketchPreferences {
             System.out.println("Could not flush preferences for RecentFileList\n" + ex.getLocalizedMessage());
         }
     }
-    
+
     // recent Folders List
     public static ObservableList<PathWithShortName> getFoldersList(Class clazz) {
         ObservableList<PathWithShortName> result = FXCollections.observableArrayList();

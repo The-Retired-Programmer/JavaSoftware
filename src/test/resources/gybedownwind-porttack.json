@@ -34,9 +34,9 @@
         }
     ],
     "COURSE": {
-        "start": [50,90],
+        "start": [50, 90],
         "legs": [
-            ["mark2","port"],
+            ["mark2", "port"],
             ["mark1", "port"]
         ]
     },

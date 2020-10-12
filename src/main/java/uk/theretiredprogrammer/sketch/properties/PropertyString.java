@@ -40,7 +40,7 @@ public class PropertyString extends PropertyElement<String> {
         setKey(key);
         stringproperty = new SimpleStringProperty(defaultvalue);
     }
-    
+
     @Override
     public final String get() {
         return stringproperty.get();
@@ -54,7 +54,7 @@ public class PropertyString extends PropertyElement<String> {
     public SimpleStringProperty propertyString() {
         return stringproperty;
     }
-    
+
     @Override
     public final String parsevalue(JsonValue value) throws IOException {
         if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
@@ -72,14 +72,15 @@ public class PropertyString extends PropertyElement<String> {
     public Node getField(Controller controller) {
         return getField(controller, 0);
     }
-        
+
     @Override
-     public Node getField(Controller controller, int size) {    
+    public Node getField(Controller controller, int size) {
         TextField stringfield = new TextField(stringproperty.get());
         stringfield.textProperty().bindBidirectional(stringproperty);
         return stringfield;
     }
 
+    @Override
     public final void parse(JsonValue jvalue) throws IOException {
         set(parsevalue(jvalue));
     }

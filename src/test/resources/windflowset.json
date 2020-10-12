@@ -25,7 +25,7 @@
             "zlevel": 1,
             "speed": 8,
             "from": 10,
-            "location": [50,50],
+            "location": [50, 50],
             "width": 40,
             "height": 15
         },
@@ -48,9 +48,9 @@
         }
     ],
     "COURSE": {
-        "start": [50,10],
+        "start": [50, 10],
         "legs": [
-            ["mark1","port"]
+            ["mark1", "port"]
         ]
     },
     "BOATS": [

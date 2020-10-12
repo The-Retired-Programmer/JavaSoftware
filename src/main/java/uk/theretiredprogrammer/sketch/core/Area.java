@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.core;
 
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.io.IOException;
@@ -28,7 +27,7 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Area {
-    
+
     public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
 
     public static Optional<Area> parse(JsonObject jobj, String key) throws IOException {
@@ -91,7 +90,7 @@ public class Area {
         return Json.createArrayBuilder().add(bottomleft.getX())
                 .add(bottomleft.getY()).add(width).add(height).build();
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;

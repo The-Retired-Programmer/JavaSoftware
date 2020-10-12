@@ -30,7 +30,7 @@ import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class SpeedPolar extends Polar<SpeedPolar> {
-    
+
     public final static SpeedPolar FLOWZERO = new SpeedPolar(0.0, ANGLE0);
 
     public static Optional<SpeedPolar> parse(JsonObject jobj, String key) throws IOException {
@@ -65,12 +65,12 @@ public class SpeedPolar extends Polar<SpeedPolar> {
         super(angle);
         this.speed = speed;
     }
-    
+
     public SpeedPolar(double speed, double angle) {
         super(new Angle(angle));
         this.speed = speed;
     }
-    
+
     public SpeedPolar() {
         super(ANGLE0);
         this.speed = 0.0;
@@ -99,30 +99,30 @@ public class SpeedPolar extends Polar<SpeedPolar> {
     }
 
     private Angle extrapolateAngle(Angle other, double fraction) {
-        return new SpeedPolar(1,this.getAngle()).mult(1.0 - fraction)
-                .add(new SpeedPolar(1,other).mult(fraction))
+        return new SpeedPolar(1, this.getAngle()).mult(1.0 - fraction)
+                .add(new SpeedPolar(1, other).mult(fraction))
                 .getAngle();
     }
-    
+
     private double extrapolateSpeed(double other, double fraction) {
-        return speed*(1.0 - fraction)+other*fraction;
+        return speed * (1.0 - fraction) + other * fraction;
     }
-    
+
     private SpeedPolar extrapolate(SpeedPolar other, double fraction) {
         return new SpeedPolar(extrapolateSpeed(other.getSpeed(), fraction),
                 extrapolateAngle(other.getAngle(), fraction));
-    } 
-    
+    }
+
     public SpeedPolar extrapolate(SpeedPolar nw, SpeedPolar ne, SpeedPolar se, Location fractions) {
         SpeedPolar w = this.extrapolate(nw, fractions.getY());
         SpeedPolar e = se.extrapolate(ne, fractions.getY());
         return w.extrapolate(e, fractions.getX());
     }
-    
+
     public static Angle meanAngle(SpeedPolar[][] array) {
         return Polar.meanAngle(array);
     }
-    
+
     public JsonArray toJson() {
         return Json.createArrayBuilder().add(speed).add(getAngle().getDegrees()).build();
     }

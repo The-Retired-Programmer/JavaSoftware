@@ -45,7 +45,7 @@ public abstract class PropertyListWithFactoryCreator<P extends PropertyAny> exte
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray array = ((JsonArray) jvalue);
             for (JsonValue value : array) {
-                switch (value.getValueType()){
+                switch (value.getValueType()) {
                     case OBJECT -> {
                         JsonObject oparams = (JsonObject) value;
                         String type = oparams.getString(parametername, "UNKNOWN");
@@ -53,7 +53,8 @@ public abstract class PropertyListWithFactoryCreator<P extends PropertyAny> exte
                         oproperty.parse(oparams);
                         add(oproperty);
                     }
-                    default -> throw new IOException("Malformed Definition File - array contains items other than the expected object/array (key=" + getKeyForInfo() + ")");
+                    default ->
+                        throw new IOException("Malformed Definition File - array contains items other than the expected object/array (key=" + getKeyForInfo() + ")");
                 }
             }
         }

@@ -19,13 +19,13 @@ package uk.theretiredprogrammer.sketch.properties;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class PropertyBoats extends PropertyListNamedWithSimpleCreator<PropertyBoat>  {
+public class PropertyBoats extends PropertyListNamedWithSimpleCreator<PropertyBoat> {
 
-    public PropertyBoats(String key)  {
-        super(()->new PropertyBoat());
+    public PropertyBoats(String key) {
+        super(() -> new PropertyBoat());
         setKey(key);
     }
-    
+
     @Override
     public PropertyBoats get() {
         return this;

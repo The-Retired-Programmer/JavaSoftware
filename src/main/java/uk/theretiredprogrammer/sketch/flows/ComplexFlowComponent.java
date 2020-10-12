@@ -27,7 +27,7 @@ import uk.theretiredprogrammer.sketch.properties.PropertyComplexFlowComponent;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class ComplexFlowComponent extends FlowComponent {
-    
+
     private final PropertyComplexFlowComponent property;
 
     public ComplexFlowComponent(PropertyComplexFlowComponent complexflowcomponentproperty) {

@@ -65,7 +65,7 @@ public class TurnTest {
         }
         return boat;
     }
-    
+
     void setboatdirection(double degrees) {
         boat.getProperty().setDirection(new Angle(degrees));
     }

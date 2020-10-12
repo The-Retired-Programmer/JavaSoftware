@@ -27,8 +27,8 @@ import uk.theretiredprogrammer.sketch.core.SpeedPolar;
  *
  * @author richard
  */
-public class TestFlowComponentTest extends FlowComponentTest{
-    
+public class TestFlowComponentTest extends FlowComponentTest {
+
     @Test
     public void testGetTestFlow() throws IOException {
         System.out.println("getTestFlow");

@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class DoubleParser {
-    
+
     public static Optional<Double> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
             return Optional.empty();

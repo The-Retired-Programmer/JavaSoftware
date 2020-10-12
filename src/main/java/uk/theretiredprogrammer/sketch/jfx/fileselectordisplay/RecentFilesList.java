@@ -45,7 +45,7 @@ public class RecentFilesList {
     public void close() {
         SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class);
     }
-    
+
     public void clear() {
         recentFileList.clear();
     }

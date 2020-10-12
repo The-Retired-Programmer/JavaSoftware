@@ -43,7 +43,7 @@ public class PerformanceVectors {
             }
             angleindex++;
         }
-        if (angleindex == -1){
+        if (angleindex == -1) {
             angleindex = 0;
         }
         // find the lookup point for wind speed

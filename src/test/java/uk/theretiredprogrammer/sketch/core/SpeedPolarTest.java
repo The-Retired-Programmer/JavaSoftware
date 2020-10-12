@@ -27,22 +27,22 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class SpeedPolarTest {
-    
+
     public SpeedPolarTest() {
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
     }
-    
+
     @AfterAll
     public static void tearDownClass() {
     }
-    
+
     @BeforeEach
     public void setUp() {
     }
-    
+
     @AfterEach
     public void tearDown() {
     }
@@ -50,10 +50,9 @@ public class SpeedPolarTest {
     @Test
     public void testCreation() {
         System.out.println("creation<distance,angle>");
-        SpeedPolar instance = new SpeedPolar(100,new Angle(90));
-        assertEquals(100,instance.getSpeed());
+        SpeedPolar instance = new SpeedPolar(100, new Angle(90));
+        assertEquals(100, instance.getSpeed());
         assertEquals(new Angle(90), instance.getAngle());
     }
-    
-    
+
 }

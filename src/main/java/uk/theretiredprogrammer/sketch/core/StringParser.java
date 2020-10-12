@@ -26,7 +26,7 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class StringParser {
-    
+
     public static Optional<String> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
             return Optional.empty();
@@ -35,9 +35,9 @@ public class StringParser {
         if (value == null) {
             return Optional.empty();
         }
-            if (value.getValueType() == JsonValue.ValueType.STRING) {
-                return Optional.of(((JsonString) value).getString());
-            }
+        if (value.getValueType() == JsonValue.ValueType.STRING) {
+            return Optional.of(((JsonString) value).getString());
+        }
         throw new IOException("Malformed Definition file - String expected with " + key);
     }
 }

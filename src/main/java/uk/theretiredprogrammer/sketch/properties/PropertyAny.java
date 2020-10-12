@@ -26,11 +26,11 @@ import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
  * @param <C>
  */
 public abstract class PropertyAny<C> {
-    
+
     public abstract JsonValue toJson();
-    
+
     public abstract C get();
-    
+
     public abstract void parse(JsonValue jvalue) throws IOException;
 
     private Optional<String> key = Optional.empty();
@@ -38,12 +38,12 @@ public abstract class PropertyAny<C> {
     final void setKey(String key) {
         this.key = Optional.ofNullable(key);
     }
-    
+
     final String getKey() {
         return key
                 .orElseThrow(() -> new IllegalStateFailure("PropertyAny: getKey() called on uninitiaised key"));
     }
-    
+
     final String getKeyForInfo() {
         return key.orElse("Undefined");
     }

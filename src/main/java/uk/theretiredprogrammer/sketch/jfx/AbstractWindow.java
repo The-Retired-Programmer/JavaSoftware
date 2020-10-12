@@ -38,7 +38,7 @@ import javafx.stage.WindowEvent;
  * @author richard
  */
 public abstract class AbstractWindow {
-    
+
     public static final boolean SCROLLABLE = true;
 
     private AbstractWindow parentwindow = null;
@@ -135,7 +135,7 @@ public abstract class AbstractWindow {
                 screenbounds.getHeight()
         );
     }
-    
+
     public final void addtoMenubar(Menu... nodes) {
         menubar.getMenus().addAll(nodes);
     }
@@ -152,12 +152,11 @@ public abstract class AbstractWindow {
         this.contentnode = contentnode;
         this.scrollable = false;
     }
-    
+
     public final void setContent(Node contentnode, boolean scrollable) {
         this.contentnode = contentnode;
         this.scrollable = scrollable;
     }
-
 
     public final void setOnCloseAction(Consumer<WindowEvent> closeaction) {
         this.closeaction = closeaction;

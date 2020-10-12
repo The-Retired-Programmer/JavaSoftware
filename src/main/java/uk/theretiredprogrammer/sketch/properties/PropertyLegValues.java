@@ -38,11 +38,11 @@ public class PropertyLegValues extends PropertyListWithSimpleCreator<PropertyLeg
     public PropertyLegValues get() {
         return this;
     }
-    
+
     public void add() {
         super.add(new PropertyLegValue(marknames, roundings));
     }
-    
+
     public void add(LegValue legvalue) {
         super.add(new PropertyLegValue(legvalue, marknames, roundings));
     }

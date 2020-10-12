@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.properties;
 
-import java.io.IOException;
 import java.util.function.Supplier;
 
 /**
@@ -29,7 +28,7 @@ public abstract class PropertyListNamedWithSimpleCreator<P extends PropertyAny &
         super(creator);
     }
 
-    public final P get(String key)  {
+    public final P get(String key) {
         for (P property : propertylist) {
             if (property.hasName(key)) {
                 return property;
@@ -38,7 +37,7 @@ public abstract class PropertyListNamedWithSimpleCreator<P extends PropertyAny &
         return null;
     }
 
-    public final void remove(String name)  {
+    public final void remove(String name) {
         remove(get(name));
     }
 }

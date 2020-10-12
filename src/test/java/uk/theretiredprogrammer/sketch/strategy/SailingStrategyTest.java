@@ -70,7 +70,7 @@ public class SailingStrategyTest {
     void setboattrue(String... propertynames) {
         boat.getProperty().stream().filter(p
                 -> Arrays.asList(propertynames).stream()
-                     .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
+                        .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
                 .forEach(p -> ((PropertyBoolean) p.getValue()).set(true));
     }
 

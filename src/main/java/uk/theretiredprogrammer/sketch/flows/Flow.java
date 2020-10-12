@@ -73,7 +73,7 @@ public abstract class Flow implements Timerable {
             meanflowangle = calcMeanFlowAngle(); // if not then calculate it
         }
     }
-    
+
     private SpeedPolar getFlowwithoutswing(Location pos) {
         int w = (int) Math.floor((pos.getX() - area.getBottomleft().getX()) / wstepsize);
         if (w < 0) {

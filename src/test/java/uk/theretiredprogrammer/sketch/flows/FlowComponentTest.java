@@ -32,14 +32,14 @@ public abstract class FlowComponentTest {
 
     public void initialiseFlow(String filename) throws IOException {
         controller = new Controller(filename)
-                .setOnSketchChange(() ->fail("BAD - Callback() made -should not occur"))
+                .setOnSketchChange(() -> fail("BAD - Callback() made -should not occur"))
                 .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
                 .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
     }
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {
         SpeedPolar flow = controller.windflow.getFlow(at);
-        assertEquals(expected.getAngle().getDegrees(), flow.getAngle().getDegrees(),DELTA);
+        assertEquals(expected.getAngle().getDegrees(), flow.getAngle().getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
 

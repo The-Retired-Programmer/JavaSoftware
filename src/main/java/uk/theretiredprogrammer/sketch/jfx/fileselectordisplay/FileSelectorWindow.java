@@ -93,7 +93,7 @@ public class FileSelectorWindow extends AbstractWindow {
         SketchWindow.create("<new>", controller, sketchproperty, this);
     }
 
-    private void selected(PathWithShortName pn){
+    private void selected(PathWithShortName pn) {
         statusbarDisplay();
         Controller controller;
         PropertySketch sketchproperty;

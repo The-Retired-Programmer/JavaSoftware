@@ -21,9 +21,10 @@ import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 /**
  * The Element Class - represents the core class of every simulation object
  * class.
+ *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public interface Timerable {
-    
+
     public void timerAdvance(int time, TimerLog timerlog) throws IOException;
 }

@@ -29,8 +29,8 @@ import java.util.function.Function;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class ListOf {
-    
-    public static <T> Optional<List<T>> parse(JsonObject jobj, String key,  Function<JsonValue,T> parseelement) throws IOException {
+
+    public static <T> Optional<List<T>> parse(JsonObject jobj, String key, Function<JsonValue, T> parseelement) throws IOException {
         if (jobj == null) {
             return Optional.empty();
         }
@@ -38,20 +38,20 @@ public class ListOf {
         if (value == null) {
             return Optional.empty();
         }
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray jarray = (JsonArray) value;
-                int size = jarray.size();
-                List<T> result = new ArrayList<>();
-                for(int i = 0; i < size; i++) {
-                    T r = parseelement.apply(jarray.get(i));
-                    if (r == null) {
-                       throw new IOException("Malformed Definition file - within Array " + key); 
-                    }
-                    result.add(r);
+        if (value.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray jarray = (JsonArray) value;
+            int size = jarray.size();
+            List<T> result = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                T r = parseelement.apply(jarray.get(i));
+                if (r == null) {
+                    throw new IOException("Malformed Definition file - within Array " + key);
                 }
-                return Optional.of(result);
+                result.add(r);
             }
+            return Optional.of(result);
+        }
         throw new IOException("Malformed Definition file - Array expected with " + key);
     }
-    
+
 }

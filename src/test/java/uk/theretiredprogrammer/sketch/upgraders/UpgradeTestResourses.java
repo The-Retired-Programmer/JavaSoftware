@@ -24,14 +24,13 @@ import org.junit.jupiter.api.Test;
  * @author richard
  */
 public class UpgradeTestResourses {
-    
+
     //@Test
     public void testupgrade1() throws IOException {
         System.out.println("boat-turn-calculation");
         upgradeTest(Path.of("/Users/richard/GitHubProjects/RaceTrainingSketch-JFX/src/test/resources/boat-turn-calculation.json"));
     }
-    
-    
+
     private void upgradeTest(Path path) throws IOException {
         ConfigFileController uc = new ConfigFileController(path);
         if (uc.needsUpgrade()) {

@@ -62,7 +62,7 @@ public abstract class PropertyMap extends PropertyAny {
     public Stream<Entry<String, PropertyAny>> stream() {
         return propertymap.entrySet().stream();
     }
-    
+
     public Stream<PropertyAny> streamvalues() {
         return propertymap.values().stream();
     }

@@ -22,17 +22,17 @@ import java.nio.file.Path;
  * @author richard
  */
 public class PathWithShortName {
-    
+
     private final Path path;
-    
+
     public PathWithShortName(Path path) {
         this.path = path;
     }
-    
+
     public Path getPath() {
         return path;
     }
-    
+
     @Override
     public String toString() {
         String fn = path.getFileName().toString();

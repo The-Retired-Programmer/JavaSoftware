@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class AngleTest {
-    
+
     private static final double DELTA = 0.0000001;
-    
+
     @Test
     public void testNormalisation() {
         System.out.println("normalisation");
@@ -164,7 +164,7 @@ public class AngleTest {
         instance = new Angle(180);
         assertEquals(180, instance.negateif(false).getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testReflectH() {
         System.out.println("reflectH");
@@ -194,7 +194,7 @@ public class AngleTest {
         instance = new Angle(-140);
         assertEquals(-40, instance.reflectH().getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testReflectHif() {
         System.out.println("reflectH");
@@ -248,7 +248,7 @@ public class AngleTest {
         instance = new Angle(-140);
         assertEquals(-140, instance.reflectHif(false).getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testReflectV() {
         System.out.println("reflectV");
@@ -278,7 +278,7 @@ public class AngleTest {
         instance = new Angle(-140);
         assertEquals(140, instance.reflectV().getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testReflectVif() {
         System.out.println("reflectVif");
@@ -339,51 +339,51 @@ public class AngleTest {
     public void testIsPositive() {
         System.out.println("isPositive");
         Angle instance = new Angle(100);
-        assert(instance.isPositive());
+        assert (instance.isPositive());
         instance = new Angle(-100);
-        assert(!instance.isPositive());
+        assert (!instance.isPositive());
         instance = new Angle(0);
-        assert(instance.isPositive());
+        assert (instance.isPositive());
         instance = new Angle(-1);
-        assert(!instance.isPositive());
+        assert (!instance.isPositive());
         instance = new Angle(180);
-        assert(instance.isPositive());
+        assert (instance.isPositive());
     }
-    
+
     @Test
     public void testIsZero() {
         System.out.println("isZero");
         Angle instance = new Angle(100);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(-100);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(0);
-        assert(instance.isZero());
+        assert (instance.isZero());
         instance = new Angle(-1);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(1);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(180);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(-179);
-        assert(!instance.isZero());
+        assert (!instance.isZero());
         instance = new Angle(360);
-        assert(instance.isZero());
+        assert (instance.isZero());
     }
 
     @Test
     public void testIsNegative() {
         System.out.println("isNegative");
         Angle instance = new Angle(100);
-        assert(!instance.isNegative());
+        assert (!instance.isNegative());
         instance = new Angle(-100);
-        assert(instance.isNegative());
+        assert (instance.isNegative());
         instance = new Angle(0);
-        assert(!instance.isNegative());
+        assert (!instance.isNegative());
         instance = new Angle(-1);
-        assert(instance.isNegative());
+        assert (instance.isNegative());
         instance = new Angle(180);
-        assert(!instance.isNegative());
+        assert (!instance.isNegative());
     }
 
     @Test
@@ -391,19 +391,19 @@ public class AngleTest {
         System.out.println("gt");
         Angle instance = new Angle(100);
         Angle other = new Angle(99);
-        assert(instance.gt(other));
+        assert (instance.gt(other));
         other = new Angle(100);
-        assert(!instance.gt(other));
+        assert (!instance.gt(other));
         other = new Angle(101);
-        assert(!instance.gt(other));
+        assert (!instance.gt(other));
         //
         instance = new Angle(-100);
         other = new Angle(-99);
-        assert(!instance.gt(other));
+        assert (!instance.gt(other));
         other = new Angle(-100);
-        assert(!instance.gt(other));
+        assert (!instance.gt(other));
         other = new Angle(-101);
-        assert(instance.gt(other));
+        assert (instance.gt(other));
     }
 
     @Test
@@ -411,19 +411,19 @@ public class AngleTest {
         System.out.println("gteq");
         Angle instance = new Angle(100);
         Angle other = new Angle(99);
-        assert(instance.gteq(other));
+        assert (instance.gteq(other));
         other = new Angle(100);
-        assert(instance.gteq(other));
+        assert (instance.gteq(other));
         other = new Angle(101);
-        assert(!instance.gteq(other));
+        assert (!instance.gteq(other));
         //
         instance = new Angle(-100);
         other = new Angle(-99);
-        assert(!instance.gteq(other));
+        assert (!instance.gteq(other));
         other = new Angle(-100);
-        assert(instance.gteq(other));
+        assert (instance.gteq(other));
         other = new Angle(-101);
-        assert(instance.gteq(other));
+        assert (instance.gteq(other));
     }
 
     @Test
@@ -431,19 +431,19 @@ public class AngleTest {
         System.out.println("lt");
         Angle instance = new Angle(100);
         Angle other = new Angle(99);
-        assert(!instance.lt(other));
+        assert (!instance.lt(other));
         other = new Angle(100);
-        assert(!instance.lt(other));
+        assert (!instance.lt(other));
         other = new Angle(101);
-        assert(instance.lt(other));
+        assert (instance.lt(other));
         //
         instance = new Angle(-100);
         other = new Angle(-99);
-        assert(instance.lt(other));
+        assert (instance.lt(other));
         other = new Angle(-100);
-        assert(!instance.lt(other));
+        assert (!instance.lt(other));
         other = new Angle(-101);
-        assert(!instance.lt(other));
+        assert (!instance.lt(other));
     }
 
     @Test
@@ -451,19 +451,19 @@ public class AngleTest {
         System.out.println("lteq");
         Angle instance = new Angle(100);
         Angle other = new Angle(99);
-        assert(!instance.lteq(other));
+        assert (!instance.lteq(other));
         other = new Angle(100);
-        assert(instance.lteq(other));
+        assert (instance.lteq(other));
         other = new Angle(101);
-        assert(instance.lteq(other));
+        assert (instance.lteq(other));
         //
         instance = new Angle(-100);
         other = new Angle(-99);
-        assert(instance.lteq(other));
+        assert (instance.lteq(other));
         other = new Angle(-100);
-        assert(instance.lteq(other));
+        assert (instance.lteq(other));
         other = new Angle(-101);
-        assert(!instance.lteq(other));
+        assert (!instance.lteq(other));
     }
 
     @Test
@@ -505,36 +505,36 @@ public class AngleTest {
         other = new Angle(180);
         assertEquals(170, instance.absAngleDiff(other).getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testBetween() {
         System.out.println("between");
         Angle instance = new Angle(-90);
         Angle min = new Angle(90);
         Angle max = new Angle(180);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(140);
         min = new Angle(90);
         max = new Angle(180);
-        assert(instance.between(min, max));
+        assert (instance.between(min, max));
         max = new Angle(-179);
-        assert(instance.between(min, max));
+        assert (instance.between(min, max));
         instance = new Angle(160);
         min = new Angle(-117);
         max = new Angle(-27);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(151);
         min = new Angle(-118);
         max = new Angle(-28); // inverse = 152
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(152);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(153);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(180);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
         instance = new Angle(-179);
-        assert(!instance.between(min, max));
+        assert (!instance.between(min, max));
     }
 
     @Test
@@ -550,7 +550,7 @@ public class AngleTest {
         Angle instance = new Angle(88);
         assertEquals(88, instance.getDegrees(), DELTA);
     }
-    
+
     @Test
     public void testInverse() {
         System.out.println("Inverse");
@@ -570,18 +570,18 @@ public class AngleTest {
         Angle angle = Angle.parse(getAngleParameters(), "angle").orElse(Angle.ANGLE0);
         assertEquals(88, angle.getDegrees());
     }
-    
+
     private JsonObject getAngleParameters() {
         return Json.createObjectBuilder()
                 .add("angle", 88)
                 .build();
     }
-    
+
     @Test
     public void testEquals() {
         System.out.println("equals");
         Angle other = new Angle(88);
         Angle instance = new Angle(88);
-        assert(instance.equals(other));
+        assert (instance.equals(other));
     }
 }

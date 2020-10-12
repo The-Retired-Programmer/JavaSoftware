@@ -15,23 +15,23 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import uk.theretiredprogrammer.sketch.strategy.Decision;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javafx.scene.paint.Color;
-import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.PropertySketch;
+import uk.theretiredprogrammer.sketch.strategy.Decision;
+import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.MARKROUNDING;
+import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.SAILON;
 
 /**
  * The Abstract Boat class - implements the core capabilities of a boat.

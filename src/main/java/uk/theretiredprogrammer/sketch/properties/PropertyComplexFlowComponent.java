@@ -24,12 +24,12 @@ import static uk.theretiredprogrammer.sketch.core.SpeedPolar.FLOWZERO;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class PropertyComplexFlowComponent extends PropertyFlowComponent {
-    
+
     private final Config<PropertySpeedPolar, SpeedPolar> northwestflow = new Config<>("northwestflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
     private final Config<PropertySpeedPolar, SpeedPolar> northeastflow = new Config<>("northeastflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
     private final Config<PropertySpeedPolar, SpeedPolar> southeastflow = new Config<>("southeastflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
     private final Config<PropertySpeedPolar, SpeedPolar> southwestflow = new Config<>("southwestflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
-    
+
     public PropertyComplexFlowComponent(Supplier<Area> getdisplayarea) {
         super(getdisplayarea);
         this.addConfig(northwestflow, northeastflow, southeastflow, southwestflow);
@@ -38,17 +38,17 @@ public class PropertyComplexFlowComponent extends PropertyFlowComponent {
     public SpeedPolar getNorthwestflow() {
         return northwestflow.get("PropertyComplexFlowcomponent northwestflow");
     }
-    
+
     public SpeedPolar getNortheastflow() {
         return northeastflow.get("PropertyComplexFlowcomponent northeastflow");
     }
-   
+
     public SpeedPolar getSoutheastflow() {
         return southeastflow.get("PropertyComplexFlowcomponent southeastflow");
     }
-   
+
     public SpeedPolar getSouthwestflow() {
         return southwestflow.get("PropertyComplexFlowcomponent southwestflow");
     }
-   
+
 }

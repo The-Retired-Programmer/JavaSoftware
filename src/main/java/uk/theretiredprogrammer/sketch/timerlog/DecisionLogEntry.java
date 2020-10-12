@@ -34,9 +34,9 @@ public class DecisionLogEntry extends TimerLogEntry {
         this.decisionangle = decision.getAngle().getDegrees();
         this.decisionPORT = decision.isPort();
     }
-    
+
     @Override
-    public boolean hasName(String name){
+    public boolean hasName(String name) {
         return boatname.equals(name);
     }
 

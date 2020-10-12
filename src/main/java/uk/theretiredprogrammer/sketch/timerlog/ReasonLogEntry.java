@@ -28,9 +28,9 @@ public class ReasonLogEntry extends TimerLogEntry {
         this.boatname = boatname;
         this.reason = reason;
     }
-    
+
     @Override
-    public boolean hasName(String name){
+    public boolean hasName(String name) {
         return boatname.equals(name);
     }
 

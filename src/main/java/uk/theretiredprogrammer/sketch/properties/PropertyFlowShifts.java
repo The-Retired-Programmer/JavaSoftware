@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.properties;
 
-import java.io.IOException;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;

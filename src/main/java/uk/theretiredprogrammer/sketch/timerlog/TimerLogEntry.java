@@ -48,7 +48,7 @@ public abstract class TimerLogEntry {
     public String toString() {
         return mmsstime;
     }
-    
+
     public boolean hasName(String name) {
         return true;
     }

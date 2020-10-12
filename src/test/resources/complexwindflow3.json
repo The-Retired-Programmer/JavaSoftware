@@ -7,9 +7,8 @@
         "east": 100,
         "north": 100,
         "south": 0
-        
     },
-     "DISPLAY": {
+    "DISPLAY": {
         "zoom": 10,
         "speedup": 5
     },
@@ -35,9 +34,9 @@
         }
     ],
     "COURSE": {
-        "start": [50,10],
+        "start": [50, 10],
         "legs": [
-            ["mark1","port"]
+            ["mark1", "port"]
         ]
     },
     "BOATS": [

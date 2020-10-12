@@ -26,7 +26,7 @@ public class Decision {
 
     public static final boolean PORT = true;
     public static final boolean STARBOARD = false;
-    
+
     public enum DecisionAction {
         SAILON, STOP, MARKROUNDING, TURN
     }
@@ -74,7 +74,7 @@ public class Decision {
     public Angle getAngle() {
         return isRotating() ? angle : boat.getProperty().getDirection();
     }
-    
+
     public boolean isPort() {
         return turndirection;
     }

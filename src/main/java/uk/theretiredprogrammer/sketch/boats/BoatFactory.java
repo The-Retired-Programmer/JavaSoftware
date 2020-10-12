@@ -15,11 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import jakarta.json.JsonObject;
 import java.io.IOException;
-import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
-import uk.theretiredprogrammer.sketch.controller.Controller;
 import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**

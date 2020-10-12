@@ -33,11 +33,11 @@ import uk.theretiredprogrammer.sketch.controller.Controller;
 public class PropertyColour extends PropertyElement<Color> {
 
     private SimpleObjectProperty<Color> colourproperty;
-    
+
     public PropertyColour(Color defaultvalue) {
         this(null, defaultvalue);
     }
-    
+
     public PropertyColour(String key, Color defaultvalue) {
         setKey(key);
         colourproperty = new SimpleObjectProperty(defaultvalue);

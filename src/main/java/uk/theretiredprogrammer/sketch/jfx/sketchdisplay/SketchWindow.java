@@ -77,7 +77,7 @@ public class SketchWindow extends AbstractWindow {
                 UI.toolbarButton("control_pause_blue.png", "Pause", actionEvent -> controller.stop()),
                 UI.toolbarButton("control_rewind_blue.png", "Reset", actionEvent -> controller.reset()),
                 UI.toolbarButton("table_save.png", "Save Properties", actionEvent -> save(controller,
-                        "/Users/richard/SKETCHSAVE/save.json")),
+                "/Users/richard/SKETCHSAVE/save.json")),
                 UI.toolbarButton("table.png", "Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, controller.getProperty(), SketchWindow.this)),
                 UI.toolbarButton("script.png", "Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
                 UI.toolbarButton("script_code.png", "Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn)),

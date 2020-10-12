@@ -65,7 +65,7 @@ public class ColorParser {
 
     private static Color string2color(String value) {
         try {
-        return Color.valueOf(value.toLowerCase());
+            return Color.valueOf(value.toLowerCase());
         } catch (IllegalArgumentException ex) {
             return null;
         }
@@ -113,7 +113,7 @@ public class ColorParser {
                         return field.getName();
                     }
                 } catch (IllegalAccessException ex) {
-                    return "Securty Manager does not allow access to field '"+ field.getName() + "'.";
+                    return "Securty Manager does not allow access to field '" + field.getName() + "'.";
                 }
             }
         }

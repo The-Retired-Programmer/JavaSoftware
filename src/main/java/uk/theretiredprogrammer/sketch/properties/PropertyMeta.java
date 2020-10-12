@@ -26,22 +26,22 @@ import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
  * @author richard
  */
 public class PropertyMeta extends PropertyMap {
-    
+
     public PropertyMeta(String key) {
         setKey(key);
     }
-    
+
     @Override
     public PropertyMeta get() {
         return this;
     }
-    
+
     @Override
     public void parse(JsonValue jval) {
-        if (jval != null  && jval.getValueType() == JsonValue.ValueType.OBJECT) {
-            JsonObject metaobj = ((JsonObject)jval).getJsonObject(getKey());
-            if (metaobj != null){
-                metaobj.forEach( (metakey, jvalue) -> {
+        if (jval != null && jval.getValueType() == JsonValue.ValueType.OBJECT) {
+            JsonObject metaobj = ((JsonObject) jval).getJsonObject(getKey());
+            if (metaobj != null) {
+                metaobj.forEach((metakey, jvalue) -> {
                     switch (jvalue.getValueType()) {
                         case NUMBER -> {
                             try {
@@ -50,11 +50,16 @@ public class PropertyMeta extends PropertyMap {
                                 add(new PropertyDouble(metakey, ((JsonNumber) jvalue).doubleValue()));
                             }
                         }
-                        case STRING -> add(new PropertyString(metakey, ((JsonString) jvalue).getString()));
-                        case TRUE -> add(new PropertyBoolean(metakey, true));
-                        case FALSE -> add(new PropertyBoolean(metakey, false));
-                        case NULL -> add(null);
-                        default -> throw new IllegalStateFailure("PropertyMeta parse - unexpected values in switch");
+                        case STRING ->
+                            add(new PropertyString(metakey, ((JsonString) jvalue).getString()));
+                        case TRUE ->
+                            add(new PropertyBoolean(metakey, true));
+                        case FALSE ->
+                            add(new PropertyBoolean(metakey, false));
+                        case NULL ->
+                            add(null);
+                        default ->
+                            throw new IllegalStateFailure("PropertyMeta parse - unexpected values in switch");
                     }
                 });
             }

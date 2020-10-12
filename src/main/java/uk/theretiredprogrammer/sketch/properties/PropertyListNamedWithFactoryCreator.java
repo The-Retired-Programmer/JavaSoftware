@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.properties;
 
-import java.io.IOException;
 import java.util.function.Function;
 
 /**
@@ -23,16 +22,16 @@ import java.util.function.Function;
  * @author richard
  * @param <P>
  */
-public abstract class PropertyListNamedWithFactoryCreator<P extends PropertyAny & PropertyNamed> extends PropertyListWithFactoryCreator<P>  {
-    
-    public PropertyListNamedWithFactoryCreator(Function<String, P> creator){
+public abstract class PropertyListNamedWithFactoryCreator<P extends PropertyAny & PropertyNamed> extends PropertyListWithFactoryCreator<P> {
+
+    public PropertyListNamedWithFactoryCreator(Function<String, P> creator) {
         super(creator);
     }
-    
-    public PropertyListNamedWithFactoryCreator(Function<String, P> creator, String parametername){
+
+    public PropertyListNamedWithFactoryCreator(Function<String, P> creator, String parametername) {
         super(creator, parametername);
     }
-    
+
     public final P get(String key) {
         for (P property : propertylist) {
             if (property.hasName(key)) {

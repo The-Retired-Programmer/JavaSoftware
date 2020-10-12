@@ -19,7 +19,7 @@ package uk.theretiredprogrammer.sketch.core;
  *
  * @author richard
  */
-public class IllegalStateFailure extends RuntimeException{
+public class IllegalStateFailure extends RuntimeException {
 
     public IllegalStateFailure(String message) {
         super(message);

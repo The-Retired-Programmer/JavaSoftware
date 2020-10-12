@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.timerlog;
 
-import java.io.IOException;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
 

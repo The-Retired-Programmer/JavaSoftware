@@ -52,7 +52,7 @@ public class DistancePolar extends Polar<DistancePolar> {
         }
         throw new IOException("Malformed Definition file - decimal and decimal expected with " + key);
     }
-    
+
     private final double distance;
 
     public DistancePolar(double distance, Angle angle) {

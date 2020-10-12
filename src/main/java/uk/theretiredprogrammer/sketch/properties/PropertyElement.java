@@ -31,7 +31,7 @@ import uk.theretiredprogrammer.sketch.controller.Controller;
  * @param <C>
  */
 public abstract class PropertyElement<C extends Object> extends PropertyAny<C> {
-    
+
     public final C getValue() {
         return get();
     }
@@ -39,9 +39,9 @@ public abstract class PropertyElement<C extends Object> extends PropertyAny<C> {
     public final void setValue(C newvalue) throws IOException {
         set(newvalue);
     }
-    
+
     abstract void set(C newvalue) throws IOException;
-    
+
     abstract C parsevalue(JsonValue jvalue) throws IOException;
 
     public abstract Node getField(Controller controller, int size);

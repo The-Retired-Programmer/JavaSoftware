@@ -32,20 +32,20 @@ import uk.theretiredprogrammer.sketch.properties.PropertyTestFlowComponent;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class FlowComponent {
-    
+
     public static FlowComponent factory(PropertyFlowComponent componentproperty) {
         switch (componentproperty.getType()) {
             case "testflow" -> {
-                return new TestFlowComponent((PropertyTestFlowComponent)componentproperty);
+                return new TestFlowComponent((PropertyTestFlowComponent) componentproperty);
             }
             case "complexflow" -> {
-                return new ComplexFlowComponent((PropertyComplexFlowComponent)componentproperty);
+                return new ComplexFlowComponent((PropertyComplexFlowComponent) componentproperty);
             }
             case "constantflow" -> {
-                return new ConstantFlowComponent((PropertyConstantFlowComponent)componentproperty);
+                return new ConstantFlowComponent((PropertyConstantFlowComponent) componentproperty);
             }
             case "gradientflow" -> {
-                return new GradientFlowComponent((PropertyGradientFlowComponent)componentproperty);
+                return new GradientFlowComponent((PropertyGradientFlowComponent) componentproperty);
             }
             default ->
                 throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition");
@@ -53,19 +53,19 @@ public abstract class FlowComponent {
     }
 
     private final PropertyFlowComponent componentproperty;
-    
+
     public FlowComponent(PropertyFlowComponent componentproperty) {
         this.componentproperty = componentproperty;
     }
-    
-    public abstract SpeedPolar getFlow(Location pos) ;
-    
-    void testLocationWithinArea(Location pos)  {
+
+    public abstract SpeedPolar getFlow(Location pos);
+
+    void testLocationWithinArea(Location pos) {
         if (!componentproperty.getArea().isWithinArea(pos)) {
             throw new IllegalStateFailure("Location is not with the Area " + pos);
         }
     }
-    
+
     public Angle meanWindAngle() {
         return null; // should override if manual control  of mean wind angle required
     }

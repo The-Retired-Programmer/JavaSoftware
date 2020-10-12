@@ -15,14 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.properties;
 
-import java.io.IOException;
-
 /**
  *
  * @author richard
  */
 public interface PropertyNamed {
-    
+
     abstract boolean hasName(String name);
-    
+
 }

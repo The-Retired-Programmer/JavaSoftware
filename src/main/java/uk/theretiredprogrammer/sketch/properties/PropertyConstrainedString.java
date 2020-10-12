@@ -91,11 +91,11 @@ public class PropertyConstrainedString extends PropertyElement<String> {
 
     @Override
     public final void set(String newvalue) throws IOException {
-            if (constraintslookup.get().stream().anyMatch(v -> newvalue.equals(v))) {
-                constrainedproperty.set(newvalue);
-            } else {
-                throw new IOException("Constrained String - value not in constrained set");
-            }
+        if (constraintslookup.get().stream().anyMatch(v -> newvalue.equals(v))) {
+            constrainedproperty.set(newvalue);
+        } else {
+            throw new IOException("Constrained String - value not in constrained set");
+        }
     }
 
     @Override

@@ -25,21 +25,21 @@ import uk.theretiredprogrammer.sketch.properties.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Boats  {
-    
+public class Boats {
+
     private List<Boat> boats = new ArrayList<>();
-    
+
     public Boats(PropertySketch sketchproperty) throws IOException {
-            for (var boatproperty : sketchproperty.getBoats().getList()){
-                boats.add(BoatFactory.createBoat(boatproperty, sketchproperty));
-            }
+        for (var boatproperty : sketchproperty.getBoats().getList()) {
+            boats.add(BoatFactory.createBoat(boatproperty, sketchproperty));
+        }
     }
-    
+
     public Stream<Boat> stream() {
         return boats.stream();
     }
-    
-    public Boat getBoat(String name){
+
+    public Boat getBoat(String name) {
         return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
     }
 }

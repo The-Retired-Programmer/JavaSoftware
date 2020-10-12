@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.sketch.controller.Controller;
 public class PropertyDouble extends PropertyElement<Double> {
 
     private final SimpleDoubleProperty doubleproperty;
-    
+
     public PropertyDouble(double defaultvalue) {
         this(null, defaultvalue);
     }
@@ -50,7 +50,6 @@ public class PropertyDouble extends PropertyElement<Double> {
 //        this(key, defaultvalue);
 //        set(parsevalue(jvalue));
 //    }
-
     public final Double get() {
         return doubleproperty.get();
     }

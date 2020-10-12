@@ -19,8 +19,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.Location;
@@ -34,7 +32,7 @@ public class PropertyLocation extends PropertyElement<Location> {
 
     private final PropertyDouble xlocationproperty;
     private final PropertyDouble ylocationproperty;
-    
+
     public PropertyLocation(Location defaultvalue) {
         this(null, defaultvalue);
     }
@@ -61,10 +59,10 @@ public class PropertyLocation extends PropertyElement<Location> {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                    return new Location(
-                            xlocationproperty.parsevalue(values.get(0)),
-                            ylocationproperty.parsevalue(values.get(1))
-                    );
+                return new Location(
+                        xlocationproperty.parsevalue(values.get(0)),
+                        ylocationproperty.parsevalue(values.get(1))
+                );
             }
         }
         throw new IOException("Malformed Definition file - List of 2 numbers expected");

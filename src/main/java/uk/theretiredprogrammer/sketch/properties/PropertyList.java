@@ -39,7 +39,7 @@ public abstract class PropertyList<P extends PropertyAny> extends PropertyAny {
     public final Stream<P> stream() {
         return propertylist.stream();
     }
-    
+
     public final ObservableList<P> getList() {
         return propertylist;
     }

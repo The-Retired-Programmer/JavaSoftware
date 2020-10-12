@@ -19,7 +19,7 @@ package uk.theretiredprogrammer.sketch.core;
  *
  * @author richard
  */
-public class ParseFailure extends RuntimeException{
+public class ParseFailure extends RuntimeException {
 
     public ParseFailure(String message) {
         super(message);

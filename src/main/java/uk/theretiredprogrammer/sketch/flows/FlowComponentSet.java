@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
@@ -29,7 +28,7 @@ import uk.theretiredprogrammer.sketch.properties.PropertyFlowComponent;
 public class FlowComponentSet {
 
     private final ObservableList<PropertyFlowComponent> flows;
-    
+
     public FlowComponentSet(ObservableList<PropertyFlowComponent> flows) {
         this.flows = flows;
     }

@@ -37,6 +37,7 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
     public PropertySpeedPolar(SpeedPolar defaultvalue) {
         this(null, defaultvalue);
     }
+
     public PropertySpeedPolar(String key, SpeedPolar defaultvalue) {
         setKey(key);
         speedproperty = new PropertyDouble(defaultvalue.getSpeed());

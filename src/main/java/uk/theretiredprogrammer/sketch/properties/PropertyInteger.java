@@ -37,6 +37,7 @@ public class PropertyInteger extends PropertyElement<Integer> {
     public PropertyInteger(int defaultvalue) {
         this(null, defaultvalue);
     }
+
     public PropertyInteger(String key, int defaultvalue) {
         setKey(key);
         integerproperty = new SimpleIntegerProperty(defaultvalue);
