@@ -16,137 +16,118 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.io.IOException;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.Area;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyArea extends PropertyItem {
+public class PropertyArea extends PropertyElement<Area> {
 
-    private final SimpleDoubleProperty xproperty = new SimpleDoubleProperty();
-    private final SimpleDoubleProperty yproperty = new SimpleDoubleProperty();
-    private final SimpleDoubleProperty widthproperty = new SimpleDoubleProperty();
-    private final SimpleDoubleProperty heightproperty = new SimpleDoubleProperty();
+    private final PropertyDouble xproperty;
+    private final PropertyDouble yproperty;
+    private final PropertyDouble widthproperty;
+    private final PropertyDouble heightproperty;
 
-    public final Area getValue() {
-        return new Area(new Location(xproperty.get(), yproperty.get()), widthproperty.get(), heightproperty.get());
+    public PropertyArea(Area defaultvalue) {
+        this(null, defaultvalue);
     }
 
-    public final void setValue(Area newarea) {
-        xproperty.set(newarea.getBottomleft().getX());
-        yproperty.set(newarea.getBottomleft().getY());
-        widthproperty.set(newarea.getWidth());
-        heightproperty.set(newarea.getHeight());
+    public PropertyArea(String key, Area defaultvalue) {
+        setKey(key);
+        xproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getBottomleft().getX());
+        yproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getBottomleft().getY());
+        widthproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getWidth());
+        heightproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getHeight());
     }
 
+//    public PropertyValueArea(JsonValue jvalue) throws IOException {
+//        this(jvalue, null);
+//    }
+//
+//    public PropertyValueArea(JsonValue jvalue, Area defaultvalue) throws IOException {
+//        this(defaultvalue);
+//        set(parsevalue(jvalue));
+//    }
+    @Override
     public final Area get() {
-        return new Area(new Location(xproperty.get(), yproperty.get()), widthproperty.get(), heightproperty.get());
-    }
-
-    public final void set(Area newarea) {
-        xproperty.set(newarea.getBottomleft().getX());
-        yproperty.set(newarea.getBottomleft().getY());
-        widthproperty.set(newarea.getWidth());
-        heightproperty.set(newarea.getHeight());
-    }
-
-    public SimpleDoubleProperty PropertyLocationX() {
-        return xproperty;
-    }
-
-    public final double getLocationX() {
-        return xproperty.get();
-    }
-
-    public final void setLocationX(double newX) {
-        xproperty.set(newX);
-    }
-
-    public SimpleDoubleProperty PropertyLocationY() {
-        return yproperty;
-    }
-
-    public final double getLocationY() {
-        return yproperty.get();
-    }
-
-    public final void setLocationY(double newY) {
-        yproperty.set(newY);
-    }
-
-    public SimpleDoubleProperty PropertyWidth() {
-        return widthproperty;
-    }
-
-    public final double getWidth() {
-        return widthproperty.get();
-    }
-
-    public final void setWidth(double newwidth) {
-        widthproperty.set(newwidth);
-    }
-
-    public SimpleDoubleProperty PropertyHeight() {
-        return heightproperty;
-    }
-
-    public final double getHeight() {
-        return heightproperty.get();
-    }
-
-    public final void setHeight(double newheight) {
-        heightproperty.set(newheight);
-    }
-
-    public final Location getLocation() {
-        return new Location(xproperty.get(), yproperty.get());
+        Double xval = xproperty.get();
+        return xval == null ? null
+                : new Area(new Location(xval, yproperty.get()), widthproperty.get(), heightproperty.get());
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        HBox content = new HBox();
-        TextField xfield = new TextField(Double.toString(xproperty.get()));
-        xfield.setPrefColumnCount(7);
-        TextFormatter<Number> xtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        xfield.setTextFormatter(xtextformatter);
-        xtextformatter.valueProperty().bindBidirectional(xproperty);
-        TextField yfield = new TextField(Double.toString(yproperty.get()));
-        yfield.setPrefColumnCount(7);
-        TextFormatter<Number> ytextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        yfield.setTextFormatter(ytextformatter);
-        ytextformatter.valueProperty().bindBidirectional(yproperty);
-        TextField wfield = new TextField(Double.toString(widthproperty.get()));
-        wfield.setPrefColumnCount(7);
-        TextFormatter<Number> wtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        wfield.setTextFormatter(wtextformatter);
-        wtextformatter.valueProperty().bindBidirectional(widthproperty);
-        TextField hfield = new TextField(Double.toString(heightproperty.get()));
-        wfield.setPrefColumnCount(7);
-        TextFormatter<Number> htextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        hfield.setTextFormatter(htextformatter);
-        htextformatter.valueProperty().bindBidirectional(heightproperty);
-        content.getChildren().addAll(createTextFor("["), xfield, createTextFor(","), yfield, createTextFor("] "),
-                wfield, createTextFor("x"), hfield);
-        return content;
+    public final void set(Area newarea) {
+        xproperty.set(newarea == null ? null : newarea.getBottomleft().getX());
+        yproperty.set(newarea == null ? null : newarea.getBottomleft().getY());
+        widthproperty.set(newarea == null ? null : newarea.getWidth());
+        heightproperty.set(newarea == null ? null : newarea.getHeight());
     }
-    
+
+    @Override
+    public final Area parsevalue(JsonValue value) throws IOException {
+        if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) value;
+            if (values.size() == 4) {
+                return new Area(
+                        xproperty.parsevalue(values.get(0)),
+                        yproperty.parsevalue(values.get(1)),
+                        widthproperty.parsevalue(values.get(2)),
+                        heightproperty.parsevalue(values.get(3))
+                );
+            }
+        }
+        throw new IOException("Malformed Definition file - List of 4 numbers expected");
+    }
+
     @Override
     public JsonValue toJson() {
-        return Json.createArrayBuilder()
-                .add(xproperty.get())
-                .add(yproperty.get())
-                .add(widthproperty.get())
-                .add(heightproperty.get())
-                .build();
+        Double xval = xproperty.get();
+        return xval == null ? JsonValue.NULL
+                : Json.createArrayBuilder()
+                        .add(xval)
+                        .add(yproperty.get())
+                        .add(widthproperty.get())
+                        .add(heightproperty.get())
+                        .build();
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return new HBox(
+                createTextFor("["),
+                xproperty.getField(controller, 7),
+                createTextFor(","),
+                yproperty.getField(controller, 7),
+                createTextFor("] "),
+                widthproperty.getField(controller, 7),
+                createTextFor("x"),
+                heightproperty.getField(controller, 7)
+        );
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
+        return new HBox(
+                createTextFor("["),
+                xproperty.getField(controller, size),
+                createTextFor(","),
+                yproperty.getField(controller, size),
+                createTextFor("] "),
+                widthproperty.getField(controller, size),
+                createTextFor("x"),
+                heightproperty.getField(controller, size)
+        );
+    }
+
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

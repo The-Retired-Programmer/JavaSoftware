@@ -35,7 +35,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
     public void test2() throws IOException {
         System.out.println("on starboard reach - pointing high - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
-                () -> setboatintvalue("heading", -80));
+                () -> setboatdirection(-80));
         assertTURN(decision, -90, false);
     }
 
@@ -43,7 +43,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
     public void test3() throws IOException {
         System.out.println("on starboard reach - pointing low - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
-                () -> setboatintvalue("heading", -100));
+                () -> setboatdirection(-100));
         assertTURN(decision, -90, true);
     }
 
@@ -51,7 +51,7 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
     public void test4() throws IOException {
         System.out.println("on starboard reach - sailing low - turn to closer reach");
         Decision decision = makeDecision("/reach-starboardtack.json",
-                () -> setboatlocationvalue("location", 40, 50));
+                () -> setboatlocation(40, 50));
         assertTURN(decision, -84, true);
     }
 }

@@ -16,49 +16,77 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.JsonValue;
+import java.io.IOException;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyBoolean extends PropertyItem {
+public class PropertyBoolean extends PropertyElement<Boolean> {
 
-    private SimpleBooleanProperty booleanproperty = new SimpleBooleanProperty();
+    private final SimpleBooleanProperty booleanproperty;
 
-    public final Boolean getValue() {
-        return booleanproperty.getValue();
+    public PropertyBoolean(Boolean defaultvalue) {
+        this(null, defaultvalue);
     }
 
-    public final void setValue(Boolean newvalue) {
-        booleanproperty.setValue(newvalue);
+    public PropertyBoolean(String key, Boolean defaultvalue) {
+        setKey(key);
+        booleanproperty = new SimpleBooleanProperty(defaultvalue);
     }
 
-    public final boolean get() {
+    @Override
+    public final Boolean get() {
         return booleanproperty.get();
     }
 
-    public final void set(boolean newboolean) {
+    @Override
+    public final void set(Boolean newboolean) {
         booleanproperty.set(newboolean);
     }
 
-    public SimpleBooleanProperty PropertyBoolean() {
+    public SimpleBooleanProperty propertyBoolean() {
         return booleanproperty;
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        CheckBox booleanfield = new CheckBox();
-        booleanfield.setSelected(booleanproperty.get());
-        booleanfield.selectedProperty().bindBidirectional(booleanproperty);
-        return booleanfield;
+    public final Boolean parsevalue(JsonValue value) throws IOException {
+        if (value != null) {
+            switch (value.getValueType()) {
+                case TRUE -> {
+                    return true;
+                }
+                case FALSE -> {
+                    return false;
+                }
+            }
+        }
+        throw new IOException("Malformed Definition file - Boolean expected");
     }
 
     @Override
     public JsonValue toJson() {
         return get() ? JsonValue.TRUE : JsonValue.FALSE;
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        CheckBox booleanfield = new CheckBox();
+        booleanfield.setSelected(get());
+        booleanfield.selectedProperty().bindBidirectional(booleanproperty);
+        return booleanfield;
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
+        return getField(controller);
+    }
+
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

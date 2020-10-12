@@ -15,9 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -26,12 +27,12 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
 class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.getLocation()).getAngle();
+    String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
         boolean onPort = legstrategy.boat.isPort(winddirection);
-        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.getLocation(), onPort);
-        if (nextDirection.neq(legstrategy.boat.getDirection())) {
-            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.getDirection().gt(nextDirection));
+        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.getProperty().getLocation(), onPort);
+        if (nextDirection.neq(legstrategy.boat.getProperty().getDirection())) {
+            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.getProperty().getDirection().gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

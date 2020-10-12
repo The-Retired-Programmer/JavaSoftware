@@ -17,54 +17,62 @@ package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.Node;
+import java.io.IOException;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyAngle extends PropertyItem {
+public class PropertyAngle extends PropertyElement<Angle> {
 
-    private SimpleDoubleProperty angleproperty = new SimpleDoubleProperty();
+    private final PropertyDouble angleproperty;
 
-    public final Angle getValue() {
-        return new Angle(angleproperty.get());
+    public PropertyAngle(Angle defaultvalue) {
+        this(null, defaultvalue);
     }
 
-    public final void setValue(Angle newangle) {
-        angleproperty.set(newangle.getDegrees());
-    }
-
-    public final double get() {
-        return angleproperty.get();
-    }
-
-    public final void set(double newangle) {
-        angleproperty.set(newangle);
-    }
-
-    public SimpleDoubleProperty PropertyAngle() {
-        return angleproperty;
+    public PropertyAngle(String key, Angle defaultvalue) {
+        setKey(key);
+        angleproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getDegrees());
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        TextField doublefield = new TextField(Double.toString(angleproperty.get()));
-        doublefield.setPrefColumnCount(7);
-        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        doublefield.setTextFormatter(textformatter);
-        textformatter.valueProperty().bindBidirectional(angleproperty);
-        return doublefield;
+    public final Angle get() {
+        Double angle = angleproperty.get();
+        return angle == null ? null : new Angle(angleproperty.get());
+    }
+
+    @Override
+    public final void set(Angle newangle) {
+        angleproperty.set(newangle == null ? null : newangle.getDegrees());
+    }
+
+    @Override
+    public final Angle parsevalue(JsonValue jvalue) throws IOException {
+        return new Angle(angleproperty.parsevalue(jvalue));
     }
 
     @Override
     public JsonValue toJson() {
-        return Json.createValue(get());
+        Double angle = angleproperty.get();
+        return angle == null ? JsonValue.NULL : Json.createValue(angle);
+    }
+
+    @Override
+    public TextField getField(Controller controller) {
+        return angleproperty.getField(controller, 7);
+    }
+
+    @Override
+    public TextField getField(Controller controller, int size) {
+        return angleproperty.getField(controller, size);
+    }
+
+    @Override
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

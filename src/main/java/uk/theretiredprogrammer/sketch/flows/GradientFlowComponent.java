@@ -15,17 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.Gradient;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyGradient;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.properties.PropertyString;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyGradientFlowComponent;
 
 /**
  * The EastWestGradientFlow Class - represents a flow with differing parameters
@@ -36,38 +28,16 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class GradientFlowComponent extends FlowComponent {
 
-    private final static String GRADIENTFLOWTYPE = "gradientflow";
+    private final PropertyGradientFlowComponent property;
 
-    static {
-        FlowComponentSet.registerFlowType(GRADIENTFLOWTYPE);
-    }
-
-    private final PropertyString flowtypeproperty = new PropertyString(GRADIENTFLOWTYPE);
-    private final PropertyGradient gradientproperty = new PropertyGradient();
-
-    public GradientFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
-        super(controllersupplier, paramsobj);
-        gradientproperty.set(Gradient.parse(paramsobj, "gradient").orElse(new Gradient()));
+    public GradientFlowComponent(PropertyGradientFlowComponent gradientflowcomponentproperty) {
+        super(gradientflowcomponentproperty);
+        this.property = gradientflowcomponentproperty;
     }
 
     @Override
-    public void change(JsonObject params) throws IOException {
-        super.change(params);
-        gradientproperty.set(Gradient.parse(params, "gradient").orElse(gradientproperty.get()));
-    }
-
-    @Override
-    public LinkedHashMap<String, PropertyItem> properties() {
-        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
-        super.properties(map);
-        map.put("type", flowtypeproperty);
-        map.put("gradient", gradientproperty);
-        return map;
-    }
-
-    @Override
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return gradientproperty.get().getFlow(pos);
+        return property.getGradient().getFlow(pos);
     }
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)

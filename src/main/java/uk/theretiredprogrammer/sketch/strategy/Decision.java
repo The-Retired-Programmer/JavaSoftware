@@ -72,7 +72,7 @@ public class Decision {
     }
 
     public Angle getAngle() {
-        return isRotating() ? angle : boat.getDirection();
+        return isRotating() ? angle : boat.getProperty().getDirection();
     }
     
     public boolean isPort() {

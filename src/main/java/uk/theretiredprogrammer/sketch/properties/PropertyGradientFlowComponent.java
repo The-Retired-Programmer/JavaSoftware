@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.ui;
+package uk.theretiredprogrammer.sketch.properties;
 
-import java.io.IOException;
-import java.util.Map;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
+import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.Area;
+import uk.theretiredprogrammer.sketch.core.Gradient;
 
-/**
- * The Element Class - represents the core class of every simulation object
- * class.
- *
+/*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public interface Displayable {
+public class PropertyGradientFlowComponent extends PropertyFlowComponent {
 
-    public void draw(SketchPane canvas) throws IOException;
-    
-    public Map<String, PropertyItem> properties();
+    private final Config<PropertyGradient, Gradient> gradient = new Config<>("gradient", OPTIONAL, (s) -> new PropertyGradient(s, null));
+
+    public PropertyGradientFlowComponent(Supplier<Area> getdisplayarea) {
+        super(getdisplayarea);
+        this.addConfig(gradient);
+    }
+
+    public Gradient getGradient() {
+        return gradient.get("PropertyGradientFlowComponent gradient");
+    }
 }

@@ -15,25 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.Area;
-import uk.theretiredprogrammer.sketch.core.DoubleParser;
-import uk.theretiredprogrammer.sketch.core.IntegerParser;
+import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyArea;
-import uk.theretiredprogrammer.sketch.properties.PropertyInteger;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.properties.PropertyString;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.core.StringParser;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyComplexFlowComponent;
+import uk.theretiredprogrammer.sketch.properties.PropertyConstantFlowComponent;
+import uk.theretiredprogrammer.sketch.properties.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.properties.PropertyGradientFlowComponent;
+import uk.theretiredprogrammer.sketch.properties.PropertyTestFlowComponent;
 
 /**
  * Abstract Class describing a Flow Model. A Flow Model represents variable
@@ -43,55 +33,36 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public abstract class FlowComponent {
     
-    static final SpeedPolar ZEROFLOW = new SpeedPolar(0.0, ANGLE0); 
+    public static FlowComponent factory(PropertyFlowComponent componentproperty) {
+        switch (componentproperty.getType()) {
+            case "testflow" -> {
+                return new TestFlowComponent((PropertyTestFlowComponent)componentproperty);
+            }
+            case "complexflow" -> {
+                return new ComplexFlowComponent((PropertyComplexFlowComponent)componentproperty);
+            }
+            case "constantflow" -> {
+                return new ConstantFlowComponent((PropertyConstantFlowComponent)componentproperty);
+            }
+            case "gradientflow" -> {
+                return new GradientFlowComponent((PropertyGradientFlowComponent)componentproperty);
+            }
+            default ->
+                throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition");
+        }
+    }
 
-    private final PropertyString nameproperty = new PropertyString();
-    public String getName(){
-        return nameproperty.get();
-    }
-    private final PropertyArea areaproperty = new PropertyArea();
-    private final PropertyInteger zlevelproperty = new PropertyInteger();
-
-    public FlowComponent(Supplier<Controller>controllersupplier, JsonObject paramsobj) throws IOException {
-        Area  darea = controllersupplier.get().displayparameters.getDisplayArea();
-        nameproperty.set(StringParser.parse(paramsobj, "name")
-                .orElseThrow(() -> new IOException("Malformed Definition file - <name> is a mandatory parameter")));
-        zlevelproperty.set(IntegerParser.parse(paramsobj, "zlevel").orElse(0));
-        areaproperty.set(Area.parse(paramsobj, "area").orElse(darea));
-    }
-
-    public void change(JsonObject params) throws IOException {
-        zlevelproperty.set(IntegerParser.parse(params, "zlevel").orElse(zlevelproperty.get()));
-        areaproperty.set(Area.parse(params, "area").orElse(areaproperty.get()));
+    private final PropertyFlowComponent componentproperty;
+    
+    public FlowComponent(PropertyFlowComponent componentproperty) {
+        this.componentproperty = componentproperty;
     }
     
-    void properties(LinkedHashMap<String,PropertyItem> map) {
-        map.put("name", nameproperty);
-        map.put("area", areaproperty);
-        map.put("zlevel", zlevelproperty);
-    }
+    public abstract SpeedPolar getFlow(Location pos) ;
     
-    public JsonObject toJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
-        return job.build();
-    }
-    
-    public abstract LinkedHashMap<String,PropertyItem> properties();
-    
-    public Area getArea() {
-        return areaproperty.get();
-    }
-    
-    public int getZlevel() {
-        return zlevelproperty.get();
-    }
-    
-    public abstract SpeedPolar getFlow(Location pos) throws IOException;
-    
-    void testLocationWithinArea(Location pos) throws IOException {
-        if (!getArea().isWithinArea(pos)) {
-            throw new IOException("Location is not with the Area " + pos);
+    void testLocationWithinArea(Location pos)  {
+        if (!componentproperty.getArea().isWithinArea(pos)) {
+            throw new IllegalStateFailure("Location is not with the Area " + pos);
         }
     }
     

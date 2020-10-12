@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.ui;
+package uk.theretiredprogrammer.sketch.properties;
 
-import jakarta.json.JsonObject;
+import java.io.IOException;
 
 /**
  *
  * @author richard
  */
-public class MetaParameters {
+public interface PropertyNamed {
     
-    private final JsonObject metaobj;
+    abstract boolean hasName(String name);
     
-    public MetaParameters(JsonObject parsedjson) {
-        metaobj = parsedjson.getJsonObject("meta");
-    }
-    
-    public JsonObject toJson() {
-        return metaobj;
-    }
 }

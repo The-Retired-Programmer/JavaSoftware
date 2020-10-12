@@ -30,6 +30,8 @@ import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class SpeedPolar extends Polar<SpeedPolar> {
+    
+    public final static SpeedPolar FLOWZERO = new SpeedPolar(0.0, ANGLE0);
 
     public static Optional<SpeedPolar> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
@@ -61,6 +63,11 @@ public class SpeedPolar extends Polar<SpeedPolar> {
 
     public SpeedPolar(double speed, Angle angle) {
         super(angle);
+        this.speed = speed;
+    }
+    
+    public SpeedPolar(double speed, double angle) {
+        super(new Angle(angle));
         this.speed = speed;
     }
     

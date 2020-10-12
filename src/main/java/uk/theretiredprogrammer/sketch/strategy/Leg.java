@@ -15,14 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
-import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import uk.theretiredprogrammer.sketch.core.LegValue;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyLegValue;
-import uk.theretiredprogrammer.sketch.course.Mark;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyMark;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
 
 /**
  *
@@ -34,25 +30,12 @@ public class Leg {
     private final Location marklocation;
     private final boolean portrounding;
     private Leg followingleg;
-    private final Supplier<Controller> controllersupplier;
-    private final PropertyLegValue legproperty = new PropertyLegValue();
 
-    public Leg(Supplier<Controller> controllersupplier, Location startfrom, Mark mark, boolean portrounding, Leg followingleg) throws IOException {
-        this.controllersupplier = controllersupplier;
+    public Leg(Location startfrom, PropertyMark markproperties, boolean portrounding, Leg followingleg) {
         this.startfrom = startfrom;
-        this.marklocation = mark.getLocation();
+        this.marklocation = markproperties.getLocation();
         this.portrounding = portrounding;
         this.followingleg = followingleg;
-        this.legproperty.set(new LegValue(mark.getName(), portrounding ? "port" : "starboard"));
-    }
-
-    @Override
-    public final String toString() {
-        return startfrom + "->" + marklocation + (portrounding ? " to Port" : " to Starboard");
-    }
-
-    public PropertyLegValue getProperty() {
-        return legproperty;
     }
 
     public Leg getFollowingLeg() {
@@ -75,8 +58,8 @@ public class Leg {
         return marklocation;
     }
 
-    Angle getMarkMeanwinddirection() throws IOException {
-        return controllersupplier.get().windflow.getMeanFlowAngle(marklocation);
+    Angle getMarkMeanwinddirection(WindFlow windflow) {
+        return windflow.getMeanFlowAngle(marklocation);
     }
 
     Angle getAngleofLeg() {

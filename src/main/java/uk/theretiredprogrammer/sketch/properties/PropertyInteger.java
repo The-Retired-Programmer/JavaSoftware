@@ -16,54 +16,79 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
+import java.io.IOException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyInteger extends PropertyItem {
+public class PropertyInteger extends PropertyElement<Integer> {
 
-    private SimpleIntegerProperty integerproperty = new SimpleIntegerProperty();
+    private final SimpleIntegerProperty integerproperty;
 
-    public final Integer getValue() {
-        return integerproperty.getValue();
+    public PropertyInteger(int defaultvalue) {
+        this(null, defaultvalue);
+    }
+    public PropertyInteger(String key, int defaultvalue) {
+        setKey(key);
+        integerproperty = new SimpleIntegerProperty(defaultvalue);
     }
 
-    public final void setValue(Integer newvalue) {
-        integerproperty.setValue(newvalue);
-    }
-
-    public final int get() {
+    @Override
+    public final Integer get() {
         return integerproperty.get();
     }
 
-    public final void set(int newint) {
+    @Override
+    public final void set(Integer newint) {
         integerproperty.set(newint);
     }
 
-    public SimpleIntegerProperty PropertyInteger() {
+    public SimpleIntegerProperty propertyInteger() {
         return integerproperty;
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
+    public Integer parsevalue(JsonValue value) throws IOException {
+        if (value != null & value.getValueType() == JsonValue.ValueType.NUMBER) {
+            try {
+                return ((JsonNumber) value).intValueExact();
+            } catch (ArithmeticException ex) {
+            }
+        }
+        throw new IOException("Malformed Definition file - Integer expected");
+    }
+
+    @Override
+    public JsonValue toJson() {
+        return Json.createValue(get());
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return getField(controller, 5);
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
         TextField intfield = new TextField(Integer.toString(integerproperty.get()));
-        intfield.setPrefColumnCount(5);
+        intfield.setPrefColumnCount(size);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
         intfield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(integerproperty);
         return intfield;
     }
-    
-    @Override
-    public JsonValue toJson() {
-        return Json.createValue(get());
+
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
+
 }

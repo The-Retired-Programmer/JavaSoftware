@@ -16,7 +16,9 @@
 package uk.theretiredprogrammer.sketch.strategy;
 
 import uk.theretiredprogrammer.sketch.boats.Boat;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -29,8 +31,8 @@ class BoatStrategyForAfterFinishLeg extends BoatStrategyForLeg {
     }
 
     @Override
-    String nextBoatStrategyTimeInterval(Controller controller) {
-        double fromfinishmark = boat.getLocation().to(leg.getEndLocation());
+    String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+        double fromfinishmark = boat.getProperty().getLocation().to(leg.getEndLocation());
         if (fromfinishmark > boat.metrics.getLength() * 5) {
             decision.setSTOP();
             return "Stopping at end of course";

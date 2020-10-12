@@ -15,44 +15,24 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.function.Supplier;
-import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Area;
-import uk.theretiredprogrammer.sketch.core.BooleanParser;
-import uk.theretiredprogrammer.sketch.core.ColorParser;
-import uk.theretiredprogrammer.sketch.core.DoubleParser;
-import uk.theretiredprogrammer.sketch.core.IntegerParser;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyAngle;
-import uk.theretiredprogrammer.sketch.properties.PropertyBoolean;
-import uk.theretiredprogrammer.sketch.properties.PropertyColor;
-import uk.theretiredprogrammer.sketch.properties.PropertyDouble;
-import uk.theretiredprogrammer.sketch.properties.PropertyInteger;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.timerlog.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.WindSwingLogEntry;
-import uk.theretiredprogrammer.sketch.ui.Controller;
-import uk.theretiredprogrammer.sketch.ui.Displayable;
-import uk.theretiredprogrammer.sketch.ui.Timerable;
+import uk.theretiredprogrammer.sketch.controller.Timerable;
+import uk.theretiredprogrammer.sketch.properties.PropertyFlowComponents;
+import uk.theretiredprogrammer.sketch.properties.PropertyFlowShifts;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public abstract class Flow implements Displayable, Timerable {
+public abstract class Flow implements Timerable {
 
     final static int WIDTHSTEPS = 100;
     final static int HEIGHTSTEPS = 100;
@@ -60,98 +40,41 @@ public abstract class Flow implements Displayable, Timerable {
     private final Area area;
     private final double wstepsize;
     private final double hstepsize;
-
-    private Angle swingNow = new Angle(0);
     private Angle shiftNow = new Angle(0);
-
-    private final PropertyBoolean showflowproperty = new PropertyBoolean();
-    private final PropertyDouble showflowintervalproperty = new PropertyDouble();
-    private final PropertyColor showflowcolorproperty = new PropertyColor();
-    private final PropertyAngle swingangleproperty = new PropertyAngle();
-    private final PropertyInteger swingperiodproperty = new PropertyInteger();
-    private final PropertyAngle shiftangleproperty = new PropertyAngle();
-    private final PropertyInteger shiftperiodproperty = new PropertyInteger();
-    private final PropertyBoolean randomshiftsproperty = new PropertyBoolean();
-
+    private Angle swingNow = new Angle(0);
     private Angle meanflowangle;
-    private final FlowComponentSet flowset;
 
-    public Flow(Supplier<Controller> controllersupplier, JsonObject paramsobj, FlowComponentSet flowset) throws IOException {
-        showflowproperty.set(BooleanParser.parse(paramsobj, "showflow").orElse(false));
-        showflowintervalproperty.set(DoubleParser.parse(paramsobj, "showflowinterval").orElse(100.0));
-        showflowcolorproperty.set(ColorParser.parse(paramsobj, "showflowcolour").orElse(Color.BLACK));
-        swingangleproperty.setValue(Angle.parse(paramsobj, "swingangle").orElse(ANGLE0));
-        swingperiodproperty.set(IntegerParser.parse(paramsobj, "swingperiod").orElse(0));
-        shiftangleproperty.setValue(Angle.parse(paramsobj, "shiftangle").orElse(ANGLE0));
-        shiftperiodproperty.set(IntegerParser.parse(paramsobj, "shiftperiod").orElse(0));
-        randomshiftsproperty.set(BooleanParser.parse(paramsobj, "randomshifts").orElse(false));
+    private final PropertyFlowShifts flowshiftsproperty;
+    private final PropertyFlowComponents flowcomponentsproperty;
+
+    public Flow(PropertySketch sketchproperty, PropertyFlowShifts flowshiftsproperty, PropertyFlowComponents flowcomponentsproperty) {
+        this.flowshiftsproperty = flowshiftsproperty;
+        this.flowcomponentsproperty = flowcomponentsproperty;
         //
-        this.area = controllersupplier.get().displayparameters.getSailingArea();
+        this.area = sketchproperty.getDisplay().getSailingarea();
         hstepsize = area.getHeight() / HEIGHTSTEPS;
         wstepsize = area.getWidth() / WIDTHSTEPS;
-        this.flowset = flowset;
         setFlows();
     }
 
-    public void change(JsonObject paramsobj) throws IOException {
-        showflowproperty.set(BooleanParser.parse(paramsobj, "showflow").orElse(showflowproperty.get()));
-        showflowintervalproperty.set(DoubleParser.parse(paramsobj, "showflowinterval").orElse(showflowintervalproperty.get()));
-        showflowcolorproperty.set(ColorParser.parse(paramsobj, "showflowcolour").orElse(showflowcolorproperty.get()));
-        swingangleproperty.setValue(Angle.parse(paramsobj, "swingangle").orElse(swingangleproperty.getValue()));
-        swingperiodproperty.set(IntegerParser.parse(paramsobj, "swingperiod").orElse(swingperiodproperty.get()));
-        shiftangleproperty.setValue(Angle.parse(paramsobj, "shiftangle").orElse(shiftangleproperty.getValue()));
-        shiftperiodproperty.set(IntegerParser.parse(paramsobj, "shiftperiod").orElse(shiftperiodproperty.get()));
-        randomshiftsproperty.set(BooleanParser.parse(paramsobj, "randomshifts").orElse(randomshiftsproperty.get()));
-    }
-
-    void properties(LinkedHashMap<String, PropertyItem> map) {
-        map.put("showflow", showflowproperty);
-        map.put("showflowinterval", showflowintervalproperty);
-        map.put("showflowcolor", showflowcolorproperty);
-        map.put("swingangle", swingangleproperty);
-        map.put("swingperiod", swingperiodproperty);
-        map.put("shiftangle", shiftangleproperty);
-        map.put("shiftperiod", shiftperiodproperty);
-        map.put("randomshifts", randomshiftsproperty);
-    }
-    
-    public JsonObject shiftsToJson() {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-        properties().entrySet().forEach( e -> job.add(e.getKey(), e.getValue().toJson()));
-        return job.build();
-    }
-    
-    public JsonArray flowcomponentsToJson() {
-        JsonArrayBuilder jab = Json.createArrayBuilder();
-        getComponents().forEach(c -> jab.add(c.toJson()));
-        return jab.build();
-    }
-
-    public FlowComponentSet getFlowComponentSet() {
-        return flowset;
-    }
-    
-    public List<FlowComponent> getComponents() {
-        return flowset.getComponents();
-    }
-
-    public final void setFlows() throws IOException {
+    public final void setFlows() {
+        FlowComponentSet flowcomponents = new FlowComponentSet(flowcomponentsproperty.getList());
         double hpos = area.getBottomleft().getY();
         double wpos = area.getBottomleft().getX();
         for (int h = 0; h < HEIGHTSTEPS + 1; h++) {
             double y = hpos + hstepsize * h;
             for (int w = 0; w < WIDTHSTEPS + 1; w++) {
                 double x = wpos + wstepsize * w;
-                flowarray[w][h] = flowset.getFlow(new Location(x, y));
+                flowarray[w][h] = flowcomponents.getFlow(new Location(x, y));
             }
         }
-        meanflowangle = flowset.meanWindAngle(); // check if we are using a forced mean
+        meanflowangle = flowcomponents.meanWindAngle(); // check if we are using a forced mean
         if (meanflowangle == null) {
             meanflowangle = calcMeanFlowAngle(); // if not then calculate it
         }
     }
-
-    private SpeedPolar getFlowwithoutswing(Location pos) throws IOException {
+    
+    private SpeedPolar getFlowwithoutswing(Location pos) {
         int w = (int) Math.floor((pos.getX() - area.getBottomleft().getX()) / wstepsize);
         if (w < 0) {
             w = 0;
@@ -169,24 +92,24 @@ public abstract class Flow implements Displayable, Timerable {
         return flowarray[w][h];
     }
 
-    public Angle getMeanFlowAngle(Location pos) throws IOException {
+    public Angle getMeanFlowAngle(Location pos) {
         return getFlowwithoutswing(pos).getAngle();
     }
 
-    public Angle getMeanFlowAngle() throws IOException {
+    public Angle getMeanFlowAngle() {
         return meanflowangle;
     }
 
-    private Angle calcMeanFlowAngle() throws IOException {
+    private Angle calcMeanFlowAngle() {
         return SpeedPolar.meanAngle(flowarray);
     }
 
     @Override
     public void timerAdvance(int simulationtime, TimerLog timerlog) {
-        if (swingperiodproperty.get() != 0) {
+        if (flowshiftsproperty.getSwingperiod() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
-            double radians = Math.toRadians(((double) simulationtime % swingperiodproperty.get()) / swingperiodproperty.get() * 360);
-            swingNow = swingangleproperty.getValue().mult(Math.sin(radians));
+            double radians = Math.toRadians(((double) simulationtime % flowshiftsproperty.getShiftperiod()) / flowshiftsproperty.getShiftperiod() * 360);
+            swingNow = flowshiftsproperty.getSwingangle().mult(Math.sin(radians));
             timerlog.add(new WindSwingLogEntry(swingNow));
         } else {
             swingNow = ANGLE0;
@@ -194,21 +117,23 @@ public abstract class Flow implements Displayable, Timerable {
         // now deal with shifts
         Angle shiftval = ANGLE0;
         boolean shifting = false;
-        if (shiftperiodproperty.get() != 0) {
-            double delta = randomshiftsproperty.get() ? Math.random() * shiftperiodproperty.get() : simulationtime % shiftperiodproperty.get();
-            double quarterPeriod = shiftperiodproperty.get() / 4;
+        if (flowshiftsproperty.getShiftperiod() != 0) {
+            double delta = flowshiftsproperty.isRandomshifts()
+                    ? Math.random() * flowshiftsproperty.getShiftperiod()
+                    : simulationtime % flowshiftsproperty.getShiftperiod();
+            double quarterPeriod = flowshiftsproperty.getShiftperiod() / 4;
             if (delta < quarterPeriod) {
                 shiftval = ANGLE0;
             } else if (delta < quarterPeriod * 2) {
-                shiftval = shiftangleproperty.getValue().negate();
+                shiftval = flowshiftsproperty.getShiftangle().negate();
             } else if (delta < quarterPeriod * 3) {
                 shiftval = ANGLE0;
             } else {
-                shiftval = shiftangleproperty.getValue();
+                shiftval = flowshiftsproperty.getShiftangle();
             }
             shifting = true;
         }
-        if (randomshiftsproperty.get()) {
+        if (flowshiftsproperty.isRandomshifts()) {
             // only apply the random shift in 2% of cases - otherwise leave alone
             if (Math.random() <= 0.02) {
                 shiftNow = shiftval;
@@ -222,66 +147,12 @@ public abstract class Flow implements Displayable, Timerable {
         }
     }
 
-    @Override
-    public void draw(SketchPane canvas) throws IOException {
-        Location sw = area.getBottomleft();
-        double westedge = sw.getX();
-        double eastedge = westedge + area.getWidth();
-        double southedge = sw.getY();
-        double northedge = southedge + area.getHeight();
-        if (showflowproperty.get()) { // draw the flow arrows
-            //
-            double x = westedge + showflowintervalproperty.get();
-            while (x < eastedge) {
-                double y = southedge + showflowintervalproperty.get();
-                while (y < northedge) {
-                    Location here = new Location(x, y);
-                    canvas.displayWindGraphic(here, getFlow(here), showflowcolorproperty.get());
-                    y += showflowintervalproperty.get();
-                }
-                x += showflowintervalproperty.get();
-            }
-        }
-    }
-
-//    private void displayWindGraphic(SketchWindow canvas, double zoom, double x, double y) throws IOException {
-//        GeneralPath p = new GeneralPath();
-//        p.moveTo(0, 15);
-//        p.lineTo(0, -15);
-//        p.moveTo(4, 7);
-//        p.lineTo(0, 15);
-//        p.lineTo(-4, 7);
-//        //
-//        AffineTransform xform = gc.getTransform();
-//        gc.translate(x, y);
-//        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedPolar flow = getFlow(new Location(x, y));
-//        gc.rotate(flow.getAngle().getRadians());
-//        gc.setColor(showflowcolor);
-//        gc.setStroke(new BasicStroke(1));
-//        gc.draw(p);
-//        //
-//        gc.setFont(new Font("Sans Serif", Font.PLAIN, 10));
-//        NumberFormat nf = NumberFormat.getInstance();
-//        nf.setMaximumFractionDigits(1);
-//        nf.setMinimumFractionDigits(1);
-//        String windspeedText = nf.format(flow.getSpeed());
-//        if (flow.getAngle().isPositive()) {
-//            gc.translate(-2, 4);
-//            gc.rotate(-Math.PI / 2);
-//        } else {
-//            gc.translate(+2, -15);
-//            gc.rotate(Math.PI / 2);
-//        }
-//        gc.drawString(windspeedText, 0, 0);
-//        gc.setTransform(xform);
-//    }
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         SpeedPolar f = getFlowwithoutswing(pos);
-        if (swingperiodproperty.get() > 0) {
+        if (flowshiftsproperty.getSwingperiod() > 0) {
             f = new SpeedPolar(f.getSpeed(), f.getAngle().add(swingNow));
         }
-        if (shiftperiodproperty.get() > 0 || randomshiftsproperty.get()) {
+        if (flowshiftsproperty.getShiftperiod() > 0 || flowshiftsproperty.isRandomshifts()) {
             f = new SpeedPolar(f.getSpeed(), f.getAngle().add(shiftNow));
         }
         return f;

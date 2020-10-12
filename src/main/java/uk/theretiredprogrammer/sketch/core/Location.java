@@ -27,7 +27,9 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Location {
-    
+
+    public final static Location LOCATIONZERO = new Location(0.0, 0.0);
+
     public static Optional<Location> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {
             return Optional.empty();
@@ -50,12 +52,11 @@ public class Location {
         }
         throw new IOException("Malformed Definition file - List of 2 numbers expected with " + key);
     }
-    
+
     // locations are relative
     // measured from a logical origin (so x and y are signed)
     // y +ve is North; x +ve is East
     // units are in metres
-
     /**
      * The horizontal position (ie east west)
      */
@@ -66,40 +67,38 @@ public class Location {
      */
     private final double y;
 
-
     public Location(double x, double y) {
         this.x = x;
         this.y = y;
     }
-    
+
     public Location(Location pos) {
         x = pos.x;
         y = pos.y;
     }
 
-    public double to(Location target){
+    public double to(Location target) {
         double deltax = (target.getX() - this.getX());
         double deltay = (target.getY() - this.getY());
         return Math.sqrt(deltax * deltax + deltay * deltay);
     }
-    
-    public Angle angleto(Location target){
+
+    public Angle angleto(Location target) {
         return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
     }
-    
-    public Location getFractionalLocation(Location lowerleft, double width, double height){
+
+    public Location getFractionalLocation(Location lowerleft, double width, double height) {
         // note this location uses fractional units - not metres
         return new Location(
-                (this.x - lowerleft.x)/(width),
-                (this.y - lowerleft.y)/(height)
+                (this.x - lowerleft.x) / (width),
+                (this.y - lowerleft.y) / (height)
         );
     }
-    
-    
+
     public double getX() {
         return x;
     }
-    
+
     public double getY() {
         return y;
     }
@@ -129,9 +128,9 @@ public class Location {
         }
         return Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
     }
-    
+
     @Override
     public String toString() {
-        return "["+x+","+y+"]";
+        return "[" + x + "," + y + "]";
     }
 }

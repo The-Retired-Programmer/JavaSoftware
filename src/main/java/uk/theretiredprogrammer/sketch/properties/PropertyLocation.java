@@ -16,91 +16,86 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyLocation extends PropertyItem {
+public class PropertyLocation extends PropertyElement<Location> {
 
-    private SimpleDoubleProperty xproperty = new SimpleDoubleProperty();
-    private SimpleDoubleProperty yproperty = new SimpleDoubleProperty();
-
-    public final Location getValue() {
-        return new Location(xproperty.get(), yproperty.get());
+    private final PropertyDouble xlocationproperty;
+    private final PropertyDouble ylocationproperty;
+    
+    public PropertyLocation(Location defaultvalue) {
+        this(null, defaultvalue);
     }
 
-    public final void setValue(Location newlocation) {
-        xproperty.set(newlocation.getX());
-        yproperty.set(newlocation.getY());
+    public PropertyLocation(String key, Location defaultvalue) {
+        setKey(key);
+        xlocationproperty = new PropertyDouble(defaultvalue.getX());
+        ylocationproperty = new PropertyDouble(defaultvalue.getY());
     }
 
+    @Override
     public final Location get() {
-        return new Location(xproperty.get(), yproperty.get());
+        return new Location(xlocationproperty.get(), ylocationproperty.get());
     }
 
+    @Override
     public final void set(Location newlocation) {
-        xproperty.set(newlocation.getX());
-        yproperty.set(newlocation.getY());
-    }
-
-    public SimpleDoubleProperty PropertyLocationX() {
-        return xproperty;
-    }
-
-    public final double getLocationX() {
-        return xproperty.get();
-    }
-
-    public final void setLocationX(double newX) {
-        xproperty.set(newX);
-    }
-
-    public SimpleDoubleProperty PropertyLocationY() {
-        return yproperty;
-    }
-
-    public final double getLocationY() {
-        return yproperty.get();
-    }
-
-    public final void setLocationY(double newY) {
-        yproperty.set(newY);
+        xlocationproperty.set(newlocation.getX());
+        ylocationproperty.set(newlocation.getY());
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        TextField xfield = new TextField(Double.toString(xproperty.get()));
-        xfield.setPrefColumnCount(7);
-        TextFormatter<Number> xtextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        xfield.setTextFormatter(xtextformatter);
-        xtextformatter.valueProperty().bindBidirectional(xproperty);
-        TextField yfield = new TextField(Double.toString(yproperty.get()));
-        yfield.setPrefColumnCount(7);
-        TextFormatter<Number> ytextformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        yfield.setTextFormatter(ytextformatter);
-        ytextformatter.valueProperty().bindBidirectional(yproperty);
-        TextFlow content = new TextFlow(createTextFor("["), xfield, createTextFor(","), yfield, createTextFor("]"));
-        return content;
+    public Location parsevalue(JsonValue jvalue) throws IOException {
+        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) jvalue;
+            if (values.size() == 2) {
+                    return new Location(
+                            xlocationproperty.parsevalue(values.get(0)),
+                            ylocationproperty.parsevalue(values.get(1))
+                    );
+            }
+        }
+        throw new IOException("Malformed Definition file - List of 2 numbers expected");
     }
 
     @Override
-    public JsonValue toJson() {
+    public JsonArray toJson() {
         return Json.createArrayBuilder()
-                .add(xproperty.get())
-                .add(yproperty.get())
+                .add(xlocationproperty.get())
+                .add(ylocationproperty.get())
                 .build();
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return getField(controller, 7);
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
+        return new TextFlow(
+                createTextFor("["),
+                xlocationproperty.getField(controller, size),
+                createTextFor(","),
+                ylocationproperty.getField(controller, size),
+                createTextFor("]")
+        );
+    }
+
+    @Override
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

@@ -15,66 +15,31 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyAngle;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.properties.PropertySpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.PropertyString;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyTestFlowComponent;
 
 /**
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class TestFlowComponent extends FlowComponent {
 
-    private final static String TESTFLOWTYPE = "testflow";
+    private final PropertyTestFlowComponent property;
 
-    static {
-        FlowComponentSet.registerFlowType(TESTFLOWTYPE);
-    }
-
-    private final PropertyString flowtypeproperty = new PropertyString(TESTFLOWTYPE);
-    private final PropertySpeedPolar flowproperty = new PropertySpeedPolar();
-    private final PropertyAngle meanproperty = new PropertyAngle();
-
-    public TestFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
-        super(controllersupplier, paramsobj);
-        flowproperty.set(SpeedPolar.parse(paramsobj, "flow").orElse(ZEROFLOW));
-        meanproperty.setValue(Angle.parse(paramsobj, "mean").orElse(ANGLE0));
+    public TestFlowComponent(PropertyTestFlowComponent testflowcomponentproperty) {
+        super(testflowcomponentproperty);
+        this.property = testflowcomponentproperty;
     }
 
     @Override
-    public void change(JsonObject paramsobj) throws IOException {
-        super.change(paramsobj);
-        flowproperty.set(SpeedPolar.parse(paramsobj, "flow").orElse(flowproperty.get()));
-        meanproperty.setValue(Angle.parse(paramsobj, "mean").orElse(meanproperty.getValue()));
-    }
-
-    @Override
-    public LinkedHashMap<String, PropertyItem> properties() {
-        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
-        super.properties(map);
-        map.put("type", flowtypeproperty);
-        map.put("flow", flowproperty);
-        map.put("mean", meanproperty);
-        return map;
-    }
-
-    @Override
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return flowproperty.get();
+        return property.getFlow();
     }
 
     @Override
     public Angle meanWindAngle() {
-        return meanproperty.getValue();
+        return property.getmean();
     }
 }

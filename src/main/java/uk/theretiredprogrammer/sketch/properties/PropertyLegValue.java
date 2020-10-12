@@ -16,62 +16,91 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import java.io.IOException;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.LegValue;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyLegValue extends PropertyItem {
+public class PropertyLegValue extends PropertyElement<LegValue> {
 
-    private SimpleStringProperty marknameproperty = new SimpleStringProperty();
-    private SimpleStringProperty roundingproperty = new SimpleStringProperty();
+    private final PropertyConstrainedString marknameproperty;
+    private final PropertyConstrainedString roundingproperty;
 
-    public final LegValue getValue() throws IOException {
+    public PropertyLegValue(ObservableList<String> marknames, ObservableList<String> roundings) {
+        marknameproperty = new PropertyConstrainedString(marknames);
+        roundingproperty = new PropertyConstrainedString(roundings);
+    }
+
+    public PropertyLegValue(LegValue defaultvalue, ObservableList<String> marknames, ObservableList<String> roundings) {
+        marknameproperty = new PropertyConstrainedString(marknames, defaultvalue.getMarkname());
+        roundingproperty = new PropertyConstrainedString(roundings, defaultvalue.getRoundingdirection());
+    }
+
+    public String getMarkname() {
+        return marknameproperty.get();
+    }
+
+    public String getRounding() {
+        return roundingproperty.get();
+    }
+
+    @Override
+    public final LegValue get() {
         return new LegValue(marknameproperty.get(), roundingproperty.get());
     }
 
-    public final void setValue(LegValue newleg) {
-        marknameproperty.setValue(newleg.getMarkname());
-        roundingproperty.set(newleg.getRoundingdirection());
-    }
-
-    public final LegValue get() throws IOException {
-        return new LegValue(marknameproperty.get(), roundingproperty.get());
-    }
-
-    public final void set(LegValue newleg) {
+    @Override
+    public final void set(LegValue newleg) throws IOException {
         marknameproperty.setValue(newleg.getMarkname());
         roundingproperty.set(newleg.getRoundingdirection());
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        HBox hbox = new HBox();
-        //
-        ComboBox marknamefield = new ComboBox(controller.course.getMarknames());
-        marknamefield.valueProperty().bindBidirectional(marknameproperty);
-        hbox.getChildren().add(marknamefield);
-        //
-        ComboBox roundingfield = new ComboBox(LegValue.getRoundingdirections());
-        roundingfield.valueProperty().bindBidirectional(roundingproperty);
-        hbox.getChildren().add(roundingfield);
-        //
-        return hbox;
+    public final LegValue parsevalue(JsonValue jvalue) throws IOException {
+        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) jvalue;
+            if (values.size() == 2) {
+                return new LegValue(
+                        marknameproperty.parsevalue(values.get(0)),
+                        roundingproperty.parsevalue(values.get(1))
+                );
+            }
+        }
+        throw new IOException("Malformed Definition file - List of 2 Strings expected");
     }
-    
+
     @Override
-    public JsonValue toJson() {
+    public JsonArray toJson() {
         return Json.createArrayBuilder()
                 .add(marknameproperty.get())
                 .add(roundingproperty.get())
                 .build();
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return new HBox(marknameproperty.getField(controller), roundingproperty.getField(controller));
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
+        return getField(controller, size, size);
+    }
+
+    private Node getField(Controller controller, int sizemark, int sizerounding) {
+        return new HBox(marknameproperty.getField(controller, sizemark), roundingproperty.getField(controller, sizerounding));
+    }
+
+    @Override
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

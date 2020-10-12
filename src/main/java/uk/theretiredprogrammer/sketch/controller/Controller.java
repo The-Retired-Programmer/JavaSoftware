@@ -13,27 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.ui;
+package uk.theretiredprogrammer.sketch.controller;
 
-import jakarta.json.Json;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
-import uk.theretiredprogrammer.sketch.boats.Boat;
-import uk.theretiredprogrammer.sketch.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.boats.Boats;
+import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.course.Course;
-import uk.theretiredprogrammer.sketch.course.Mark;
-import uk.theretiredprogrammer.sketch.flows.FlowComponent;
-import uk.theretiredprogrammer.sketch.flows.FlowComponentFactory;
 import uk.theretiredprogrammer.sketch.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
+import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
+import uk.theretiredprogrammer.sketch.properties.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.properties.PropertyMark;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 import uk.theretiredprogrammer.sketch.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
@@ -44,13 +42,14 @@ import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
  */
 public class Controller {
 
-    public DisplayParameters displayparameters;
-    private MetaParameters metaparameters;
+    private PropertySketch sketchproperty;
+
+    public BoatStrategies boatstrategies;
     public WindFlow windflow;
     public WaterFlow waterflow;
     public Course course;
     public Boats boats;
-    public BoatStrategies boatstrategies;
+    private Painter painter;
     //
     private ConfigFileController configfilecontroller;
     private int simulationtime;
@@ -121,88 +120,53 @@ public class Controller {
 
     private void createObjectProperties(JsonObject parsedjson) throws IOException {
         simulationtime = 0;
-        displayparameters = new DisplayParameters(parsedjson);
-        metaparameters = new MetaParameters(parsedjson);
-        waterflow = WaterFlow.create(() -> this, parsedjson);
-        windflow = WindFlow.create(() -> this, parsedjson);
-        course = new Course(() -> this, parsedjson);
-        boats = new Boats(() -> this, parsedjson);
-        boatstrategies = new BoatStrategies(this);
+        sketchproperty = new PropertySketch();
+        sketchproperty.parse(parsedjson);
+        //
+        windflow = new WindFlow(sketchproperty);
+        waterflow = new WaterFlow(sketchproperty);
+        course = new Course(sketchproperty);
+        boats = new Boats(sketchproperty);
+        boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
+        painter = new Painter(boatstrategies, sketchproperty, windflow, waterflow, course, boats, writetostatusline);
     }
-    
-    
-    public JsonObject toJson() {
-        return Json.createObjectBuilder()
-                .add("type", "sketch-v1")
-                .add("meta", metaparameters.toJson())
-                .add("display", displayparameters.toJson())
-                .add("windshifts",windflow.shiftsToJson())
-                .add("wind", windflow.flowcomponentsToJson())
-                .add("watershifts",waterflow.shiftsToJson())
-                .add("water", waterflow.flowcomponentsToJson())
-                .add("course", course.toJson())
-                .add("marks",course.marksToJson())
-                .add("boats", boats.toJson())
-                .build();
+
+    public PropertySketch getProperty() {
+        return sketchproperty;
     }
 
     public void addNewMark() throws IOException {
-        JsonObject jobj = Json.createObjectBuilder()
-                .add("name", "<new>")
-                .build();
-        Mark newmark = new Mark(() -> this, jobj);
-        course.addMark(newmark);
+        PropertyMark newmarkproperty = new PropertyMark();
+        sketchproperty.getMarks().add(newmarkproperty);
     }
 
     public void addNewBoat() throws IOException {
-        JsonObject jobj = Json.createObjectBuilder()
-                .add("name", "<new>")
-                .add("type", "laser2")
-                .build();
-        Boat newboat = BoatFactory.createboatelement(() -> this, jobj);
-        boats.addBoat(newboat);
+        sketchproperty.getBoats().add(new PropertyBoat());
     }
 
     public void addNewWindFlowComponent() throws IOException {
-        JsonObject jobj = Json.createObjectBuilder()
-                .add("name", "<new>")
-                .add("type", "constantflow")
-                .build();
-        FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
-        windflow.getFlowComponentSet().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory("constantflow", () -> sketchproperty.getDisplayArea());
+        sketchproperty.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent() throws IOException {
-        JsonObject jobj = Json.createObjectBuilder()
-                .add("name", "<new>")
-                .add("type", "constantflow")
-                .build();
-        FlowComponent newflow = FlowComponentFactory.createflowelement(() -> this, jobj);
-        waterflow.getFlowComponentSet().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory("constantflow", () -> sketchproperty.getDisplayArea());
+        sketchproperty.getWater().add(newflow);
     }
 
     public void addNewLeg() throws IOException {
-        course.addLeg();
+        sketchproperty.getCourse().getPropertyLegValues().add();
     }
 
     public void paint(SketchPane canvas) {
-        canvas.clear();
-        try {
-            displayparameters.draw(canvas);
-            windflow.draw(canvas);
-            waterflow.draw(canvas);
-            course.draw(canvas);
-            boats.draw(canvas);
-        } catch (IOException ex) {
-            writetostatusline.accept(ex.getLocalizedMessage());
-        }
+        painter.paint(canvas);
     }
 
     public void start() {
         if (isRunning) {
             return;
         }
-        int rate = (int) (displayparameters.getSecondsperdisplay() * 1000 / displayparameters.getSpeedup());
+        int rate = (int) (sketchproperty.getDisplay().getSecondsperdisplay() * 1000 / sketchproperty.getDisplay().getSpeedup());
         timer = new Timer();
         runner = new TimeStepRunner();
         timer.scheduleAtFixedRate(runner, 0, rate);
@@ -238,18 +202,20 @@ public class Controller {
         @Override
         public void run() {
             try {
-                int secondsperdisplay = displayparameters.getSecondsperdisplay();
+                int secondsperdisplay = sketchproperty.getDisplay().getSecondsperdisplay();
                 while (secondsperdisplay > 0) {
                     timerlog.setTime(simulationtime);
                     windflow.timerAdvance(simulationtime, timerlog);
                     waterflow.timerAdvance(simulationtime, timerlog);
-                    boatstrategies.timerAdvance(Controller.this, simulationtime, timerlog);
+                    boatstrategies.timerAdvance(sketchproperty, simulationtime, timerlog, windflow, waterflow);
                     secondsperdisplay--;
                     simulationtime++;
                 }
                 timechangeaction.accept(simulationtime);
                 sketchchangeaction.run();
-            } catch (IOException ex) {
+            } catch (IllegalStateFailure ex) {
+                writetostatusline.accept(ex.getLocalizedMessage());
+            } catch (Exception ex) {
                 writetostatusline.accept(ex.getLocalizedMessage());
             }
         }

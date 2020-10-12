@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.jfx.propertiesdisplay;
 
-import java.util.Map;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Accordion;
@@ -23,9 +22,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
+import uk.theretiredprogrammer.sketch.properties.PropertyElement;
 import uk.theretiredprogrammer.sketch.properties.PropertyString;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyAny;
+import uk.theretiredprogrammer.sketch.properties.PropertyMap;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -33,98 +34,99 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class PropertiesPane extends Accordion {
 
-    public PropertiesPane(Controller controller) {
-        refreshcontent(controller);
+    public PropertiesPane(PropertySketch sketchproperty) {
+        refreshcontent(sketchproperty);
     }
 
-    private void refreshcontent(Controller controller) {
+    private void refreshcontent(PropertySketch sketchproperty) {
         this.getPanes().clear();
-        this.getPanes().add(new PropertiesSection(controller.displayparameters.properties(), "Display", controller));
-        this.getPanes().add(new PropertiesSection(controller.windflow.properties(), "Wind Flow", controller));
-        createAllWindComponentPropertiesSection(controller);
-        createAllWaterComponentPropertiesSection(controller);
-        createCoursePropertiesSection(controller);
-        createAllMarksPropertiesSection(controller);
-        createAllBoatsPropertiesSection(controller);
+        this.getPanes().add(new PropertiesSection(sketchproperty.getDisplay(), "Display"));
+        this.getPanes().add(new PropertiesSection(sketchproperty.getWindshifts(), "Wind Shifts"));
+        createAllWindComponentPropertiesSection(sketchproperty);
+        this.getPanes().add(new PropertiesSection(sketchproperty.getWatershifts(), "Water Shifts"));
+        createAllWaterComponentPropertiesSection(sketchproperty);
+        createCoursePropertiesSection(sketchproperty);
+        createAllMarksPropertiesSection(sketchproperty);
+        createAllBoatsPropertiesSection(sketchproperty);
     }
 
-    private void createCoursePropertiesSection(Controller controller) {
-        controller.course.setOnLegValuesChange(new ListChangeListener() {
+    private void createCoursePropertiesSection(PropertySketch sketchproperty) {
+        sketchproperty.getCourse().getPropertyLegValues().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(controller);
+                refreshcontent(sketchproperty);
             }
         });
-        this.getPanes().add(new PropertiesSection(controller.course.properties(), "Course", controller));
+        this.getPanes().add(new PropertiesSection(sketchproperty.getCourse(), "Course"));
     }
 
-    private void createAllWindComponentPropertiesSection(Controller controller) {
-        controller.windflow.getComponents().forEach(
-                component -> this.getPanes().add(new PropertiesSection(component.properties(), "Wind Component - ", "name", controller))
+    private void createAllWindComponentPropertiesSection(PropertySketch sketchproperty) {
+        sketchproperty.getWind().stream().forEach(
+                component -> this.getPanes().add(new PropertiesSection(component.get(), "Wind Component - ", component.getNameProperty()))
         );
-        controller.windflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
+        sketchproperty.getWind().get().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(controller);
+                refreshcontent(sketchproperty);
             }
         });
     }
 
-    private void createAllWaterComponentPropertiesSection(Controller controller) {
-        controller.waterflow.getComponents().forEach(
-                component -> this.getPanes().add(new PropertiesSection(component.properties(), "Water Component - ", "name", controller))
+    private void createAllWaterComponentPropertiesSection(PropertySketch sketchproperty) {
+        sketchproperty.getWater().stream().forEach(
+                component -> this.getPanes().add(new PropertiesSection(component.get(), "Water Component - ", component.getNameProperty()))
         );
-        controller.waterflow.getFlowComponentSet().setOnComponentsChange(new ListChangeListener() {
+        sketchproperty.getWater().get().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(controller);
+                refreshcontent(sketchproperty);
             }
         });
     }
 
-    private void createAllBoatsPropertiesSection(Controller controller) {
-        controller.boats.getBoats().forEach(boat -> this.getPanes().add(new PropertiesSection(boat.properties(), "Boat - ", "name", controller)));
-        controller.boats.setOnBoatsChange(new ListChangeListener() {
+    private void createAllBoatsPropertiesSection(PropertySketch sketchproperty) {
+        sketchproperty.getBoats().stream().forEach(boatproperty -> this.getPanes().add(new PropertiesSection(boatproperty, "Boat - ", boatproperty.getNameProperty())));
+        sketchproperty.getBoats().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(controller);
+                refreshcontent(sketchproperty);
             }
         });
     }
 
-    private void createAllMarksPropertiesSection(Controller controller) {
-        controller.course.getMarks().forEach(mark -> this.getPanes().add(new PropertiesSection(mark.properties(), "Mark - ", "name", controller)));
-        controller.course.setOnMarksChange(new ListChangeListener() {
+    private void createAllMarksPropertiesSection(PropertySketch sketchproperty) {
+        sketchproperty.getMarks().getList().forEach(markproperty -> this.getPanes().add(new PropertiesSection(markproperty, "Mark - ", markproperty.getNameProperty())));
+        sketchproperty.getMarks().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(controller);
+                refreshcontent(sketchproperty);
             }
         });
     }
 
     private class PropertiesSection extends TitledPane {
 
-        PropertiesSection(Map<String, PropertyItem> properties, String title, Controller controller) {
+        PropertiesSection(PropertyMap properties, String title) {
             this.setText(title);
-            this.setContent(new ScrollPane(createpropertiescontent(properties, controller)));
+            this.setContent(new ScrollPane(createpropertiescontent(properties)));
         }
 
-        PropertiesSection(Map<String, PropertyItem> properties, String titleroot, String propertyname, Controller controller) {
-            this.textProperty().bind(
-                    new SimpleStringProperty(titleroot)
-                            .concat(((PropertyString) properties.get(propertyname)).PropertyString())
+        PropertiesSection(PropertyMap properties, String titleroot, PropertyString propertyname) {
+            this.textProperty().bind(new SimpleStringProperty(titleroot)
+                    .concat(propertyname.propertyString())
             );
-            this.setContent(createpropertiescontent(properties, controller));
+            this.setContent(createpropertiescontent(properties));
         }
 
-        private ScrollPane createpropertiescontent(Map<String, PropertyItem> properties, Controller controller) {
+        @SuppressWarnings("null")
+        private ScrollPane createpropertiescontent(PropertyMap properties) {
             GridPane propertiestable = new GridPane();
             int row = 0;
-            for (Map.Entry<String, PropertyItem> mapentry : properties.entrySet()) {
-                propertiestable.add(new Label(mapentry.getKey()), 0, row, 1, 1);
-                Object value = mapentry.getValue();
-                if (value instanceof PropertyItem propertyItem) {
-                    propertiestable.add(propertyItem.createPropertySheetItem(controller), 1, row++, 1, 1);
+            for (var pe : properties.getMap().entrySet()) {
+                propertiestable.add(new Label(pe.getKey()), 0, row, 1, 1);
+                PropertyAny value = pe.getValue();
+                if (value instanceof PropertyElement propertyElement) {
+                    propertiestable.add(propertyElement.getField(null), 1, row++, 1, 1);
                 } else {
                     propertiestable.add(new Label(value.toString()), 1, row++, 1, 1);
                 }

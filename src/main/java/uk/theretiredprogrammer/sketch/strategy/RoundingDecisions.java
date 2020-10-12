@@ -37,9 +37,9 @@ abstract class RoundingDecisions extends SailingDecisions {
 
     final String executePortRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, BoatStrategyForLeg legstrategy) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
-        Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getDirection());
+        Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getProperty().getDirection());
         if (turnangle.gt(ANGLE90)) {
-            legstrategy.decision.setTURN(legstrategy.boat.getDirection().sub(ANGLE90), PORT);
+            legstrategy.decision.setTURN(legstrategy.boat.getProperty().getDirection().sub(ANGLE90), PORT);
             return "markrounding action - first phase - starboard tack - port rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
@@ -49,9 +49,9 @@ abstract class RoundingDecisions extends SailingDecisions {
 
     final String executeStarboardRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, BoatStrategyForLeg legstrategy) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
-        Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getDirection());
+        Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getProperty().getDirection());
         if (turnangle.gt(ANGLE90)) {
-            legstrategy.decision.setTURN(legstrategy.boat.getDirection().add(ANGLE90), STARBOARD);
+            legstrategy.decision.setTURN(legstrategy.boat.getProperty().getDirection().add(ANGLE90), STARBOARD);
             return "markrounding action - first phase - port tack - starboard rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion

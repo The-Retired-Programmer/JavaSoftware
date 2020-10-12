@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.core;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -33,10 +32,7 @@ public class LegValue {
         if (parameter.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) parameter;
             if (values.size() == 2) {
-                try {
-                    return new LegValue(values.getString(0), values.getString(1));
-                } catch (IOException ex) {
-                }
+                return new LegValue(values.getString(0), values.getString(1));
             }
         }
         return null;
@@ -45,13 +41,13 @@ public class LegValue {
     private final String mark;
     private final String passing;
 
-    public LegValue(String mark, String passing) throws IOException {
+    public LegValue(String mark, String passing) {
         this.mark = mark;
         passing = passing.toLowerCase();
         if (passing.equals("port") || passing.equals("starboard")) {
             this.passing = passing;
         } else {
-            throw new IOException("Malformed Definition file - 2nd parameter in leg must be port or starboard");
+            throw new IllegalStateFailure("Malformed Definition file - 2nd parameter in leg must be port or starboard");
         }
     }
 

@@ -15,18 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.JsonObject;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
+import uk.theretiredprogrammer.sketch.properties.PropertyFlowComponent;
 
 /**
  *
@@ -34,70 +28,27 @@ import uk.theretiredprogrammer.sketch.core.SpeedPolar;
  */
 public class FlowComponentSet {
 
-    private static final List<String> flowtypes = new ArrayList<>();
-
-    static void registerFlowType(String flowtype) {
-        flowtypes.add(flowtype);
+    private final ObservableList<PropertyFlowComponent> flows;
+    
+    public FlowComponentSet(ObservableList<PropertyFlowComponent> flows) {
+        this.flows = flows;
     }
 
-    static List<String> getFlowTypes() {
-        return flowtypes;
-    }
-
-    private final ObservableList<FlowComponent> flows = FXCollections.observableArrayList();
-
-    public List<FlowComponent> getComponents() {
-        return flows;
-    }
-
-    public void change(JsonObject params, String name) throws IOException {
-        for (FlowComponent flow : flows) {
-            if (flow.getName().equals(name)) {
-                flow.change(params);
-            }
-        }
-    }
-
-    public void change(JsonObject params) throws IOException {
-        change(params, 0);
-    }
-
-    public void change(JsonObject params, int zlevel) throws IOException {
-        for (FlowComponent flow : flows) {
-            if (flow.getZlevel() == zlevel) {
-                flow.change(params);
-            }
-        }
-    }
-
-    void properties(LinkedHashMap<String, PropertyItem> map) {
-        flows.forEach(fc -> fc.properties(map));
-    }
-
-    public void add(FlowComponent flow) {
-        flows.add(flow);
-    }
-
-    public void setOnComponentsChange(ListChangeListener<FlowComponent> ml) {
-        flows.addListener(ml);
-    }
-
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         int zlevel = -1;
-        FlowComponent flowtouse = null;
-        for (FlowComponent flow : flows) {
-            if (flow.getArea().isWithinArea(pos)) {
-                if (flow.getZlevel() > zlevel) {
-                    zlevel = flow.getZlevel();
-                    flowtouse = flow;
-                }
+        PropertyFlowComponent flowtouse = null;
+        for (PropertyFlowComponent flow : flows) {
+            if (flow.getArea().isWithinArea(pos) && flow.getZlevel() > zlevel) {
+                zlevel = flow.getZlevel();
+                flowtouse = flow;
             }
         }
-        return flowtouse != null ? flowtouse.getFlow(pos) : FlowComponent.ZEROFLOW;
+        return flowtouse != null ? FlowComponent.factory(flowtouse).getFlow(pos) : SpeedPolar.FLOWZERO;
     }
 
     public Angle meanWindAngle() {
-        for (FlowComponent flow : flows) {
+        for (PropertyFlowComponent flowproperty : flows) {
+            FlowComponent flow = FlowComponent.factory(flowproperty);
             Angle res = flow.meanWindAngle();
             if (res != null) {
                 return res;

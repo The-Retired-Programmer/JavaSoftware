@@ -16,75 +16,85 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.io.IOException;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.text.TextFlow;
-import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertySpeedPolar extends PropertyItem {
+public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
 
-    private SimpleDoubleProperty angleproperty = new SimpleDoubleProperty();
-    private SimpleDoubleProperty speedproperty = new SimpleDoubleProperty();
+    private final PropertyDouble speedproperty;
+    private final PropertyAngle directionproperty;
 
-    public final SpeedPolar getValue() {
-        return new SpeedPolar(speedproperty.get(), new Angle(angleproperty.get()));
+    public PropertySpeedPolar(SpeedPolar defaultvalue) {
+        this(null, defaultvalue);
+    }
+    public PropertySpeedPolar(String key, SpeedPolar defaultvalue) {
+        setKey(key);
+        speedproperty = new PropertyDouble(defaultvalue.getSpeed());
+        directionproperty = new PropertyAngle(defaultvalue.getAngle());
     }
 
-    public final void setValue(SpeedPolar newpolar) {
-        angleproperty.set(newpolar.getAngle().getDegrees());
-        speedproperty.set(newpolar.getSpeed());
-    }
-    
+    @Override
     public final SpeedPolar get() {
-        return new SpeedPolar(speedproperty.get(), new Angle(angleproperty.get()));
+        return new SpeedPolar(speedproperty.get(), new Angle(directionproperty.get()));
     }
 
+    @Override
     public final void set(SpeedPolar newpolar) {
-        angleproperty.set(newpolar.getAngle().getDegrees());
         speedproperty.set(newpolar.getSpeed());
-    }
-    
-    public final double getSpeed() {
-        return speedproperty.get();
-    }
-    
-    public final Angle getAngle() {
-        return new Angle(angleproperty.get());
+        directionproperty.set(newpolar.getAngle());
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        TextField speedfield = new TextField(Double.toString(speedproperty.get()));
-        speedfield.setPrefColumnCount(6);
-        TextFormatter<Number> speedformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        speedfield.setTextFormatter(speedformatter);
-        speedformatter.valueProperty().bindBidirectional(speedproperty);
-        //
-        TextField anglefield = new TextField(Double.toString(angleproperty.get()));
-        anglefield.setPrefColumnCount(7);
-        TextFormatter<Number> angleformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        anglefield.setTextFormatter(angleformatter);
-        angleformatter.valueProperty().bindBidirectional(angleproperty);
-        //
-        TextFlow flow = new TextFlow(speedfield, createTextFor("@"), anglefield, createTextFor("˚"));
-        return flow;
+    public final SpeedPolar parsevalue(JsonValue value) throws IOException {
+        if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) value;
+            if (values.size() == 2) {
+                return new SpeedPolar(
+                        speedproperty.parsevalue(values.get(0)),
+                        directionproperty.parsevalue(values.get(1))
+                );
+            }
+        }
+        throw new IOException("Malformed Definition file - two numbers expected");
     }
-    
+
     @Override
-    public JsonValue toJson() {
+    public JsonArray toJson() {
         return Json.createArrayBuilder()
                 .add(speedproperty.get())
-                .add(angleproperty.get())
+                .add(directionproperty.get().getDegrees())
                 .build();
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return getField(controller, 6, 7);
+    }
+
+    @Override
+    public Node getField(Controller controller, int size) {
+        return getField(controller, size, size);
+    }
+
+    private Node getField(Controller controller, int sizespeed, int sizedirection) {
+        return new TextFlow(
+                speedproperty.getField(controller, sizespeed),
+                createTextFor("@"),
+                directionproperty.getField(controller, sizedirection),
+                createTextFor("˚"));
+    }
+
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

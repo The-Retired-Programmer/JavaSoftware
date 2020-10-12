@@ -15,17 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -33,31 +23,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class WindFlow extends Flow {
 
-    public static WindFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray windarray = parsedjson.getJsonArray("wind");
-        FlowComponentSet flowcomponents = new FlowComponentSet();
-        if (windarray != null) {
-            for (JsonValue windv : windarray) {
-                if (windv.getValueType() == JsonValue.ValueType.OBJECT) {
-                    JsonObject wind = (JsonObject) windv;
-                    flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, wind));
-                } else {
-                    throw new IOException("Malformed Definition File - <wind> array contains items other that wind objects");
-                }
-            }
-        }
-        JsonObject windshiftparams = parsedjson.getJsonObject("windshifts");
-        return new WindFlow(controllersupplier, windshiftparams, flowcomponents);
-    }
-
-    private WindFlow(Supplier<Controller> controllersupplier, JsonObject params, FlowComponentSet flowcomponents) throws IOException {
-        super(controllersupplier, params, flowcomponents);
-    }
-
-    @Override
-    public Map<String, PropertyItem> properties() {
-        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
-        super.properties(map);
-        return map;
+    public WindFlow(PropertySketch sketchproperty) {
+        super(sketchproperty, sketchproperty.getWindshifts(), sketchproperty.getWind());
     }
 }

@@ -28,6 +28,8 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Area {
+    
+    public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
 
     public static Optional<Area> parse(JsonObject jobj, String key) throws IOException {
         if (jobj == null) {

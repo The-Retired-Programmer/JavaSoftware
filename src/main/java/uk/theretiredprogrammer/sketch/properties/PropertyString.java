@@ -16,56 +16,71 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
+import java.io.IOException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyString extends PropertyItem {
+public class PropertyString extends PropertyElement<String> {
 
-    private SimpleStringProperty stringproperty = new SimpleStringProperty();
-    
-    public PropertyString(String value) {
-        setValue(value);
+    private final SimpleStringProperty stringproperty;
+
+    public PropertyString(String defaultvalue) {
+        this(null, defaultvalue);
+    }
+
+    public PropertyString(String key, String defaultvalue) {
+        setKey(key);
+        stringproperty = new SimpleStringProperty(defaultvalue);
     }
     
-    public PropertyString() {
-    }
-
-    public final String getValue() {
-        return stringproperty.getValue();
-    }
-
-    public final void setValue(String newvalue) {
-        stringproperty.setValue(newvalue);
-    }
-
+    @Override
     public final String get() {
         return stringproperty.get();
     }
 
+    @Override
     public final void set(String newvalue) {
         stringproperty.set(newvalue);
     }
 
-    public SimpleStringProperty PropertyString() {
+    public SimpleStringProperty propertyString() {
         return stringproperty;
+    }
+    
+    @Override
+    public final String parsevalue(JsonValue value) throws IOException {
+        if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
+            return ((JsonString) value).getString();
+        }
+        throw new IOException("Malformed Definition file - String expected");
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
+    public JsonValue toJson() {
+        return Json.createValue(stringproperty.get());
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        return getField(controller, 0);
+    }
+        
+    @Override
+     public Node getField(Controller controller, int size) {    
         TextField stringfield = new TextField(stringproperty.get());
         stringfield.textProperty().bindBidirectional(stringproperty);
         return stringfield;
     }
-    
-    @Override
-    public JsonValue toJson() {
-        return Json.createValue(get());
+
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

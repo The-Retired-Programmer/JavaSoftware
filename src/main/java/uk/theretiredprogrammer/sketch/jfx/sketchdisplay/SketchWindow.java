@@ -39,7 +39,8 @@ import uk.theretiredprogrammer.sketch.jfx.UI;
 import uk.theretiredprogrammer.sketch.jfx.decisiondisplay.DecisionDisplayWindow;
 import uk.theretiredprogrammer.sketch.jfx.propertiesdisplay.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -47,15 +48,15 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class SketchWindow extends AbstractWindow {
 
-    public static SketchWindow create(String fn, Controller controller, AbstractWindow parent) {
-        return new SketchWindow(fn, controller, parent);
+    public static SketchWindow create(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
+        return new SketchWindow(fn, controller, sketchproperty, parent);
     }
 
     private final SketchPane canvas;
     private final Text timetext;
     private DecisionDisplayWindow decisiondisplaywindow = null;
 
-    private SketchWindow(String fn, Controller controller, AbstractWindow parent) {
+    private SketchWindow(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
         super(SketchWindow.class, parent);
         setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();
@@ -66,7 +67,7 @@ public class SketchWindow extends AbstractWindow {
                         UI.menuitem("Reset", actionEvent -> controller.reset())
                 ),
                 UI.menu("Window Management",
-                        UI.menuitem("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                        UI.menuitem("Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, controller.getProperty(), SketchWindow.this)),
                         UI.menuitem("Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
                         UI.menuitem("Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn))
                 )
@@ -77,13 +78,13 @@ public class SketchWindow extends AbstractWindow {
                 UI.toolbarButton("control_rewind_blue.png", "Reset", actionEvent -> controller.reset()),
                 UI.toolbarButton("table_save.png", "Save Properties", actionEvent -> save(controller,
                         "/Users/richard/SKETCHSAVE/save.json")),
-                UI.toolbarButton("table.png", "Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, SketchWindow.this)),
+                UI.toolbarButton("table.png", "Show Properties", actionEvent -> PropertiesWindow.create(fn, controller, controller.getProperty(), SketchWindow.this)),
                 UI.toolbarButton("script.png", "Show Decision Log", actionEvent -> showDecisionLog(controller, fn)),
                 UI.toolbarButton("script_code.png", "Show Filtered Decision Log", actionEvent -> showFilteredDecisionLog(controller, fn)),
                 timetext = new Text("      ")
         );
         Group group = new Group();
-        canvas = new SketchPane(controller.displayparameters.getDisplayArea(), controller.displayparameters.getZoom());
+        canvas = new SketchPane(sketchproperty.getDisplay().getDisplayarea(), sketchproperty.getDisplay().getZoom());
         controller
                 .setOnSketchChange(() -> Platform.runLater(() -> controller.paint(canvas)))
                 .setOnTimeChange((seconds) -> Platform.runLater(() -> updateTimeField(seconds)))
@@ -96,7 +97,7 @@ public class SketchWindow extends AbstractWindow {
 
     private boolean save(Controller controller, String fn) {
         Path path = Path.of(fn);
-        JsonObject jobj = controller.toJson();
+        JsonObject jobj = controller.getProperty().toJson();
         if (path != null) {
             //Files.move(path, path.resolveSibling(path.getFileName() + ".v" + fromversion));
             try ( JsonWriter jsonWriter = Json.createWriter(Files.newOutputStream(path))) {

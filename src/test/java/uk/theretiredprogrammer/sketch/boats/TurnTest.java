@@ -15,15 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArrayBuilder;
 import java.io.IOException;
-import java.util.function.Supplier;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.Angle;
+import uk.theretiredprogrammer.sketch.core.Location;
 import uk.theretiredprogrammer.sketch.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
+import uk.theretiredprogrammer.sketch.core.SpeedPolar;
+import uk.theretiredprogrammer.sketch.properties.PropertyTestFlowComponent;
 
 /**
  *
@@ -35,18 +35,15 @@ public class TurnTest {
     private Controller controller;
     private Decision decision;
 
-    Boat setupForTurn(String filename, Supplier<String>... configs) throws IOException {
+    Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
         controller = new Controller(filename)
-                .setOnSketchChange(() ->fail("BAD - Callback() made -should not occur"))
+                .setOnSketchChange(() -> fail("BAD - Callback() made -should not occur"))
                 .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
                 .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
         boat = controller.boats.getBoat("Red");
         //
-        for (var config : configs) {
-            String error = config.get();
-            if (error != null) {
-                throw new IOException(error);
-            }
+        for (var updateaction : updateproperties) {
+            updateaction.run();
         }
         decision = controller.boatstrategies.getStrategy(boat).decision;
         return boat;
@@ -55,7 +52,7 @@ public class TurnTest {
     Boat getUptospeed(int seconds) throws IOException {
         while (seconds > 0) {
             decision.setSAILON();
-            boat.moveUsingDecision();
+            boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
             seconds--;
         }
         return boat;
@@ -64,54 +61,29 @@ public class TurnTest {
     Boat makeTurn(Angle finalangle, boolean turndirection) throws IOException {
         decision.setTURN(finalangle, turndirection);
         while (decision.getAction() != SAILON) {
-            boat.moveUsingDecision();
+            boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
         }
         return boat;
     }
-
-    public String setboatintvalue(String name, int value) {
-        try {
-            boat.change(Json.createObjectBuilder().add(name, value).build());
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
+    
+    void setboatdirection(double degrees) {
+        boat.getProperty().setDirection(new Angle(degrees));
     }
 
-    String setboatlocationvalue(String name, double x, double y) {
-        try {
-            boat.change(Json.createObjectBuilder()
-                    .add(name, Json.createArrayBuilder().add(x).add(y).build())
-                    .build());
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
+    void setboatlocation(double x, double y) {
+        boat.getProperty().setLocation(new Location(x, y));
     }
 
-    String setwindflow(String name, double speed, double degrees) {
-        try {
-            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), name);
-            controller.windflow.setFlows();
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
+    void setwindflow(double speed, double degrees) {
+        setwindflow(speed, degrees, 0);
     }
 
-    String setwindflow(int zlevel, double speed, double degrees) {
-        try {
-            JsonArrayBuilder flow = Json.createArrayBuilder().add(speed).add(degrees);
-            controller.windflow.getFlowComponentSet().change(Json.createObjectBuilder().add("flow", flow).build(), zlevel);
-            controller.windflow.setFlows();
-            return null;
-        } catch (IOException ex) {
-            return ex.getLocalizedMessage();
-        }
-    }
-
-    String setwindflow(double speed, double degrees) {
-        return setwindflow(0, speed, degrees);
+    void setwindflow(double speed, double degrees, int zlevel) {
+        controller.getProperty().getWind().stream()
+                .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
+                .forEach(tfc -> {
+                    ((PropertyTestFlowComponent) tfc).setFlow(new SpeedPolar(speed, degrees));
+                    controller.windflow.setFlows();
+                });
     }
 }

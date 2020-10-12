@@ -15,10 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.Angle;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -34,8 +35,8 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getFlow(legstrategy.boat.getLocation()).getAngle();
+    final String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
         if (atStarboardRoundingTurnPoint(legstrategy)) {
             return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy);
         }

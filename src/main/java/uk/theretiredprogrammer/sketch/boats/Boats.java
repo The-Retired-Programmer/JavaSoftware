@@ -15,88 +15,31 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.jfx.sketchdisplay.SketchWindow.SketchPane;
-import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
-import uk.theretiredprogrammer.sketch.ui.Controller;
-import uk.theretiredprogrammer.sketch.ui.Displayable;
-import uk.theretiredprogrammer.sketch.ui.Timerable;
+import java.util.stream.Stream;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Boats implements Displayable, Timerable {
-
-    private final ObservableList<Boat> boats = FXCollections.observableArrayList();
-
-    public Boats(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray boatarray = parsedjson.getJsonArray("boats");
-        if (boatarray != null) {
-            for (JsonValue boatv : boatarray) {
-                if (boatv.getValueType() == JsonValue.ValueType.OBJECT) {
-                    JsonObject boatparams = (JsonObject) boatv;
-                    Boat boat = BoatFactory.createboatelement(controllersupplier, boatparams);
-                    boats.add(boat);
-                } else {
-                    throw new IOException("Malformed Definition File - <boats> array contains items other that boat objects");
-                }
+public class Boats  {
+    
+    private List<Boat> boats = new ArrayList<>();
+    
+    public Boats(PropertySketch sketchproperty) throws IOException {
+            for (var boatproperty : sketchproperty.getBoats().getList()){
+                boats.add(BoatFactory.createBoat(boatproperty, sketchproperty));
             }
-        }
     }
     
-    public JsonArray toJson() {
-        JsonArrayBuilder jab = Json.createArrayBuilder();
-        boats.forEach(boat-> jab.add(boat.toJson()));
-        return jab.build();
+    public Stream<Boat> stream() {
+        return boats.stream();
     }
-
-    public final Boat getBoat(String name) {
-        for (Boat boat : boats) {
-            if (boat.getName().equals(name)) {
-                return boat;
-            }
-        }
-        return null;
-    }
-
-    public void addBoat(Boat boat) {
-        boats.add(boat);
-    }
-
-    public List<Boat> getBoats() {
-        return boats;
-    }
-
-    public void setOnBoatsChange(ListChangeListener<Boat> ml) {
-        boats.addListener(ml);
-    }
-
-    @Override
-    public void timerAdvance(int simulationtime, TimerLog timerlog) throws IOException {
-    }
-
-    @Override
-    public void draw(SketchPane canvas) throws IOException {
-        for (var boat : boats) {
-            boat.draw(canvas);
-        }
-    }
-
-    @Override
-    public Map<String, PropertyItem> properties() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    
+    public Boat getBoat(String name){
+        return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
     }
 }

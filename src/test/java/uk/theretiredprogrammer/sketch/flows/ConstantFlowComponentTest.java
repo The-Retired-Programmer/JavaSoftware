@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.flows;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.Location;
+import static uk.theretiredprogrammer.sketch.core.Location.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
@@ -31,7 +31,7 @@ public class ConstantFlowComponentTest extends FlowComponentTest {
     public void testGetConstantFlow() throws IOException {
         System.out.println("getConstantFlow");
         initialiseFlow("/constantwindflow.json");
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertMeanFlowAngle(ANGLE0);
     }
 }

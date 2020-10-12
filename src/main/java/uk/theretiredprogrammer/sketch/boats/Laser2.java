@@ -15,10 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import jakarta.json.JsonObject;
 import java.io.IOException;
-import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  * The Laser 2 Dinghy.
@@ -27,8 +26,8 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class Laser2 extends Boat {
 
-    public Laser2(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
-        super(controllersupplier, paramsobj,
+    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty) throws IOException {
+        super(boatproperty, sketchproperty,
                 new BoatMetricsBuilder()
                         .length(4)
                         .width(1.5)

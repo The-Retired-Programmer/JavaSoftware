@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.boats.Boat;
 import uk.theretiredprogrammer.sketch.boats.BoatMetrics;
@@ -28,7 +27,10 @@ import uk.theretiredprogrammer.sketch.timerlog.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.ReasonLogEntry;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -40,33 +42,33 @@ public abstract class BoatStrategyForLeg {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    static BoatStrategyForLeg getLegStrategy(Controller controller, Boat boat, Leg leg) throws IOException {
-        LegType legtype = getLegType(controller, boat, leg);
+    static BoatStrategyForLeg getLegStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+        LegType legtype = getLegType(boat, leg, windflow);
         switch (legtype) {
             case WINDWARD -> {
-                return new BoatStrategyForWindwardLeg(controller, boat, leg);
+                return new BoatStrategyForWindwardLeg(boat, leg, windflow, waterflow);
             }
             case OFFWIND -> {
-                return new BoatStrategyForOffwindLeg(controller, boat, leg);
+                return new BoatStrategyForOffwindLeg(boat, leg, windflow, waterflow);
             }
             case GYBINGDOWNWIND -> {
-                return new BoatStrategyForGybingDownwindLeg(controller, boat, leg);
+                return new BoatStrategyForGybingDownwindLeg(boat, leg, windflow, waterflow);
             }
             default ->
-                throw new IOException("Illegal/unknown LEGTYPE: " + legtype.toString());
+                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
         }
     }
 
-    static LegType getLegType(Controller controller, Boat boat, Leg leg) throws IOException {
+    static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
         if (leg == null) {
             return LegType.NONE;
         }
         BoatMetrics metrics = boat.metrics;
-        Angle legtowind = leg.getAngleofLeg().absAngleDiff(controller.windflow.getMeanFlowAngle());
+        Angle legtowind = leg.getAngleofLeg().absAngleDiff(windflow.getMeanFlowAngle());
         if (legtowind.lteq(metrics.getUpwindrelative())) {
             return LegType.WINDWARD;
         }
-        if (boat.getReachdownwind() && legtowind.gteq(metrics.getDownwindrelative())) {
+        if (boat.getProperty().isReachdownwind() && legtowind.gteq(metrics.getDownwindrelative())) {
             return LegType.GYBINGDOWNWIND;
         }
         return LegType.OFFWIND;
@@ -154,21 +156,21 @@ public abstract class BoatStrategyForLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    abstract String nextBoatStrategyTimeInterval(Controller controller) throws IOException;
+    abstract String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow);
 
-    BoatStrategyForLeg nextTimeInterval(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
+    BoatStrategyForLeg nextTimeInterval(PropertySketch sketchproperty, int simulationtime, TimerLog timerlog, WindFlow windflow, WaterFlow waterflow) {
         String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
-            String reason = nextBoatStrategyTimeInterval(controller);
-            timerlog.add(new BoatLogEntry(boat));
+            String reason = nextBoatStrategyTimeInterval(sketchproperty, windflow, waterflow);
+            timerlog.add(new BoatLogEntry(boat.getProperty()));
             timerlog.add(new DecisionLogEntry(boatname, decision));
             timerlog.add(new ReasonLogEntry(boatname, reason));
         }
-        if (boat.moveUsingDecision()) {
+        if (boat.moveUsingDecision(windflow, waterflow, decision)) {
             Leg nextleg = leg.getFollowingLeg();
             return nextleg == null
                     ? new BoatStrategyForAfterFinishLeg(boat, leg)
-                    : BoatStrategyForLeg.getLegStrategy(controller, boat, nextleg);
+                    : BoatStrategyForLeg.getLegStrategy(boat, nextleg, windflow, waterflow);
         }
         return null;
     }

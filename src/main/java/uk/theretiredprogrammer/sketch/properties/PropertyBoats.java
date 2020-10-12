@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2020 richard Linsdale.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.ui;
-
-import java.io.IOException;
-import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
+package uk.theretiredprogrammer.sketch.properties;
 
 /**
- * The Element Class - represents the core class of every simulation object
- * class.
+ *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public interface Timerable {
+public class PropertyBoats extends PropertyListNamedWithSimpleCreator<PropertyBoat>  {
+
+    public PropertyBoats(String key)  {
+        super(()->new PropertyBoat());
+        setKey(key);
+    }
     
-    public void timerAdvance(int time, TimerLog timerlog) throws IOException;
+    @Override
+    public PropertyBoats get() {
+        return this;
+    }
 }

@@ -15,18 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -34,30 +23,7 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class WaterFlow extends Flow {
 
-    public static WaterFlow create(Supplier<Controller> controllersupplier, JsonObject parsedjson) throws IOException {
-        JsonArray waterarray = parsedjson.getJsonArray("water");
-        FlowComponentSet flowcomponents = new FlowComponentSet();
-        if (waterarray != null) {
-            for (JsonValue waterv : waterarray) {
-                if (waterv.getValueType() == JsonValue.ValueType.OBJECT) {
-                    JsonObject water = (JsonObject) waterv;
-                    flowcomponents.add(FlowComponentFactory.createflowelement(controllersupplier, water));
-                } else {
-                    throw new IOException("Malformed Definition File - <water> array contains items other that <water> objects");
-                }
-            }
-        }
-        return new WaterFlow(controllersupplier, flowcomponents);
-    }
-
-    private WaterFlow(Supplier<Controller> controllersupplier, FlowComponentSet flowcomponents) throws IOException {
-        super(controllersupplier, null, flowcomponents);
-    }
-
-    @Override
-    public Map<String, PropertyItem> properties() {
-        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
-        super.properties(map);
-        return map;
+    public WaterFlow(PropertySketch sketchproperty) {
+        super(sketchproperty, sketchproperty.getWatershifts(), sketchproperty.getWater());
     }
 }

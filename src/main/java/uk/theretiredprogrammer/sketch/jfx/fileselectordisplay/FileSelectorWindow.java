@@ -23,7 +23,8 @@ import javafx.stage.Stage;
 import uk.theretiredprogrammer.sketch.jfx.AbstractWindow;
 import uk.theretiredprogrammer.sketch.jfx.UI;
 import uk.theretiredprogrammer.sketch.jfx.fileselectordisplay.FileSelectorWindow.FileSelectorPane;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -81,26 +82,30 @@ public class FileSelectorWindow extends AbstractWindow {
     private void newConfigfile() {
         statusbarDisplay();
         Controller controller;
+        PropertySketch sketchproperty;
         try {
             controller = new Controller("newtemplate.json");
+            sketchproperty = controller.getProperty();
         } catch (IOException ex) {
             statusbarDisplay("<new>: " + ex.getLocalizedMessage());
             return;
         }
-        SketchWindow.create("<new>", controller, this);
+        SketchWindow.create("<new>", controller, sketchproperty, this);
     }
 
-    private void selected(PathWithShortName pn) {
+    private void selected(PathWithShortName pn){
         statusbarDisplay();
         Controller controller;
+        PropertySketch sketchproperty;
         try {
             controller = new Controller(pn.getPath());
+            sketchproperty = controller.getProperty();
         } catch (IOException ex) {
             statusbarDisplay(pn.toString() + ": " + ex.getLocalizedMessage());
             return;
         }
         recents.updateRecentFileList(pn);
-        SketchWindow.create(pn.toString(), controller, this);
+        SketchWindow.create(pn.toString(), controller, sketchproperty, this);
     }
 
     public class FileSelectorPane extends Accordion {

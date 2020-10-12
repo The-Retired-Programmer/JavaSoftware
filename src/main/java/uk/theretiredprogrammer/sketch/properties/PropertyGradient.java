@@ -16,72 +16,117 @@
 package uk.theretiredprogrammer.sketch.properties;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleDoubleProperty;
+import java.io.IOException;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
-import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.Gradient;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
 
 /**
  *
  * @author richard
  */
-public class PropertyGradient extends PropertyItem {
+public class PropertyGradient extends PropertyElement<Gradient> {
 
-    private SimpleStringProperty typeproperty = new SimpleStringProperty();
-    private SimpleListProperty<SimpleDoubleProperty> speedsproperty = new SimpleListProperty<>();
+    private static final ObservableList<String> types = FXCollections.observableArrayList();
 
-    public final Gradient getValue() {
-        return new Gradient(typeproperty.get(), speedsproperty.get());
+    static {
+        types.addAll("north", "south", "east", "west");
     }
 
-    public final void setValue(Gradient newgradient) {
-        typeproperty.setValue(newgradient.getType());
-        speedsproperty.set(newgradient.getSpeeds());
+    private final PropertyConstrainedString typeproperty;
+    private ObservableList<PropertyDouble> speedsproperty;
+
+    public PropertyGradient(Gradient defaultvalue) {
+        this(null, defaultvalue);
     }
 
-    public final Gradient get() {
-        return new Gradient(typeproperty.get(), speedsproperty.get());
-    }
-
-    public final void set(Gradient newgradient) {
-        typeproperty.setValue(newgradient.getType());
-        speedsproperty.set(newgradient.getSpeeds());
+    public PropertyGradient(String key, Gradient defaultvalue) {
+        setKey(key);
+        typeproperty = new PropertyConstrainedString(types, defaultvalue == null ? null : defaultvalue.getType());
+        speedsproperty = defaultvalue == null ? FXCollections.observableArrayList() : defaultvalue.getSpeeds();
     }
 
     @Override
-    public Node createPropertySheetItem(Controller controller) {
-        ComboBox typefield = new ComboBox(get().getTypes());
-        typefield.valueProperty().bindBidirectional(typeproperty);
-        HBox hbox = new HBox();
-        hbox.getChildren().add(typefield);
-        //
-        speedsproperty.get().forEach((speed) -> buildDoubleField(speed));
+    public final Gradient get() {
+        String type = typeproperty.get();
+        return type == null ? null : new Gradient(type, speedsproperty);
+    }
+
+    @Override
+    public final void set(Gradient newgradient) throws IOException {
+        typeproperty.setValue(newgradient == null ? null : newgradient.getType());
+        speedsproperty = newgradient == null ? FXCollections.observableArrayList() : newgradient.getSpeeds();
+    }
+
+    @Override
+    public Gradient parsevalue(JsonValue value) throws IOException {
+        String newtype = "north";
+        if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) value;
+            int count = -1;
+            ObservableList<PropertyDouble> enteredspeeds = new SimpleListProperty<>();
+            for (JsonValue val : values) {
+                switch (val.getValueType()) {
+                    case STRING -> {
+                        if (count >= 0) {
+                            throw new IOException("Illegal parameter in gradient definition");
+                        }
+                        newtype = ((JsonString) val).getString();
+                    }
+                    case NUMBER -> {
+                        if (count < 0) {
+                            throw new IOException("Illegal parameter in gradient definition");
+                        }
+                        enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
+                    }
+                    default ->
+                        throw new IOException("Illegal parameter in gradient definition");
+                }
+                count++;
+            }
+            return new Gradient(newtype, enteredspeeds);
+        }
+        throw new IOException("Illegal number in gradient definition");
+    }
+
+    @Override
+    public JsonValue toJson() {
+        String type = typeproperty.get();
+        if (type == null) {
+            return JsonValue.NULL;
+        } else {
+            JsonArrayBuilder jab = Json.createArrayBuilder()
+                    .add(typeproperty.get());
+            speedsproperty.forEach(speed -> jab.add(speed.get()));
+            return jab.build();
+        }
+    }
+
+    @Override
+    public Node getField(Controller controller) {
+        HBox hbox = new HBox(typeproperty.getField(controller));
+        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
         return hbox;
     }
 
-    private TextField buildDoubleField(SimpleDoubleProperty bindto) {
-        TextField doublefield = new TextField(Double.toString(bindto.get()));
-        doublefield.setPrefColumnCount(6);
-        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        doublefield.setTextFormatter(textformatter);
-        textformatter.valueProperty().bindBidirectional(bindto);
-        return doublefield;
-    }
-    
     @Override
-    public JsonValue toJson() {
-        JsonArrayBuilder jab = Json.createArrayBuilder()
-                .add(typeproperty.get());
-        speedsproperty.forEach(speed-> jab.add(speed.doubleValue()));
-        return jab.build();
+    public Node getField(Controller controller, int size) {
+        HBox hbox = new HBox(typeproperty.getField(controller));
+        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
+        return hbox;
+    }
+
+    @Override
+    public final void parse(JsonValue jvalue) throws IOException {
+        set(parsevalue(jvalue));
     }
 }

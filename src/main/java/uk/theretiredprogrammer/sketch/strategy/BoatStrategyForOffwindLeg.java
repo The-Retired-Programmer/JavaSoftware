@@ -15,13 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE180;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -33,43 +35,48 @@ public class BoatStrategyForOffwindLeg extends BoatStrategyForLeg {
     private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
 
-    public BoatStrategyForOffwindLeg(Controller controller, Boat boat, Leg leg) throws IOException {
+    public BoatStrategyForOffwindLeg(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg, leg.getAngleofLeg().add(ANGLE90), leg.getAngleofLeg().sub(ANGLE90));
         decisions = new OffwindSailingDecisions();
-        LegType followinglegtype = getLegType(controller, boat, leg.getFollowingLeg());
+        LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
         switch (followinglegtype) {
-            case WINDWARD -> roundingdecisions = leg.isPortRounding()
+            case WINDWARD ->
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
-            case OFFWIND -> roundingdecisions = leg.isPortRounding()
+            case OFFWIND ->
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
                         : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
-            case GYBINGDOWNWIND -> roundingdecisions = leg.isPortRounding()
+            case GYBINGDOWNWIND ->
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
-            case NONE -> roundingdecisions = leg.isPortRounding()
+            case NONE ->
+                roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> windangle.add(ANGLE90))
                         : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(ANGLE90));
-            default -> throw new IOException("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
+            default ->
+                throw new IllegalStateFailure("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());
         }
     }
 
     @Override
-    String nextBoatStrategyTimeInterval(Controller controller) throws IOException {
-        Angle markMeanwinddirection = leg.getMarkMeanwinddirection();
+    String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+        Angle markMeanwinddirection = leg.getMarkMeanwinddirection(windflow);
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(controller, this);
+            return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(controller, this);
+            return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
-        return decisions.nextTimeInterval(controller, this);
+        return decisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+        Optional<Double> refdistance = getRefDistance(boat.getProperty().getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 

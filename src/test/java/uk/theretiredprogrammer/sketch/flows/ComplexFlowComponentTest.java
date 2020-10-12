@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
+import static uk.theretiredprogrammer.sketch.core.Location.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
@@ -32,7 +33,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
     public void testGetComplexFlow() throws IOException {
         System.out.println("getComplexFlow");
         initialiseFlow("/complexwindflow.json");
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 0), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(0, 100), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 100), new SpeedPolar(4, ANGLE0));
@@ -45,7 +46,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
     public void testGetComplexFlow2() throws IOException {
         System.out.println("getComplexFlow2");
         initialiseFlow("/complexwindflow2.json");
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 0), new SpeedPolar(2, ANGLE0));
         assertFlowAt(new Location(0, 100), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 100), new SpeedPolar(2, ANGLE0));
@@ -59,7 +60,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow3");
         initialiseFlow("/complexwindflow3.json");
         //
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 0), new SpeedPolar(4, new Angle(45)));
         assertFlowAt(new Location(0, 100), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 100), new SpeedPolar(4, new Angle(45)));
@@ -73,7 +74,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow4");
         initialiseFlow("/complexwindflow4.json");
         //
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 0), new SpeedPolar(2, new Angle(45)));
         assertFlowAt(new Location(0, 100), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 100), new SpeedPolar(2, new Angle(45)));
@@ -87,7 +88,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow5");
         initialiseFlow("/complexwindflow5.json");
         //
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 0), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(0, 100), new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(100, 100), new SpeedPolar(4, new Angle(45)));

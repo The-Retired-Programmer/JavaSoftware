@@ -15,12 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import uk.theretiredprogrammer.sketch.boats.Boat;
+import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.timerlog.TimerLog;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.course.Course;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -30,23 +33,24 @@ public class BoatStrategies {
 
     private final Map<String, BoatStrategyForLeg> boatstrategies = new HashMap<>();
 
-    public BoatStrategies(Controller controller) throws IOException {
-        Leg firstleg = controller.course.getFirstCourseLeg();
-        for (var boat : controller.boats.getBoats()) {
-            boatstrategies.put(boat.getName(), BoatStrategyForLeg.getLegStrategy(controller, boat, firstleg));
-        }
+    public BoatStrategies(PropertySketch sketchproperty, Course course, Boats boats, WindFlow windflow, WaterFlow waterflow) {
+        Leg firstleg = course.getFirstCourseLeg();
+        boats.stream().forEach(boat -> boatstrategies.put(
+                boat.getName(),
+                BoatStrategyForLeg.getLegStrategy(boat, firstleg, windflow, waterflow)
+        ));
     }
 
     public BoatStrategyForLeg getStrategy(Boat boat) {
         return boatstrategies.get(boat.getName());
     }
 
-    public void timerAdvance(Controller controller, int simulationtime, TimerLog timerlog) throws IOException {
-        for (var boatstrategy : boatstrategies.values()) {
-            BoatStrategyForLeg newstrategy = boatstrategy.nextTimeInterval(controller, simulationtime, timerlog);
+    public void timerAdvance(PropertySketch sketchproperty, int simulationtime, TimerLog timerlog, WindFlow windflow, WaterFlow waterflow) {
+        boatstrategies.values().forEach(boatstrategy -> {
+            BoatStrategyForLeg newstrategy = boatstrategy.nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {
                 boatstrategies.put(boatstrategy.boat.getName(), newstrategy);
             }
-        }
+        });
     }
 }

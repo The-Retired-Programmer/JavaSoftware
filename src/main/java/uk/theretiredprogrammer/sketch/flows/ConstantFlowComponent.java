@@ -15,16 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.flows;
 
-import jakarta.json.JsonObject;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.properties.PropertyItem;
-import uk.theretiredprogrammer.sketch.properties.PropertySpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.PropertyString;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyConstantFlowComponent;
 
 /**
  * The ConstantFlow Class - represents a flow which is steady in speed and
@@ -34,39 +27,16 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final static String CONSTANTFLOWTYPE = "constantflow";
+    private final PropertyConstantFlowComponent property;
 
-    static {
-        FlowComponentSet.registerFlowType(CONSTANTFLOWTYPE);
-    }
-
-    private final PropertyString flowtypeproperty = new PropertyString(CONSTANTFLOWTYPE);
-    private final PropertySpeedPolar flowproperty = new PropertySpeedPolar();
-
-    public ConstantFlowComponent(Supplier<Controller> controllersupplier, JsonObject paramsobj) throws IOException {
-        super(controllersupplier, paramsobj);
-        flowproperty.set(SpeedPolar.parse(paramsobj, "flow").orElse(ZEROFLOW));
+    public ConstantFlowComponent(PropertyConstantFlowComponent constantflowcomponentproperty) {
+        super(constantflowcomponentproperty);
+        this.property = constantflowcomponentproperty;
     }
 
     @Override
-    public void change(JsonObject params) throws IOException {
-        super.change(params);
-        flowproperty.set(SpeedPolar.parse(params, "flow").orElse(flowproperty.get()));
-    }
-
-    @Override
-    public LinkedHashMap<String, PropertyItem> properties() {
-        LinkedHashMap<String, PropertyItem> map = new LinkedHashMap<>();
-        super.properties(map);
-        map.put("type", flowtypeproperty);
-        map.put("flow", flowproperty);
-        return map;
-    }
-
-    @Override
-    public SpeedPolar getFlow(Location pos) throws IOException {
+    public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return flowproperty.get();
+        return property.getFlow();
     }
-
 }

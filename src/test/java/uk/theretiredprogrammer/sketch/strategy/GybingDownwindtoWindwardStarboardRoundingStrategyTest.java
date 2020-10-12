@@ -26,12 +26,12 @@ import uk.theretiredprogrammer.sketch.core.Angle;
 public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends SailingStrategyTest {
 
     private static final Angle DELTAANGLE = new Angle(5);
-    
+
     @Test
     public void testStarboardlayline1A() throws IOException {
         System.out.println("starboard layline 1A");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 56, 12));
+                () -> setboatlocation(56, 12));
         Angle starboardreaching = getStarboardReaching();
         assertSailing(decision, starboardreaching, starboardreaching.add(DELTAANGLE));
     }
@@ -40,7 +40,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline2A() throws IOException {
         System.out.println("starboard layline 2A");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 54, 10));
+                () -> setboatlocation(54, 10));
         Angle starboardreaching = getStarboardReaching();
         assertSailing(decision, starboardreaching, starboardreaching.add(DELTAANGLE));
     }
@@ -49,7 +49,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline3A() throws IOException {
         System.out.println("starboard layline 3A");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 52, 8));
+                () -> setboatlocation(52, 8));
         assertMARKROUNDING(decision, -45, true);
     }
 
@@ -57,7 +57,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline4A() throws IOException {
         System.out.println("starboard layline 4A");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 51.8, 7.8));
+                () -> setboatlocation(51.8, 7.8));
         assertMARKROUNDING(decision, -45, true);
     }
 
@@ -65,7 +65,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline1A() throws IOException {
         System.out.println("port layline 1A");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 48, 16));
+                () -> setboatlocation(48, 16));
         Angle portreaching = getPortReaching();
         assertSailing(decision, portreaching.sub(DELTAANGLE), portreaching);
     }
@@ -74,7 +74,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline2A() throws IOException {
         System.out.println("port layline 2A");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 50, 14));
+                () -> setboatlocation(50, 14));
         Angle portreaching = getPortReaching();
         assertSailing(decision, portreaching.sub(DELTAANGLE), portreaching);
     }
@@ -83,7 +83,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline3A() throws IOException {
         System.out.println("port layline 3A");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 52, 12));
+                () -> setboatlocation(52, 12));
         assertTURN(decision, getStarboardReaching(), true);
     }
 
@@ -91,7 +91,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline4A() throws IOException {
         System.out.println("port layline 4A");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding.json",
-                () -> setboatlocationvalue("location", 52.2, 11.8));
+                () -> setboatlocation(52.2, 11.8));
         assertTURN(decision, getStarboardReaching(), true);
     }
 
@@ -99,7 +99,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline1B() throws IOException {
         System.out.println("starboard layline 1B");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 52, 4));
+                () -> setboatlocation(52, 4));
         Angle starboardreaching = getStarboardReaching();
         assertSailing(decision, starboardreaching, starboardreaching.add(DELTAANGLE));
     }
@@ -108,7 +108,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline2B() throws IOException {
         System.out.println("starboard layline 2B");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 50, 6));
+                () -> setboatlocation(50, 6));
         Angle starboardreaching = getStarboardReaching();
         assertSailing(decision, starboardreaching, starboardreaching.add(DELTAANGLE));
     }
@@ -117,7 +117,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline3B() throws IOException {
         System.out.println("starboard layline 3B");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 48, 8));
+                () -> setboatlocation(48, 8));
         assertMARKROUNDING(decision, 45, true);
     }
 
@@ -125,7 +125,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testStarboardlayline4B() throws IOException {
         System.out.println("starboard layline 4B");
         Decision decision = makeDecision("/gybedownwindtowindward-starboardtack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 47.8, 8.2));
+                () -> setboatlocation(47.8, 8.2));
         assertMARKROUNDING(decision, 45, true);
     }
 
@@ -133,7 +133,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline1B() throws IOException {
         System.out.println("port layline 1B");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 56, 12));
+                () -> setboatlocation(56, 12));
         Angle portreaching = getPortReaching();
         assertSailing(decision, portreaching.sub(DELTAANGLE), portreaching);
     }
@@ -142,7 +142,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline2B() throws IOException {
         System.out.println("port layline 2B");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 54, 10));
+                () -> setboatlocation(54, 10));
         Angle portreaching = getPortReaching();
         assertSailing(decision, portreaching.sub(DELTAANGLE), portreaching);
     }
@@ -151,7 +151,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline3B() throws IOException {
         System.out.println("port layline 3B");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 52, 8));
+                () -> setboatlocation(52, 8));
         assertTURN(decision, getStarboardReaching(), true);
     }
 
@@ -159,7 +159,7 @@ public class GybingDownwindtoWindwardStarboardRoundingStrategyTest extends Saili
     public void testPortlayline4B() throws IOException {
         System.out.println("port layline 4B");
         Decision decision = makeDecision("/gybedownwindtowindward-porttack-starboardrounding-90Wind.json",
-                () -> setboatlocationvalue("location", 51.8, 7.8));
+                () -> setboatlocation(51.8, 7.8));
         assertTURN(decision, getStarboardReaching(), true);
     }
 }

@@ -18,7 +18,8 @@ package uk.theretiredprogrammer.sketch.jfx.propertiesdisplay;
 import java.io.IOException;
 import uk.theretiredprogrammer.sketch.jfx.AbstractWindow;
 import uk.theretiredprogrammer.sketch.jfx.UI;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.controller.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -26,15 +27,15 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class PropertiesWindow extends AbstractWindow {
 
-    public static PropertiesWindow create(String fn, Controller controller, AbstractWindow parent) {
-        return new PropertiesWindow(fn, controller, parent);
+    public static PropertiesWindow create(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
+        return new PropertiesWindow(fn, controller, sketchproperty, parent);
     }
 
-    private PropertiesWindow(String fn, Controller controller, AbstractWindow parent) {
+    private PropertiesWindow(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
         super(PropertiesWindow.class, parent);
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
-        setContent(new PropertiesPane(controller));
+        setContent(new PropertiesPane(sketchproperty));
         addtoMenubar(
                 UI.menu("Add Element",
                         UI.menuitem("Add Boat", actionEvent -> addnewboat(controller)),

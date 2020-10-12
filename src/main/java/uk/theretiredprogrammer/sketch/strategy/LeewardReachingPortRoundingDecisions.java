@@ -15,12 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.strategy;
 
-import java.io.IOException;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.strategy.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -35,8 +36,8 @@ class LeewardReachingPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Controller controller, BoatStrategyForLeg legstrategy) throws IOException {
-        Angle winddirection = controller.windflow.getMeanFlowAngle(legstrategy.boat.getLocation());
+    final String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getMeanFlowAngle(legstrategy.boat.getProperty().getLocation());
         if (legstrategy.boat.isPort(winddirection)) {
             if (atPortRoundingTurnPoint(legstrategy)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy);

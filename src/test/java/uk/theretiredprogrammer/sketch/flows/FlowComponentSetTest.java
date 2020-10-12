@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.Location;
+import static uk.theretiredprogrammer.sketch.core.Location.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
@@ -32,7 +33,7 @@ public class FlowComponentSetTest extends FlowComponentTest {
     public void testFlowElementSet() throws IOException {
         System.out.println("FlowElementSet");
         initialiseFlow("/windflowset.json");
-        assertFlowAt(new Location(0, 0), new SpeedPolar(4, ANGLE0));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
         assertFlowAt(new Location(50, 50), new SpeedPolar(8, new Angle(10)));
         assertFlowAt(new Location(90, 65), new SpeedPolar(8, new Angle(10)));
         assertFlowAt(new Location(50, 65), new SpeedPolar(8, new Angle(10)));

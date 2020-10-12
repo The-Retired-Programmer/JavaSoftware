@@ -18,7 +18,9 @@ package uk.theretiredprogrammer.sketch.boats;
 import jakarta.json.JsonObject;
 import java.io.IOException;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.ui.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertyBoat;
+import uk.theretiredprogrammer.sketch.controller.Controller;
+import uk.theretiredprogrammer.sketch.properties.PropertySketch;
 
 /**
  *
@@ -26,16 +28,13 @@ import uk.theretiredprogrammer.sketch.ui.Controller;
  */
 public class BoatFactory {
 
-    public static Boat createboatelement(Supplier<Controller> controllersupplier, JsonObject paramobj) throws IOException{
-        if (paramobj == null) {
-            return null;
-        }
-        switch (paramobj.getString("type", "MISSING")){
+    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty) throws IOException {
+        switch (boatproperty.getType()) {
             case "laser2" -> {
-                return new Laser2(controllersupplier, paramobj);
+                return new Laser2(boatproperty, sketchproperty);
             }
-            default -> throw new IOException("Missing or Unknown class parameter in boat definition");
+            default ->
+                throw new IOException("Missing or Unknown class parameter in boat definition");
         }
     }
-
 }

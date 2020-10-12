@@ -24,13 +24,13 @@ import static jakarta.json.JsonValue.ValueType.NUMBER;
 import static jakarta.json.JsonValue.ValueType.STRING;
 import java.io.IOException;
 import java.util.Optional;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE180;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE90MINUS;
+import uk.theretiredprogrammer.sketch.properties.PropertyDouble;
 
 /**
  *
@@ -51,7 +51,7 @@ public class Gradient {
             if (value.getValueType() == JsonValue.ValueType.ARRAY) {
                 JsonArray values = (JsonArray) value;
                 int count = -1;
-                ObservableList<SimpleDoubleProperty> enteredspeeds = new SimpleListProperty<>();
+                ObservableList<PropertyDouble> enteredspeeds = new SimpleListProperty<>();
                 for (JsonValue val : values) {
                     switch (val.getValueType()) {
                         case STRING -> {
@@ -64,7 +64,7 @@ public class Gradient {
                             if (count < 0) {
                                 throw new IOException("Illegal parameter in gradient definition");
                             }
-                            enteredspeeds.add(new SimpleDoubleProperty(((JsonNumber) val).doubleValue()));
+                            enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
                         }
                         default ->
                             throw new IOException("Illegal parameter in gradient definition");
@@ -79,19 +79,19 @@ public class Gradient {
     }
 
     private final String type;
-    private final ObservableList<SimpleDoubleProperty> speeds;
+    private final ObservableList<PropertyDouble> speeds;
 
     public Gradient() {
         this.type = "north";
         this.speeds = new SimpleListProperty<>();
     }
 
-    public Gradient(String type, ObservableList<SimpleDoubleProperty> speeds) {
+    public Gradient(String type, ObservableList<PropertyDouble> speeds) {
         this.type = type;
         this.speeds = speeds;
     }
 
-    public ObservableList<SimpleDoubleProperty> getSpeeds() {
+    public ObservableList<PropertyDouble> getSpeeds() {
         return speeds;
     }
 

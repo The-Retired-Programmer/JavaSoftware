@@ -15,10 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.boats;
 
-import java.io.IOException;
-import java.util.function.Supplier;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.Angle;
 import uk.theretiredprogrammer.sketch.core.Location;
@@ -35,96 +36,103 @@ public class BoatTurnTest extends TurnTest {
     private Location endturnlocation;
 
     @Test
-    public void test1() throws IOException {
+    public void test1() {
         System.out.println("tacking radius calculation");
         runturntest(45, -45, PORT, 12, new Location(58.28, 58.28), new Location(57.94, 60.56),
-                () -> this.setboatintvalue("heading", 45));
+                () -> setboatdirection(45));
         testradiusY(1.378);
     }
 
     @Test
-    public void test1A() throws IOException {
+    public void test1A() {
         System.out.println("tacking radius calculation - 15kt");
         runturntest(45, -45, PORT, 12, new Location(67.05, 67.05), new Location(66.07, 71.10),
-                () -> this.setboatintvalue("heading", 45),
-                () -> this.setwindflow(15.0, 0.0));
+                () -> setboatdirection(45),
+                () -> setwindflow(15.0, 0.0));
         testradiusY(2.18);
     }
 
     @Test
-    public void test2() throws IOException {
+    public void test2() {
         System.out.println("bearaway radius calculation");
         runturntest(-45, -135, PORT, 12, new Location(41.72, 58.28), new Location(38.06, 57.24),
-                () -> this.setboatintvalue("heading", -45));
+                () -> setboatdirection(-45));
         testradiusX(1.85);
     }
 
     @Test
-    public void test2A() throws IOException {
+    public void test2A() {
         System.out.println("bearaway radius calculation - 15kt");
         runturntest(-45, -135, PORT, 12, new Location(32.95, 67.05), new Location(23.22, 63.60),
-                () -> this.setboatintvalue("heading", -45),
-                () -> this.setwindflow(15.0, 0.0));
+                () -> setboatdirection(-45),
+                () -> setwindflow(15.0, 0.0));
         testradiusX(4.45);
     }
 
     @Test
-    public void test3() throws IOException {
+    public void test3() {
         System.out.println("gybing radius calculation");
         runturntest(-135, 135, PORT, 12, new Location(41.23, 41.23), new Location(42.09, 37.97),
-                () -> this.setboatintvalue("heading", -135));
+                () -> setboatdirection(-135));
         testradiusY(1.69);
     }
 
     @Test
-    public void test3A() throws IOException {
+    public void test3A() {
         System.out.println("gybing radius calculation - 15kt");
         runturntest(-135, 135, PORT, 12, new Location(14.83, 14.83), new Location(18.17, 2.21),
-                () -> this.setboatintvalue("heading", -135),
-                () -> this.setwindflow(15.0, 0.0));
+                () -> setboatdirection(-135),
+                () -> setwindflow(15.0, 0.0));
         testradiusY(6.56);
     }
 
     @Test
-    public void test4() throws IOException {
+    public void test4() {
         System.out.println("luffup radius calculation");
         runturntest(135, 45, PORT, 12, new Location(58.77, 41.23), new Location(62.59, 42.23),
-                () -> this.setboatintvalue("heading", 135));
+                () -> setboatdirection(135));
         testradiusX(1.99);
     }
 
     @Test
-    public void test4A() throws IOException {
+    public void test4A() {
         System.out.println("luffup radius calculation - 15kt");
         runturntest(135, 45, PORT, 12, new Location(85.17, 14.83), new Location(99.33, 17.96),
-                () -> this.setboatintvalue("heading", 135),
-                () -> this.setwindflow(15.0, 0.0));
+                () -> setboatdirection(135),
+                () -> setwindflow(15.0, 0.0));
         testradiusX(7.80);
     }
 
     private void runturntest(int startangleint, int finishangleint,
             boolean turndirection, int secondstospeed,
             Location expectedstartturnlocation, Location expectedendturnlocation,
-            Supplier<String>... configs) throws IOException {
-        Angle startangle = new Angle(startangleint);
-        Angle targetangle = new Angle(finishangleint);
-        setupForTurn("/boat-turn-calculation.json", configs);
-        Boat boat = getUptospeed(secondstospeed);
-        Angle direction = boat.getDirection();
-        assertEquals(startangle, direction);
-        startturnlocation = boat.getLocation();
-        assertAll("startturnlocation",
-                () -> assertEquals(expectedstartturnlocation.getY(), startturnlocation.getY(), DELTA),
-                () -> assertEquals(expectedstartturnlocation.getX(), startturnlocation.getX(), DELTA)
-        );
-        boat = makeTurn(targetangle, turndirection);
-        direction = boat.getDirection();
-        assertEquals(targetangle, direction);
-        endturnlocation = boat.getLocation();
-        assertAll("endturnlocation",
-                () -> assertEquals(expectedendturnlocation.getY(), endturnlocation.getY(), DELTA),
-                () -> assertEquals(expectedendturnlocation.getX(), endturnlocation.getX(), DELTA)
-        );
+            Runnable... updateproperties) {
+        try {
+            Angle startangle = new Angle(startangleint);
+            Angle targetangle = new Angle(finishangleint);
+            setupForTurn("/boat-turn-calculation.json", updateproperties);
+            Boat boat = getUptospeed(secondstospeed);
+            Angle direction = boat.getProperty().getDirection();
+            assertEquals(startangle, direction);
+            startturnlocation = boat.getProperty().getLocation();
+            assertAll("startturnlocation",
+                    () -> assertEquals(expectedstartturnlocation.getY(), startturnlocation.getY(), DELTA),
+                    () -> assertEquals(expectedstartturnlocation.getX(), startturnlocation.getX(), DELTA)
+            );
+            boat = makeTurn(targetangle, turndirection);
+            direction = boat.getProperty().getDirection();
+            assertEquals(targetangle, direction);
+            endturnlocation = boat.getProperty().getLocation();
+            assertAll("endturnlocation",
+                    () -> assertEquals(expectedendturnlocation.getY(), endturnlocation.getY(), DELTA),
+                    () -> assertEquals(expectedendturnlocation.getX(), endturnlocation.getX(), DELTA)
+            );
+        } catch (Exception ex) {
+            StringWriter writer = new StringWriter();
+            PrintWriter pwriter = new PrintWriter(writer);
+            ex.printStackTrace(pwriter);
+            fail("caught failure - " + ex.getMessage() + "\n" + writer.toString());
+        }
     }
 
     private void testradiusY(double expectedradius) {
@@ -151,7 +159,7 @@ public class BoatTurnTest extends TurnTest {
 //        Angle targetangle = new Angle(-135);
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
-//                () -> this.setboatintvalue("heading", -45));
+//                (c) -> setboatdirection(c, -45));
 //        Angle directionproperty = boat.directionproperty;
 //        assertEquals(targetangle, directionproperty);
 //        Location location = boat.getLocation();
@@ -167,7 +175,7 @@ public class BoatTurnTest extends TurnTest {
 //        Angle targetangle = new Angle(135);
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
-//                () -> this.setboatintvalue("heading", -135));
+//                (c) -> setboatdirection(c, -135));
 //        Angle directionproperty = boat.directionproperty;
 //        assertEquals(targetangle, directionproperty);
 //        Location location = boat.getLocation();
@@ -183,7 +191,7 @@ public class BoatTurnTest extends TurnTest {
 //        Angle targetangle = new Angle(45);
 //        TurnDirection turndirection = PORT; 
 //        Boat boat = setupForTurn(targetangle, turndirection, "/boat-turn-calculation.json",
-//                () -> this.setboatintvalue("heading", 135));
+//                (c) -> setboatdirection(c, 135));
 //        Angle directionproperty = boat.directionproperty;
 //        assertEquals(targetangle, directionproperty);
 //        Location location = boat.getLocation();
