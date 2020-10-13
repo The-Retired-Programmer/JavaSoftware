@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.controller;
 
 import java.io.IOException;
-import static java.lang.Double.SIZE;
 import java.util.function.Consumer;
 import uk.theretiredprogrammer.sketch.boats.Boat;
 import uk.theretiredprogrammer.sketch.boats.Boats;
@@ -137,6 +136,8 @@ public class Painter {
     }
 
     // mark
+    private static final double SIZE = 1; // set up as 1 metre diameter object
+    
     private void markdraw(SketchPane canvas, PropertyMark markproperty) throws IOException {
         canvas.drawmark(markproperty.getLocation(), SIZE, 6, markproperty.getColour());
         Angle windAngle = windflow.getFlow(markproperty.getLocation()).getAngle();

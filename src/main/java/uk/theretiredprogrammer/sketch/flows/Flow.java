@@ -108,7 +108,7 @@ public abstract class Flow implements Timerable {
     public void timerAdvance(int simulationtime, TimerLog timerlog) {
         if (flowshiftsproperty.getSwingperiod() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
-            double radians = Math.toRadians(((double) simulationtime % flowshiftsproperty.getShiftperiod()) / flowshiftsproperty.getShiftperiod() * 360);
+            double radians = Math.toRadians(((double) simulationtime % flowshiftsproperty.getSwingperiod()) / flowshiftsproperty.getSwingperiod() * 360);
             swingNow = flowshiftsproperty.getSwingangle().mult(Math.sin(radians));
             timerlog.add(new WindSwingLogEntry(swingNow));
         } else {

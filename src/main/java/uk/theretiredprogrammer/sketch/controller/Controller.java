@@ -18,10 +18,16 @@ package uk.theretiredprogrammer.sketch.controller;
 import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
+import javafx.application.Platform;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import uk.theretiredprogrammer.sketch.boats.Boats;
 import uk.theretiredprogrammer.sketch.core.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.course.Course;
@@ -217,7 +223,26 @@ public class Controller {
                 writetostatusline.accept(ex.getLocalizedMessage());
             } catch (Exception ex) {
                 writetostatusline.accept(ex.getLocalizedMessage());
-            }
+                stop();
+                Platform.runLater(() -> exceptiondialog(ex));
+             }
+        }
+        
+        private void exceptiondialog(Exception ex) {
+            StringWriter writer = new StringWriter();
+            PrintWriter pwriter = new PrintWriter(writer);
+            ex.printStackTrace(pwriter);
+            //fail("caught failure - " + ex.getMessage() + "\n" + writer.toString());
+            ButtonType loginButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+            Dialog<String> dialog = new Dialog<>();
+            dialog.getDialogPane().getButtonTypes().add(loginButtonType);
+//            boolean disabled = false; // computed based on content of text fields, for example
+//            dialog.getDialogPane().lookupButton(loginButtonType).setDisable(disabled);
+            dialog.setTitle("Exception Trap - " + ex.getLocalizedMessage());
+            dialog.setContentText(writer.toString());
+            dialog.setWidth(600);
+            dialog.setResizable(true);
+            dialog.showAndWait();
         }
     }
 }
