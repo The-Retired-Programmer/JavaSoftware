@@ -15,15 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
-import static jakarta.json.JsonValue.ValueType.NUMBER;
-import static jakarta.json.JsonValue.ValueType.STRING;
 import java.io.IOException;
-import java.util.Optional;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
@@ -37,46 +29,6 @@ import uk.theretiredprogrammer.sketch.properties.PropertyDouble;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Gradient {
-
-    public static Optional<Gradient> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        String newtype = "north";
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                int count = -1;
-                ObservableList<PropertyDouble> enteredspeeds = new SimpleListProperty<>();
-                for (JsonValue val : values) {
-                    switch (val.getValueType()) {
-                        case STRING -> {
-                            if (count >= 0) {
-                                throw new IOException("Illegal parameter in gradient definition");
-                            }
-                            newtype = ((JsonString) val).getString();
-                        }
-                        case NUMBER -> {
-                            if (count < 0) {
-                                throw new IOException("Illegal parameter in gradient definition");
-                            }
-                            enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
-                        }
-                        default ->
-                            throw new IOException("Illegal parameter in gradient definition");
-                    }
-                    count++;
-                }
-                return Optional.of(new Gradient(newtype, enteredspeeds));
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Illegal number in gradient definition");
-    }
 
     private final String type;
     private final ObservableList<PropertyDouble> speeds;

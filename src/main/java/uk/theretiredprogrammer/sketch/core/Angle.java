@@ -15,12 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
-
 /**
  * The Angle Class.
  *
@@ -32,23 +26,6 @@ public class Angle {
     public final static Angle ANGLE90 = new Angle(90);
     public final static Angle ANGLE180 = new Angle(180);
     public final static Angle ANGLE90MINUS = new Angle(-90);
-
-    public static Optional<Angle> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.NUMBER) {
-                return Optional.of(new Angle(((JsonNumber) value).doubleValue()));
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - Double expected with " + key);
-    }
 
     private final double angle_degrees; // Range +-179.999.. to +180.0 degrees
 
@@ -176,8 +153,6 @@ public class Angle {
         return Math.toRadians(angle_degrees);
     }
 
-    // for testing purposes 
-    // TODO can we get rid of this
     public final double getDegrees() {
         return angle_degrees;
     }

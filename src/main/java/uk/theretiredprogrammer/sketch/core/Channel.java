@@ -15,43 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
-
 /**
- *
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Channel {
 
     public final static Channel CHANNELOFF = new Channel();
-
-    public static Optional<Channel> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                if (values.size() == 2) {
-                    return Optional.of(new Channel(
-                            values.getJsonNumber(0).intValueExact(),
-                            values.getJsonNumber(1).intValueExact()
-                    ));
-                }
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - List of 2 Integers expected with " + key);
-    }
 
     private final double west;
     private final double east;

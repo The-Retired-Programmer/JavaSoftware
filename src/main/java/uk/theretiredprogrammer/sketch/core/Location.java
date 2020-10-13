@@ -15,14 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
-
 /**
- * A location is a relative position from a logical origin
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
@@ -30,41 +23,7 @@ public class Location {
 
     public final static Location LOCATIONZERO = new Location(0.0, 0.0);
 
-    public static Optional<Location> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                if (values.size() == 2) {
-                    return Optional.of(new Location(
-                            values.getJsonNumber(0).doubleValue(),
-                            values.getJsonNumber(1).doubleValue()
-                    ));
-                }
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - List of 2 numbers expected with " + key);
-    }
-
-    // locations are relative
-    // measured from a logical origin (so x and y are signed)
-    // y +ve is North; x +ve is East
-    // units are in metres
-    /**
-     * The horizontal position (ie east west)
-     */
     private final double x;
-
-    /**
-     * the vertical position (ie north south)
-     */
     private final double y;
 
     public Location(double x, double y) {

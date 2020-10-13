@@ -15,12 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
-
 /**
  * A Polar location is the relative value (distance, flow etc from a logical
  * origin with direction
@@ -28,30 +22,6 @@ import java.util.Optional;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class DistancePolar extends Polar<DistancePolar> {
-//TODO the Polar system and location coordinate system are 180 degrees out of sync in Y direction 
-
-    public static Optional<DistancePolar> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                if (values.size() == 2) {
-                    return Optional.of(new DistancePolar(
-                            values.getJsonNumber(1).doubleValue(),
-                            new Angle(values.getJsonNumber(0).doubleValue())
-                    ));
-                }
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - decimal and decimal expected with " + key);
-    }
 
     private final double distance;
 

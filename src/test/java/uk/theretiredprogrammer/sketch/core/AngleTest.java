@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -562,19 +560,6 @@ public class AngleTest {
         assertEquals(new Angle(-90), instance.inverse());
         instance = new Angle(-90);
         assertEquals(new Angle(90), instance.inverse());
-    }
-
-    @Test
-    public void testparse() throws Exception {
-        System.out.println("parse");
-        Angle angle = Angle.parse(getAngleParameters(), "angle").orElse(Angle.ANGLE0);
-        assertEquals(88, angle.getDegrees());
-    }
-
-    private JsonObject getAngleParameters() {
-        return Json.createObjectBuilder()
-                .add("angle", 88)
-                .build();
     }
 
     @Test

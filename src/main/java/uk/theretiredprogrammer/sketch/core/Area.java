@@ -15,13 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
-
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -29,31 +22,6 @@ import java.util.Optional;
 public class Area {
 
     public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
-
-    public static Optional<Area> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                if (values.size() == 4) {
-                    return Optional.of(new Area(
-                            values.getJsonNumber(0).doubleValue(),
-                            values.getJsonNumber(1).doubleValue(),
-                            values.getJsonNumber(2).doubleValue(),
-                            values.getJsonNumber(3).doubleValue()
-                    ));
-                }
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - List of 4 numbers expected with " + key);
-    }
 
     private final Location bottomleft;
     private final double width;
@@ -84,11 +52,6 @@ public class Area {
     public boolean isWithinArea(Location location) {
         return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width
                 && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height;
-    }
-
-    public JsonArray toJson() {
-        return Json.createArrayBuilder().add(bottomleft.getX())
-                .add(bottomleft.getY()).add(width).add(height).build();
     }
 
     @Override

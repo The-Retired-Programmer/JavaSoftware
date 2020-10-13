@@ -15,12 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import java.io.IOException;
-import java.util.Optional;
 import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 
 /**
@@ -32,29 +26,6 @@ import static uk.theretiredprogrammer.sketch.core.Angle.ANGLE0;
 public class SpeedPolar extends Polar<SpeedPolar> {
 
     public final static SpeedPolar FLOWZERO = new SpeedPolar(0.0, ANGLE0);
-
-    public static Optional<SpeedPolar> parse(JsonObject jobj, String key) throws IOException {
-        if (jobj == null) {
-            return Optional.empty();
-        }
-        JsonValue value = jobj.get(key);
-        if (value == null) {
-            return Optional.empty();
-        }
-        try {
-            if (value.getValueType() == JsonValue.ValueType.ARRAY) {
-                JsonArray values = (JsonArray) value;
-                if (values.size() == 2) {
-                    return Optional.of(new SpeedPolar(
-                            values.getJsonNumber(0).doubleValue(),
-                            new Angle(values.getJsonNumber(1).doubleValue())
-                    ));
-                }
-            }
-        } catch (ArithmeticException ex) {
-        }
-        throw new IOException("Malformed Definition file - decimal and decimal expected with " + key);
-    }
 
     private static final double KNOTSTOMETRESPERSECOND = (double) 1853 / 3600; // multiply knots to get m/s
     // source NASA - 1 knot = 1.853 km/hour
@@ -121,9 +92,5 @@ public class SpeedPolar extends Polar<SpeedPolar> {
 
     public static Angle meanAngle(SpeedPolar[][] array) {
         return Polar.meanAngle(array);
-    }
-
-    public JsonArray toJson() {
-        return Json.createArrayBuilder().add(speed).add(getAngle().getDegrees()).build();
     }
 }

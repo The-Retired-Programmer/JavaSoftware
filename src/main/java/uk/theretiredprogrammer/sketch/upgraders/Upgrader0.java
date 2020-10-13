@@ -23,10 +23,6 @@ import jakarta.json.JsonPointer;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonValue.ValueType;
 import java.io.IOException;
-import uk.theretiredprogrammer.sketch.core.Angle;
-import uk.theretiredprogrammer.sketch.core.Area;
-import uk.theretiredprogrammer.sketch.core.Location;
-import uk.theretiredprogrammer.sketch.core.SpeedPolar;
 
 /**
  *
@@ -70,8 +66,7 @@ public class Upgrader0 extends Upgrader {
         int east = sailingareaobj.getInt("east", -500);
         int north = sailingareaobj.getInt("north", 500);
         int south = sailingareaobj.getInt("south", -500);
-        Area displayarea = new Area(new Location(west, south), east - west, north - south);
-        JsonArray displayareajson = displayarea.toJson();
+        JsonArray displayareajson = area2Json(west, south, east - west, north - south);
         JsonPointer inserthere = Json.createPointer("/display/displayarea");
         newroot = inserthere.add(newroot, displayareajson);
         //
@@ -79,9 +74,8 @@ public class Upgrader0 extends Upgrader {
         int eastlimit = sailingareaobj.getInt("eastlimit", east);
         int northlimit = sailingareaobj.getInt("northlimit", north);
         int southlimit = sailingareaobj.getInt("southlimit", south);
-        Area sailingarea = new Area(new Location(westlimit, southlimit), eastlimit - westlimit, northlimit - southlimit);
-        if (!sailingarea.equals(displayarea)) {
-            JsonArray sailingareajson = sailingarea.toJson();
+        if (!(west == westlimit && east == eastlimit && north == northlimit && south == southlimit)) {
+            JsonArray sailingareajson = area2Json(westlimit, southlimit, eastlimit - westlimit, northlimit - southlimit);
             JsonPointer insert2here = Json.createPointer("/display/sailingarea");
             newroot = insert2here.add(newroot, sailingareajson);
         }
@@ -105,9 +99,8 @@ public class Upgrader0 extends Upgrader {
                     case "constantflow", "testflow" -> {
                         double speed = jobj.getJsonNumber("speed").doubleValue();
                         double direction = jobj.getJsonNumber("from").doubleValue();
-                        SpeedPolar flow = new SpeedPolar(speed, new Angle(direction));
                         inserthere = Json.createPointer("/flow");
-                        newobj = inserthere.add(jobj, flow.toJson());
+                        newobj = inserthere.add(jobj, flow2Json(speed, direction));
                         removehere = Json.createPointer("/speed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/from");
@@ -116,9 +109,8 @@ public class Upgrader0 extends Upgrader {
                     case "complexflow" -> {
                         double northwestspeed = jobj.getJsonNumber("northwestspeed").doubleValue();
                         double northwestdirection = jobj.getJsonNumber("northwestfrom").doubleValue();
-                        SpeedPolar northwestflow = new SpeedPolar(northwestspeed, new Angle(northwestdirection));
                         inserthere = Json.createPointer("/northwestflow");
-                        newobj = inserthere.add(jobj, northwestflow.toJson());
+                        newobj = inserthere.add(jobj, flow2Json(northwestspeed,northwestdirection));
                         removehere = Json.createPointer("/northwestspeed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/northwestfrom");
@@ -126,9 +118,8 @@ public class Upgrader0 extends Upgrader {
                         //
                         double northeastspeed = jobj.getJsonNumber("northeastspeed").doubleValue();
                         double northeastdirection = jobj.getJsonNumber("northeastfrom").doubleValue();
-                        SpeedPolar northeastflow = new SpeedPolar(northeastspeed, new Angle(northeastdirection));
                         inserthere = Json.createPointer("/northeastflow");
-                        newobj = inserthere.add(newobj, northeastflow.toJson());
+                        newobj = inserthere.add(newobj, flow2Json(northeastspeed, northeastdirection));
                         removehere = Json.createPointer("/northeastspeed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/northeastfrom");
@@ -136,9 +127,8 @@ public class Upgrader0 extends Upgrader {
                         //
                         double southwestspeed = jobj.getJsonNumber("southwestspeed").doubleValue();
                         double southwestdirection = jobj.getJsonNumber("southwestfrom").doubleValue();
-                        SpeedPolar southwestflow = new SpeedPolar(southwestspeed, new Angle(southwestdirection));
                         inserthere = Json.createPointer("/southwestflow");
-                        newobj = inserthere.add(newobj, southwestflow.toJson());
+                        newobj = inserthere.add(newobj, flow2Json(southwestspeed, southwestdirection));
                         removehere = Json.createPointer("/southwestspeed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/southwestfrom");
@@ -146,9 +136,8 @@ public class Upgrader0 extends Upgrader {
                         //
                         double southeastspeed = jobj.getJsonNumber("southeastspeed").doubleValue();
                         double southeastdirection = jobj.getJsonNumber("southeastfrom").doubleValue();
-                        SpeedPolar southeastflow = new SpeedPolar(southeastspeed, new Angle(southeastdirection));
                         inserthere = Json.createPointer("/southeastflow");
-                        newobj = inserthere.add(newobj, southeastflow.toJson());
+                        newobj = inserthere.add(newobj, flow2Json(southeastspeed, southeastdirection));
                         removehere = Json.createPointer("/southeastspeed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/southeastfrom");
@@ -164,9 +153,8 @@ public class Upgrader0 extends Upgrader {
                     double y = loc.getJsonNumber(1).doubleValue();
                     double w = jobj.getJsonNumber("width").doubleValue();
                     double h = jobj.getJsonNumber("height").doubleValue();
-                    Area area = new Area(x, y, w, h);
                     inserthere = Json.createPointer("/area");
-                    newobj = inserthere.add(newobj, area.toJson());
+                    newobj = inserthere.add(newobj, area2Json(x,y,w,h));
                     removehere = Json.createPointer("/location");
                     newobj = removehere.remove(newobj);
                     removehere = Json.createPointer("/width");
@@ -183,5 +171,18 @@ public class Upgrader0 extends Upgrader {
             }
         }
         return newarray;
+    }
+
+    private JsonArray flow2Json(double speed, double direction) {
+        return Json.createArrayBuilder().add(speed).add(direction).build();
+    }
+
+    private JsonArray area2Json(double x, double y, double w, double h) {
+        return Json.createArrayBuilder()
+                .add(x)
+                .add(y)
+                .add(w)
+                .add(h)
+                .build();
     }
 }

@@ -15,9 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -27,16 +24,6 @@ import javafx.collections.ObservableList;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class LegValue {
-
-    public static LegValue parseElement(JsonValue parameter) {
-        if (parameter.getValueType() == JsonValue.ValueType.ARRAY) {
-            JsonArray values = (JsonArray) parameter;
-            if (values.size() == 2) {
-                return new LegValue(values.getString(0), values.getString(1));
-            }
-        }
-        return null;
-    }
 
     private final String mark;
     private final String passing;
@@ -67,13 +54,6 @@ public class LegValue {
 
     public String getMarkname() {
         return mark;
-    }
-
-    public JsonArray toJson() {
-        return Json.createArrayBuilder()
-                .add(mark)
-                .add(passing)
-                .build();
     }
 
     @Override
