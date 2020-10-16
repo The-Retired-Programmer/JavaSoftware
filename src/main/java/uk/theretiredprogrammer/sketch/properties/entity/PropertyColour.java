@@ -18,13 +18,13 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -54,14 +54,14 @@ public class PropertyColour extends PropertyElement<Color> {
     }
 
     @Override
-    public Color parsevalue(JsonValue value) throws IOException {
+    public Color parsevalue(JsonValue value) {
         if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
             Color color = string2color(((JsonString) value).getString());
             if (color != null) {
                 return color;
             }
         }
-        throw new IOException("Malformed Definition file - Colour name or hex string expected");
+        throw new ParseFailure("Malformed Definition file - Colour name or hex string expected");
     }
 
     @Override
@@ -70,12 +70,12 @@ public class PropertyColour extends PropertyElement<Color> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return getField(controller, 0);
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         ColorPicker picker = new ColorPicker();
         picker.setValue(get());
         picker.setOnAction(actionEvent -> {
@@ -109,7 +109,8 @@ public class PropertyColour extends PropertyElement<Color> {
         return color.toString();
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

@@ -18,12 +18,12 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.LegValue;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -58,13 +58,13 @@ public class PropertyLegValue extends PropertyElement<LegValue> {
     }
 
     @Override
-    public final void set(LegValue newleg) throws IOException {
+    public final void set(LegValue newleg) {
         marknameproperty.setValue(newleg.getMarkname());
         roundingproperty.set(newleg.getRoundingdirection());
     }
 
     @Override
-    public final LegValue parsevalue(JsonValue jvalue) throws IOException {
+    public final LegValue parsevalue(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
@@ -74,7 +74,7 @@ public class PropertyLegValue extends PropertyElement<LegValue> {
                 );
             }
         }
-        throw new IOException("Malformed Definition file - List of 2 Strings expected");
+        throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
     }
 
     @Override
@@ -86,21 +86,21 @@ public class PropertyLegValue extends PropertyElement<LegValue> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return new HBox(marknameproperty.getField(controller), roundingproperty.getField(controller));
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         return getField(controller, size, size);
     }
 
-    private Node getField(Controller controller, int sizemark, int sizerounding) {
+    private Node getField(DisplayController controller, int sizemark, int sizerounding) {
         return new HBox(marknameproperty.getField(controller, sizemark), roundingproperty.getField(controller, sizerounding));
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

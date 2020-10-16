@@ -18,13 +18,13 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -58,14 +58,14 @@ public class PropertyInteger extends PropertyElement<Integer> {
     }
 
     @Override
-    public Integer parsevalue(JsonValue value) throws IOException {
+    public Integer parsevalue(JsonValue value) {
         if (value != null & value.getValueType() == JsonValue.ValueType.NUMBER) {
             try {
                 return ((JsonNumber) value).intValueExact();
             } catch (ArithmeticException ex) {
             }
         }
-        throw new IOException("Malformed Definition file - Integer expected");
+        throw new ParseFailure("Malformed Definition file - Integer expected");
     }
 
     @Override
@@ -74,12 +74,12 @@ public class PropertyInteger extends PropertyElement<Integer> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return getField(controller, 5);
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         TextField intfield = new TextField(Integer.toString(integerproperty.get()));
         intfield.setPrefColumnCount(size);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
@@ -88,8 +88,8 @@ public class PropertyInteger extends PropertyElement<Integer> {
         return intfield;
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
-
 }

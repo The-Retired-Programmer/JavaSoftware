@@ -16,11 +16,11 @@
 package uk.theretiredprogrammer.sketch.properties.entity;
 
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -54,7 +54,7 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     }
 
     @Override
-    public final Boolean parsevalue(JsonValue value) throws IOException {
+    public final Boolean parsevalue(JsonValue value) {
         if (value != null) {
             switch (value.getValueType()) {
                 case TRUE -> {
@@ -65,7 +65,7 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
                 }
             }
         }
-        throw new IOException("Malformed Definition file - Boolean expected");
+        throw new ParseFailure("Malformed Definition file - Boolean expected");
     }
 
     @Override
@@ -74,7 +74,7 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         CheckBox booleanfield = new CheckBox();
         booleanfield.setSelected(get());
         booleanfield.selectedProperty().bindBidirectional(booleanproperty);
@@ -82,11 +82,12 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         return getField(controller);
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

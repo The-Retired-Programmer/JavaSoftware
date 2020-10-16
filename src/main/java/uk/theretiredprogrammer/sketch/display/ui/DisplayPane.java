@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2020 richard.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.control;
+package uk.theretiredprogrammer.sketch.display.ui;
 
-import java.io.IOException;
-import uk.theretiredprogrammer.sketch.decisionslog.control.TimerLog;
+import javafx.scene.canvas.Canvas;
 
 /**
- * The Element Class - represents the core class of every simulation object
- * class.
  *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
+ * @author richard
  */
-public interface Timerable {
-
-    public void timerAdvance(int time, TimerLog timerlog) throws IOException;
+public class DisplayPane  extends Canvas {
 }

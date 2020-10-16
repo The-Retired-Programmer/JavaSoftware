@@ -34,7 +34,8 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponen
 public abstract class FlowComponent {
 
     public static FlowComponent factory(PropertyFlowComponent componentproperty) {
-        switch (componentproperty.getType()) {
+        String type = componentproperty.getType();
+        switch (type) {
             case "testflow" -> {
                 return new TestFlowComponent((PropertyTestFlowComponent) componentproperty);
             }
@@ -48,7 +49,7 @@ public abstract class FlowComponent {
                 return new GradientFlowComponent((PropertyGradientFlowComponent) componentproperty);
             }
             default ->
-                throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition");
+                throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition ("+type+")");
         }
     }
 

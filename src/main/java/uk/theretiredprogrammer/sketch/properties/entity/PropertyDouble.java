@@ -18,12 +18,12 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -42,18 +42,12 @@ public class PropertyDouble extends PropertyElement<Double> {
         doubleproperty = new SimpleDoubleProperty(defaultvalue);
     }
 
-//    public PropertyValueDouble(JsonValue jvalue) throws IOException {
-//        this(jvalue, null);
-//    }
-//
-//    public PropertyValueDouble(String key, JsonValue jvalue, Double defaultvalue) throws IOException {
-//        this(key, defaultvalue);
-//        set(parsevalue(jvalue));
-//    }
+    @Override
     public final Double get() {
         return doubleproperty.get();
     }
 
+    @Override
     public final void set(Double newdouble) {
         doubleproperty.set(newdouble);
     }
@@ -63,11 +57,11 @@ public class PropertyDouble extends PropertyElement<Double> {
     }
 
     @Override
-    public Double parsevalue(JsonValue jvalue) throws IOException {
+    public Double parsevalue(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             return ((JsonNumber) jvalue).doubleValue();
         }
-        throw new IOException("Malformed Definition file - Decimal expected");
+        throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
     @Override
@@ -76,12 +70,12 @@ public class PropertyDouble extends PropertyElement<Double> {
     }
 
     @Override
-    public TextField getField(Controller controller) {
+    public TextField getField(DisplayController controller) {
         return getField(controller, 10);
     }
 
     @Override
-    public TextField getField(Controller controller, int size) {
+    public TextField getField(DisplayController controller, int size) {
         TextField doublefield = new TextField(Double.toString(doubleproperty.get()));
         doublefield.setPrefColumnCount(size);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
@@ -90,7 +84,8 @@ public class PropertyDouble extends PropertyElement<Double> {
         return doublefield;
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

@@ -16,14 +16,13 @@
 package uk.theretiredprogrammer.sketch.properties.entity;
 
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.util.function.UnaryOperator;
 import javafx.scene.Node;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.text.Font;
 import static javafx.scene.text.FontWeight.NORMAL;
 import javafx.scene.text.Text;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -36,17 +35,17 @@ public abstract class PropertyElement<C extends Object> extends PropertyAny<C> {
         return get();
     }
 
-    public final void setValue(C newvalue) throws IOException {
+    public final void setValue(C newvalue) {
         set(newvalue);
     }
 
-    abstract void set(C newvalue) throws IOException;
+    abstract void set(C newvalue);
 
-    abstract C parsevalue(JsonValue jvalue) throws IOException;
+    abstract C parsevalue(JsonValue jvalue);
 
-    public abstract Node getField(Controller controller, int size);
+    public abstract Node getField(DisplayController controller, int size);
 
-    public abstract Node getField(Controller controller);
+    public abstract Node getField(DisplayController controller);
 
     //
     UnaryOperator<TextFormatter.Change> doubleFilter = change -> {

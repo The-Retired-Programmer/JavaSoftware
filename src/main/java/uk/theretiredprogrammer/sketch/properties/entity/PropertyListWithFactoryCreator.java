@@ -18,8 +18,8 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.util.function.Function;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -41,7 +41,7 @@ public abstract class PropertyListWithFactoryCreator<P extends PropertyAny> exte
     }
 
     @Override
-    public void parse(JsonValue jvalue) throws IOException {
+    public void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray array = ((JsonArray) jvalue);
             for (JsonValue value : array) {
@@ -54,7 +54,7 @@ public abstract class PropertyListWithFactoryCreator<P extends PropertyAny> exte
                         add(oproperty);
                     }
                     default ->
-                        throw new IOException("Malformed Definition File - array contains items other than the expected object/array (key=" + getKeyForInfo() + ")");
+                        throw new ParseFailure("Malformed Definition File - array contains items other than the expected object/array (key=" + getKeyForInfo() + ")");
                 }
             }
         }

@@ -15,9 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategyForLeg;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Leg;
 import java.io.IOException;
 import java.util.Arrays;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -32,7 +29,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponent;
 
@@ -43,14 +40,12 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponen
 public class SailingStrategyTest {
 
     private Boat boat;
-    private Controller controller;
+    private DisplayController controller;
     private Angle winddirection;
 
     public Decision makeDecision(String filename, Runnable... updateproperties) throws IOException {
-        controller = new Controller(filename)
-                .setOnSketchChange(() -> fail("BAD - Callback() made -should not occur"))
-                .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
-                .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
+        controller = new DisplayController();
+        controller.createFromResource(filename);
         boat = controller.boats.getBoat("Red");
         for (var updateaction : updateproperties) {
             updateaction.run();

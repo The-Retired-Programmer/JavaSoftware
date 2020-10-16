@@ -15,14 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponent;
 
@@ -33,14 +32,12 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponen
 public class TurnTest {
 
     private Boat boat;
-    private Controller controller;
+    private DisplayController controller;
     private Decision decision;
 
     Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
-        controller = new Controller(filename)
-                .setOnSketchChange(() -> fail("BAD - Callback() made -should not occur"))
-                .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
-                .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
+        controller = new DisplayController();
+        controller.createFromResource(filename);
         boat = controller.boats.getBoat("Red");
         //
         for (var updateaction : updateproperties) {

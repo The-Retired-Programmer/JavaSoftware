@@ -20,10 +20,9 @@ import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.decisionslog.control.TimerLog;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
-import uk.theretiredprogrammer.sketch.display.control.Timerable;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponents;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowShifts;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
@@ -32,7 +31,7 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public abstract class Flow implements Timerable {
+public abstract class Flow {
 
     final static int WIDTHSTEPS = 100;
     final static int HEIGHTSTEPS = 100;
@@ -104,8 +103,7 @@ public abstract class Flow implements Timerable {
         return SpeedPolar.meanAngle(flowarray);
     }
 
-    @Override
-    public void timerAdvance(int simulationtime, TimerLog timerlog) {
+    public void timerAdvance(int simulationtime, DecisionController timerlog) {
         if (flowshiftsproperty.getSwingperiod() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
             double radians = Math.toRadians(((double) simulationtime % flowshiftsproperty.getSwingperiod()) / flowshiftsproperty.getSwingperiod() * 360);

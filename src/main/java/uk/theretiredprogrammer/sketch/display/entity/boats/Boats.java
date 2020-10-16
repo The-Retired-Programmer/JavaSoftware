@@ -29,7 +29,7 @@ public class Boats {
 
     private List<Boat> boats = new ArrayList<>();
 
-    public Boats(PropertySketch sketchproperty) throws IOException {
+    public Boats(PropertySketch sketchproperty)  {
         for (var boatproperty : sketchproperty.getBoats().getList()) {
             boats.add(BoatFactory.createBoat(boatproperty, sketchproperty));
         }

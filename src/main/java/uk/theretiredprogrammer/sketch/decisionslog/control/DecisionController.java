@@ -17,14 +17,15 @@ package uk.theretiredprogrammer.sketch.decisionslog.control;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.TimerLogEntry;
+import uk.theretiredprogrammer.sketch.decisionslog.ui.DecisionDisplayWindow;
 
 /**
  *
  * @author richard
  */
-public class TimerLog {
+public class DecisionController {
 
     private String mmsstime;
     private final List<TimerLogEntry> log = new ArrayList<>();
@@ -47,14 +48,26 @@ public class TimerLog {
         entry.setTime(mmsstime);
         log.add(entry);
     }
+    
+    private DecisionDisplayWindow decisiondisplaywindow = null;
 
-    public void write2output(Consumer<String> outwriter) {
-        log.stream().forEach(entry -> outwriter.accept(entry.toString()));
+    public void showFullDecisionWindow(String fn, AbstractWindow parent) {
+        showDecisionWindow(fn, parent);
+        log.stream()
+                .forEach(entry -> decisiondisplaywindow.writeline(entry.toString()));
     }
 
-    public void writefiltered2output(Consumer<String> outwriter, String boatname) {
+    public void showFilteredDecisionWindow(String fn, AbstractWindow parent) {
+        showDecisionWindow(fn, parent);
         log.stream()
-                .filter(entry -> entry.hasName(boatname))
-                .forEach(entry -> outwriter.accept(entry.toString()));
+                .filter(entry -> entry.hasName("SELECTED"))
+                .forEach(entry -> decisiondisplaywindow.writeline(entry.toString()));
+    }
+
+    private void showDecisionWindow(String fn, AbstractWindow parent) {
+        if (decisiondisplaywindow == null) {
+            decisiondisplaywindow = new DecisionDisplayWindow(fn, parent);
+        }
+        decisiondisplaywindow.clear();
     }
 }

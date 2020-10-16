@@ -15,16 +15,18 @@
  */
 package uk.theretiredprogrammer.sketch.fileselector.ui;
 
-import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.display.ui.SketchWindow;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TitledPane;
 import javafx.stage.Stage;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
+import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
 
 /**
  *
@@ -32,93 +34,90 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class FileSelectorWindow extends AbstractWindow {
 
-    private final RecentFilesList recents;
-    private final FolderList folders;
+    public final FileSelectorController controller;
+    private final FileSelectorPane fileselectorpane;
 
-    public static FileSelectorWindow create(Stage stage) {
-        return new FileSelectorWindow(stage);
-    }
-
-    private FileSelectorWindow(Stage stage) {
+    public FileSelectorWindow(FileSelectorController controller, Stage stage) {
         super(FileSelectorWindow.class, stage);
         //
-        recents = new RecentFilesList((pn -> selected(pn)));
-        folders = new FolderList((pn -> selected(pn)));
-        //
+        this.controller = controller;
         setDefaultWindowWidth(400);
         setTitle("SKETCH Scenario Selector");
-        FileSelectorPane fileselectorpane = new FileSelectorPane();
+        fileselectorpane = new FileSelectorPane();
         setContent(fileselectorpane);
         addtoMenubar(
                 UI.menu("Scenarios",
-                        UI.menuitem("New", ev -> newConfigfile())
+                        UI.menuitem("New", ev -> controller.newConfigfile())
                 ),
                 UI.menu("Folders",
-                        UI.menuitem("Add", ev -> folders.choose(stage)),
-                        UI.menuitem("Remove", ev -> folders.remove(fileselectorpane))
+                        UI.menuitem("Add", ev -> controller.addFolder(stage)),
+                        UI.menuitem("Remove", ev -> remove(fileselectorpane))
                 ),
                 UI.menu("Recent Scenarios List",
-                        UI.menuitem("Clear List", ev -> recents.clear())
+                        UI.menuitem("Clear List", ev -> controller.clearRecents())
                 ),
                 UI.menu("Windows",
                         UI.menuitem("Reset Positions and Sizes", ev -> resetWindows())
                 )
         );
         addtoToolbar(
-                UI.toolbarButton("folder_add.png", "Add Scenario Folder", ev -> folders.choose(stage)),
-                UI.toolbarButton("folder_delete.png", "Remove Scenario Folder", ev -> folders.remove(fileselectorpane)),
-                UI.toolbarButton("page_add.png", "New Scenario", ev -> newConfigfile()),
-                UI.toolbarButton("link_delete.png", "Clear Recent Scenarios List", ev -> recents.clear()),
+                UI.toolbarButton("folder_add.png", "Add Scenario Folder", ev -> controller.addFolder(stage)),
+                UI.toolbarButton("folder_delete.png", "Remove Scenario Folder", ev -> remove(fileselectorpane)),
+                UI.toolbarButton("page_add.png", "New Scenario", ev -> controller.newConfigfile()),
+                UI.toolbarButton("link_delete.png", "Clear Recent Scenarios List", ev -> controller.clearRecents()),
                 new Separator(),
                 UI.toolbarButton("application_cascade.png", "Reset Windows Positions", ev -> resetWindows())
         );
         this.setOnCloseAction((e) -> {
-            recents.close();
-            folders.close();
+            controller.close();
         });
         show();
     }
 
-    private void newConfigfile() {
-        statusbarDisplay();
-        Controller controller;
-        PropertySketch sketchproperty;
-        try {
-            controller = new Controller("newtemplate.json");
-            sketchproperty = controller.getProperty();
-        } catch (IOException ex) {
-            statusbarDisplay("<new>: " + ex.getLocalizedMessage());
-            return;
-        }
-        SketchWindow.create("<new>", controller, sketchproperty, this);
-    }
-
-    private void selected(PathWithShortName pn) {
-        statusbarDisplay();
-        Controller controller;
-        PropertySketch sketchproperty;
-        try {
-            controller = new Controller(pn.getPath());
-            sketchproperty = controller.getProperty();
-        } catch (IOException ex) {
-            statusbarDisplay(pn.toString() + ": " + ex.getLocalizedMessage());
-            return;
-        }
-        recents.updateRecentFileList(pn);
-        SketchWindow.create(pn.toString(), controller, sketchproperty, this);
+    public void refreshWindow() {
+        fileselectorpane.refresh();
     }
 
     public class FileSelectorPane extends Accordion {
 
         public FileSelectorPane() {
-            this.getPanes().add(recents.getPane());
-            this.getPanes().addAll(folders.getPanes((s) -> this.refresh(s)));
+            this.getPanes().add(getRecentsPane());
+            this.getPanes().addAll(getFolderPanes());
         }
 
-        private void refresh(String s) {
+        private void refresh() {
             this.getPanes().clear();
-            this.getPanes().add(recents.getPane());
-            this.getPanes().addAll(folders.getPanes());
+            this.getPanes().add(getRecentsPane());
+            this.getPanes().addAll(getFolderPanes());
+        }
+    }
+
+    public TitledPane getRecentsPane() {
+        ListView<PathWithShortName> recentsview = new ListView<>(controller.getRecents());
+        recentsview.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> controller.recentSelected(newValue));
+        TitledPane titledpane = new TitledPane("Recently Opened Scenarios", new ScrollPane(recentsview));
+        titledpane.setGraphic(UI.image("link.png"));
+        return titledpane;
+    }
+
+    public List<TitledPane> getFolderPanes() {
+        List<TitledPane> panes = new ArrayList<>();
+        for (var pn : controller.getFolders()) {
+            ListView<PathWithShortName> filesview = new ListView<>(controller.getFoldercontent(pn));
+            filesview.getSelectionModel().selectedItemProperty().addListener(
+                    (observable, oldValue, newValue) -> controller.selected(newValue));
+            TitledPane titledpane = new TitledPane(pn.toString(), new ScrollPane(filesview));
+            titledpane.setGraphic(UI.image("folder.png"));
+            panes.add(titledpane);
+        }
+        return panes;
+    }
+
+    private void remove(FileSelectorPane fileselectorpane) {
+        TitledPane expandedpane = fileselectorpane.getExpandedPane();
+        if (expandedpane != null) {
+            controller.removefromfolderlist(expandedpane.getText());
         }
     }
 }

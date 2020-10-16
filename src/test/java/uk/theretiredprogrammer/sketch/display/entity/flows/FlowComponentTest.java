@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -28,13 +28,11 @@ import uk.theretiredprogrammer.sketch.display.control.Controller;
 public abstract class FlowComponentTest {
 
     final static double DELTA = 0.0000001;
-    private Controller controller;
+    private DisplayController controller;
 
     public void initialiseFlow(String filename) throws IOException {
-        controller = new Controller(filename)
-                .setOnSketchChange(() -> fail("BAD - Callback() made -should not occur"))
-                .setOnTimeChange((i) -> fail("BAD - Callback(int) made -should not occur"))
-                .setShowDecisionLine((s) -> fail("BAD - Callback(String) made -should not occur"));
+        controller = new DisplayController();
+        controller.createFromResource(filename);
     }
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {

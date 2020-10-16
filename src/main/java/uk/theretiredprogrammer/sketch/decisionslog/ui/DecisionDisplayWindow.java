@@ -25,13 +25,9 @@ import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
  */
 public class DecisionDisplayWindow extends AbstractWindow {
 
-    public static DecisionDisplayWindow create(String fn, AbstractWindow parent) {
-        return new DecisionDisplayWindow(fn, parent);
-    }
-
     private final TextFlow textarea;
 
-    private DecisionDisplayWindow(String fn, AbstractWindow parent) {
+    public DecisionDisplayWindow(String fn, AbstractWindow parent) {
         super(DecisionDisplayWindow.class, parent);
         setTitle("SKETCH Decisions Viewer - " + fn);
         setDefaultWindowWidth(400);

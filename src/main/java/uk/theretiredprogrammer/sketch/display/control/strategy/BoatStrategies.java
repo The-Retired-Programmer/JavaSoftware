@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
-import uk.theretiredprogrammer.sketch.decisionslog.control.TimerLog;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -45,7 +45,7 @@ public class BoatStrategies {
         return boatstrategies.get(boat.getName());
     }
 
-    public void timerAdvance(PropertySketch sketchproperty, int simulationtime, TimerLog timerlog, WindFlow windflow, WaterFlow waterflow) {
+    public void timerAdvance(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         boatstrategies.values().forEach(boatstrategy -> {
             BoatStrategyForLeg newstrategy = boatstrategy.nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {

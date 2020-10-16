@@ -30,15 +30,4 @@ public class PropertyMarks extends PropertyListNamedWithSimpleCreator<PropertyMa
     public PropertyMarks get() {
         return this;
     }
-
-    @Override
-    public final void add(PropertyMark property) {
-        super.add(property);
-        // recreate the mark names here
-    }
-
-    public final void remove(PropertyMark property) {
-        super.remove(property);
-        // recreate the mark names here
-    }
 }

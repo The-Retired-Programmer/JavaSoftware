@@ -18,12 +18,12 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -56,7 +56,7 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
     }
 
     @Override
-    public final SpeedPolar parsevalue(JsonValue value) throws IOException {
+    public final SpeedPolar parsevalue(JsonValue value) {
         if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) value;
             if (values.size() == 2) {
@@ -66,7 +66,7 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
                 );
             }
         }
-        throw new IOException("Malformed Definition file - two numbers expected");
+        throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
 
     @Override
@@ -78,16 +78,16 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return getField(controller, 6, 7);
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         return getField(controller, size, size);
     }
 
-    private Node getField(Controller controller, int sizespeed, int sizedirection) {
+    private Node getField(DisplayController controller, int sizespeed, int sizedirection) {
         return new TextFlow(
                 speedproperty.getField(controller, sizespeed),
                 createTextFor("@"),
@@ -95,7 +95,8 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
                 createTextFor("˚"));
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

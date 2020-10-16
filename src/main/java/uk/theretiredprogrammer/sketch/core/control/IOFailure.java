@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.upgraders;
+package uk.theretiredprogrammer.sketch.core.control;
 
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import java.io.IOException;
 
 /**
  *
  * @author richard
  */
-public class UpgraderFactory {
+public class IOFailure extends RuntimeException {
 
-    public static Upgrader createUpgrader(int version) {
-        switch (version) {
-            case 0 -> {
-                return new Upgrader0();
-            }
-            default ->
-                throw new IllegalStateFailure("UpgraderFactory - no upgrader available: " + version + " to " + version + 1);
-        }
+    public IOFailure(String message) {
+        super(message);
+    }
+    
+    public IOFailure(IOException ex){
+        super(ex);
     }
 }

@@ -18,12 +18,12 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -48,14 +48,6 @@ public class PropertyArea extends PropertyElement<Area> {
         heightproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getHeight());
     }
 
-//    public PropertyValueArea(JsonValue jvalue) throws IOException {
-//        this(jvalue, null);
-//    }
-//
-//    public PropertyValueArea(JsonValue jvalue, Area defaultvalue) throws IOException {
-//        this(defaultvalue);
-//        set(parsevalue(jvalue));
-//    }
     @Override
     public final Area get() {
         Double xval = xproperty.get();
@@ -72,7 +64,7 @@ public class PropertyArea extends PropertyElement<Area> {
     }
 
     @Override
-    public final Area parsevalue(JsonValue value) throws IOException {
+    public final Area parsevalue(JsonValue value) {
         if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) value;
             if (values.size() == 4) {
@@ -84,7 +76,7 @@ public class PropertyArea extends PropertyElement<Area> {
                 );
             }
         }
-        throw new IOException("Malformed Definition file - List of 4 numbers expected");
+        throw new ParseFailure("Malformed Definition file - List of 4 numbers expected");
     }
 
     @Override
@@ -100,7 +92,7 @@ public class PropertyArea extends PropertyElement<Area> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return new HBox(
                 createTextFor("["),
                 xproperty.getField(controller, 7),
@@ -114,7 +106,7 @@ public class PropertyArea extends PropertyElement<Area> {
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         return new HBox(
                 createTextFor("["),
                 xproperty.getField(controller, size),
@@ -127,7 +119,8 @@ public class PropertyArea extends PropertyElement<Area> {
         );
     }
 
-    public final void parse(JsonValue jvalue) throws IOException {
+    @Override
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

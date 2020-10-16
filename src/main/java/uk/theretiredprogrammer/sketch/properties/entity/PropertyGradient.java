@@ -21,14 +21,14 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Gradient;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -62,13 +62,13 @@ public class PropertyGradient extends PropertyElement<Gradient> {
     }
 
     @Override
-    public final void set(Gradient newgradient) throws IOException {
+    public final void set(Gradient newgradient) {
         typeproperty.setValue(newgradient == null ? null : newgradient.getType());
         speedsproperty = newgradient == null ? FXCollections.observableArrayList() : newgradient.getSpeeds();
     }
 
     @Override
-    public Gradient parsevalue(JsonValue value) throws IOException {
+    public Gradient parsevalue(JsonValue value) {
         String newtype = "north";
         if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) value;
@@ -78,24 +78,24 @@ public class PropertyGradient extends PropertyElement<Gradient> {
                 switch (val.getValueType()) {
                     case STRING -> {
                         if (count >= 0) {
-                            throw new IOException("Illegal parameter in gradient definition");
+                            throw new ParseFailure("Illegal parameter in gradient definition");
                         }
                         newtype = ((JsonString) val).getString();
                     }
                     case NUMBER -> {
                         if (count < 0) {
-                            throw new IOException("Illegal parameter in gradient definition");
+                            throw new ParseFailure("Illegal parameter in gradient definition");
                         }
                         enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
                     }
                     default ->
-                        throw new IOException("Illegal parameter in gradient definition");
+                        throw new ParseFailure("Illegal parameter in gradient definition");
                 }
                 count++;
             }
             return new Gradient(newtype, enteredspeeds);
         }
-        throw new IOException("Illegal number in gradient definition");
+        throw new ParseFailure("Illegal number in gradient definition");
     }
 
     @Override
@@ -112,21 +112,21 @@ public class PropertyGradient extends PropertyElement<Gradient> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         HBox hbox = new HBox(typeproperty.getField(controller));
         speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
         return hbox;
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         HBox hbox = new HBox(typeproperty.getField(controller));
         speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
         return hbox;
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

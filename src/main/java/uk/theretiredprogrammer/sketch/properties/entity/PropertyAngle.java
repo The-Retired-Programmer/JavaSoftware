@@ -20,7 +20,7 @@ import jakarta.json.JsonValue;
 import java.io.IOException;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -51,7 +51,7 @@ public class PropertyAngle extends PropertyElement<Angle> {
     }
 
     @Override
-    public final Angle parsevalue(JsonValue jvalue) throws IOException {
+    public final Angle parsevalue(JsonValue jvalue) {
         return new Angle(angleproperty.parsevalue(jvalue));
     }
 
@@ -62,17 +62,17 @@ public class PropertyAngle extends PropertyElement<Angle> {
     }
 
     @Override
-    public TextField getField(Controller controller) {
+    public TextField getField(DisplayController controller) {
         return angleproperty.getField(controller, 7);
     }
 
     @Override
-    public TextField getField(Controller controller, int size) {
+    public TextField getField(DisplayController controller, int size) {
         return angleproperty.getField(controller, size);
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue)  {
         set(parsevalue(jvalue));
     }
 }

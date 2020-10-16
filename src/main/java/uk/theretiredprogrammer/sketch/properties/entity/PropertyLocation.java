@@ -18,11 +18,11 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -55,7 +55,7 @@ public class PropertyLocation extends PropertyElement<Location> {
     }
 
     @Override
-    public Location parsevalue(JsonValue jvalue) throws IOException {
+    public Location parsevalue(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
@@ -65,7 +65,7 @@ public class PropertyLocation extends PropertyElement<Location> {
                 );
             }
         }
-        throw new IOException("Malformed Definition file - List of 2 numbers expected");
+        throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
     }
 
     @Override
@@ -77,12 +77,12 @@ public class PropertyLocation extends PropertyElement<Location> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return getField(controller, 7);
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         return new TextFlow(
                 createTextFor("["),
                 xlocationproperty.getField(controller, size),
@@ -93,7 +93,7 @@ public class PropertyLocation extends PropertyElement<Location> {
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
 }

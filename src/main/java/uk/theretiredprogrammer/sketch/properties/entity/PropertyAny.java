@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.properties.entity;
 
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 
@@ -31,7 +30,7 @@ public abstract class PropertyAny<C> {
 
     public abstract C get();
 
-    public abstract void parse(JsonValue jvalue) throws IOException;
+    public abstract void parse(JsonValue jvalue);
 
     private Optional<String> key = Optional.empty();
 

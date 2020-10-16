@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.properties.entity;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
@@ -27,12 +29,23 @@ import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class PropertyBoat extends PropertyMap implements PropertyNamed {
+    
+    private static final ObservableList<String> classes;
+    
+    static {
+        classes = FXCollections.observableArrayList();
+        classes.addAll("laser2");
+    }
+    
+    public static ObservableList<String> getClasses() {
+        return classes;
+    }
 
     public final Channel upwindchannel = CHANNELOFF;
     public final Channel downwindchannel = CHANNELOFF;
 
-    private final Config<PropertyString, String> name = new Config<PropertyString, String>("name", MANDATORY, (s) -> new PropertyString(s, "<name>"));
-    private final Config<PropertyString, String> type = new Config<PropertyString, String>("type", MANDATORY, (s) -> new PropertyString(s, "laser2"));
+    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
+    private final Config<PropertyConstrainedString, String> type;
     private final Config<PropertyAngle, Angle> heading = new Config<PropertyAngle, Angle>("heading", OPTIONAL, (s) -> new PropertyAngle(s, ANGLE0));
     private final Config<PropertyLocation, Location> location = new Config<PropertyLocation, Location>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
     private final Config<PropertyColour, Color> colour = new Config<PropertyColour, Color>("colour", OPTIONAL, (s) -> new PropertyColour(s, Color.BLACK));
@@ -48,6 +61,11 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     private final Config<PropertyBoolean, Boolean> downwindluffupiflifted = new Config<PropertyBoolean, Boolean>("downwindluffupiflifted", OPTIONAL, (s) -> new PropertyBoolean(s, false));
 
     public PropertyBoat() {
+        this("laser2");
+    }
+    
+    public PropertyBoat(String classtype) {
+        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes,  classtype));
         this.addConfig(name, type, heading, location, colour, trackcolour, upwindsailonbesttack,
                 upwindtackifheaded, upwindbearawayifheaded, upwindluffupiflifted, reachdownwind,
                 downwindsailonbestgybe, downwindbearawayifheaded, downwindgybeiflifted, downwindluffupiflifted

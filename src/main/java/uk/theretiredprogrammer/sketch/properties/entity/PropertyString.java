@@ -22,7 +22,8 @@ import java.io.IOException;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -56,11 +57,11 @@ public class PropertyString extends PropertyElement<String> {
     }
 
     @Override
-    public final String parsevalue(JsonValue value) throws IOException {
+    public final String parsevalue(JsonValue value) {
         if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
             return ((JsonString) value).getString();
         }
-        throw new IOException("Malformed Definition file - String expected");
+        throw new ParseFailure("Malformed Definition file - String expected");
     }
 
     @Override
@@ -69,19 +70,19 @@ public class PropertyString extends PropertyElement<String> {
     }
 
     @Override
-    public Node getField(Controller controller) {
+    public Node getField(DisplayController controller) {
         return getField(controller, 0);
     }
 
     @Override
-    public Node getField(Controller controller, int size) {
+    public Node getField(DisplayController controller, int size) {
         TextField stringfield = new TextField(stringproperty.get());
         stringfield.textProperty().bindBidirectional(stringproperty);
         return stringfield;
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue){
         set(parsevalue(jvalue));
     }
 }

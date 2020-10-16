@@ -2,7 +2,7 @@ package uk.theretiredprogrammer.sketch;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import uk.theretiredprogrammer.sketch.fileselector.ui.FileSelectorWindow;
+import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
 
 public class App extends Application {
 
@@ -12,6 +12,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        FileSelectorWindow.create(stage);
+        FileSelectorController fileselectorcontroller = new FileSelectorController();
+        fileselectorcontroller.showFileSelectorWindow(stage);
     }
 }

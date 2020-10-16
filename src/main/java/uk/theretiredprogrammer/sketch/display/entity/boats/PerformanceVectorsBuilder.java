@@ -15,11 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 /**
@@ -32,9 +32,9 @@ public class PerformanceVectorsBuilder {
     private Angle[] angles;
     private int anglescount = 0;
 
-    public PerformanceVectorsBuilder defineAngles(int[] inputangles) throws IOException {
+    public PerformanceVectorsBuilder defineAngles(int[] inputangles) {
         if (anglescount != 0) {
-            throw new IOException("PerformanceVectorsBuilder: duplicate angles definition");
+            throw new IllegalStateFailure("PerformanceVectorsBuilder: duplicate angles definition");
         }
         anglescount = inputangles.length;
         angles = new Angle[anglescount];
@@ -44,24 +44,24 @@ public class PerformanceVectorsBuilder {
         return this;
     }
 
-    public PerformanceVectorsBuilder vector(double windspeed, double[] vector) throws IOException {
+    public PerformanceVectorsBuilder vector(double windspeed, double[] vector) {
         if (anglescount == 0) {
-            throw new IOException("PerformanceVectorsBuilder: can't define vectors prior to defining angles");
+            throw new IllegalStateFailure("PerformanceVectorsBuilder: can't define vectors prior to defining angles");
         }
         if (vector.length != anglescount) {
-            throw new IOException("PerformanceVectorsBuilder: vector length not equal to angles length");
+            throw new IllegalStateFailure("PerformanceVectorsBuilder: vector length not equal to angles length");
         }
         vectors.put(windspeed, vector);
         return this;
     }
 
-    public PerformanceVectors build() throws IOException {
+    public PerformanceVectors build() {
         if (anglescount == 0) {
-            throw new IOException("PerformanceVectorsBuilder: no angles defined");
+            throw new IllegalStateFailure("PerformanceVectorsBuilder: no angles defined");
         }
         int vectorssize = vectors.size();
         if (vectors.isEmpty()) {
-            throw new IOException("PerformanceVectorsBuilder: no vectors defined");
+            throw new IllegalStateFailure("PerformanceVectorsBuilder: no vectors defined");
         }
         double[][] vectorsarray = new double[vectorssize + 2][anglescount];
         double[] windspeeds = new double[vectorssize + 2];

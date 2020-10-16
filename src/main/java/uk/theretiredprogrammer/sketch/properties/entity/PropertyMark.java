@@ -26,7 +26,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
  */
 public class PropertyMark extends PropertyMap implements PropertyNamed {
 
-    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<new>"));
+    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
     private final Config<PropertyLocation, Location> location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
     private final Config<PropertyBoolean, Boolean> windwardlaylines = new Config<>("windwardlaylines", OPTIONAL, (s) -> new PropertyBoolean(s, false));
     private final Config<PropertyBoolean, Boolean> downwindlaylines = new Config<>("downwindlaylines", OPTIONAL, (s) -> new PropertyBoolean(s, false));

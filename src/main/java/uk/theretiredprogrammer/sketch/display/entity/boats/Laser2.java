@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import java.io.IOException;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -26,7 +25,7 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class Laser2 extends Boat {
 
-    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty) throws IOException {
+    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty) {
         super(boatproperty, sketchproperty,
                 new BoatMetricsBuilder()
                         .length(4)

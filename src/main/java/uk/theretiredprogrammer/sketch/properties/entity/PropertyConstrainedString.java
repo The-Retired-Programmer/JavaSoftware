@@ -17,12 +17,12 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.util.function.Supplier;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -90,23 +90,26 @@ public class PropertyConstrainedString extends PropertyElement<String> {
     }
 
     @Override
-    public final void set(String newvalue) throws IOException {
+    public final void set(String newvalue) {
         if (constraintslookup.get().stream().anyMatch(v -> newvalue.equals(v))) {
             constrainedproperty.set(newvalue);
         } else {
-            throw new IOException("Constrained String - value not in constrained set");
+            throw new ParseFailure("Constrained String - value not in constrained set");
         }
     }
 
     @Override
-    public String parsevalue(JsonValue value) throws IOException {
+    public String parsevalue(JsonValue value) {
+        String val = "Bad Json value";
         if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
-            String val = ((JsonString) value).getString();
-            if (constraintslookup.get().stream().anyMatch(v -> val.equals(v))) {
-                return val;
+            val = ((JsonString) value).getString();
+            for (var v : constraintslookup.get()) {
+                if (val.equals(v)) {
+                    return val;
+                }
             }
         }
-        throw new IOException("Malformed Definition file - value not in constrained set");
+        throw new ParseFailure("Malformed Definition file - value not in constrained set: key: " + getKey() + "; value: " + val);
     }
 
     @Override
@@ -115,19 +118,19 @@ public class PropertyConstrainedString extends PropertyElement<String> {
     }
 
     @Override
-    public ComboBox getField(Controller controller) {
+    public ComboBox getField(DisplayController controller) {
         return getField(controller, 0);
     }
 
     @Override
-    public ComboBox getField(Controller controller, int size) {
+    public ComboBox getField(DisplayController controller, int size) {
         ComboBox combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(constrainedproperty.propertyString());
         return combofield;
     }
 
     @Override
-    public final void parse(JsonValue jvalue) throws IOException {
+    public final void parse(JsonValue jvalue) {
         constrainedproperty.set(parsevalue(jvalue));
     }
 }

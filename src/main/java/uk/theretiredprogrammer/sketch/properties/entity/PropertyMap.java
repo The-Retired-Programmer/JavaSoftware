@@ -19,7 +19,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +27,7 @@ import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -51,7 +51,7 @@ public abstract class PropertyMap extends PropertyAny {
     }
 
     @Override
-    public void parse(JsonValue jvalue) throws IOException {
+    public void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.OBJECT) {
             for (Config config : configs.values()) {
                 config.parse((JsonObject) jvalue);
@@ -109,7 +109,7 @@ public abstract class PropertyMap extends PropertyAny {
             return creator.apply(key);
         }
 
-        public void parse(JsonObject parentobj) throws IOException {
+        public void parse(JsonObject parentobj) {
             if (mandatoryparse) {
                 parseMandatoryProperty(key, parentobj);
             } else {
@@ -142,13 +142,13 @@ public abstract class PropertyMap extends PropertyAny {
             return get("Config - get");
         }
 
-        private void parseMandatoryProperty(String key, JsonObject parentobj) throws IOException {
+        private void parseMandatoryProperty(String key, JsonObject parentobj) {
             if (!parseOptionalProperty(key, parentobj)) {
-                throw new IOException("Missing a Mandatory parameter: " + key);
+                throw new ParseFailure("Missing a Mandatory parameter: " + key);
             }
         }
 
-        private boolean parseOptionalProperty(String key, JsonObject parentobj) throws IOException {
+        private boolean parseOptionalProperty(String key, JsonObject parentobj) {
             PropertyAny property = propertymap.get(key);
             if (property == null) {
                 throw new IllegalStateFailure("Config parse - missing initialised Config");

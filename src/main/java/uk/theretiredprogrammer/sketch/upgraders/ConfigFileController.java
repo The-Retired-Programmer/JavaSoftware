@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -33,17 +34,14 @@ public class ConfigFileController {
     private final static int CURRENTVERSION = 1;
     private JsonObject parsedjson;
     int fromversion = 0;
-    private Path path;
 
     public ConfigFileController(Path path) throws IOException {
-        this.path = path;
         try ( JsonReader rdr = Json.createReader(Files.newInputStream(path))) {
             parsedjson = rdr.readObject();
         }
     }
 
     public ConfigFileController(InputStream is) {
-        this.path = null;
         try ( JsonReader rdr = Json.createReader(is)) {
             parsedjson = rdr.readObject();
         }
@@ -53,31 +51,28 @@ public class ConfigFileController {
         return parsedjson;
     }
 
-    public boolean needsUpgrade() throws IOException {
+    public boolean needsUpgrade() {
         String type = parsedjson.getString("type", "NOTPRESENT");
         if (type.startsWith("sketch-v")) {
             fromversion = Integer.parseInt(type.substring(8));
         } else {
             if (parsedjson.getJsonObject("SAILING AREA") == null) {
-                throw new IOException("Probably not a Sketch file");
+                throw new ParseFailure("Probably not a Sketch file");
             }
         }
         return fromversion < CURRENTVERSION;
     }
 
-    public void upgrade() throws IOException {
-        if (fromversion < CURRENTVERSION) {
-            int fromv = fromversion;
-            while (fromv < CURRENTVERSION) {
-                Upgrader upgrader = UpgraderFactory.createUpgrader(fromv);
-                parsedjson = upgrader.upgrade(parsedjson);
-                fromv++;
-            }
-            rewriteFile();
+    public void upgrade() {
+        int fromv = fromversion;
+        while (fromv < CURRENTVERSION) {
+            Upgrader upgrader = UpgraderFactory.createUpgrader(fromv);
+            parsedjson = upgrader.upgrade(parsedjson);
+            fromv++;
         }
     }
 
-    private void rewriteFile() throws IOException {
+    public void rewriteFile(Path path) throws IOException {
         if (path != null) {
             Files.move(path, path.resolveSibling(path.getFileName() + ".v" + fromversion));
             try ( JsonWriter jsonWriter = Json.createWriter(Files.newOutputStream(path))) {

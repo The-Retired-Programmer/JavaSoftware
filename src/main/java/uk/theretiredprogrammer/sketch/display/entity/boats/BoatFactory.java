@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import java.io.IOException;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -25,13 +25,13 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class BoatFactory {
 
-    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty) throws IOException {
+    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty) {
         switch (boatproperty.getType()) {
             case "laser2" -> {
                 return new Laser2(boatproperty, sketchproperty);
             }
             default ->
-                throw new IOException("Missing or Unknown class parameter in boat definition");
+                throw new IllegalStateFailure("Missing or Unknown class parameter in boat definition");
         }
     }
 }

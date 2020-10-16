@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 public abstract class Upgrader {
 
-    public abstract JsonObject upgrade(JsonObject oldversion) throws IOException;
+    public abstract JsonObject upgrade(JsonObject oldversion);
 
     JsonObject copyobj(JsonObject oldroot, String oldname, JsonObject newroot, JsonPointer insertpoint) {
         JsonObject copyobj = oldroot.getJsonObject(oldname);

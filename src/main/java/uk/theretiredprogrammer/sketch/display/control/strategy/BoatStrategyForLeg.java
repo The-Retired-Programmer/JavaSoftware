@@ -26,7 +26,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
-import uk.theretiredprogrammer.sketch.decisionslog.control.TimerLog;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -158,7 +158,7 @@ public abstract class BoatStrategyForLeg {
 
     abstract String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow);
 
-    BoatStrategyForLeg nextTimeInterval(PropertySketch sketchproperty, int simulationtime, TimerLog timerlog, WindFlow windflow, WaterFlow waterflow) {
+    BoatStrategyForLeg nextTimeInterval(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
             String reason = nextBoatStrategyTimeInterval(sketchproperty, windflow, waterflow);

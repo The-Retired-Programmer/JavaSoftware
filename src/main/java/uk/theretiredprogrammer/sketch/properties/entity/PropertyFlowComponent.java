@@ -26,6 +26,17 @@ import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public abstract class PropertyFlowComponent extends PropertyMap implements PropertyNamed {
+    
+    private static final ObservableList<String> typenames;
+    
+    static {
+        typenames = FXCollections.observableArrayList();
+        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow");
+    }
+    
+    public static ObservableList<String> getTypenames() {
+        return typenames;
+    }
 
     public static PropertyFlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
@@ -42,7 +53,7 @@ public abstract class PropertyFlowComponent extends PropertyMap implements Prope
                 return new PropertyGradientFlowComponent(getdisplayarea);
             }
             default ->
-                throw new ParseFailure("Missing or Unknown type parameter in a flow definition");
+                throw new ParseFailure("Missing or Unknown type parameter in a flow definition ("+type+")");
         }
     }
 
@@ -54,9 +65,7 @@ public abstract class PropertyFlowComponent extends PropertyMap implements Prope
 
     public PropertyFlowComponent(Supplier<Area> getdisplayarea) {
         this.getdisplayarea = getdisplayarea;
-        ObservableList<String> types = FXCollections.observableArrayList();
-        types.addAll("complexflow", "constantflow", "gradientflow", "testflow");
-        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, types));
+        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, typenames));
         this.addConfig(name, zlevel, area, type);
     }
 

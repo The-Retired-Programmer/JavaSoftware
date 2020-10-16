@@ -22,7 +22,7 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonPointer;
 import jakarta.json.JsonValue;
 import jakarta.json.JsonValue.ValueType;
-import java.io.IOException;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -31,7 +31,7 @@ import java.io.IOException;
 public class Upgrader0 extends Upgrader {
 
     @Override
-    public JsonObject upgrade(JsonObject root) throws IOException {
+    public JsonObject upgrade(JsonObject root) {
         JsonObject titleobj = root.getJsonObject("TITLE");
         String title = "";
         if (titleobj != null) {
@@ -82,7 +82,7 @@ public class Upgrader0 extends Upgrader {
         return newroot;
     }
 
-    private JsonArray updateSpeedDirectionPairs2PolarsAndLocationWidthHeight2Area(JsonObject root, String oldname) throws IOException {
+    private JsonArray updateSpeedDirectionPairs2PolarsAndLocationWidthHeight2Area(JsonObject root, String oldname) {
         JsonArray array = root.getJsonArray(oldname);
         if (array == null) {
             return null;
@@ -110,7 +110,7 @@ public class Upgrader0 extends Upgrader {
                         double northwestspeed = jobj.getJsonNumber("northwestspeed").doubleValue();
                         double northwestdirection = jobj.getJsonNumber("northwestfrom").doubleValue();
                         inserthere = Json.createPointer("/northwestflow");
-                        newobj = inserthere.add(jobj, flow2Json(northwestspeed,northwestdirection));
+                        newobj = inserthere.add(jobj, flow2Json(northwestspeed, northwestdirection));
                         removehere = Json.createPointer("/northwestspeed");
                         newobj = removehere.remove(newobj);
                         removehere = Json.createPointer("/northwestfrom");
@@ -144,7 +144,7 @@ public class Upgrader0 extends Upgrader {
                         newobj = removehere.remove(newobj);
                     }
                     default ->
-                        throw new IOException("Oh dear - miised that case for Flow (" + type + ")");
+                        throw new ParseFailure("Upgrader0 - illegal type for a flow object (" + type + ")");
                 }
                 // change location / width / height to area
                 JsonArray loc = jobj.getJsonArray("location");
@@ -154,7 +154,7 @@ public class Upgrader0 extends Upgrader {
                     double w = jobj.getJsonNumber("width").doubleValue();
                     double h = jobj.getJsonNumber("height").doubleValue();
                     inserthere = Json.createPointer("/area");
-                    newobj = inserthere.add(newobj, area2Json(x,y,w,h));
+                    newobj = inserthere.add(newobj, area2Json(x, y, w, h));
                     removehere = Json.createPointer("/location");
                     newobj = removehere.remove(newobj);
                     removehere = Json.createPointer("/width");

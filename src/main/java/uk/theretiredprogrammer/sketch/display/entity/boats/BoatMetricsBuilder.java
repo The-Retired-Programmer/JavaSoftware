@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import java.io.IOException;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 /**
@@ -67,9 +67,9 @@ public class BoatMetricsBuilder {
         return this;
     }
 
-    public BoatMetrics build() throws IOException {
+    public BoatMetrics build() {
         if (performancevectors == null) {
-            throw new IOException("BoatMetricsBuilder: no performance vectors defined");
+            throw new IllegalStateFailure("BoatMetricsBuilder: no performance vectors defined");
         }
         return new BoatMetrics(length, width, inertia, maxTurningAnglePerSecond,
                 upwindrelative, downwindrelative, performancevectors);

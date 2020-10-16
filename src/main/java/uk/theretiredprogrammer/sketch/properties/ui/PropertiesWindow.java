@@ -15,10 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.properties.ui;
 
-import java.io.IOException;
+import javafx.scene.control.Menu;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
-import uk.theretiredprogrammer.sketch.display.control.Controller;
+import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
+import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
+import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
 /**
@@ -27,68 +29,37 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class PropertiesWindow extends AbstractWindow {
 
-    public static PropertiesWindow create(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
-        return new PropertiesWindow(fn, controller, sketchproperty, parent);
-    }
-
-    private PropertiesWindow(String fn, Controller controller, PropertySketch sketchproperty, AbstractWindow parent) {
+    public PropertiesWindow(String fn, PropertiesController controller, PropertySketch sketchproperty, AbstractWindow parent) {
         super(PropertiesWindow.class, parent);
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(sketchproperty));
+        
+        Menu boatmenu = UI.menu("Add Boat");
+        for (var classname : PropertyBoat.getClasses()) {
+            boatmenu.getItems().add(UI.menuitem(classname, actionEvent -> controller.addNewBoat(classname)));
+        }
+        Menu windmenu = UI.menu("Add WindFlowComponent");
+        for(var typename : PropertyFlowComponent.getTypenames()){
+            windmenu.getItems().add(UI.menuitem(typename, actionEvent -> controller.addNewWindFlowComponent(typename)));
+        }
+        Menu watermenu = UI.menu("Add WaterFlowComponent");
+        for(var typename : PropertyFlowComponent.getTypenames()){
+            watermenu.getItems().add(UI.menuitem(typename, actionEvent -> controller.addNewWaterFlowComponent(typename)));
+        }
         addtoMenubar(
-                UI.menu("Add Element",
-                        UI.menuitem("Add Boat", actionEvent -> addnewboat(controller)),
-                        UI.menuitem("Add Mark", actionEvent -> addnewmark(controller)),
-                        UI.menuitem("Add WindFlowComponent", actionEvent -> addnewwindflow(controller)),
-                        UI.menuitem("Add WaterFlowComponent", actionEvent -> addnewwaterflow(controller)),
-                        UI.menuitem("Add Course Leg", actionEvent -> addNewLeg(controller))
+                boatmenu,
+                windmenu,
+                watermenu,
+                UI.menu("Add  Course Elements",
+                    UI.menuitem("Add Mark", actionEvent -> controller.addNewMark()),
+                    UI.menuitem("Add Course Leg", actionEvent -> controller.addNewLeg())
                 )
         );
         addtoToolbar(
-                UI.toolbarButton("shape_flip_horizontal.png", "Add Boat", actionEvent -> addnewboat(controller)),
-                UI.toolbarButton("pencil.png", "Add Mark", actionEvent -> addnewmark(controller))
+                UI.toolbarButton("shape_flip_horizontal.png", "Add Laser2", actionEvent -> controller.addNewBoat("laser2")),
+                UI.toolbarButton("pencil.png", "Add Mark", actionEvent -> controller.addNewMark())
         );
         show();
-    }
-
-    private void addnewboat(Controller controller) {
-        try {
-            controller.addNewBoat();
-        } catch (IOException ex) {
-            statusbarDisplay("failed to create new Boat: " + ex.getLocalizedMessage());
-        }
-    }
-
-    private void addnewmark(Controller controller) {
-        try {
-            controller.addNewMark();
-        } catch (IOException ex) {
-            statusbarDisplay("failed to create new Mark: " + ex.getLocalizedMessage());
-        }
-    }
-
-    private void addnewwindflow(Controller controller) {
-        try {
-            controller.addNewWindFlowComponent();
-        } catch (IOException ex) {
-            statusbarDisplay("failed to create new Wind Flow: " + ex.getLocalizedMessage());
-        }
-    }
-
-    private void addnewwaterflow(Controller controller) {
-        try {
-            controller.addNewWaterFlowComponent();
-        } catch (IOException ex) {
-            statusbarDisplay("failed to create new Water Flow: " + ex.getLocalizedMessage());
-        }
-    }
-
-    private void addNewLeg(Controller controller) {
-        try {
-            controller.addNewLeg();
-        } catch (IOException ex) {
-            statusbarDisplay("failed to create new Leg: " + ex.getLocalizedMessage());
-        }
     }
 }
