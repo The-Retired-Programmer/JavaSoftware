@@ -27,8 +27,8 @@ public class PropertyConstantFlowComponent extends PropertyFlowComponent {
 
     private final Config<PropertySpeedPolar, SpeedPolar> flow = new Config<>("flow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
 
-    public PropertyConstantFlowComponent(Supplier<Area> getdisplayarea) {
-        super(getdisplayarea);
+    public PropertyConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
         this.addConfig(flow);
     }
 

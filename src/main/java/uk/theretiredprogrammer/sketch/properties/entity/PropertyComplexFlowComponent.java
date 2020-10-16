@@ -30,8 +30,8 @@ public class PropertyComplexFlowComponent extends PropertyFlowComponent {
     private final Config<PropertySpeedPolar, SpeedPolar> southeastflow = new Config<>("southeastflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
     private final Config<PropertySpeedPolar, SpeedPolar> southwestflow = new Config<>("southwestflow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
 
-    public PropertyComplexFlowComponent(Supplier<Area> getdisplayarea) {
-        super(getdisplayarea);
+    public PropertyComplexFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
         this.addConfig(northwestflow, northeastflow, southeastflow, southwestflow);
     }
 

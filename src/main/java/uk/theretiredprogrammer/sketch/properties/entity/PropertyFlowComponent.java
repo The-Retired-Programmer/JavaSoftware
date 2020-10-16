@@ -41,31 +41,31 @@ public abstract class PropertyFlowComponent extends PropertyMap implements Prope
     public static PropertyFlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
             case "testflow" -> {
-                return new PropertyTestFlowComponent(getdisplayarea);
+                return new PropertyTestFlowComponent(getdisplayarea, type);
             }
             case "complexflow" -> {
-                return new PropertyComplexFlowComponent(getdisplayarea);
+                return new PropertyComplexFlowComponent(getdisplayarea, type);
             }
             case "constantflow" -> {
-                return new PropertyConstantFlowComponent(getdisplayarea);
+                return new PropertyConstantFlowComponent(getdisplayarea, type);
             }
             case "gradientflow" -> {
-                return new PropertyGradientFlowComponent(getdisplayarea);
+                return new PropertyGradientFlowComponent(getdisplayarea, type);
             }
             default ->
                 throw new ParseFailure("Missing or Unknown type parameter in a flow definition ("+type+")");
         }
     }
 
-    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, null));
+    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
     private final Config<PropertyInteger, Integer> zlevel = new Config<>("zlevel", OPTIONAL, (s) -> new PropertyInteger(s, 0));
     private final Config<PropertyArea, Area> area = new Config<>("area", OPTIONAL, (s) -> new PropertyArea(s, AREAZERO));
     private final Config<PropertyConstrainedString, String> type;
     private final Supplier<Area> getdisplayarea;
 
-    public PropertyFlowComponent(Supplier<Area> getdisplayarea) {
+    public PropertyFlowComponent(Supplier<Area> getdisplayarea, String flowtype) {
         this.getdisplayarea = getdisplayarea;
-        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, typenames));
+        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, typenames, flowtype));
         this.addConfig(name, zlevel, area, type);
     }
 

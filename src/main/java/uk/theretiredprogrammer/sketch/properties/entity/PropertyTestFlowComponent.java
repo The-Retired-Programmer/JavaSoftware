@@ -30,8 +30,8 @@ public class PropertyTestFlowComponent extends PropertyFlowComponent {
     private final Config<PropertySpeedPolar, SpeedPolar> flow = new Config<>("flow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));
     private final Config<PropertyAngle, Angle> mean = new Config<>("mean", OPTIONAL, (s) -> new PropertyAngle(s, ANGLE0));
 
-    public PropertyTestFlowComponent(Supplier<Area> getdisplayarea) {
-        super(getdisplayarea);
+    public PropertyTestFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
         this.addConfig(flow, mean);
     }
 

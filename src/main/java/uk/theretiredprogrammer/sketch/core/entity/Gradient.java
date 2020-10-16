@@ -29,6 +29,8 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertyDouble;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Gradient {
+    
+    public static final Gradient GRADIENTDEFAULT = new Gradient();
 
     private final String type;
     private final ObservableList<PropertyDouble> speeds;

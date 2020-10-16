@@ -18,16 +18,17 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Gradient;
+import static uk.theretiredprogrammer.sketch.core.entity.Gradient.GRADIENTDEFAULT;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class PropertyGradientFlowComponent extends PropertyFlowComponent {
 
-    private final Config<PropertyGradient, Gradient> gradient = new Config<>("gradient", OPTIONAL, (s) -> new PropertyGradient(s, null));
+    private final Config<PropertyGradient, Gradient> gradient = new Config<>("gradient", OPTIONAL, (s) -> new PropertyGradient(s, GRADIENTDEFAULT));
 
-    public PropertyGradientFlowComponent(Supplier<Area> getdisplayarea) {
-        super(getdisplayarea);
+    public PropertyGradientFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
         this.addConfig(gradient);
     }
 
