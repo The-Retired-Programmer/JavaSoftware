@@ -74,12 +74,12 @@ public class PropertyInteger extends PropertyElement<Integer> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return getField(controller, 5);
+    public Node getField() {
+        return getField(5);
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
+    public Node getField(int size) {
         TextField intfield = new TextField(Integer.toString(integerproperty.get()));
         intfield.setPrefColumnCount(size);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);

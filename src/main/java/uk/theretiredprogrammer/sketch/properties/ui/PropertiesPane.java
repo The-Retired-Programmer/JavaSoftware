@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.properties.ui;
 
+import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Accordion;
@@ -22,9 +23,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyElement;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyAny;
+import uk.theretiredprogrammer.sketch.properties.entity.PropertyList;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMap;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -118,20 +121,49 @@ public class PropertiesPane extends Accordion {
             this.setContent(createpropertiescontent(properties));
         }
 
-        @SuppressWarnings("null")
         private ScrollPane createpropertiescontent(PropertyMap properties) {
             GridPane propertiestable = new GridPane();
             int row = 0;
+            createpropertymapcontent(propertiestable, row, properties);
+            return new ScrollPane(propertiestable);
+        }
+
+        private int createpropertymapcontent(GridPane propertiestable, int row, PropertyMap properties) {
             for (var pe : properties.getMap().entrySet()) {
-                propertiestable.add(new Label(pe.getKey()), 0, row, 1, 1);
                 PropertyAny value = pe.getValue();
-                if (value instanceof PropertyElement propertyElement) {
-                    propertiestable.add(propertyElement.getField(null), 1, row++, 1, 1);
+                if (value instanceof PropertyList propertylist) {
+                    row = createpropertylistcontent(propertiestable, row, propertylist);
+                } else if (value instanceof PropertyMap propertymap) {
+                    row = createpropertymapcontent(propertiestable, row, propertymap);
+                } else if (value instanceof PropertyElement propertyelement) {
+                    row = createpropertyelementcontent(propertiestable, row, propertyelement);
                 } else {
-                    propertiestable.add(new Label(value.toString()), 1, row++, 1, 1);
+                    throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
                 }
             }
-            return new ScrollPane(propertiestable);
+            return row;
+        }
+
+        private int createpropertylistcontent(GridPane propertiestable, int row, PropertyList<? extends PropertyAny> properties) {
+            for (PropertyAny value : properties.getList()) {
+                if (value instanceof PropertyList propertylist) {
+                    row = createpropertylistcontent(propertiestable, row, propertylist);
+                } else if (value instanceof PropertyMap propertymap) {
+                    row = createpropertymapcontent(propertiestable, row, propertymap);
+                } else if (value instanceof PropertyElement propertyelement) {
+                    row = createpropertyelementcontent(propertiestable, row, propertyelement);
+                } else {
+                    throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
+                }
+            }
+            return row;
+        }
+
+        private int createpropertyelementcontent(GridPane propertiestable, int row, PropertyElement propertyelement) {
+            Optional<String> okey = propertyelement.getOptionalKey();
+            propertiestable.add(new Label(okey.orElse("")), 0, row, 1, 1);
+            propertiestable.add(propertyelement.getField(), 1, row++, 1, 1);
+            return row;
         }
     }
 }

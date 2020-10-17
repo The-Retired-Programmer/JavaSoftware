@@ -33,13 +33,11 @@ public class PropertyCourse extends PropertyMap {
         roundings.addAll("port", "starboard");
     }
 
-    private final ObservableList<String> marknames;
     private final Config<PropertyLocation, Location> start = new Config<>("start", MANDATORY, (s) -> new PropertyLocation(s, LOCATIONZERO));
     private final Config<PropertyLegValues, PropertyLegValues> legs;
 
     public PropertyCourse(String key, ObservableList<String> marknames) {
         setKey(key);
-        this.marknames = marknames;
         legs = new Config<>("legs", OPTIONAL, (s) -> new PropertyLegValues(s, marknames, roundings));
         this.addConfig(start, legs);
     }

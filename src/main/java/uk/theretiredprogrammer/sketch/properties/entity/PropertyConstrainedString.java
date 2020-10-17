@@ -118,12 +118,12 @@ public class PropertyConstrainedString extends PropertyElement<String> {
     }
 
     @Override
-    public ComboBox getField(DisplayController controller) {
-        return getField(controller, 0);
+    public ComboBox getField() {
+        return getField(0);
     }
 
     @Override
-    public ComboBox getField(DisplayController controller, int size) {
+    public ComboBox getField(int size) {
         ComboBox combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(constrainedproperty.propertyString());
         return combofield;

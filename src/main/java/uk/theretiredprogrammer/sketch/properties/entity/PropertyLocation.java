@@ -22,7 +22,6 @@ import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -77,17 +76,17 @@ public class PropertyLocation extends PropertyElement<Location> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return getField(controller, 7);
+    public Node getField() {
+        return getField(7);
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
+    public Node getField(int size) {
         return new TextFlow(
                 createTextFor("["),
-                xlocationproperty.getField(controller, size),
+                xlocationproperty.getField(size),
                 createTextFor(","),
-                ylocationproperty.getField(controller, size),
+                ylocationproperty.getField(size),
                 createTextFor("]")
         );
     }

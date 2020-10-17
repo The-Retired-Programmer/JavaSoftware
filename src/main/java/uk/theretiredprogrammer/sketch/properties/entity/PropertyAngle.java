@@ -17,10 +17,8 @@ package uk.theretiredprogrammer.sketch.properties.entity;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
-import java.io.IOException;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -62,13 +60,13 @@ public class PropertyAngle extends PropertyElement<Angle> {
     }
 
     @Override
-    public TextField getField(DisplayController controller) {
-        return angleproperty.getField(controller, 7);
+    public TextField getField() {
+        return angleproperty.getField(7);
     }
 
     @Override
-    public TextField getField(DisplayController controller, int size) {
-        return angleproperty.getField(controller, size);
+    public TextField getField(int size) {
+        return angleproperty.getField(size);
     }
 
     @Override

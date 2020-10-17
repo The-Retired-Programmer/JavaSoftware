@@ -74,7 +74,7 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
+    public Node getField() {
         CheckBox booleanfield = new CheckBox();
         booleanfield.setSelected(get());
         booleanfield.selectedProperty().bindBidirectional(booleanproperty);
@@ -82,8 +82,8 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
-        return getField(controller);
+    public Node getField(int size) {
+        return getField();
     }
 
     @Override

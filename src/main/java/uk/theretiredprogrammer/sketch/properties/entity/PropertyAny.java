@@ -46,4 +46,8 @@ public abstract class PropertyAny<C> {
     final String getKeyForInfo() {
         return key.orElse("Undefined");
     }
+    
+    public Optional<String> getOptionalKey() {
+        return key;
+    }
 }

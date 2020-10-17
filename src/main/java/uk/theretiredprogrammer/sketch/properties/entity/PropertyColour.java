@@ -70,12 +70,12 @@ public class PropertyColour extends PropertyElement<Color> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return getField(controller, 0);
+    public Node getField() {
+        return getField(0);
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
+    public Node getField(int size) {
         ColorPicker picker = new ColorPicker();
         picker.setValue(get());
         picker.setOnAction(actionEvent -> {

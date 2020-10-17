@@ -23,7 +23,6 @@ import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *
@@ -92,30 +91,30 @@ public class PropertyArea extends PropertyElement<Area> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
+    public Node getField() {
         return new HBox(
                 createTextFor("["),
-                xproperty.getField(controller, 7),
+                xproperty.getField(7),
                 createTextFor(","),
-                yproperty.getField(controller, 7),
+                yproperty.getField(7),
                 createTextFor("] "),
-                widthproperty.getField(controller, 7),
+                widthproperty.getField(7),
                 createTextFor("x"),
-                heightproperty.getField(controller, 7)
+                heightproperty.getField(7)
         );
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
+    public Node getField(int size) {
         return new HBox(
                 createTextFor("["),
-                xproperty.getField(controller, size),
+                xproperty.getField(size),
                 createTextFor(","),
-                yproperty.getField(controller, size),
+                yproperty.getField(size),
                 createTextFor("] "),
-                widthproperty.getField(controller, size),
+                widthproperty.getField(size),
                 createTextFor("x"),
-                heightproperty.getField(controller, size)
+                heightproperty.getField(size)
         );
     }
 

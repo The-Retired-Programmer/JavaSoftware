@@ -78,20 +78,20 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return getField(controller, 6, 7);
+    public Node getField() {
+        return getField(6, 7);
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
-        return getField(controller, size, size);
+    public Node getField(int size) {
+        return getField(size, size);
     }
 
-    private Node getField(DisplayController controller, int sizespeed, int sizedirection) {
+    private Node getField(int sizespeed, int sizedirection) {
         return new TextFlow(
-                speedproperty.getField(controller, sizespeed),
+                speedproperty.getField(sizespeed),
                 createTextFor("@"),
-                directionproperty.getField(controller, sizedirection),
+                directionproperty.getField(sizedirection),
                 createTextFor("˚"));
     }
 

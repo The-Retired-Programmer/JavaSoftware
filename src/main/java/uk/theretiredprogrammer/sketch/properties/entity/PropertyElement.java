@@ -43,9 +43,9 @@ public abstract class PropertyElement<C extends Object> extends PropertyAny<C> {
 
     abstract C parsevalue(JsonValue jvalue);
 
-    public abstract Node getField(DisplayController controller, int size);
+    public abstract Node getField(int size);
 
-    public abstract Node getField(DisplayController controller);
+    public abstract Node getField();
 
     //
     UnaryOperator<TextFormatter.Change> doubleFilter = change -> {

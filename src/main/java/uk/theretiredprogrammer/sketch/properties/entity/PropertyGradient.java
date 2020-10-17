@@ -112,16 +112,16 @@ public class PropertyGradient extends PropertyElement<Gradient> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        HBox hbox = new HBox(typeproperty.getField(controller));
-        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
+    public Node getField() {
+        HBox hbox = new HBox(typeproperty.getField());
+        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField()));
         return hbox;
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
-        HBox hbox = new HBox(typeproperty.getField(controller));
-        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField(controller)));
+    public Node getField(int size) {
+        HBox hbox = new HBox(typeproperty.getField());
+        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField()));
         return hbox;
     }
 

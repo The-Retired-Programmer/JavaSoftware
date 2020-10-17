@@ -70,12 +70,12 @@ public class PropertyString extends PropertyElement<String> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return getField(controller, 0);
+    public Node getField() {
+        return getField(0);
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
+    public Node getField(int size) {
         TextField stringfield = new TextField(stringproperty.get());
         stringfield.textProperty().bindBidirectional(stringproperty);
         return stringfield;

@@ -70,12 +70,12 @@ public class PropertyDouble extends PropertyElement<Double> {
     }
 
     @Override
-    public TextField getField(DisplayController controller) {
-        return getField(controller, 10);
+    public TextField getField() {
+        return getField(10);
     }
 
     @Override
-    public TextField getField(DisplayController controller, int size) {
+    public TextField getField(int size) {
         TextField doublefield = new TextField(Double.toString(doubleproperty.get()));
         doublefield.setPrefColumnCount(size);
         TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);

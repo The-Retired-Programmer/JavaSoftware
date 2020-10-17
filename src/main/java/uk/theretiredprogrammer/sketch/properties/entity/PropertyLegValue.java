@@ -86,17 +86,17 @@ public class PropertyLegValue extends PropertyElement<LegValue> {
     }
 
     @Override
-    public Node getField(DisplayController controller) {
-        return new HBox(marknameproperty.getField(controller), roundingproperty.getField(controller));
+    public Node getField() {
+        return new HBox(marknameproperty.getField(), roundingproperty.getField());
     }
 
     @Override
-    public Node getField(DisplayController controller, int size) {
-        return getField(controller, size, size);
+    public Node getField(int size) {
+        return getField(size, size);
     }
 
-    private Node getField(DisplayController controller, int sizemark, int sizerounding) {
-        return new HBox(marknameproperty.getField(controller, sizemark), roundingproperty.getField(controller, sizerounding));
+    private Node getField(int sizemark, int sizerounding) {
+        return new HBox(marknameproperty.getField(sizemark), roundingproperty.getField(sizerounding));
     }
 
     @Override
