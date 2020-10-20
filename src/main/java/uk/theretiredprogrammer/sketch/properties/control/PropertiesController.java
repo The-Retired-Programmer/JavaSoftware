@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.IOFailure;
-import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
@@ -32,19 +31,27 @@ import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class PropertiesController extends AbstractController {
+public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     private PropertySketch sketchproperty;
 
-    public void fileReadUpgradeParse(Path path) {
-        new WorkRunner(() -> fileWork(path)).run();
+    public PropertiesController(Path path, String fn, AbstractController parentcontroller) {
+        super(ExternalCloseAction.HIDE);
+        new WorkRunner(() -> initialisefromFile(path)).run();
+        setWindow(new PropertiesWindow(fn, this, sketchproperty));
     }
 
-    public void resourceReadUpgradeParse(String resourcename) {
-        new WorkRunner(() -> resourceWork(resourcename)).run();
+    public PropertiesController(String resource, String fn, AbstractController parentcontroller) {
+        super(ExternalCloseAction.HIDE);
+        new WorkRunner(() -> initialisefromResource(resource)).run();
+        setWindow(new PropertiesWindow(fn, this, sketchproperty));
     }
 
-    private void fileWork(Path path) {
+    public PropertiesController(String resource) {
+        new WorkRunner(() -> initialisefromResource(resource)).run();
+    }
+
+    private void initialisefromFile(Path path) {
         ConfigFileController configfilecontroller;
         try {
             configfilecontroller = new ConfigFileController(path);
@@ -59,7 +66,7 @@ public class PropertiesController extends AbstractController {
         sketchproperty.parse(configfilecontroller.getParsedConfigFile());
     }
 
-    private void resourceWork(String resourcename) {
+    private void initialisefromResource(String resourcename) {
         ConfigFileController configfilecontroller = new ConfigFileController(this.getClass().getResourceAsStream(resourcename));
         if (configfilecontroller.needsUpgrade()) {
             configfilecontroller.upgrade();
@@ -68,20 +75,20 @@ public class PropertiesController extends AbstractController {
         sketchproperty.parse(configfilecontroller.getParsedConfigFile());
     }
 
+    public void showWindow() {
+        getWindow().show();
+    }
+
     public PropertySketch getProperty() {
         return sketchproperty;
     }
-    
-    public void showPropertiesWindow(String fn, AbstractWindow parent){
-        new PropertiesWindow(fn, this, sketchproperty, parent);
-    }
-    
+
     public void addNewMark() {
         PropertyMark newmarkproperty = new PropertyMark();
         sketchproperty.getMarks().add(newmarkproperty);
     }
 
-    public void addNewBoat(String type)  {
+    public void addNewBoat(String type) {
         sketchproperty.getBoats().add(new PropertyBoat(type));
     }
 

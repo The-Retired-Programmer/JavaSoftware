@@ -27,7 +27,6 @@ import java.util.TimerTask;
 import javafx.application.Platform;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
-import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -36,35 +35,44 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
+import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
+import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class DisplayController extends AbstractController {
+public class DisplayController extends AbstractController<DisplayWindow> {
 
-    private DisplayWindow sketchwindow;
     private PropertiesController propertiescontroller;
-    private final DecisionController decisioncontroller = new DecisionController();
+    private DecisionController decisioncontroller;
+    private FileSelectorController fileselectorcontroller;
     public BoatStrategies boatstrategies;
     public WindFlow windflow;
     public WaterFlow waterflow;
     public Course course;
     public Boats boats;
     private DisplayPainter painter;
-    private String fn;
 
-    public void createFromFile(Path path) {
-        propertiescontroller = new PropertiesController();
-        propertiescontroller.fileReadUpgradeParse(path);
+    public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
+        this.fileselectorcontroller = fileselectorcontroller;
+        propertiescontroller = new PropertiesController(pn.getPath(), pn.toString(), this);
+        createDisplayEntities();
+        decisioncontroller = new DecisionController(pn.toString(), false, this);
+        showDisplayWindow(pn.toString());
+    }
+
+    public DisplayController(String resourcename) {
+        propertiescontroller = new PropertiesController(resourcename);
         createDisplayEntities();
     }
 
-    public void createFromResource(String resourcename) {
-        propertiescontroller = new PropertiesController();
-        propertiescontroller.resourceReadUpgradeParse(resourcename);
-        createDisplayEntities();
+    public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
+        this(resourcename);
+        decisioncontroller = new DecisionController(fn, false, this);
+        this.fileselectorcontroller = fileselectorcontroller;
+        showDisplayWindow(fn);
     }
 
     private void createDisplayEntities() {
@@ -78,11 +86,21 @@ public class DisplayController extends AbstractController {
         painter = new DisplayPainter(sketchproperty, windflow, waterflow, boats);
     }
 
-    public void showDisplayWindow(String fn, AbstractWindow parent) {
-        this.fn = fn;
-        sketchwindow = new DisplayWindow(fn, this, this.getProperty(), parent);
+    private void showDisplayWindow(String fn) {
+        setWindow(new DisplayWindow(fn, this, this.getProperty()));
     }
-
+    
+    @Override
+    protected void whenWindowIsClosing() {
+        propertiescontroller.close();
+        decisioncontroller.close();
+    }
+    
+    @Override
+    protected void whenWindowIsClosedExternally() {
+        fileselectorcontroller.removeparentchildrelationship(this);
+    }
+    
     public DisplayPane getDisplayPanePainter() {
         return painter;
     }
@@ -116,18 +134,18 @@ public class DisplayController extends AbstractController {
     }
 
     public void showPropertiesWindow() {
-        propertiescontroller.showPropertiesWindow(fn, sketchwindow);
+        propertiescontroller.showWindow();
     }
 
     public void showFullDecisionWindow() {
-        decisioncontroller.showFullDecisionWindow(fn, sketchwindow);
+        decisioncontroller.showWindow();
     }
 
     public void showFilteredDecisionWindow() {
-        decisioncontroller.showFilteredDecisionWindow(fn, sketchwindow);
+        decisioncontroller.showWindow();
     }
 
-    //  the TIMER CONTROLLER STUFF //
+    //  the SIMULATION CONTROLLER STUFF //
     private int simulationtime;
     private boolean isRunning;
     private Timer timer;
@@ -177,7 +195,7 @@ public class DisplayController extends AbstractController {
                 secondsperdisplay--;
                 simulationtime++;
             }
-            sketchwindow.updateTimeField(simulationtime);
+            getWindow().updateTimeField(simulationtime);
             Platform.runLater(() -> painter.repaint());
         }
     }

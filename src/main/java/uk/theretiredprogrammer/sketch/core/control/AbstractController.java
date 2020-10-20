@@ -23,12 +23,112 @@ import javafx.application.Platform;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.stage.WindowEvent;
+import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 
 /**
  *
  * @author richard
+ * @param <W>
  */
-public class AbstractController {
+public abstract class AbstractController<W extends AbstractWindow> {
+
+    protected enum ExternalCloseAction {
+        CLOSE, HIDE, IGNORE
+    }
+
+    protected enum ClosingMode {
+        PROGRAMMATICALLY, EXTERNALLY, HIDEONLY
+    }
+
+    private ClosingMode closingmode = ClosingMode.HIDEONLY;
+    private final ExternalCloseAction externalcloseaction;
+
+    public AbstractController() {
+        this.externalcloseaction = ExternalCloseAction.CLOSE;
+    }
+
+    public AbstractController(ExternalCloseAction externalcloseaction) {
+        this.externalcloseaction = externalcloseaction;
+    }
+
+    public final void close() {
+        closingmode = ClosingMode.PROGRAMMATICALLY;
+        whenWindowIsClosingProgrammatically();
+        whenWindowIsClosing();
+        getWindow().close();
+    }
+
+    protected void whenWindowIsClosing() {
+    }
+
+    protected void whenWindowIsClosingProgrammatically() {
+    }
+
+    protected void whenWindowIsClosingExternally() {
+    }
+
+    public final void windowHasExternalCloseRequest(WindowEvent e) {
+        switch (externalcloseaction) {
+            case CLOSE -> {
+                closingmode = ClosingMode.EXTERNALLY;
+                whenWindowIsClosingExternally();
+                whenWindowIsClosing();
+            }
+            case HIDE -> {
+                closingmode = ClosingMode.HIDEONLY;
+            }
+            case IGNORE ->
+                e.consume();
+        }
+    }
+
+    public final void windowIsHiding(WindowEvent e) {
+        getWindow().saveWindowSizePreferences();
+        whenWindowIsHiding();
+    }
+
+    protected void whenWindowIsHiding() {
+    }
+
+    public final void windowIsHidden(WindowEvent e) {
+        switch (closingmode) {
+            case PROGRAMMATICALLY -> {
+                whenWindowIsClosedProgrammatically();
+                whenWindowIsClosed();
+                setWindow(null);
+            }
+            case EXTERNALLY -> {
+                whenWindowIsClosedExternally();
+                whenWindowIsClosed();
+                setWindow(null);
+            }
+            case HIDEONLY ->
+                whenWindowIsHiddenOnly();
+        }
+    }
+
+    protected void whenWindowIsHiddenOnly() {
+    }
+
+    protected void whenWindowIsClosed() {
+    }
+
+    protected void whenWindowIsClosedProgrammatically() {
+    }
+
+    protected void whenWindowIsClosedExternally() {
+    }
+
+    private W window;
+
+    protected void setWindow(W window) {
+        this.window = window;
+    }
+
+    protected W getWindow() {
+        return window;
+    }
 
     public class WorkRunner {
 

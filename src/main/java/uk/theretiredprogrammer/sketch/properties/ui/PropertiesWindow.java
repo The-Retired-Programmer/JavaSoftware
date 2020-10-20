@@ -27,10 +27,10 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author richard
  */
-public class PropertiesWindow extends AbstractWindow {
+public class PropertiesWindow extends AbstractWindow<PropertiesController> {
 
-    public PropertiesWindow(String fn, PropertiesController controller, PropertySketch sketchproperty, AbstractWindow parent) {
-        super(PropertiesWindow.class, parent);
+    public PropertiesWindow(String fn, PropertiesController controller, PropertySketch sketchproperty) {
+        super(PropertiesWindow.class, controller);
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(sketchproperty));
@@ -60,6 +60,6 @@ public class PropertiesWindow extends AbstractWindow {
                 UI.toolbarButton("shape_flip_horizontal.png", "Add Laser2", actionEvent -> controller.addNewBoat("laser2")),
                 UI.toolbarButton("pencil.png", "Add Mark", actionEvent -> controller.addNewMark())
         );
-        show();
+        build();
     }
 }

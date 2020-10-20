@@ -18,21 +18,22 @@ package uk.theretiredprogrammer.sketch.decisionslog.ui;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 
 /**
  *
  * @author richard
  */
-public class DecisionDisplayWindow extends AbstractWindow {
+public class DecisionDisplayWindow extends AbstractWindow<DecisionController> {
 
     private final TextFlow textarea;
 
-    public DecisionDisplayWindow(String fn, AbstractWindow parent) {
-        super(DecisionDisplayWindow.class, parent);
+    public DecisionDisplayWindow(String fn, DecisionController controller) {
+        super(DecisionDisplayWindow.class, controller);
         setTitle("SKETCH Decisions Viewer - " + fn);
         setDefaultWindowWidth(400);
         setContent(textarea = new TextFlow(), SCROLLABLE);
-        show();
+        build();
     }
 
     public void clear() {

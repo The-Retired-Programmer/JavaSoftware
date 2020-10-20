@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import java.io.IOException;
-import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
@@ -36,8 +35,7 @@ public class TurnTest {
     private Decision decision;
 
     Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
-        controller = new DisplayController();
-        controller.createFromResource(filename);
+        controller = new DisplayController(filename);
         boat = controller.boats.getBoat("Red");
         //
         for (var updateaction : updateproperties) {

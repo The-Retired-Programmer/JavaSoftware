@@ -32,15 +32,13 @@ import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
  *
  * @author richard
  */
-public class FileSelectorWindow extends AbstractWindow {
+public class FileSelectorWindow extends AbstractWindow<FileSelectorController> {
 
-    public final FileSelectorController controller;
     private final FileSelectorPane fileselectorpane;
 
     public FileSelectorWindow(FileSelectorController controller, Stage stage) {
-        super(FileSelectorWindow.class, stage);
+        super(FileSelectorWindow.class, stage, controller);
         //
-        this.controller = controller;
         setDefaultWindowWidth(400);
         setTitle("SKETCH Scenario Selector");
         fileselectorpane = new FileSelectorPane();
@@ -68,9 +66,7 @@ public class FileSelectorWindow extends AbstractWindow {
                 new Separator(),
                 UI.toolbarButton("application_cascade.png", "Reset Windows Positions", ev -> resetWindows())
         );
-        this.setOnCloseAction((e) -> {
-            controller.close();
-        });
+        build();
         show();
     }
 
@@ -93,6 +89,7 @@ public class FileSelectorWindow extends AbstractWindow {
     }
 
     public TitledPane getRecentsPane() {
+        FileSelectorController controller = getController();
         ListView<PathWithShortName> recentsview = new ListView<>(controller.getRecents());
         recentsview.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> controller.recentSelected(newValue));
@@ -102,6 +99,7 @@ public class FileSelectorWindow extends AbstractWindow {
     }
 
     public List<TitledPane> getFolderPanes() {
+        FileSelectorController controller = getController();
         List<TitledPane> panes = new ArrayList<>();
         for (var pn : controller.getFolders()) {
             ListView<PathWithShortName> filesview = new ListView<>(controller.getFoldercontent(pn));
@@ -117,7 +115,7 @@ public class FileSelectorWindow extends AbstractWindow {
     private void remove(FileSelectorPane fileselectorpane) {
         TitledPane expandedpane = fileselectorpane.getExpandedPane();
         if (expandedpane != null) {
-            controller.removefromfolderlist(expandedpane.getText());
+            getController().removefromfolderlist(expandedpane.getText());
         }
     }
 }

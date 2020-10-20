@@ -26,13 +26,13 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author richard
  */
-public class DisplayWindow extends AbstractWindow {
+public class DisplayWindow extends AbstractWindow<DisplayController> {
 
     private final DisplayPane pane;
     private final Text timetext;
 
-    public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty, AbstractWindow parent) {
-        super(DisplayWindow.class, parent);
+    public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty) {
+        super(DisplayWindow.class, controller);
         setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();
         addtoMenubar(
@@ -62,6 +62,7 @@ public class DisplayWindow extends AbstractWindow {
         pane = controller.getDisplayPanePainter();
         group.getChildren().add(pane);
         setContent(group, SCROLLABLE);
+        build();
         show();
     }
 

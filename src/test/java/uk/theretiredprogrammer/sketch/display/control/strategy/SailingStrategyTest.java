@@ -44,8 +44,7 @@ public class SailingStrategyTest {
     private Angle winddirection;
 
     public Decision makeDecision(String filename, Runnable... updateproperties) throws IOException {
-        controller = new DisplayController();
-        controller.createFromResource(filename);
+        controller = new DisplayController(filename);
         boat = controller.boats.getBoat("Red");
         for (var updateaction : updateproperties) {
             updateaction.run();

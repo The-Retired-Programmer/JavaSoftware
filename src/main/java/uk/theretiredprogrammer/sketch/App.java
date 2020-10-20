@@ -12,7 +12,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        FileSelectorController fileselectorcontroller = new FileSelectorController();
-        fileselectorcontroller.showFileSelectorWindow(stage);
+        new FileSelectorController(stage);
     }
 }

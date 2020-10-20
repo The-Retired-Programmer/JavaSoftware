@@ -40,25 +40,39 @@ import uk.theretiredprogrammer.sketch.fileselector.ui.FileSelectorWindow;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class FileSelectorController extends AbstractController {
+public class FileSelectorController extends AbstractController<FileSelectorWindow> {
 
+    private final List<DisplayController> displayscreated;
     private final ObservableList<PathWithShortName> recentFileList;
     private final ObservableList<PathWithShortName> folderList;
-    private FileSelectorWindow fileselectorwindow;
 
-    public FileSelectorController() {
+    public FileSelectorController(Stage stage) {
+        this.displayscreated = new ArrayList<>();
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         folderList = SketchPreferences.getFoldersList(FileSelectorWindow.class);
-        folderList.addListener((ListChangeListener) (c) -> fileselectorwindow.refreshWindow());
+        folderList.addListener((ListChangeListener) (c) -> onfolderlistchange(c));
+        setWindow(new FileSelectorWindow(this, stage));
     }
 
-    public void close() {
+    private void onfolderlistchange(ListChangeListener.Change<PathWithShortName> lcl) {
+        getWindow().refreshWindow();
+    }
+
+    @Override
+    protected void whenWindowIsClosing() {
+        for (var controller : displayscreated) {
+            controller.close();
+        }
+    }
+    
+    @Override
+    protected void whenWindowIsHiding() {
         SketchPreferences.saveFoldersList(folderList, FileSelectorWindow.class);
         SketchPreferences.saveRecentFileList(recentFileList, FileSelectorWindow.class);
     }
 
-    public void showFileSelectorWindow(Stage stage) {
-        fileselectorwindow = new FileSelectorWindow(this, stage);
+    public void removeparentchildrelationship(DisplayController childcontroller) {
+        displayscreated.remove(childcontroller);
     }
 
     public ObservableList<PathWithShortName> getRecents() {
@@ -114,18 +128,14 @@ public class FileSelectorController extends AbstractController {
     }
 
     public void newConfigfile() {
-        fileselectorwindow.statusbarDisplay();
-        DisplayController displaycontroller = new DisplayController();
-        displaycontroller.createFromResource("newtemplate.json");
-        displaycontroller.showDisplayWindow("<newfile>", fileselectorwindow);
+        getWindow().clearStatusbar();
+        displayscreated.add(new DisplayController("newtemplate.json", "<newfile>", this));
     }
 
     public void selected(PathWithShortName pn) {
-        fileselectorwindow.statusbarDisplay();
+        getWindow().clearStatusbar();
         updateRecentFileList(pn);
-        DisplayController displaycontroller = new DisplayController();
-        displaycontroller.createFromFile(pn.getPath());
-        displaycontroller.showDisplayWindow(pn.toString(), fileselectorwindow);
+        displayscreated.add(new DisplayController(pn, this));
     }
 
     private void updateRecentFileList(PathWithShortName pn) {

@@ -31,8 +31,7 @@ public abstract class FlowComponentTest {
     private DisplayController controller;
 
     public void initialiseFlow(String filename) throws IOException {
-        controller = new DisplayController();
-        controller.createFromResource(filename);
+        controller = new DisplayController(filename);
     }
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {

@@ -15,9 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -31,46 +28,56 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
+import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 
 /**
  *
  * @author richard
+ * @param <C>
  */
-public abstract class AbstractWindow {
+public abstract class AbstractWindow<C extends AbstractController> {
 
     public static final boolean SCROLLABLE = true;
 
-    private AbstractWindow parentwindow = null;
-    private final List<AbstractWindow> childwindows = new ArrayList<>();
+//    private AbstractWindow parentwindow = null;
+//    private final List<AbstractWindow> childwindows = new ArrayList<>();
 
-    private Stage stage = new Stage();
+    private final Stage stage;
     private final Class clazz;
     private final MenuBar menubar = new MenuBar();
     private final ToolBar toolbar = new ToolBar();
-    ;
     private final Text statusbar = new Text("");
     private String title;
     private Node contentnode;
-    private Consumer<WindowEvent> closeaction;
+//    private Consumer<WindowEvent> closeaction;
     private Rectangle2D windowsize;
     private boolean scrollable = false;
+    private C controller;
 
-    public AbstractWindow(Class clazz) {
+    public AbstractWindow(Class clazz, Stage stage, C controller) {
         this.clazz = clazz;
+        this.stage = stage;
+        this.controller = controller;
     }
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public AbstractWindow(Class clazz, AbstractWindow parent) {
-        this(clazz);
-        parentwindow = parent;
-        parent.childwindows.add(this);
+    public AbstractWindow(Class clazz, C controller) {
+        this(clazz, new Stage(), controller);
+//        parentwindow = parent;
+//        parent.childwindows.add(this);
     }
 
-    public AbstractWindow(Class clazz, Stage stage) {
-        this(clazz);
-        this.stage = stage;
+    protected C getController() {
+        return controller;
+    }
+
+    public void close() {
+        stage.close();
+    }
+
+    public void saveWindowSizePreferences() {
+        SketchPreferences.saveWindowSizePreferences(stage, clazz);
     }
 
     private static final double MINWINDOWWIDTH = 50;
@@ -159,11 +166,7 @@ public abstract class AbstractWindow {
         this.scrollable = scrollable;
     }
 
-    public final void setOnCloseAction(Consumer<WindowEvent> closeaction) {
-        this.closeaction = closeaction;
-    }
-
-    public final Stage show() {
+    public final Stage build() {
         BorderPane borderpane = new BorderPane();
         borderpane.setTop(new VBox(menubar, toolbar));
         borderpane.setCenter(scrollable ? new ScrollPane(contentnode) : contentnode);
@@ -173,43 +176,27 @@ public abstract class AbstractWindow {
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
-        if (closeaction != null) {
-            stage.setOnCloseRequest(e -> {
-                closeaction.accept(e);
-                closeRequest();
-            });
-        }
-        stage.setOnHiding(e -> {
-            SketchPreferences.saveWindowSizePreferences(stage, clazz);
-            closeChildren();
-        });
-        stage.show();
+        stage.setOnCloseRequest(e -> controller.windowHasExternalCloseRequest(e));
+        stage.setOnHiding(e -> controller.windowIsHiding(e));
+        stage.setOnHidden(e -> controller.windowIsHidden(e));
         return stage;
+    }
+
+    public void show() {
+        stage.show();
     }
 
     public final void resetWindows() {
         SketchPreferences.clearWindowSizePreferences(clazz);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
-        childwindows.forEach(window -> window.resetWindows());
+//        childwindows.forEach(window -> window.resetWindows());
     }
 
-    public final void statusbarDisplay(String message) {
+    public final void writeToStatusbar(String message) {
         statusbar.setText(message);
     }
 
-    public final void statusbarDisplay() {
-        statusbarDisplay("");
-    }
-
-    private void closeChildren() {
-        childwindows.forEach(window -> {
-            window.stage.close();
-        });
-    }
-
-    private void closeRequest() {
-        if (parentwindow != null) {
-            parentwindow.childwindows.remove(this);
-        }
+    public final void clearStatusbar() {
+        writeToStatusbar("");
     }
 }
