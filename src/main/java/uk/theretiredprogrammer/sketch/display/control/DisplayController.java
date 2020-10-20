@@ -33,7 +33,7 @@ import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
-import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 
 /**
@@ -56,7 +56,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
-        propertiescontroller = new PropertiesController(pn.getPath(), pn.toString());
+        propertiescontroller = new PropertiesController(pn);
         createDisplayEntities();
         decisioncontroller = new DecisionController(pn.toString(), false);
         simulationcontroller = new SimulationController(this, getProperty());
@@ -112,8 +112,8 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 //        }
 //        sketchchangeaction.run();
     }
-    
-     public void resetSimulation() {
+
+    public void resetSimulation() {
         simulationcontroller.stop();
         decisioncontroller.clear();
         resetObjectProperties();
@@ -149,19 +149,19 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public void showFilteredDecisionWindow() {
         decisioncontroller.showWindow();
     }
-    
+
     public SimulationController getSimulationController() {
         return simulationcontroller;
     }
-    
-    public void updateTimeField(int seconds){
+
+    public void updateTimeField(int seconds) {
         getWindow().updateTimeField(seconds);
     }
-    
+
     public void repaint() {
         painter.repaint();
     }
-    
+
     public DecisionController getDecisionController() {
         return decisioncontroller;
     }

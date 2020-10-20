@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core.control;
 
-import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import java.nio.file.Path;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

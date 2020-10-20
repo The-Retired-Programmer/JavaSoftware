@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.IOFailure;
 import uk.theretiredprogrammer.sketch.core.control.WorkRunner;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
@@ -36,9 +37,9 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     private PropertySketch sketchproperty;
 
-    public PropertiesController(Path path, String fn) {
-        new WorkRunner(() -> initialisefromFile(path)).run();
-        setWindow(new PropertiesWindow(fn, this, sketchproperty), ExternalCloseAction.HIDE);
+    public PropertiesController(PathWithShortName pn) {
+        new WorkRunner(() -> initialisefromFile(pn.getPath())).run();
+        setWindow(new PropertiesWindow(pn.toString(), this, sketchproperty), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource, String fn) {

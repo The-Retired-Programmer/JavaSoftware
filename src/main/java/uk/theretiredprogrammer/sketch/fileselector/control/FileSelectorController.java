@@ -33,7 +33,7 @@ import uk.theretiredprogrammer.sketch.core.control.IOFailure;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
-import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.fileselector.ui.FileSelectorWindow;
 
 /**

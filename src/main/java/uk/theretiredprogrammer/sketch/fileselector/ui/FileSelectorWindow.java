@@ -26,7 +26,7 @@ import javafx.stage.Stage;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
-import uk.theretiredprogrammer.sketch.fileselector.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 
 /**
  *
