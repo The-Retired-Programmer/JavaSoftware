@@ -23,6 +23,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TitledPane;
 import javafx.stage.Stage;
+import uk.theretiredprogrammer.sketch.core.control.Execute;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
@@ -92,7 +93,7 @@ public class FileSelectorWindow extends AbstractWindow<FileSelectorController> {
         FileSelectorController controller = getController();
         ListView<PathWithShortName> recentsview = new ListView<>(controller.getRecents());
         recentsview.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> controller.recentSelected(newValue));
+                (observable, oldValue, newValue) -> new Execute(() -> controller.recentSelected(newValue)));
         TitledPane titledpane = new TitledPane("Recently Opened Scenarios", new ScrollPane(recentsview));
         titledpane.setGraphic(UI.image("link.png"));
         return titledpane;
@@ -104,7 +105,7 @@ public class FileSelectorWindow extends AbstractWindow<FileSelectorController> {
         for (var pn : controller.getFolders()) {
             ListView<PathWithShortName> filesview = new ListView<>(controller.getFoldercontent(pn));
             filesview.getSelectionModel().selectedItemProperty().addListener(
-                    (observable, oldValue, newValue) -> controller.selected(newValue));
+                    (observable, oldValue, newValue) -> new Execute(() -> controller.selected(newValue)));
             TitledPane titledpane = new TitledPane(pn.toString(), new ScrollPane(filesview));
             titledpane.setGraphic(UI.image("folder.png"));
             panes.add(titledpane);
