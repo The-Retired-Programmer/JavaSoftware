@@ -22,9 +22,6 @@ import uk.theretiredprogrammer.sketch.display.ui.DisplayPainter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
@@ -48,6 +45,8 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     private PropertiesController propertiescontroller;
     private DecisionController decisioncontroller;
     private FileSelectorController fileselectorcontroller;
+    private SimulationController simulationcontroller;
+    //
     public BoatStrategies boatstrategies;
     public WindFlow windflow;
     public WaterFlow waterflow;
@@ -57,9 +56,10 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
-        propertiescontroller = new PropertiesController(pn.getPath(), pn.toString(), this);
+        propertiescontroller = new PropertiesController(pn.getPath(), pn.toString());
         createDisplayEntities();
-        decisioncontroller = new DecisionController(pn.toString(), false, this);
+        decisioncontroller = new DecisionController(pn.toString(), false);
+        simulationcontroller = new SimulationController(this, getProperty());
         showDisplayWindow(pn.toString());
     }
 
@@ -70,14 +70,13 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
         this(resourcename);
-        decisioncontroller = new DecisionController(fn, false, this);
+        decisioncontroller = new DecisionController(fn, false);
         this.fileselectorcontroller = fileselectorcontroller;
         showDisplayWindow(fn);
     }
 
     private void createDisplayEntities() {
         PropertySketch sketchproperty = propertiescontroller.getProperty();
-        simulationtime = 0;
         windflow = new WindFlow(sketchproperty);
         waterflow = new WaterFlow(sketchproperty);
         course = new Course(sketchproperty);
@@ -89,18 +88,18 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     private void showDisplayWindow(String fn) {
         setWindow(new DisplayWindow(fn, this, this.getProperty()));
     }
-    
+
     @Override
     protected void whenWindowIsClosing() {
         propertiescontroller.close();
         decisioncontroller.close();
     }
-    
+
     @Override
     protected void whenWindowIsClosedExternally() {
         fileselectorcontroller.removeparentchildrelationship(this);
     }
-    
+
     public DisplayPane getDisplayPanePainter() {
         return painter;
     }
@@ -113,8 +112,14 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 //        }
 //        sketchchangeaction.run();
     }
+    
+     public void resetSimulation() {
+        simulationcontroller.stop();
+        decisioncontroller.clear();
+        resetObjectProperties();
+    }
 
-    public PropertySketch getProperty() {
+    public final PropertySketch getProperty() {
         return propertiescontroller.getProperty();
     }
 
@@ -144,59 +149,20 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public void showFilteredDecisionWindow() {
         decisioncontroller.showWindow();
     }
-
-    //  the SIMULATION CONTROLLER STUFF //
-    private int simulationtime;
-    private boolean isRunning;
-    private Timer timer;
-    private TimeStepRunner runner;
-
-    public void start() {
-        if (isRunning) {
-            return;
-        }
-        int rate = (int) (getProperty().getDisplay().getSecondsperdisplay() * 1000 / getProperty().getDisplay().getSpeedup());
-        timer = new Timer();
-        runner = new TimeStepRunner();
-        timer.scheduleAtFixedRate(runner, 0, rate);
-        isRunning = true;
+    
+    public SimulationController getSimulationController() {
+        return simulationcontroller;
     }
-
-    public void stop() {
-        if (!isRunning) {
-            return;
-        }
-        isRunning = false;
-        timer.cancel();
+    
+    public void updateTimeField(int seconds){
+        getWindow().updateTimeField(seconds);
     }
-
-    public void reset() {
-        stop();
-        decisioncontroller.clear();
-        resetObjectProperties();
+    
+    public void repaint() {
+        painter.repaint();
     }
-
-    private class TimeStepRunner extends TimerTask {
-
-        @Override
-        public void run() {
-            new WorkRunner(() -> doWork())
-                    .setExceptionHandler(() -> stop())
-                    .run();
-        }
-
-        private void doWork() {
-            int secondsperdisplay = getProperty().getDisplay().getSecondsperdisplay();
-            while (secondsperdisplay > 0) {
-                decisioncontroller.setTime(simulationtime);
-                windflow.timerAdvance(simulationtime, decisioncontroller);
-                waterflow.timerAdvance(simulationtime, decisioncontroller);
-                boatstrategies.timerAdvance(getProperty(), simulationtime, decisioncontroller, windflow, waterflow);
-                secondsperdisplay--;
-                simulationtime++;
-            }
-            getWindow().updateTimeField(simulationtime);
-            Platform.runLater(() -> painter.repaint());
-        }
+    
+    public DecisionController getDecisionController() {
+        return decisioncontroller;
     }
 }

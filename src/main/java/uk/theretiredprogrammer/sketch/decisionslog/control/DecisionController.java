@@ -30,9 +30,8 @@ public class DecisionController extends AbstractController<DecisionDisplayWindow
     private String mmsstime;
     private final List<TimerLogEntry> log = new ArrayList<>();
 
-    public DecisionController(String fn, Boolean requiresfilter, AbstractController parentcontroller) {
-        super(ExternalCloseAction.HIDE);
-        setWindow(new DecisionDisplayWindow(fn, this));
+    public DecisionController(String fn, Boolean requiresfilter) {
+        setWindow(new DecisionDisplayWindow(fn, this), ExternalCloseAction.HIDE);
         getWindow().clear();
         if (requiresfilter) {
             log.stream()
@@ -42,10 +41,6 @@ public class DecisionController extends AbstractController<DecisionDisplayWindow
             log.stream()
                     .forEach(entry -> getWindow().writeline(entry.toString()));
         }
-    }
-
-    public void showWindow() {
-        getWindow().show();
     }
 
     public void setTime(int seconds) {

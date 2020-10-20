@@ -15,14 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.control;
 
-import jakarta.json.JsonException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.function.Consumer;
-import javafx.application.Platform;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.stage.WindowEvent;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 
@@ -42,14 +34,25 @@ public abstract class AbstractController<W extends AbstractWindow> {
     }
 
     private ClosingMode closingmode = ClosingMode.HIDEONLY;
-    private final ExternalCloseAction externalcloseaction;
+    private ExternalCloseAction externalcloseaction;
+    private W window;
 
-    public AbstractController() {
+    protected final void setWindow(W window, ExternalCloseAction externalcloseaction) {
+        this.window = window;
+        this.externalcloseaction = externalcloseaction;
+    }
+    
+    protected final void setWindow(W window) {
+        this.window = window;
         this.externalcloseaction = ExternalCloseAction.CLOSE;
     }
 
-    public AbstractController(ExternalCloseAction externalcloseaction) {
-        this.externalcloseaction = externalcloseaction;
+    protected final W getWindow() {
+        return window;
+    }
+
+    public final void showWindow() {
+        window.show();
     }
 
     public final void close() {
@@ -57,15 +60,6 @@ public abstract class AbstractController<W extends AbstractWindow> {
         whenWindowIsClosingProgrammatically();
         whenWindowIsClosing();
         getWindow().close();
-    }
-
-    protected void whenWindowIsClosing() {
-    }
-
-    protected void whenWindowIsClosingProgrammatically() {
-    }
-
-    protected void whenWindowIsClosingExternally() {
     }
 
     public final void windowHasExternalCloseRequest(WindowEvent e) {
@@ -88,9 +82,6 @@ public abstract class AbstractController<W extends AbstractWindow> {
         whenWindowIsHiding();
     }
 
-    protected void whenWindowIsHiding() {
-    }
-
     public final void windowIsHidden(WindowEvent e) {
         switch (closingmode) {
             case PROGRAMMATICALLY -> {
@@ -108,6 +99,18 @@ public abstract class AbstractController<W extends AbstractWindow> {
         }
     }
 
+    protected void whenWindowIsClosing() {
+    }
+
+    protected void whenWindowIsClosingProgrammatically() {
+    }
+
+    protected void whenWindowIsClosingExternally() {
+    }
+
+    protected void whenWindowIsHiding() {
+    }
+
     protected void whenWindowIsHiddenOnly() {
     }
 
@@ -118,96 +121,5 @@ public abstract class AbstractController<W extends AbstractWindow> {
     }
 
     protected void whenWindowIsClosedExternally() {
-    }
-
-    private W window;
-
-    protected void setWindow(W window) {
-        this.window = window;
-    }
-
-    protected W getWindow() {
-        return window;
-    }
-
-    public class WorkRunner {
-
-        private final Runnable work;
-        private Consumer<Exception> illegalstatefailurereporting = (ex) -> catchDialog("Program Failure", ex);
-        private Consumer<Exception> iofailurereporting = (ex) -> catchDialog("File read/write Failure", ex);
-        private Consumer<Exception> parsefailurereporting = (ex) -> catchDialog("Problem parsing Config file", ex);
-        private Consumer<Exception> otherexceptionsreporting = (ex) -> catchDialog("Program Failure", ex);
-        private Runnable exceptionHandler = () -> nothing();
-        private Runnable parsefailureHandler = () -> exceptionHandler.run();
-
-        public WorkRunner(Runnable work) {
-            this.work = work;
-        }
-
-        public WorkRunner reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
-            this.illegalstatefailurereporting = illegalstatefailurereporting;
-            return this;
-        }
-
-        public WorkRunner reportOnIOFailure(Consumer<Exception> iofailurereporting) {
-            this.iofailurereporting = iofailurereporting;
-            return this;
-        }
-
-        public WorkRunner reportOnParseFailure(Consumer<Exception> parsefailurereporting) {
-            this.parsefailurereporting = parsefailurereporting;
-            return this;
-        }
-
-        public WorkRunner reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
-            this.otherexceptionsreporting = otherexceptionsreporting;
-            return this;
-        }
-
-        public WorkRunner setExceptionHandler(Runnable exceptionHandler) {
-            this.exceptionHandler = exceptionHandler;
-            return this;
-        }
-
-        public WorkRunner setParseFailureHandler(Runnable parsefailureHandler) {
-            this.parsefailureHandler = parsefailureHandler;
-            return this;
-        }
-
-        public void run() {
-            try {
-                work.run();
-            } catch (IllegalStateFailure ex) {
-                exceptionHandler.run();
-                Platform.runLater(() -> illegalstatefailurereporting.accept(ex));
-            } catch (JsonException | ParseFailure ex) {
-                parsefailureHandler.run();
-                Platform.runLater(() -> parsefailurereporting.accept(ex));
-            } catch (IOFailure ex) {
-                exceptionHandler.run();
-                Platform.runLater(() -> iofailurereporting.accept(ex));
-            } catch (Exception ex) {
-                exceptionHandler.run();
-                Platform.runLater(() -> otherexceptionsreporting.accept(ex));
-            }
-        }
-
-        public void nothing() {
-        }
-
-        public void catchDialog(String title, Exception ex) {
-            StringWriter writer = new StringWriter();
-            PrintWriter pwriter = new PrintWriter(writer);
-            ex.printStackTrace(pwriter);
-            ButtonType loginButtonType = new ButtonType("Close", ButtonBar.ButtonData.OK_DONE);
-            Dialog<String> dialog = new Dialog<>();
-            dialog.getDialogPane().getButtonTypes().add(loginButtonType);
-            dialog.setTitle(title + ex.getLocalizedMessage());
-            dialog.setContentText(writer.toString());
-            dialog.setWidth(600);
-            dialog.setResizable(true);
-            dialog.showAndWait();
-        }
-
     }
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.IOFailure;
+import uk.theretiredprogrammer.sketch.core.control.WorkRunner;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
@@ -35,16 +36,14 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     private PropertySketch sketchproperty;
 
-    public PropertiesController(Path path, String fn, AbstractController parentcontroller) {
-        super(ExternalCloseAction.HIDE);
+    public PropertiesController(Path path, String fn) {
         new WorkRunner(() -> initialisefromFile(path)).run();
-        setWindow(new PropertiesWindow(fn, this, sketchproperty));
+        setWindow(new PropertiesWindow(fn, this, sketchproperty), ExternalCloseAction.HIDE);
     }
 
-    public PropertiesController(String resource, String fn, AbstractController parentcontroller) {
-        super(ExternalCloseAction.HIDE);
+    public PropertiesController(String resource, String fn) {
         new WorkRunner(() -> initialisefromResource(resource)).run();
-        setWindow(new PropertiesWindow(fn, this, sketchproperty));
+        setWindow(new PropertiesWindow(fn, this, sketchproperty), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource) {
@@ -73,10 +72,6 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
         }
         sketchproperty = new PropertySketch();
         sketchproperty.parse(configfilecontroller.getParsedConfigFile());
-    }
-
-    public void showWindow() {
-        getWindow().show();
     }
 
     public PropertySketch getProperty() {

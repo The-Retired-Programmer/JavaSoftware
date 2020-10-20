@@ -37,25 +37,25 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
         setDefaultWindow();
         addtoMenubar(
                 UI.menu("Control",
-                        UI.menuitem("Start", actionEvent -> controller.start()),
-                        UI.menuitem("Pause", actionEvent -> controller.stop()),
-                        UI.menuitem("Reset", actionEvent -> controller.reset())
+                        UI.menuitem("Start", ev -> controller.getSimulationController().start()),
+                        UI.menuitem("Pause", ev -> controller.getSimulationController().stop()),
+                        UI.menuitem("Reset", ev -> controller.resetSimulation())
                 ),
                 UI.menu("Window Management",
-                        UI.menuitem("Show Properties", actionEvent -> controller.showPropertiesWindow()),
-                        UI.menuitem("Show Decision Log", actionEvent -> controller.showFullDecisionWindow()),
-                        UI.menuitem("Show Filtered Decision Log", actionEvent -> controller.showFilteredDecisionWindow())
+                        UI.menuitem("Show Properties", ev -> controller.showPropertiesWindow()),
+                        UI.menuitem("Show Decision Log", ev -> controller.showFullDecisionWindow()),
+                        UI.menuitem("Show Filtered Decision Log", ev -> controller.showFilteredDecisionWindow())
                 )
         );
         addtoToolbar(
-                UI.toolbarButton("control_play_blue.png", "Start", actionEvent -> controller.start()),
-                UI.toolbarButton("control_pause_blue.png", "Pause", actionEvent -> controller.stop()),
-                UI.toolbarButton("control_rewind_blue.png", "Reset", actionEvent -> controller.reset()),
-                UI.toolbarButton("table_save.png", "Save Properties", actionEvent -> controller.save(controller,
+                UI.toolbarButton("control_play_blue.png", "Start", ev -> controller.getSimulationController().start()),
+                UI.toolbarButton("control_pause_blue.png", "Pause", ev -> controller.getSimulationController().stop()),
+                UI.toolbarButton("control_rewind_blue.png", "Reset", ev -> controller.resetSimulation()),
+                UI.toolbarButton("table_save.png", "Save Properties", ev -> controller.save(controller,
                 "/Users/richard/SKETCHSAVE/save.json")),
-                UI.toolbarButton("table.png", "Show Properties", actionEvent -> controller.showPropertiesWindow()),
-                UI.toolbarButton("script.png", "Show Decision Log", actionEvent -> controller.showFullDecisionWindow()),
-                UI.toolbarButton("script_code.png", "Show Filtered Decision Log", actionEvent -> controller.showFilteredDecisionWindow()),
+                UI.toolbarButton("table.png", "Show Properties", ev -> controller.showPropertiesWindow()),
+                UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showFullDecisionWindow()),
+                UI.toolbarButton("script_code.png", "Show Filtered Decision Log", ev -> controller.showFilteredDecisionWindow()),
                 timetext = new Text("      ")
         );
         Group group = new Group();
