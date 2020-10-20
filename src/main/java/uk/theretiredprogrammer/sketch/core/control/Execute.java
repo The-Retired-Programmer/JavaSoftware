@@ -28,51 +28,51 @@ import javafx.scene.control.Dialog;
  *
  * @author richard
  */
-public class WorkRunner {
+public class Execute {
 
-    private final Runnable work;
     private Consumer<Exception> illegalstatefailurereporting = (ex) -> catchDialog("Program Failure", ex);
-    private Consumer<Exception> iofailurereporting = (ex) -> catchDialog("File read/write Failure", ex);
     private Consumer<Exception> parsefailurereporting = (ex) -> catchDialog("Problem parsing Config file", ex);
     private Consumer<Exception> otherexceptionsreporting = (ex) -> catchDialog("Program Failure", ex);
     private Runnable exceptionHandler = () -> nothing();
     private Runnable parsefailureHandler = () -> exceptionHandler.run();
-
-    public WorkRunner(Runnable work) {
-        this.work = work;
+    
+    public static void runLater(Runnable work) {
+        Platform.runLater(() -> new Execute(work));
+    }
+    
+    public Execute() {
+    }
+    
+    public Execute(Runnable work) {
+        run(work);
     }
 
-    public WorkRunner reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
+    public Execute reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
         this.illegalstatefailurereporting = illegalstatefailurereporting;
         return this;
     }
 
-    public WorkRunner reportOnIOFailure(Consumer<Exception> iofailurereporting) {
-        this.iofailurereporting = iofailurereporting;
-        return this;
-    }
-
-    public WorkRunner reportOnParseFailure(Consumer<Exception> parsefailurereporting) {
+    public Execute reportOnParseFailure(Consumer<Exception> parsefailurereporting) {
         this.parsefailurereporting = parsefailurereporting;
         return this;
     }
 
-    public WorkRunner reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
+    public Execute reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
         this.otherexceptionsreporting = otherexceptionsreporting;
         return this;
     }
 
-    public WorkRunner setExceptionHandler(Runnable exceptionHandler) {
+    public Execute setExceptionHandler(Runnable exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         return this;
     }
 
-    public WorkRunner setParseFailureHandler(Runnable parsefailureHandler) {
+    public Execute setParseFailureHandler(Runnable parsefailureHandler) {
         this.parsefailureHandler = parsefailureHandler;
         return this;
     }
 
-    public void run() {
+    public final void run(Runnable work) {
         try {
             work.run();
         } catch (IllegalStateFailure ex) {
@@ -81,9 +81,6 @@ public class WorkRunner {
         } catch (JsonException | ParseFailure ex) {
             parsefailureHandler.run();
             Platform.runLater(() -> parsefailurereporting.accept(ex));
-        } catch (IOFailure ex) {
-            exceptionHandler.run();
-            Platform.runLater(() -> iofailurereporting.accept(ex));
         } catch (Exception ex) {
             exceptionHandler.run();
             Platform.runLater(() -> otherexceptionsreporting.accept(ex));
@@ -106,5 +103,4 @@ public class WorkRunner {
         dialog.setResizable(true);
         dialog.showAndWait();
     }
-
 }

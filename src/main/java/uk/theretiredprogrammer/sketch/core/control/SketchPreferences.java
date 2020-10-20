@@ -59,7 +59,7 @@ public class SketchPreferences {
                 stage.setHeight(windowsize.getHeight());
             }
         } catch (BackingStoreException ex) {
-            System.out.println("Could not access preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+            throw new Failure("Could not access preferences for window " + windowname, ex);
         }
     }
 
@@ -77,8 +77,8 @@ public class SketchPreferences {
                 stagePreferences.putDouble(WINDOW_HEIGHT, stage.getHeight());
             }
             stagePreferences.flush();
-        } catch (final BackingStoreException ex) {
-            System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+        } catch (BackingStoreException ex) {
+            throw new Failure("Could not flush preferences for window " + windowname, ex);
         }
     }
 
@@ -88,8 +88,8 @@ public class SketchPreferences {
             Preferences stagePreferences = Preferences.userNodeForPackage(clazz).node(windowname);
             stagePreferences.removeNode();
             stagePreferences.flush();
-        } catch (final BackingStoreException ex) {
-            System.out.println("Could not flush preferences for window " + windowname + "\n" + ex.getLocalizedMessage());
+        } catch (BackingStoreException ex) {
+            throw new Failure("Could not flush preferences for window " + windowname, ex);
         }
     }
 
@@ -109,7 +109,7 @@ public class SketchPreferences {
                 }
             }
         } catch (BackingStoreException ex) {
-            System.out.println("Could not access preferences for RecentFileList\n" + ex.getLocalizedMessage());
+            throw new Failure("Could not access preferences for RecentFileList", ex);
         }
         return result;
     }
@@ -124,8 +124,8 @@ public class SketchPreferences {
                 index++;
             }
             recentPreferences.flush();
-        } catch (final BackingStoreException ex) {
-            System.out.println("Could not flush preferences for RecentFileList\n" + ex.getLocalizedMessage());
+        } catch (BackingStoreException ex) {
+            throw new Failure("Could not flush preferences for RecentFileList", ex);
         }
     }
 
@@ -145,7 +145,7 @@ public class SketchPreferences {
                 }
             }
         } catch (BackingStoreException ex) {
-            System.out.println("Could not access preferences for FoldersList\n" + ex.getLocalizedMessage());
+            throw new Failure("Could not access preferences for FoldersList", ex);
         }
         return result;
     }
@@ -160,8 +160,8 @@ public class SketchPreferences {
                 index++;
             }
             foldersPreferences.flush();
-        } catch (final BackingStoreException ex) {
-            System.out.println("Could not flush preferences for FoldersList\n" + ex.getLocalizedMessage());
+        } catch (BackingStoreException ex) {
+            throw new Failure("Could not flush preferences for FoldersList", ex);
         }
     }
 }

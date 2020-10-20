@@ -18,8 +18,8 @@ package uk.theretiredprogrammer.sketch.properties.control;
 import java.io.IOException;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
-import uk.theretiredprogrammer.sketch.core.control.IOFailure;
-import uk.theretiredprogrammer.sketch.core.control.WorkRunner;
+import uk.theretiredprogrammer.sketch.core.control.Execute;
+import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
@@ -38,17 +38,17 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     private PropertySketch sketchproperty;
 
     public PropertiesController(PathWithShortName pn) {
-        new WorkRunner(() -> initialisefromFile(pn.getPath())).run();
+        initialisefromFile(pn.getPath());
         setWindow(new PropertiesWindow(pn.toString(), this, sketchproperty), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource, String fn) {
-        new WorkRunner(() -> initialisefromResource(resource)).run();
+        initialisefromResource(resource);
         setWindow(new PropertiesWindow(fn, this, sketchproperty), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource) {
-        new WorkRunner(() -> initialisefromResource(resource)).run();
+        initialisefromResource(resource);
     }
 
     private void initialisefromFile(Path path) {
@@ -60,7 +60,7 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
                 configfilecontroller.rewriteFile(path);
             }
         } catch (IOException ex) {
-            throw new IOFailure(ex);
+            throw new Failure(ex);
         }
         sketchproperty = new PropertySketch();
         sketchproperty.parse(configfilecontroller.getParsedConfigFile());
@@ -80,8 +80,8 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewMark() {
-        PropertyMark newmarkproperty = new PropertyMark();
-        sketchproperty.getMarks().add(newmarkproperty);
+            PropertyMark newmarkproperty = new PropertyMark();
+            sketchproperty.getMarks().add(newmarkproperty);
     }
 
     public void addNewBoat(String type) {
@@ -89,13 +89,13 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewWindFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-        sketchproperty.getWind().add(newflow);
+            PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
+            sketchproperty.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-        sketchproperty.getWater().add(newflow);
+            PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
+            sketchproperty.getWater().add(newflow);
     }
 
     public void addNewLeg() {

@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
+import uk.theretiredprogrammer.sketch.core.control.Failure;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -123,7 +125,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         return propertiescontroller.getProperty();
     }
 
-    public boolean save(DisplayController controller, String fn) {
+    public void save(DisplayController controller, String fn) {
         Path path = Path.of(fn);
         JsonObject jobj = controller.getProperty().toJson();
         if (path != null) {
@@ -131,11 +133,11 @@ public class DisplayController extends AbstractController<DisplayWindow> {
             try ( JsonWriter jsonWriter = Json.createWriter(Files.newOutputStream(path))) {
                 jsonWriter.write(jobj);
             } catch (IOException ex) {
-                return false;
+                throw new Failure("Problem writting config file", ex);
             }
-            return true;
+        } else {
+            throw new IllegalStateFailure("Problem writting config file - file name illegal " + fn);
         }
-        return false;
     }
 
     public void showPropertiesWindow() {

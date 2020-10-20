@@ -41,7 +41,7 @@ public abstract class AbstractController<W extends AbstractWindow> {
         this.window = window;
         this.externalcloseaction = externalcloseaction;
     }
-    
+
     protected final void setWindow(W window) {
         this.window = window;
         this.externalcloseaction = ExternalCloseAction.CLOSE;

@@ -37,28 +37,28 @@ public class PropertiesWindow extends AbstractWindow<PropertiesController> {
         
         Menu boatmenu = UI.menu("Add Boat");
         for (var classname : PropertyBoat.getClasses()) {
-            boatmenu.getItems().add(UI.menuitem(classname, actionEvent -> controller.addNewBoat(classname)));
+            boatmenu.getItems().add(UI.menuitem(classname, ev -> controller.addNewBoat(classname)));
         }
         Menu windmenu = UI.menu("Add WindFlowComponent");
         for(var typename : PropertyFlowComponent.getTypenames()){
-            windmenu.getItems().add(UI.menuitem(typename, actionEvent -> controller.addNewWindFlowComponent(typename)));
+            windmenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWindFlowComponent(typename)));
         }
         Menu watermenu = UI.menu("Add WaterFlowComponent");
         for(var typename : PropertyFlowComponent.getTypenames()){
-            watermenu.getItems().add(UI.menuitem(typename, actionEvent -> controller.addNewWaterFlowComponent(typename)));
+            watermenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWaterFlowComponent(typename)));
         }
         addtoMenubar(
                 boatmenu,
                 windmenu,
                 watermenu,
                 UI.menu("Add  Course Elements",
-                    UI.menuitem("Add Mark", actionEvent -> controller.addNewMark()),
-                    UI.menuitem("Add Course Leg", actionEvent -> controller.addNewLeg())
+                    UI.menuitem("Add Mark", ev -> controller.addNewMark()),
+                    UI.menuitem("Add Course Leg", ev -> controller.addNewLeg())
                 )
         );
         addtoToolbar(
-                UI.toolbarButton("shape_flip_horizontal.png", "Add Laser2", actionEvent -> controller.addNewBoat("laser2")),
-                UI.toolbarButton("pencil.png", "Add Mark", actionEvent -> controller.addNewMark())
+                UI.toolbarButton("shape_flip_horizontal.png", "Add Laser2", ev -> controller.addNewBoat("laser2")),
+                UI.toolbarButton("pencil.png", "Add Mark", ev -> controller.addNewMark())
         );
         build();
     }

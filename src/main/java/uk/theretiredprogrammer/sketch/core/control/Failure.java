@@ -15,19 +15,21 @@
  */
 package uk.theretiredprogrammer.sketch.core.control;
 
-import java.io.IOException;
-
 /**
  *
  * @author richard
  */
-public class IOFailure extends RuntimeException {
+public class Failure extends RuntimeException {
 
-    public IOFailure(String message) {
+    public Failure(String message) {
         super(message);
     }
-    
-    public IOFailure(IOException ex){
+
+    public Failure(Exception ex) {
         super(ex);
+    }
+
+    public Failure(String message, Exception ex) {
+        super(message, ex);
     }
 }

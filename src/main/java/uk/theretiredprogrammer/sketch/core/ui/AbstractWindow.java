@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core.ui;
 
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -29,6 +30,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
+import uk.theretiredprogrammer.sketch.core.control.Execute;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 
 /**
@@ -39,9 +41,6 @@ import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 public abstract class AbstractWindow<C extends AbstractController> {
 
     public static final boolean SCROLLABLE = true;
-
-//    private AbstractWindow parentwindow = null;
-//    private final List<AbstractWindow> childwindows = new ArrayList<>();
 
     private final Stage stage;
     private final Class clazz;
@@ -61,11 +60,8 @@ public abstract class AbstractWindow<C extends AbstractController> {
         this.controller = controller;
     }
 
-    @SuppressWarnings("LeakingThisInConstructor")
     public AbstractWindow(Class clazz, C controller) {
         this(clazz, new Stage(), controller);
-//        parentwindow = parent;
-//        parent.childwindows.add(this);
     }
 
     protected C getController() {
@@ -176,9 +172,9 @@ public abstract class AbstractWindow<C extends AbstractController> {
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
-        stage.setOnCloseRequest(e -> controller.windowHasExternalCloseRequest(e));
-        stage.setOnHiding(e -> controller.windowIsHiding(e));
-        stage.setOnHidden(e -> controller.windowIsHidden(e));
+        stage.setOnCloseRequest(e -> new Execute(() -> controller.windowHasExternalCloseRequest(e)));
+        stage.setOnHiding(e -> new Execute(() -> controller.windowIsHiding(e)));
+        stage.setOnHidden(e -> new Execute(() -> controller.windowIsHidden(e)));
         return stage;
     }
 
@@ -193,7 +189,11 @@ public abstract class AbstractWindow<C extends AbstractController> {
     }
 
     public final void writeToStatusbar(String message) {
-        statusbar.setText(message);
+        if (Platform.isFxApplicationThread()) {
+            statusbar.setText(message);
+        } else {
+            Platform.runLater(() -> statusbar.setText(message));
+        }
     }
 
     public final void clearStatusbar() {

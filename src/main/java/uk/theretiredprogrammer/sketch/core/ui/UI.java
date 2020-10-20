@@ -24,6 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import uk.theretiredprogrammer.sketch.core.control.Execute;
 
 /**
  *
@@ -34,7 +35,7 @@ public class UI {
     public static Button toolbarButton(String imagename, String tooltip, EventHandler<ActionEvent> action) {
         Button button = new Button("", image(imagename));
         button.setDisable(false);
-        button.setOnAction(action);
+        button.setOnAction((e) -> new Execute(() -> action.handle(e)));
         button.setTooltip(new Tooltip(tooltip));
         return button;
     }
@@ -47,7 +48,7 @@ public class UI {
 
     public static MenuItem menuitem(String itemtext, EventHandler<ActionEvent> action) {
         MenuItem menuitem = new MenuItem(itemtext);
-        menuitem.setOnAction(action);
+        menuitem.setOnAction((e) -> new Execute(() -> action.handle(e)));
         return menuitem;
     }
 

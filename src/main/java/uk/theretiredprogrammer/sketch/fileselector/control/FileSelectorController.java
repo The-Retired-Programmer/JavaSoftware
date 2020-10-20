@@ -29,7 +29,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
-import uk.theretiredprogrammer.sketch.core.control.IOFailure;
+import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
@@ -64,7 +64,7 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
             controller.close();
         }
     }
-    
+
     @Override
     protected void whenWindowIsHiding() {
         SketchPreferences.saveFoldersList(folderList, FileSelectorWindow.class);
@@ -108,7 +108,7 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
                 }
                 return listpaths;
             } catch (IOException ex) {
-                throw new IOFailure(ex);
+                throw new Failure(ex);
             }
         }
         throw new IllegalStateFailure("Folder List - Expected Folder");
@@ -148,7 +148,7 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
                     }
                 }
             } catch (IOException ex) {
-                throw new IOFailure(ex);
+                throw new Failure(ex);
             }
             if (!removethese.isEmpty()) {
                 for (int i = removethese.size() - 1; i > -1; i--) {
