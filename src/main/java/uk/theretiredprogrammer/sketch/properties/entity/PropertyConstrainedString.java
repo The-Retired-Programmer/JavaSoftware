@@ -20,7 +20,6 @@ import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 

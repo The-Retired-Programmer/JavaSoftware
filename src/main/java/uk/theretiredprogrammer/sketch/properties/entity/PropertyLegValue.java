@@ -23,7 +23,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.LegValue;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *

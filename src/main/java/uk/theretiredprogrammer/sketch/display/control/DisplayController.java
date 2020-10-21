@@ -93,6 +93,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     @Override
     protected void whenWindowIsClosing() {
+        simulationcontroller.close();
         propertiescontroller.close();
         decisioncontroller.close();
     }

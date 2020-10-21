@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.properties.control;
 import java.io.IOException;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
-import uk.theretiredprogrammer.sketch.core.control.Execute;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;

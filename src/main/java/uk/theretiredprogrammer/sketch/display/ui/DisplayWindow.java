@@ -56,6 +56,7 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("table.png", "Show Properties", ev -> controller.showPropertiesWindow()),
                 UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showFullDecisionWindow()),
                 UI.toolbarButton("script_code.png", "Show Filtered Decision Log", ev -> controller.showFilteredDecisionWindow()),
+                UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.repaint()),
                 timetext = new Text("      ")
         );
         Group group = new Group();

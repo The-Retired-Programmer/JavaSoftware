@@ -15,10 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.display.control;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import javafx.application.Platform;
-import uk.theretiredprogrammer.sketch.core.control.Execute;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -26,40 +27,46 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class SimulationController extends TimerTask {
+public class SimulationController implements Runnable {
 
     private int simulationtime = 0;
-    private boolean isRunning;
-    private Timer timer;
+    private boolean isRunning = false;
+    private final ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> ticker;
     private final PropertySketch sketchproperty;
     private final DisplayController controller;
 
     public SimulationController(DisplayController controller, PropertySketch sketchproperty) {
         this.sketchproperty = sketchproperty;
         this.controller = controller;
+        scheduler = Executors.newScheduledThreadPool(1);
     }
-
+    
+    public void close() {
+        stop();
+        scheduler.shutdown();
+    }
+    
     public void start() {
-            if (isRunning) {
-                return;
-            }
-            int rate = (int) (sketchproperty.getDisplay().getSecondsperdisplay() * 1000 / sketchproperty.getDisplay().getSpeedup());
-            timer = new Timer();
-            timer.scheduleAtFixedRate(this, 0, rate);
-            isRunning = true;
+        if (isRunning) {
+            return;
+        }
+        int rate = (int) (sketchproperty.getDisplay().getSecondsperdisplay() * 1000 / sketchproperty.getDisplay().getSpeedup());
+        ticker = scheduler.scheduleAtFixedRate(this, rate, rate, TimeUnit.MILLISECONDS);
+        isRunning = true;
     }
 
     public void stop() {
-            if (!isRunning) {
-                return;
-            }
-            isRunning = false;
-            timer.cancel();
+        if (!isRunning) {
+            return;
+        }
+        isRunning = false;
+        ticker.cancel(false);
     }
 
     @Override
     public void run() {
-        new Execute().setExceptionHandler(() -> stop())
+        new ExecuteAndCatch().setExceptionHandler(() -> stop())
                 .run(() -> {
                     int secondsperdisplay = sketchproperty.getDisplay().getSecondsperdisplay();
                     while (secondsperdisplay > 0) {
@@ -73,7 +80,7 @@ public class SimulationController extends TimerTask {
                         simulationtime++;
                     }
                     controller.updateTimeField(simulationtime);
-                    Execute.runLater(() -> controller.repaint());
+                    ExecuteAndCatch.runLater(() -> controller.repaint());
                 });
     }
 }

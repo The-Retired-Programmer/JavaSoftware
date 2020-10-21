@@ -23,7 +23,6 @@ import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 /**
  *

@@ -28,7 +28,7 @@ import javafx.scene.control.Dialog;
  *
  * @author richard
  */
-public class Execute {
+public class ExecuteAndCatch {
 
     private Consumer<Exception> illegalstatefailurereporting = (ex) -> catchDialog("Program Failure", ex);
     private Consumer<Exception> parsefailurereporting = (ex) -> catchDialog("Problem parsing Config file", ex);
@@ -37,37 +37,37 @@ public class Execute {
     private Runnable parsefailureHandler = () -> exceptionHandler.run();
     
     public static void runLater(Runnable work) {
-        Platform.runLater(() -> new Execute(work));
+        Platform.runLater(() -> new ExecuteAndCatch(work));
     }
     
-    public Execute() {
+    public ExecuteAndCatch() {
     }
     
-    public Execute(Runnable work) {
+    public ExecuteAndCatch(Runnable work) {
         run(work);
     }
 
-    public Execute reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
+    public ExecuteAndCatch reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
         this.illegalstatefailurereporting = illegalstatefailurereporting;
         return this;
     }
 
-    public Execute reportOnParseFailure(Consumer<Exception> parsefailurereporting) {
+    public ExecuteAndCatch reportOnParseFailure(Consumer<Exception> parsefailurereporting) {
         this.parsefailurereporting = parsefailurereporting;
         return this;
     }
 
-    public Execute reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
+    public ExecuteAndCatch reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
         this.otherexceptionsreporting = otherexceptionsreporting;
         return this;
     }
 
-    public Execute setExceptionHandler(Runnable exceptionHandler) {
+    public ExecuteAndCatch setExceptionHandler(Runnable exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
         return this;
     }
 
-    public Execute setParseFailureHandler(Runnable parsefailureHandler) {
+    public ExecuteAndCatch setParseFailureHandler(Runnable parsefailureHandler) {
         this.parsefailureHandler = parsefailureHandler;
         return this;
     }

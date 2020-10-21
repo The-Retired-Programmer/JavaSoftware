@@ -30,7 +30,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
-import uk.theretiredprogrammer.sketch.core.control.Execute;
+import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 
 /**
@@ -172,9 +172,9 @@ public abstract class AbstractWindow<C extends AbstractController> {
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
-        stage.setOnCloseRequest(e -> new Execute(() -> controller.windowHasExternalCloseRequest(e)));
-        stage.setOnHiding(e -> new Execute(() -> controller.windowIsHiding(e)));
-        stage.setOnHidden(e -> new Execute(() -> controller.windowIsHidden(e)));
+        stage.setOnCloseRequest(e -> new ExecuteAndCatch(() -> controller.windowHasExternalCloseRequest(e)));
+        stage.setOnHiding(e -> new ExecuteAndCatch(() -> controller.windowIsHiding(e)));
+        stage.setOnHidden(e -> new ExecuteAndCatch(() -> controller.windowIsHidden(e)));
         return stage;
     }
 
@@ -185,7 +185,6 @@ public abstract class AbstractWindow<C extends AbstractController> {
     public final void resetWindows() {
         SketchPreferences.clearWindowSizePreferences(clazz);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
-//        childwindows.forEach(window -> window.resetWindows());
     }
 
     public final void writeToStatusbar(String message) {
