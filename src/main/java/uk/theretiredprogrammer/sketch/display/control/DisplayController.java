@@ -104,7 +104,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     public DisplayPane getDisplayPanePainter() {
-        return painter;
+        return painter.getPane();
     }
 
     private void resetObjectProperties() {
@@ -163,6 +163,10 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public void repaint() {
         painter.repaint();
+    }
+    
+    public void refreshrepaint() {
+        getWindow().setDisplayPane(painter.refreshrepaint());
     }
 
     public DecisionController getDecisionController() {

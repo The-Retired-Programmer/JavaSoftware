@@ -29,24 +29,35 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class DisplayPainter extends DisplayPainter2D {
+public class DisplayPainter {
 
     private final PropertySketch sketchproperty;
     private final WindFlow windflow;
     //private final WaterFlow waterflow;
     private final Boats boats;
+    private DisplayPainter2D paintcanvas;
 
     public DisplayPainter(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats) {
         this.sketchproperty = sketchproperty;
         this.windflow = windflow;
         //this.waterflow = waterflow;
         this.boats = boats;
-        initialise(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getZoom());
+        //initialise(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getZoom());
+        refreshrepaint();
+    }
+    
+    public DisplayPane getPane(){
+        return paintcanvas;
+    }
+    
+    public final DisplayPane refreshrepaint() {
+        paintcanvas = new DisplayPainter2D(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getZoom());
         repaint();
+        return paintcanvas;
     }
 
     public final void repaint() {
-        clear();
+        paintcanvas.clear();
         displaydraw();
         windflowdraw();
         //waterflow.draw();
@@ -55,7 +66,7 @@ public class DisplayPainter extends DisplayPainter2D {
     }
 
     private void displaydraw() {
-        drawfieldofplay(sketchproperty.getDisplay().getSailingarea());
+        paintcanvas.drawfieldofplay(sketchproperty.getDisplay().getSailingarea());
     }
 
     private void windflowdraw() {
@@ -72,7 +83,7 @@ public class DisplayPainter extends DisplayPainter2D {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
                     Location here = new Location(x, y);
-                    displayWindGraphic(here, windflow.getFlow(here), sketchproperty.getWindshifts().getShowflowcolour());
+                    paintcanvas.displayWindGraphic(here, windflow.getFlow(here), sketchproperty.getWindshifts().getShowflowcolour());
                     y += showwindflowinterval;
                 }
                 x += showwindflowinterval;
@@ -119,14 +130,14 @@ public class DisplayPainter extends DisplayPainter2D {
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
     private void markdraw(PropertyMark markproperty) {
-        drawmark(markproperty.getLocation(), SIZE, 6, markproperty.getColour());
+        paintcanvas.drawmark(markproperty.getLocation(), SIZE, 6, markproperty.getColour());
         Angle windAngle = windflow.getFlow(markproperty.getLocation()).getAngle();
         if (markproperty.isWindwardlaylines()) {
-            drawwindwardlaylines(markproperty.getLocation(), windAngle,
+            paintcanvas.drawwindwardlaylines(markproperty.getLocation(), windAngle,
                     markproperty.getLaylinelength(), markproperty.getLaylinecolour());
         }
         if (markproperty.isDownwindlaylines()) {
-            drawleewardlaylines(markproperty.getLocation(), windAngle,
+            paintcanvas.drawleewardlaylines(markproperty.getLocation(), windAngle,
                     markproperty.getLaylinelength(), markproperty.getLaylinecolour());
         }
     }
@@ -136,7 +147,7 @@ public class DisplayPainter extends DisplayPainter2D {
     }
 
     private void boatdraw(Boat boat) {
-        drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
+        paintcanvas.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
                 windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
                 boat.metrics.length, boat.metrics.width, boat.sailcolor);
     }

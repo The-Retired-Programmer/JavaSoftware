@@ -31,10 +31,10 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  */
 public class DisplayPainter2D extends DisplayPane {
 
-    private double zoom;
-    private GraphicsContext gc;
+    private final double zoom;
+    private final GraphicsContext gc;
 
-    public void initialise(Area canvasarea, double zoom) {
+    public DisplayPainter2D(Area canvasarea, double zoom) {
         this.zoom = zoom;
         setWidth(canvasarea.getWidth() * zoom);
         setHeight(canvasarea.getHeight() * zoom);

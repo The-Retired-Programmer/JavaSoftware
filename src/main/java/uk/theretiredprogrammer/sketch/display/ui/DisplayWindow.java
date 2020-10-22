@@ -28,8 +28,9 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class DisplayWindow extends AbstractWindow<DisplayController> {
 
-    private final DisplayPane pane;
+    private DisplayPane pane;
     private final Text timetext;
+    private Group group;
 
     public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty) {
         super(DisplayWindow.class, controller);
@@ -56,17 +57,22 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("table.png", "Show Properties", ev -> controller.showPropertiesWindow()),
                 UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showFullDecisionWindow()),
                 UI.toolbarButton("script_code.png", "Show Filtered Decision Log", ev -> controller.showFilteredDecisionWindow()),
-                UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.repaint()),
+                UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.refreshrepaint()),
                 timetext = new Text("      ")
         );
-        Group group = new Group();
+        group = new Group();
         pane = controller.getDisplayPanePainter();
         group.getChildren().add(pane);
         setContent(group, SCROLLABLE);
         build();
         show();
     }
-
+    
+    public void setDisplayPane(DisplayPane pane) {
+        group.getChildren().clear();
+        group.getChildren().add(pane);
+    }
+    
     public void updateTimeField(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;
