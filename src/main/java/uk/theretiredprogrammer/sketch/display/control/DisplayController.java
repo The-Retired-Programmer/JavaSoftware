@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.display.control;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonWriter;
-import uk.theretiredprogrammer.sketch.display.ui.DisplayPainter;
+import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,7 +32,6 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
@@ -54,7 +53,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public WaterFlow waterflow;
     public Course course;
     public Boats boats;
-    private DisplayPainter painter;
+    private DisplayPane displaygroup;
 
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
@@ -84,11 +83,11 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         course = new Course(sketchproperty);
         boats = new Boats(sketchproperty);
         boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
-        painter = new DisplayPainter(sketchproperty, windflow, waterflow, boats);
+        displaygroup = new DisplayPane(sketchproperty, windflow, waterflow, boats);
     }
 
     private void showDisplayWindow(String fn) {
-        setWindow(new DisplayWindow(fn, this, this.getProperty()));
+        setWindow(new DisplayWindow(fn, this, this.getProperty(), displaygroup));
     }
 
     @Override
@@ -101,10 +100,6 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     @Override
     protected void whenWindowIsClosedExternally() {
         fileselectorcontroller.removeparentchildrelationship(this);
-    }
-
-    public DisplayPane getDisplayPanePainter() {
-        return painter.getPane();
     }
 
     private void resetObjectProperties() {
@@ -162,11 +157,11 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     public void repaint() {
-        painter.repaint();
+        displaygroup.repaint();
     }
-    
+
     public void refreshrepaint() {
-        getWindow().setDisplayPane(painter.refreshrepaint());
+        displaygroup.refreshrepaint();
     }
 
     public DecisionController getDecisionController() {

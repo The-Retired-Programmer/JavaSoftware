@@ -19,8 +19,10 @@ import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
@@ -49,10 +51,10 @@ public abstract class AbstractWindow<C extends AbstractController> {
     private final Text statusbar = new Text("");
     private String title;
     private Node contentnode;
-//    private Consumer<WindowEvent> closeaction;
     private Rectangle2D windowsize;
     private boolean scrollable = false;
     private C controller;
+    private final ContextMenu contextmenu = new ContextMenu();
 
     public AbstractWindow(Class clazz, Stage stage, C controller) {
         this.clazz = clazz;
@@ -148,6 +150,10 @@ public abstract class AbstractWindow<C extends AbstractController> {
         toolbar.getItems().addAll(nodes);
     }
 
+    public final void addtoContextMenuIfScrollable(MenuItem... menuitems) {
+        contextmenu.getItems().addAll(menuitems);
+    }
+
     public final void setTitle(String title) {
         this.title = title;
     }
@@ -162,10 +168,11 @@ public abstract class AbstractWindow<C extends AbstractController> {
         this.scrollable = scrollable;
     }
 
-    public final Stage build() {
+    public final void build() {
         BorderPane borderpane = new BorderPane();
         borderpane.setTop(new VBox(menubar, toolbar));
-        borderpane.setCenter(scrollable ? new ScrollPane(contentnode) : contentnode);
+        Node centrenode = scrollable ? createScrollableNode(contentnode) : contentnode;
+        borderpane.setCenter(centrenode);
         borderpane.setBottom(statusbar);
         Scene scene = new Scene(borderpane);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
@@ -175,7 +182,12 @@ public abstract class AbstractWindow<C extends AbstractController> {
         stage.setOnCloseRequest(e -> new ExecuteAndCatch(() -> controller.windowHasExternalCloseRequest(e)));
         stage.setOnHiding(e -> new ExecuteAndCatch(() -> controller.windowIsHiding(e)));
         stage.setOnHidden(e -> new ExecuteAndCatch(() -> controller.windowIsHidden(e)));
-        return stage;
+    }
+
+    private Node createScrollableNode(Node contentnode) {
+        ScrollPane pane = new ScrollPane(contentnode);
+        pane.setContextMenu(contextmenu);
+        return pane;
     }
 
     public void show() {

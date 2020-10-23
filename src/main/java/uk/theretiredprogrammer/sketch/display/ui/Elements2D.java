@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.ui;
 
+import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
@@ -29,26 +30,26 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  *
  * @author richard
  */
-public class DisplayPainter2D extends DisplayPane {
+public class Elements2D extends Canvas {
 
     private final double zoom;
     private final GraphicsContext gc;
 
-    public DisplayPainter2D(Area canvasarea, double zoom) {
+    public Elements2D(Area canvasarea, double zoom) {
         this.zoom = zoom;
         setWidth(canvasarea.getWidth() * zoom);
         setHeight(canvasarea.getHeight() * zoom);
         gc = getGraphicsContext2D();
         gc.scale(zoom, -zoom);
         gc.translate(-canvasarea.getBottomleft().getX(), -canvasarea.getHeight() - canvasarea.getBottomleft().getY());
-        drawrectangle(canvasarea, Color.OLIVEDRAB);
     }
 
     public void clear() {
         getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
     }
 
-    public void drawfieldofplay(Area sailingarea) {
+    public void drawfieldofplay(Area canvasarea, Area sailingarea) {
+        drawrectangle(canvasarea, Color.OLIVEDRAB);
         drawrectangle(sailingarea, Color.LIGHTSEAGREEN);
     }
 

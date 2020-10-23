@@ -52,12 +52,6 @@ public class UI {
         return menuitem;
     }
 
-    public static ContextMenu contextmenu(MenuItem... items) {
-        ContextMenu contextmenu = new ContextMenu();
-        contextmenu.getItems().addAll(items);
-        return contextmenu;
-    }
-
     public static ImageView image(String name) {
         return new ImageView(new Image(UI.class.getResourceAsStream(name)));
     }

@@ -28,11 +28,9 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class DisplayWindow extends AbstractWindow<DisplayController> {
 
-    private DisplayPane pane;
     private final Text timetext;
-    private Group group;
 
-    public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty) {
+    public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty, DisplayPane pane) {
         super(DisplayWindow.class, controller);
         setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();
@@ -60,19 +58,12 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.refreshrepaint()),
                 timetext = new Text("      ")
         );
-        group = new Group();
-        pane = controller.getDisplayPanePainter();
-        group.getChildren().add(pane);
-        setContent(group, SCROLLABLE);
+        //addtoContextMenuIfScrollable();
+        setContent(pane , SCROLLABLE);
         build();
         show();
     }
-    
-    public void setDisplayPane(DisplayPane pane) {
-        group.getChildren().clear();
-        group.getChildren().add(pane);
-    }
-    
+
     public void updateTimeField(int seconds) {
         int mins = seconds / 60;
         int secs = seconds % 60;
