@@ -83,10 +83,10 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         course = new Course(sketchproperty);
         boats = new Boats(sketchproperty);
         boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
-        displaygroup = new DisplayPane(sketchproperty, windflow, waterflow, boats);
     }
 
     private void showDisplayWindow(String fn) {
+        displaygroup = new DisplayPane(propertiescontroller.getProperty(), windflow, waterflow, boats);
         setWindow(new DisplayWindow(fn, this, this.getProperty(), displaygroup));
     }
 

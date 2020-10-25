@@ -58,7 +58,6 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.refreshrepaint()),
                 timetext = new Text("      ")
         );
-        //addtoContextMenuIfScrollable();
         setContent(pane , SCROLLABLE);
         build();
         show();

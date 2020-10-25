@@ -52,7 +52,18 @@ public class UI {
         return menuitem;
     }
 
+    public static MenuItem menuitem(String itemtext) {
+        return menuitem(itemtext, (e) -> {
+        });
+    }
+
     public static ImageView image(String name) {
         return new ImageView(new Image(UI.class.getResourceAsStream(name)));
+    }
+
+    public static ContextMenu contextMenu(MenuItem... menuitems) {
+        ContextMenu menu = new ContextMenu();
+        menu.getItems().addAll(menuitems);
+        return menu;
     }
 }

@@ -21,6 +21,7 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
@@ -77,7 +78,7 @@ public class DisplayPane extends Group {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
                     Location here = new Location(x, y);
-                    getChildren().addAll(shapebuilder.displayWindGraphic(here, windflow.getFlow(here), 10 , sketchproperty.getWindshifts().getShowflowcolour()));
+                    getChildren().addAll(shapebuilder.displayWindGraphic(here, windflow.getFlow(here), 10, sketchproperty.getWindshifts().getShowflowcolour()));
                     y += showwindflowinterval;
                 }
                 x += showwindflowinterval;
@@ -128,7 +129,13 @@ public class DisplayPane extends Group {
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
     private void markdraw(PropertyMark markproperty) {
-        getChildren().addAll(shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()));
+        getChildren().addAll(
+                Wrap.contextMenu(
+                        shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()),
+                        UI.contextMenu(
+                                UI.menuitem(markproperty.getName())
+                        )
+                ));
     }
 
     private void laylinesdraw(PropertyMark markproperty) {
@@ -146,8 +153,14 @@ public class DisplayPane extends Group {
     }
 
     private void boatdraw(Boat boat) {
-        getChildren().addAll(shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
-                windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
-                boat.metrics.length, boat.metrics.width, boat.sailcolor));
+        getChildren().addAll(
+                Wrap.contextMenu(
+                        shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
+                                windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
+                                boat.metrics.length, boat.metrics.width, boat.sailcolor),
+                        UI.contextMenu(
+                                UI.menuitem(boat.getName())
+                        )
+                ));
     }
 }

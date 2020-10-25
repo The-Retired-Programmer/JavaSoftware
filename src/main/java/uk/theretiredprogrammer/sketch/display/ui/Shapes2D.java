@@ -58,7 +58,8 @@ public class Shapes2D {
     }
 
     public Shape[] drawmark(Location location, double diameter, Color fill) {
-        return new Shape[]{drawcircle(location, (diameter < 8/zoom? 8/zoom : diameter)/2, fill)};
+        Shape mark = drawcircle(location, (diameter < 8 / zoom ? 8 / zoom : diameter) / 2, fill);
+        return new Shape[]{mark};
     }
 
     public Shape[] drawwindwardlaylines(Location location, Angle windAngle, double laylinelength, Color laylinecolour) {
@@ -79,9 +80,9 @@ public class Shapes2D {
 
     public Shape[] drawboat(Location location, Angle direction, Color fill, Angle winddirection,
             double length, double width, Color sailcolour) {
-        if (length <  17/zoom) {
-            length = 17/zoom;
-            width = 7/zoom;
+        if (length < 17 / zoom) {
+            length = 17 / zoom;
+            width = 7 / zoom;
         }
         Angle relative = direction.angleDiff(winddirection);
         boolean onStarboard = relative.lt(ANGLE0);
@@ -141,7 +142,7 @@ public class Shapes2D {
         Path sail = new Path();
         sail.getElements().addAll(movesail, sailcurve);
         sail.setStroke(sailcolour);
-        sail.setStrokeWidth(2 / zoom); // was (2 / zoom);
+        sail.setStrokeWidth(2 / zoom);
         sail.getTransforms().addAll(mainscale, maintranslate, positiontranslate, directionrotation, sailreachrotation);
         return new Shape[]{boat, sail};
 //
@@ -158,10 +159,11 @@ public class Shapes2D {
 //                count++;
 //            }
 //        }
+
     }
 
     public Shape[] displayWindGraphic(Location location, SpeedPolar flow, double size, Color colour) {
-        return new Shape[]{drawLine(location, size/zoom, flow.getAngle(), 1, colour)};
+        return new Shape[]{drawLine(location, size / zoom, flow.getAngle(), 1, colour)};
     }
 
 //        GeneralPath p = new GeneralPath();
@@ -212,7 +214,7 @@ public class Shapes2D {
     private Shape drawLine(Location fromPoint, Location toPoint, double width, Color colour) {
         Line line = new Line(fromPoint.getX(), fromPoint.getY(), toPoint.getX(), toPoint.getY());
         line.setStroke(colour);
-        line.setStrokeWidth(width/zoom); // ??? was gc.setLineWidth(width / zoom);
+        line.setStrokeWidth(width / zoom); // ??? was gc.setLineWidth(width / zoom);
         line.getTransforms().addAll(mainscale, maintranslate);
         return line;
     }
