@@ -44,8 +44,9 @@ public class Elements2D extends Canvas {
         gc.translate(-canvasarea.getBottomleft().getX(), -canvasarea.getHeight() - canvasarea.getBottomleft().getY());
     }
 
-    public void clear() {
-        getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
+    public void clear(Area canvasarea) {
+        gc.clearRect(canvasarea.getBottomleft().getX(),
+                canvasarea.getBottomleft().getY(), canvasarea.getWidth(), canvasarea.getHeight());
     }
 
     public void drawfieldofplay(Area canvasarea, Area sailingarea) {

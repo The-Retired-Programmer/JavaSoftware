@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 richard linsdale (richard at theretiredprogrammer.uk)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,45 +26,41 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class DisplayPane extends Group {
 
     private final PropertySketch sketchproperty;
     private final WindFlow windflow;
     //private final WaterFlow waterflow;
     private final Boats boats;
-    private Elements2D displayelements;
+    private double zoom;
+    private Shapes2D shapebuilder;
 
     public DisplayPane(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats) {
         this.sketchproperty = sketchproperty;
         this.windflow = windflow;
         //this.waterflow = waterflow;
         this.boats = boats;
-        //initialise(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getZoom());
         refreshrepaint();
     }
-    
+
     public final void refreshrepaint() {
-        displayelements = new Elements2D(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getZoom());
-        getChildren().clear();
-        getChildren().add(displayelements);
+        this.zoom = sketchproperty.getDisplay().getZoom();
+        shapebuilder = new Shapes2D(sketchproperty.getDisplayArea(), zoom);
         repaint();
     }
 
     public final void repaint() {
-        displayelements.clear();
+        getChildren().clear();
         displaydraw();
+        marksdraw();
         windflowdraw();
         //waterflow.draw();
-        coursedraw();
+        laylinesdraw();
         boatsdraw();
     }
 
     private void displaydraw() {
-        displayelements.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea());
+        getChildren().addAll(shapebuilder.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea()));
     }
 
     private void windflowdraw() {
@@ -81,7 +77,7 @@ public class DisplayPane extends Group {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
                     Location here = new Location(x, y);
-                    displayelements.displayWindGraphic(here, windflow.getFlow(here), sketchproperty.getWindshifts().getShowflowcolour());
+                    getChildren().addAll(shapebuilder.displayWindGraphic(here, windflow.getFlow(here), 10 , sketchproperty.getWindshifts().getShowflowcolour()));
                     y += showwindflowinterval;
                 }
                 x += showwindflowinterval;
@@ -121,22 +117,27 @@ public class DisplayPane extends Group {
 //        gc.drawString(windspeedText, 0, 0);
 //        gc.setTransform(xform);
 //    }
-    private void coursedraw() {
+    private void marksdraw() {
         sketchproperty.getMarks().getList().forEach(markproperty -> markdraw(markproperty));
+    }
+
+    private void laylinesdraw() {
+        sketchproperty.getMarks().getList().forEach(markproperty -> laylinesdraw(markproperty));
     }
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
     private void markdraw(PropertyMark markproperty) {
-        displayelements.drawmark(markproperty.getLocation(), SIZE, 6, markproperty.getColour());
+        getChildren().addAll(shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()));
+    }
+
+    private void laylinesdraw(PropertyMark markproperty) {
         Angle windAngle = windflow.getFlow(markproperty.getLocation()).getAngle();
         if (markproperty.isWindwardlaylines()) {
-            displayelements.drawwindwardlaylines(markproperty.getLocation(), windAngle,
-                    markproperty.getLaylinelength(), markproperty.getLaylinecolour());
+            getChildren().addAll(shapebuilder.drawwindwardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()));
         }
         if (markproperty.isDownwindlaylines()) {
-            displayelements.drawleewardlaylines(markproperty.getLocation(), windAngle,
-                    markproperty.getLaylinelength(), markproperty.getLaylinecolour());
+            getChildren().addAll(shapebuilder.drawleewardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()));
         }
     }
 
@@ -145,8 +146,8 @@ public class DisplayPane extends Group {
     }
 
     private void boatdraw(Boat boat) {
-        displayelements.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
+        getChildren().addAll(shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
                 windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
-                boat.metrics.length, boat.metrics.width, boat.sailcolor);
+                boat.metrics.length, boat.metrics.width, boat.sailcolor));
     }
 }
