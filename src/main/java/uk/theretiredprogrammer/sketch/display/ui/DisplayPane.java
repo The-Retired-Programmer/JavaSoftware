@@ -214,7 +214,7 @@ public class DisplayPane extends Group {
                 )
         );
     }
-    
+
     private void tack(Boat boat) {
         PropertyBoat boatproperty = boat.getProperty();
         Location position = boatproperty.getLocation();
@@ -232,8 +232,8 @@ public class DisplayPane extends Group {
             decision.setTURN(target, STARBOARD);
         }
     }
-    
-     private void gybe(Boat boat) {
+
+    private void gybe(Boat boat) {
         PropertyBoat boatproperty = boat.getProperty();
         Location position = boatproperty.getLocation();
         SpeedPolar wind = windflow.getFlow(position);
