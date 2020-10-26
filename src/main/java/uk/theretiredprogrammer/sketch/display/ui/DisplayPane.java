@@ -16,14 +16,23 @@
 package uk.theretiredprogrammer.sketch.display.ui;
 
 import javafx.scene.Group;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
+import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
+import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
+import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -35,18 +44,25 @@ public class DisplayPane extends Group {
     private final Boats boats;
     private double zoom;
     private Shapes2D shapebuilder;
+    private Scale mainscale;
+    private Translate maintranslate;
+    private final BoatStrategies strategies;
 
-    public DisplayPane(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats) {
+    public DisplayPane(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats, BoatStrategies strategies) {
         this.sketchproperty = sketchproperty;
         this.windflow = windflow;
         //this.waterflow = waterflow;
         this.boats = boats;
+        this.strategies = strategies;
         refreshrepaint();
     }
 
     public final void refreshrepaint() {
         this.zoom = sketchproperty.getDisplay().getZoom();
-        shapebuilder = new Shapes2D(sketchproperty.getDisplayArea(), zoom);
+        mainscale = new Scale(zoom, -zoom);
+        Area displayarea = sketchproperty.getDisplayArea();
+        maintranslate = new Translate(-displayarea.getBottomleft().getX(), -displayarea.getHeight() - displayarea.getBottomleft().getY());
+        shapebuilder = new Shapes2D(zoom);
         repaint();
     }
 
@@ -61,7 +77,13 @@ public class DisplayPane extends Group {
     }
 
     private void displaydraw() {
-        getChildren().addAll(shapebuilder.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea()));
+        getChildren().addAll(
+                Wrap.globalTransform(
+                        shapebuilder.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea()),
+                        maintranslate,
+                        mainscale
+                )
+        );
     }
 
     private void windflowdraw() {
@@ -78,7 +100,13 @@ public class DisplayPane extends Group {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
                     Location here = new Location(x, y);
-                    getChildren().addAll(shapebuilder.displayWindGraphic(here, windflow.getFlow(here), 10, sketchproperty.getWindshifts().getShowflowcolour()));
+                    getChildren().addAll(
+                            Wrap.globalTransform(
+                                    shapebuilder.displayWindGraphic(here, windflow.getFlow(here), 10, sketchproperty.getWindshifts().getShowflowcolour()),
+                                    maintranslate,
+                                    mainscale
+                            )
+                    );
                     y += showwindflowinterval;
                 }
                 x += showwindflowinterval;
@@ -130,21 +158,38 @@ public class DisplayPane extends Group {
 
     private void markdraw(PropertyMark markproperty) {
         getChildren().addAll(
-                Wrap.contextMenu(
-                        shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()),
-                        UI.contextMenu(
-                                UI.menuitem(markproperty.getName())
-                        )
-                ));
+                Wrap.globalTransform(
+                        Wrap.contextMenu(
+                                shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()),
+                                UI.contextMenu(
+                                        UI.menuitem(markproperty.getName())
+                                )
+                        ),
+                        maintranslate,
+                        mainscale
+                )
+        );
     }
 
     private void laylinesdraw(PropertyMark markproperty) {
         Angle windAngle = windflow.getFlow(markproperty.getLocation()).getAngle();
         if (markproperty.isWindwardlaylines()) {
-            getChildren().addAll(shapebuilder.drawwindwardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()));
+            getChildren().addAll(
+                    Wrap.globalTransform(
+                            shapebuilder.drawwindwardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()),
+                            maintranslate,
+                            mainscale
+                    )
+            );
         }
         if (markproperty.isDownwindlaylines()) {
-            getChildren().addAll(shapebuilder.drawleewardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()));
+            getChildren().addAll(
+                    Wrap.globalTransform(
+                            shapebuilder.drawleewardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()),
+                            maintranslate,
+                            mainscale
+                    )
+            );
         }
     }
 
@@ -154,13 +199,55 @@ public class DisplayPane extends Group {
 
     private void boatdraw(Boat boat) {
         getChildren().addAll(
-                Wrap.contextMenu(
-                        shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
-                                windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
-                                boat.metrics.length, boat.metrics.width, boat.sailcolor),
-                        UI.contextMenu(
-                                UI.menuitem(boat.getName())
-                        )
-                ));
+                Wrap.globalTransform(
+                        Wrap.contextMenu(
+                                shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
+                                        windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
+                                        boat.metrics.length, boat.metrics.width, boat.sailcolor),
+                                UI.contextMenu(
+                                        UI.menuitem("tack", ev -> tack(boat)),
+                                        UI.menuitem("gybe", ev -> gybe(boat))
+                                )
+                        ),
+                        maintranslate,
+                        mainscale
+                )
+        );
+    }
+    
+    private void tack(Boat boat) {
+        PropertyBoat boatproperty = boat.getProperty();
+        Location position = boatproperty.getLocation();
+        SpeedPolar wind = windflow.getFlow(position);
+        Angle delta = wind.angleDiff(boatproperty.getDirection());
+        if (delta.gt(ANGLE0)) {
+            // anti clockwise to starboard tack
+            Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
+            Decision decision = strategies.getStrategy(boat).decision;
+            decision.setTURN(target, PORT);
+        } else {
+            // clockwise to port tack
+            Angle target = boat.getPortCloseHauledCourse(wind.getAngle());
+            Decision decision = strategies.getStrategy(boat).decision;
+            decision.setTURN(target, STARBOARD);
+        }
+    }
+    
+     private void gybe(Boat boat) {
+        PropertyBoat boatproperty = boat.getProperty();
+        Location position = boatproperty.getLocation();
+        SpeedPolar wind = windflow.getFlow(position);
+        Angle delta = wind.angleDiff(boatproperty.getDirection());
+        if (delta.gt(ANGLE0)) {
+            // clockwise to starboard gybe
+            Angle target = boat.getStarboardReachingCourse(wind.getAngle());
+            Decision decision = strategies.getStrategy(boat).decision;
+            decision.setTURN(target, STARBOARD);
+        } else {
+            // anticlockwise to port gybe
+            Angle target = boat.getPortReachingCourse(wind.getAngle());
+            Decision decision = strategies.getStrategy(boat).decision;
+            decision.setTURN(target, PORT);
+        }
     }
 }

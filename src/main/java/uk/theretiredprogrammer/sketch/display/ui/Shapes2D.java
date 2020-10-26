@@ -25,7 +25,6 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
@@ -40,14 +39,10 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  */
 public class Shapes2D {
 
-    private final Scale mainscale;
-    private final Translate maintranslate;
     private final double zoom;
 
-    public Shapes2D(Area displayarea, double zoom) {
+    public Shapes2D(double zoom) {
         this.zoom = zoom;
-        mainscale = new Scale(zoom, -zoom);
-        maintranslate = new Translate(-displayarea.getBottomleft().getX(), -displayarea.getHeight() - displayarea.getBottomleft().getY());
     }
 
     public Shape[] drawfieldofplay(Area canvasarea, Area sailingarea) {
@@ -117,7 +112,7 @@ public class Shapes2D {
         boat.getElements().addAll(move, curve1, curve2, new ClosePath());
         boat.setStrokeWidth(0);
         boat.setFill(fill);
-        boat.getTransforms().addAll(mainscale, maintranslate, positiontranslate, directionrotation);
+        boat.getTransforms().addAll(positiontranslate, directionrotation);
         //
         MoveTo movesail = new MoveTo();
         movesail.setX(0.0);
@@ -143,7 +138,7 @@ public class Shapes2D {
         sail.getElements().addAll(movesail, sailcurve);
         sail.setStroke(sailcolour);
         sail.setStrokeWidth(2 / zoom);
-        sail.getTransforms().addAll(mainscale, maintranslate, positiontranslate, directionrotation, sailreachrotation);
+        sail.getTransforms().addAll(positiontranslate, directionrotation, sailreachrotation);
         return new Shape[]{boat, sail};
 //
 //        double MetresPerPixel = 1 / zoom;
@@ -201,13 +196,11 @@ public class Shapes2D {
         Rectangle rect = new Rectangle(area.getBottomleft().getX(), area.getBottomleft().getY(),
                 area.getWidth(), area.getHeight());
         rect.setFill(fill);
-        rect.getTransforms().addAll(mainscale, maintranslate);
         return rect;
     }
 
     private Shape drawcircle(Location pt, double radius, Color fill) {
         Circle circle = new Circle(pt.getX(), pt.getY(), radius, fill);
-        circle.getTransforms().addAll(mainscale, maintranslate);
         return circle;
     }
 
@@ -215,7 +208,6 @@ public class Shapes2D {
         Line line = new Line(fromPoint.getX(), fromPoint.getY(), toPoint.getX(), toPoint.getY());
         line.setStroke(colour);
         line.setStrokeWidth(width / zoom); // ??? was gc.setLineWidth(width / zoom);
-        line.getTransforms().addAll(mainscale, maintranslate);
         return line;
     }
 

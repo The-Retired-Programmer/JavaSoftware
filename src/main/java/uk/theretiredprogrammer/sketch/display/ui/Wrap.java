@@ -15,10 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.display.ui;
 
+import java.util.List;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.transform.Transform;
 
 /**
  *
@@ -27,7 +29,6 @@ import javafx.scene.input.ContextMenuEvent;
 public class Wrap {
     
     public static Node contextMenu(Node element, ContextMenu contextmenu){
-        // standard configuration
         element.setCursor(Cursor.CROSSHAIR);
         element.setOnContextMenuRequested(ev -> contextmenuhandler(ev, element, contextmenu));
         return element;
@@ -44,4 +45,15 @@ public class Wrap {
         contextmenu.show(element, event.getScreenX(), event.getScreenY());
     }
     
+    public static Node globalTransform(Node element, Transform... transforms ){
+        element.getTransforms().addAll(0, List.of(transforms));
+        return element;
+    }
+    
+    public static Node[] globalTransform(Node[] elements, Transform... transforms ){
+        for (var element: elements) {
+            Wrap.globalTransform(element, transforms);
+        }
+        return elements;
+    }
 }

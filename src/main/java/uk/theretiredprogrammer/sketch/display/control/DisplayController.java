@@ -86,7 +86,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     private void showDisplayWindow(String fn) {
-        displaygroup = new DisplayPane(propertiescontroller.getProperty(), windflow, waterflow, boats);
+        displaygroup = new DisplayPane(propertiescontroller.getProperty(), windflow, waterflow, boats, boatstrategies);
         setWindow(new DisplayWindow(fn, this, this.getProperty(), displaygroup));
     }
 
