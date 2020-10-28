@@ -40,17 +40,20 @@ public class Course {
         this.legvaluesproperty = sketchproperty.getCourse().getPropertyLegValues();
         this.startproperty = sketchproperty.getCourse().getStart();
         //
-        legvaluesproperty.stream().forEach(lv -> insertLeg(lv.get()));
+        //legvaluesproperty.stream().forEach(lv -> insertLeg(lv.get()));
+        for (var lv : legvaluesproperty.getList()){
+            insertLeg(lv.get());
+        }
     }
 
-    public void addLeg() {
-        if (marksproperty.getList().isEmpty()) {
-            throw new IllegalStateFailure("No marks defined - so leg cannot be defined");
-        }
-        LegValue leg = new LegValue(marksproperty.getList().get(0).getName(), "port");
-        insertLeg(leg);
-        legvaluesproperty.add(leg);
-    }
+//    public void addLeg() {
+//        if (marksproperty.getList().isEmpty()) {
+//            throw new IllegalStateFailure("No marks defined - so leg cannot be defined");
+//        }
+//        LegValue leg = new LegValue(marksproperty.getList().get(0).getName(), "port");
+//        insertLeg(leg);
+//        legvaluesproperty.add(leg);
+//    }
 
     private void insertLeg(LegValue leg) {
         if (firstcourseleg == null) {

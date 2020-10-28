@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.properties.entity;
 
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
@@ -40,6 +41,12 @@ public class PropertyCourse extends PropertyMap {
         setKey(key);
         legs = new Config<>("legs", OPTIONAL, (s) -> new PropertyLegValues(s, marknames, roundings));
         this.addConfig(start, legs);
+    }
+    
+    @Override
+    public void setOnChange(Runnable onchange) {
+        super.setOnChange(onchange);
+        getPropertyLegValues().setOnChange(onchange);
     }
 
     @Override

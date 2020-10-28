@@ -35,6 +35,14 @@ public abstract class PropertyList<P extends PropertyAny> extends PropertyAny {
     public PropertyList() {
         propertylist = FXCollections.observableArrayList();
     }
+    
+    public void setOnChange(Runnable onchange) {
+        propertylist.addListener((ListChangeListener<P>) (c) -> onchange.run());
+    }
+    
+    public void setOnChange(ListChangeListener<P> ml) {
+        propertylist.addListener(ml);
+    }
 
     public final Stream<P> stream() {
         return propertylist.stream();
@@ -57,9 +65,5 @@ public abstract class PropertyList<P extends PropertyAny> extends PropertyAny {
         JsonArrayBuilder jab = Json.createArrayBuilder();
         propertylist.stream().forEach(p -> jab.add(p.toJson()));
         return jab.build();
-    }
-
-    public final void setOnChange(ListChangeListener<P> ml) {
-        propertylist.addListener(ml);
     }
 }

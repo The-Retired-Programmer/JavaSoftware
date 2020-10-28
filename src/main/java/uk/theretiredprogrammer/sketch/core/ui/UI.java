@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core.ui;
 
+import java.util.function.BiConsumer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -25,6 +26,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 /**
  *
@@ -65,5 +67,17 @@ public class UI {
         ContextMenu menu = new ContextMenu();
         menu.getItems().addAll(menuitems);
         return menu;
+    }
+    
+    public static DisplayContextMenu displayContextMenu(MenuItem... menuitems) {
+        DisplayContextMenu menu = new DisplayContextMenu();
+        menu.getItems().addAll(menuitems);
+        return menu;
+    }
+    
+    public static MenuItem contextMenuitem(String itemtext, BiConsumer<ActionEvent, ContextMenu> action) {
+        MenuItem menuitem = new MenuItem(itemtext);
+        menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e,menuitem.getParentPopup())));
+        return menuitem;
     }
 }

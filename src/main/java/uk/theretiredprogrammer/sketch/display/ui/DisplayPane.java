@@ -15,7 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.display.ui;
 
+import javafx.event.ActionEvent;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -25,6 +28,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
@@ -35,29 +39,31 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
+import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 
 public class DisplayPane extends Group {
 
     private final PropertySketch sketchproperty;
-    private final WindFlow windflow;
+    private WindFlow windflow;
     //private final WaterFlow waterflow;
-    private final Boats boats;
+    private Boats boats;
     private double zoom;
     private Shapes2D shapebuilder;
     private Scale mainscale;
     private Translate maintranslate;
-    private final BoatStrategies strategies;
+    private BoatStrategies strategies;
 
     public DisplayPane(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats, BoatStrategies strategies) {
         this.sketchproperty = sketchproperty;
+        refreshParameters(windflow, waterflow, boats, strategies);
+    }
+        
+    public final void refreshParameters(WindFlow windflow, WaterFlow waterflow, Boats boats, BoatStrategies strategies) {
         this.windflow = windflow;
         //this.waterflow = waterflow;
         this.boats = boats;
         this.strategies = strategies;
-        refreshrepaint();
-    }
-
-    public final void refreshrepaint() {
         this.zoom = sketchproperty.getDisplay().getZoom();
         mainscale = new Scale(zoom, -zoom);
         Area displayarea = sketchproperty.getDisplayArea();
@@ -79,11 +85,40 @@ public class DisplayPane extends Group {
     private void displaydraw() {
         getChildren().addAll(
                 Wrap.globalTransform(
-                        shapebuilder.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea()),
+                        Wrap.displayContextMenu(
+                                shapebuilder.drawfieldofplay(sketchproperty.getDisplayArea(), sketchproperty.getDisplay().getSailingarea()),
+                                UI.displayContextMenu(
+                                        UI.contextMenuitem("Add Mark", (ev, contextmenu) -> addMark(ev, contextmenu)),
+                                        UI.contextMenuitem("Add boat", (ev, contextmenu) -> addBoat(ev, contextmenu))
+                                )
+                        ),
                         maintranslate,
                         mainscale
                 )
         );
+    }
+
+    private void addMark(ActionEvent ev, ContextMenu contextmenu) {
+        if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
+            double x = displaycontextmenu.getDisplayX();
+            double y = displaycontextmenu.getDisplayY();
+            PropertyMark newmark = new PropertyMark(new Location(x, y));
+            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
+                // insert new property into sketchproperty
+                sketchproperty.getMarks().add(newmark);
+            }
+        }
+    }
+
+    private void addBoat(ActionEvent ev, ContextMenu contextmenu) {
+        if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
+            double x = displaycontextmenu.getDisplayX();
+            double y = displaycontextmenu.getDisplayY();
+            PropertyBoat newboat = new PropertyBoat(new Location(x, y));
+            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {
+                sketchproperty.getBoats().add(newboat);
+            }
+        }
     }
 
     private void windflowdraw() {
@@ -163,7 +198,8 @@ public class DisplayPane extends Group {
                                 shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()),
                                 UI.contextMenu(
                                         UI.menuitem(markproperty.getName())
-                                )
+                                ),
+                                Cursor.CROSSHAIR
                         ),
                         maintranslate,
                         mainscale
@@ -207,7 +243,8 @@ public class DisplayPane extends Group {
                                 UI.contextMenu(
                                         UI.menuitem("tack", ev -> tack(boat)),
                                         UI.menuitem("gybe", ev -> gybe(boat))
-                                )
+                                ),
+                                Cursor.CROSSHAIR
                         ),
                         maintranslate,
                         mainscale

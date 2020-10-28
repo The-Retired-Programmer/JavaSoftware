@@ -41,12 +41,35 @@ public class PropertySketch extends PropertyMap {
 
     public PropertySketch() {
         addConfig(type, meta, display, windshifts, wind, watershifts, water, marks, course, boats);
-        getMarks().getList().addListener((ListChangeListener<PropertyMark>) (c) -> marklistchanged((Change<PropertyMark>) c));
+        getMarks().setOnChange((ListChangeListener<PropertyMark>) (c) -> marklistchanged((Change<PropertyMark>) c));
     }
 
     private void marklistchanged(Change<PropertyMark> c) {
-        marknames.clear();
-        getMarks().getList().forEach(mark -> marknames.add(mark.getName()));
+        while (c.next()) {
+            for (PropertyMark remitem : c.getRemoved()) {
+                marknames.remove(remitem.getName());
+            }
+            for (PropertyMark additem : c.getAddedSubList()) {
+                marknames.add(additem.getName());
+            }
+        }
+        assert marknames.size() == getMarks().getList().size();
+//        marknames.clear();
+//        getMarks().getList().forEach(mark -> marknames.add(mark.getName()));
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        super.setOnChange(onchange);
+        getMeta().setOnChange(onchange);
+        getDisplay().setOnChange(onchange);
+        getWindshifts().setOnChange(onchange);
+        getWind().setOnChange(onchange);
+        getWatershifts().setOnChange(onchange);
+        getWater().setOnChange(onchange);
+        getMarks().setOnChange(onchange);
+        getCourse().setOnChange(onchange);
+        getBoats().setOnChange(onchange);
     }
 
     public Area getDisplayArea() {

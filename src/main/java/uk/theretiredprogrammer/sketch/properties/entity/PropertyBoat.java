@@ -29,14 +29,14 @@ import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class PropertyBoat extends PropertyMap implements PropertyNamed {
-    
+
     private static final ObservableList<String> classes;
-    
+
     static {
         classes = FXCollections.observableArrayList();
         classes.addAll("laser2");
     }
-    
+
     public static ObservableList<String> getClasses() {
         return classes;
     }
@@ -47,7 +47,7 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
     private final Config<PropertyConstrainedString, String> type;
     private final Config<PropertyAngle, Angle> heading = new Config<PropertyAngle, Angle>("heading", OPTIONAL, (s) -> new PropertyAngle(s, ANGLE0));
-    private final Config<PropertyLocation, Location> location = new Config<PropertyLocation, Location>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
+    private final Config<PropertyLocation, Location> location;
     private final Config<PropertyColour, Color> colour = new Config<PropertyColour, Color>("colour", OPTIONAL, (s) -> new PropertyColour(s, Color.BLACK));
     private final Config<PropertyColour, Color> trackcolour = new Config<PropertyColour, Color>("trackcolour", OPTIONAL, (s) -> new PropertyColour(s, Color.BLACK));
     private final Config<PropertyBoolean, Boolean> upwindsailonbesttack = new Config<PropertyBoolean, Boolean>("upwindsailonbesttack", OPTIONAL, (s) -> new PropertyBoolean(s, false));
@@ -63,9 +63,23 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     public PropertyBoat() {
         this("laser2");
     }
-    
+
     public PropertyBoat(String classtype) {
-        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes,  classtype));
+        location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
+        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes, classtype));
+        this.addConfig(name, type, heading, location, colour, trackcolour, upwindsailonbesttack,
+                upwindtackifheaded, upwindbearawayifheaded, upwindluffupiflifted, reachdownwind,
+                downwindsailonbestgybe, downwindbearawayifheaded, downwindgybeiflifted, downwindluffupiflifted
+        );
+    }
+
+    public PropertyBoat(Location loc) {
+        this("laser2", loc);
+    }
+
+    public PropertyBoat(String classtype, Location loc) {
+        location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, loc));
+        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes, classtype));
         this.addConfig(name, type, heading, location, colour, trackcolour, upwindsailonbesttack,
                 upwindtackifheaded, upwindbearawayifheaded, upwindluffupiflifted, reachdownwind,
                 downwindsailonbestgybe, downwindbearawayifheaded, downwindgybeiflifted, downwindluffupiflifted

@@ -27,7 +27,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
 public class PropertyMark extends PropertyMap implements PropertyNamed {
 
     private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
-    private final Config<PropertyLocation, Location> location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
+    private final Config<PropertyLocation, Location> location;
     private final Config<PropertyBoolean, Boolean> windwardlaylines = new Config<>("windwardlaylines", OPTIONAL, (s) -> new PropertyBoolean(s, false));
     private final Config<PropertyBoolean, Boolean> downwindlaylines = new Config<>("downwindlaylines", OPTIONAL, (s) -> new PropertyBoolean(s, false));
     private final Config<PropertyDouble, Double> laylinelength = new Config<>("laylinelength", OPTIONAL, (s) -> new PropertyDouble(s, 0.0));
@@ -35,6 +35,12 @@ public class PropertyMark extends PropertyMap implements PropertyNamed {
     private final Config<PropertyColour, Color> colour = new Config<>("colour", OPTIONAL, (s) -> new PropertyColour(s, Color.RED));
 
     public PropertyMark() {
+        location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
+        this.addConfig(name, location, windwardlaylines, downwindlaylines, laylinelength, laylinecolour, colour);
+    }
+    
+    public PropertyMark(Location loc) {
+        location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, loc));
         this.addConfig(name, location, windwardlaylines, downwindlaylines, laylinelength, laylinecolour, colour);
     }
 

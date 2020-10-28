@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -42,7 +43,15 @@ public abstract class PropertyMap extends PropertyAny {
     PropertyMap() {
         propertymap = FXCollections.observableMap(new LinkedHashMap<>());
     }
-
+    
+    public void setOnChange(Runnable onchange) {
+        propertymap.addListener((MapChangeListener<String, PropertyAny>) (c) -> onchange.run());
+    }
+    
+    public void setOnChange(MapChangeListener<String, PropertyAny> ml) {
+        propertymap.addListener(ml);
+    }
+    
     final void addConfig(Config... configvalues) {
         for (Config config : configvalues) {
             configs.put(config.getKey(), config);
