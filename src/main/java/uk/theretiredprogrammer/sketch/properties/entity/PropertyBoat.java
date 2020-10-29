@@ -44,7 +44,7 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     public final Channel upwindchannel = CHANNELOFF;
     public final Channel downwindchannel = CHANNELOFF;
 
-    private final Config<PropertyString, String> name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, "<newname>"));
+    private final Config<PropertyString, String> name;
     private final Config<PropertyConstrainedString, String> type;
     private final Config<PropertyAngle, Angle> heading = new Config<PropertyAngle, Angle>("heading", OPTIONAL, (s) -> new PropertyAngle(s, ANGLE0));
     private final Config<PropertyLocation, Location> location;
@@ -61,29 +61,41 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     private final Config<PropertyBoolean, Boolean> downwindluffupiflifted = new Config<PropertyBoolean, Boolean>("downwindluffupiflifted", OPTIONAL, (s) -> new PropertyBoolean(s, false));
 
     public PropertyBoat() {
-        this("laser2");
+        this("<newname>", "laser2", LOCATIONZERO);
     }
 
     public PropertyBoat(String classtype) {
-        location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, LOCATIONZERO));
-        type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes, classtype));
-        this.addConfig(name, type, heading, location, colour, trackcolour, upwindsailonbesttack,
-                upwindtackifheaded, upwindbearawayifheaded, upwindluffupiflifted, reachdownwind,
-                downwindsailonbestgybe, downwindbearawayifheaded, downwindgybeiflifted, downwindluffupiflifted
-        );
+        this("<newname>", classtype, LOCATIONZERO);
     }
 
     public PropertyBoat(Location loc) {
-        this("laser2", loc);
+        this("<newname>", "laser2", loc);
     }
 
-    public PropertyBoat(String classtype, Location loc) {
+    public PropertyBoat(String newname, String classtype, Location loc) {
+        name = new Config<>("name", MANDATORY, (s) -> new PropertyString(s, newname));
         location = new Config<>("location", OPTIONAL, (s) -> new PropertyLocation(s, loc));
         type = new Config<>("type", MANDATORY, (s) -> new PropertyConstrainedString(s, classes, classtype));
         this.addConfig(name, type, heading, location, colour, trackcolour, upwindsailonbesttack,
                 upwindtackifheaded, upwindbearawayifheaded, upwindluffupiflifted, reachdownwind,
                 downwindsailonbestgybe, downwindbearawayifheaded, downwindgybeiflifted, downwindluffupiflifted
         );
+    }
+
+    public PropertyBoat(String name, PropertyBoat clonefrom) {
+        this(name, clonefrom.getType(), clonefrom.getLocation());
+        this.heading.getProperty("PropertyBoat heading").set(clonefrom.heading.get("PropertyBoat heading"));
+        this.colour.getProperty("PropertyBoat colour").set(clonefrom.colour.get("PropertyBoat colour"));
+        this.trackcolour.getProperty("PropertyBoat trackcolour").set(clonefrom.trackcolour.get("PropertyBoat trackcolour"));
+        this.upwindsailonbesttack.getProperty("PropertyBoat upwindsailonbesttack").set(clonefrom.upwindsailonbesttack.get("PropertyBoat upwindsailonbesttack"));
+        this.upwindtackifheaded.getProperty("PropertyBoat upwindtackifheaded").set(clonefrom.upwindtackifheaded.get("PropertyBoat upwindtackifheaded"));
+        this.upwindbearawayifheaded.getProperty("PropertyBoat upwindbearawayifheaded").set(clonefrom.upwindbearawayifheaded.get("PropertyBoat upwindbearawayifheaded"));
+        this.upwindluffupiflifted.getProperty("PropertyBoat upwindluffupiflifted").set(clonefrom.upwindluffupiflifted.get("PropertyBoat upwindluffupiflifted"));
+        this.reachdownwind.getProperty("PropertyBoat lreachdownwind").set(clonefrom.reachdownwind.get("PropertyBoat reachdownwind"));
+        this.downwindsailonbestgybe.getProperty("PropertyBoat downwindsailonbestgybe").set(clonefrom.downwindsailonbestgybe.get("PropertyBoat downwindsailonbestgybe"));
+        this.downwindbearawayifheaded.getProperty("PropertyBoat downwindbearawayifheaded").set(clonefrom.downwindbearawayifheaded.get("PropertyBoat downwindbearawayifheaded"));
+        this.downwindgybeiflifted.getProperty("PropertyBoat downwindgybeiflifted").set(clonefrom.downwindgybeiflifted.get("PropertyBoat downwindgybeiflifted"));
+        this.downwindluffupiflifted.getProperty("PropertyBoat downwindluffupiflifted").set(clonefrom.downwindluffupiflifted.get("PropertyBoat downwindluffupiflifted"));
     }
 
     @Override

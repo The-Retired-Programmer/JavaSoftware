@@ -86,7 +86,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     private void showDisplayWindow(String fn) {
-        displaygroup = new DisplayPane(propertiescontroller.getProperty(), windflow, waterflow, boats, boatstrategies);
+        displaygroup = new DisplayPane(this);
         setWindow(new DisplayWindow(fn, this, this.getProperty(), displaygroup));
         propertiescontroller.getProperty().setOnChange(() -> refreshrepaint());
     }
@@ -163,7 +163,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public void refreshrepaint() {
         createDisplayEntities();
-        displaygroup.refreshParameters(windflow, waterflow, boats, boatstrategies);
+        displaygroup.refreshParameters();
     }
 
     public DecisionController getDecisionController() {

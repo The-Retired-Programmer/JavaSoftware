@@ -46,12 +46,12 @@ public class PropertySketch extends PropertyMap {
 
     private void marklistchanged(Change<PropertyMark> c) {
         while (c.next()) {
-            for (PropertyMark remitem : c.getRemoved()) {
+            c.getRemoved().forEach(remitem -> {
                 marknames.remove(remitem.getName());
-            }
-            for (PropertyMark additem : c.getAddedSubList()) {
+            });
+            c.getAddedSubList().forEach(additem -> {
                 marknames.add(additem.getName());
-            }
+            });
         }
         assert marknames.size() == getMarks().getList().size();
 //        marknames.clear();
