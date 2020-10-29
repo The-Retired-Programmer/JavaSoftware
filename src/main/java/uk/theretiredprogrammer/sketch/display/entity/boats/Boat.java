@@ -25,6 +25,7 @@ import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
@@ -32,6 +33,7 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 
 /**
  * The Abstract Boat class - implements the core capabilities of a boat.
@@ -50,12 +52,14 @@ public abstract class Boat {
     private double boatspeed = 0;
     private Angle rotationAnglePerSecond;
     private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
+    private Strategy strategy; // current leg strategy
 
-    public Boat(PropertyBoat boatproperty, PropertySketch sketchproperty, BoatMetrics metrics) {
+    public Boat(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this.boatproperty = boatproperty;
         this.sketchproperty = sketchproperty;
         this.metrics = metrics;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
+        this.strategy = Strategy.getLegStrategy(this, firstleg, windflow, waterflow);
     }
 
     public PropertyBoat getProperty() {
@@ -64,6 +68,14 @@ public abstract class Boat {
 
     public String getName() {
         return boatproperty.getName();
+    }
+    
+    public Strategy getStrategy() {
+        return strategy;
+    }
+    
+    public void setStrategy(Strategy strategy){
+        this.strategy = strategy;
     }
 
     public boolean isPort(Angle winddirection) {

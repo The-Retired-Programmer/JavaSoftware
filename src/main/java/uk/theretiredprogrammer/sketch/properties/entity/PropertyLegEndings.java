@@ -16,34 +16,34 @@
 package uk.theretiredprogrammer.sketch.properties.entity;
 
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.LegValue;
+import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class PropertyLegValues extends PropertyListWithSimpleCreator<PropertyLegValue> {
+public class PropertyLegEndings extends PropertyListWithSimpleCreator<PropertyLegEnding> {
 
     private final ObservableList<String> marknames;
     private final ObservableList<String> roundings;
 
-    public PropertyLegValues(String key, ObservableList<String> marknames, ObservableList<String> roundings) {
-        super(() -> new PropertyLegValue(marknames, roundings));
+    public PropertyLegEndings(String key, ObservableList<String> marknames, ObservableList<String> roundings) {
+        super(() -> new PropertyLegEnding(marknames, roundings));
         setKey(key);
         this.marknames = marknames;
         this.roundings = roundings;
     }
 
     @Override
-    public PropertyLegValues get() {
+    public PropertyLegEndings get() {
         return this;
     }
 
     public void add() {
-        super.add(new PropertyLegValue(marknames, roundings));
+        super.add(new PropertyLegEnding(marknames, roundings));
     }
 
-    public void add(LegValue legvalue) {
-        super.add(new PropertyLegValue(legvalue, marknames, roundings));
+    public void add(LegEnding legvalue) {
+        super.add(new PropertyLegEnding(legvalue, marknames, roundings));
     }
 }

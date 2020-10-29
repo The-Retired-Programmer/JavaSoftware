@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
@@ -36,30 +37,30 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public abstract class BoatStrategyForLeg {
+public abstract class Strategy {
 
-    static enum LegType {
+    public static enum LegType {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    static BoatStrategyForLeg getLegStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public static Strategy getLegStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         LegType legtype = getLegType(boat, leg, windflow);
         switch (legtype) {
             case WINDWARD -> {
-                return new BoatStrategyForWindwardLeg(boat, leg, windflow, waterflow);
+                return new WindwardStrategy(boat, leg, windflow, waterflow);
             }
             case OFFWIND -> {
-                return new BoatStrategyForOffwindLeg(boat, leg, windflow, waterflow);
+                return new OffwindStrategy(boat, leg, windflow, waterflow);
             }
             case GYBINGDOWNWIND -> {
-                return new BoatStrategyForGybingDownwindLeg(boat, leg, windflow, waterflow);
+                return new GybingDownwindStrategy(boat, leg, windflow, waterflow);
             }
             default ->
                 throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
         }
     }
 
-    static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
+    public static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
         if (leg == null) {
             return LegType.NONE;
         }
@@ -74,7 +75,7 @@ public abstract class BoatStrategyForLeg {
         return LegType.OFFWIND;
     }
 
-    static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
+    public static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
         DistancePolar tomark = new DistancePolar(location, marklocation);
         Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);
         if (refangle2mark.gt(ANGLE90)) {
@@ -99,7 +100,7 @@ public abstract class BoatStrategyForLeg {
     private final Angle portoffsetangle;
     private final Angle starboardoffsetangle;
 
-    public BoatStrategyForLeg(Boat boat, Leg leg,
+    public Strategy(Boat boat, Leg leg,
             Angle portroundingportoffsetangle, Angle portroundingstarboardoffsetangle,
             Angle starboardroundingportoffsetangle, Angle starboardroundingstarboardoffsetangle) {
         this.boat = boat;
@@ -115,7 +116,7 @@ public abstract class BoatStrategyForLeg {
         }
     }
 
-    public BoatStrategyForLeg(Boat boat, Leg leg,
+    public Strategy(Boat boat, Leg leg,
             Angle portroundingoffsetangle, Angle starboardroundingoffsetangle) {
         this.boat = boat;
         this.decision = new Decision(boat);
@@ -130,7 +131,7 @@ public abstract class BoatStrategyForLeg {
         }
     }
 
-    public BoatStrategyForLeg(Boat boat, Leg previousleg) {
+    public Strategy(Boat boat, Leg previousleg) {
         this.boat = boat;
         this.decision = new Decision(boat);
         this.leg = previousleg;
@@ -158,7 +159,7 @@ public abstract class BoatStrategyForLeg {
 
     abstract String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow);
 
-    BoatStrategyForLeg nextTimeInterval(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+    public Strategy nextTimeInterval(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
             String reason = nextBoatStrategyTimeInterval(sketchproperty, windflow, waterflow);
@@ -169,8 +170,8 @@ public abstract class BoatStrategyForLeg {
         if (boat.moveUsingDecision(windflow, waterflow, decision)) {
             Leg nextleg = leg.getFollowingLeg();
             return nextleg == null
-                    ? new BoatStrategyForAfterFinishLeg(boat, leg)
-                    : BoatStrategyForLeg.getLegStrategy(boat, nextleg, windflow, waterflow);
+                    ? new AfterFinishStrategy(boat, leg)
+                    : Strategy.getLegStrategy(boat, nextleg, windflow, waterflow);
         }
         return null;
     }

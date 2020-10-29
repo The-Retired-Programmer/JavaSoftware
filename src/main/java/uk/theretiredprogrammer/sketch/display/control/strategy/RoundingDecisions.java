@@ -27,15 +27,15 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.S
  */
 abstract class RoundingDecisions extends SailingDecisions {
 
-    final boolean atPortRoundingTurnPoint(BoatStrategyForLeg legstrategy) {
+    final boolean atPortRoundingTurnPoint(Strategy legstrategy) {
         return legstrategy.boat.isPortRear90Quadrant(legstrategy.getMarkLocation());
     }
 
-    final boolean atStarboardRoundingTurnPoint(BoatStrategyForLeg legstrategy) {
+    final boolean atStarboardRoundingTurnPoint(Strategy legstrategy) {
         return legstrategy.boat.isStarboardRear90Quadrant(legstrategy.getMarkLocation());
     }
 
-    final String executePortRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, BoatStrategyForLeg legstrategy) {
+    final String executePortRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, Strategy legstrategy) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
         Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getProperty().getDirection());
         if (turnangle.gt(ANGLE90)) {
@@ -47,7 +47,7 @@ abstract class RoundingDecisions extends SailingDecisions {
         return "markrounding action - starboard tack - port rounding";
     }
 
-    final String executeStarboardRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, BoatStrategyForLeg legstrategy) {
+    final String executeStarboardRounding(Function<Angle, Angle> getDirectionAfterTurn, Angle winddirection, Strategy legstrategy) {
         Angle finaldirection = getDirectionAfterTurn.apply(winddirection);
         Angle turnangle = finaldirection.absAngleDiff(legstrategy.boat.getProperty().getDirection());
         if (turnangle.gt(ANGLE90)) {

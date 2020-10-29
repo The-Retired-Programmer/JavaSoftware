@@ -19,6 +19,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
 /**
@@ -29,9 +34,9 @@ public class Boats {
 
     private List<Boat> boats = new ArrayList<>();
 
-    public Boats(PropertySketch sketchproperty)  {
+    public Boats(PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow)  {
         for (var boatproperty : sketchproperty.getBoats().getList()) {
-            boats.add(BoatFactory.createBoat(boatproperty, sketchproperty));
+            boats.add(BoatFactory.createBoat(boatproperty, sketchproperty, firstleg, windflow, waterflow));
         }
     }
 
@@ -41,5 +46,14 @@ public class Boats {
 
     public Boat getBoat(String name) {
         return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
+    }
+    
+    public void timerAdvance(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+        boats.forEach(boat -> {
+            Strategy newstrategy = boat.getStrategy().nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
+            if (newstrategy != null) {
+                boat.setStrategy(newstrategy);
+            }
+        });
     }
 }

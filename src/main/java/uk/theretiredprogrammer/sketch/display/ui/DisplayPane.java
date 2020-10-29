@@ -22,7 +22,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
@@ -31,12 +30,9 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
-import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
@@ -50,7 +46,6 @@ public class DisplayPane extends Group {
     private Shapes2D shapebuilder;
     private Scale mainscale;
     private Translate maintranslate;
-    
 
     public DisplayPane(DisplayController controller) { //PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats, BoatStrategies strategies) {
         this.controller = controller;
@@ -253,12 +248,12 @@ public class DisplayPane extends Group {
         if (delta.gt(ANGLE0)) {
             // anti clockwise to starboard tack
             Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
-            Decision decision = controller.boatstrategies.getStrategy(boat).decision;
+            Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, PORT);
         } else {
             // clockwise to port tack
             Angle target = boat.getPortCloseHauledCourse(wind.getAngle());
-            Decision decision = controller.boatstrategies.getStrategy(boat).decision;
+            Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, STARBOARD);
         }
     }
@@ -271,27 +266,27 @@ public class DisplayPane extends Group {
         if (delta.gt(ANGLE0)) {
             // clockwise to starboard gybe
             Angle target = boat.getStarboardReachingCourse(wind.getAngle());
-            Decision decision = controller.boatstrategies.getStrategy(boat).decision;
+            Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, STARBOARD);
         } else {
             // anticlockwise to port gybe
             Angle target = boat.getPortReachingCourse(wind.getAngle());
-            Decision decision = controller.boatstrategies.getStrategy(boat).decision;
+            Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, PORT);
         }
     }
-    
+
     private void duplicatetack(Boat boat) {
-        String newname = boat.getName()+"-1";
-        PropertyBoat newboatproperty = new PropertyBoat(boat.getName()+"-1", boat.getProperty());
+        String newname = boat.getName() + "-1";
+        PropertyBoat newboatproperty = new PropertyBoat(boat.getName() + "-1", boat.getProperty());
         controller.getProperty().getBoats().add(newboatproperty);
         Boat newboat = controller.boats.getBoat(newname);
         tack(newboat);
     }
-    
+
     private void duplicategybe(Boat boat) {
-        String newname = boat.getName()+"-1";
-        PropertyBoat newboatproperty = new PropertyBoat(boat.getName()+"-1", boat.getProperty());
+        String newname = boat.getName() + "-1";
+        PropertyBoat newboatproperty = new PropertyBoat(boat.getName() + "-1", boat.getProperty());
         controller.getProperty().getBoats().add(newboatproperty);
         Boat newboat = controller.boats.getBoat(newname);
         gybe(newboat);

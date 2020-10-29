@@ -15,11 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.display.control.strategy.Leg;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.LegValue;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyLegValues;
+import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
+import uk.theretiredprogrammer.sketch.properties.entity.PropertyLegEndings;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyMarks;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -31,7 +29,7 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 public class Course {
 
     private Leg firstcourseleg;
-    private final PropertyLegValues legvaluesproperty;
+    private final PropertyLegEndings legvaluesproperty;
     private final PropertyMarks marksproperty;
     private final Location startproperty;
 
@@ -46,29 +44,20 @@ public class Course {
         }
     }
 
-//    public void addLeg() {
-//        if (marksproperty.getList().isEmpty()) {
-//            throw new IllegalStateFailure("No marks defined - so leg cannot be defined");
-//        }
-//        LegValue leg = new LegValue(marksproperty.getList().get(0).getName(), "port");
-//        insertLeg(leg);
-//        legvaluesproperty.add(leg);
-//    }
-
-    private void insertLeg(LegValue leg) {
+    private void insertLeg(LegEnding legending) {
         if (firstcourseleg == null) {
-            firstcourseleg = new Leg(startproperty, marksproperty.get(leg.getMarkname()), leg.isPortRounding(), null);
+            firstcourseleg = new Leg(startproperty, marksproperty.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
         } else {
-            Leg l = firstcourseleg;
-            while (l.getFollowingLeg() != null) {
-                l = l.getFollowingLeg();
+            Leg leg = firstcourseleg;
+            while (leg.getFollowingLeg() != null) {
+                leg = leg.getFollowingLeg();
             }
-            Leg newl = new Leg(l.getEndLocation(), marksproperty.get(leg.getMarkname()), leg.isPortRounding(), null);
-            l.setFollowingLeg(newl);
+            Leg newleg = new Leg(leg.getEndLocation(), marksproperty.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
+            leg.setFollowingLeg(newleg);
         }
     }
 
-    public Leg getFirstCourseLeg() {
+    public Leg getFirstLeg() {
         return firstcourseleg;
     }
 }

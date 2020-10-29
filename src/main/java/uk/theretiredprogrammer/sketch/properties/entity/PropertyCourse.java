@@ -35,11 +35,11 @@ public class PropertyCourse extends PropertyMap {
     }
 
     private final Config<PropertyLocation, Location> start = new Config<>("start", MANDATORY, (s) -> new PropertyLocation(s, LOCATIONZERO));
-    private final Config<PropertyLegValues, PropertyLegValues> legs;
+    private final Config<PropertyLegEndings, PropertyLegEndings> legs;
 
     public PropertyCourse(String key, ObservableList<String> marknames) {
         setKey(key);
-        legs = new Config<>("legs", OPTIONAL, (s) -> new PropertyLegValues(s, marknames, roundings));
+        legs = new Config<>("legs", OPTIONAL, (s) -> new PropertyLegEndings(s, marknames, roundings));
         this.addConfig(start, legs);
     }
     
@@ -58,7 +58,7 @@ public class PropertyCourse extends PropertyMap {
         return start.get("PropertyCourse start");
     }
 
-    public PropertyLegValues getPropertyLegValues() {
+    public PropertyLegEndings getPropertyLegValues() {
         return legs.get("PropertyCourse legs");
     }
 }

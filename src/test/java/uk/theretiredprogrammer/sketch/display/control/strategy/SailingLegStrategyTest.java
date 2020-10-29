@@ -21,7 +21,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategyForLeg.getRefDistance;
+import static uk.theretiredprogrammer.sketch.display.control.strategy.Strategy.getRefDistance;
 
 /**
  *

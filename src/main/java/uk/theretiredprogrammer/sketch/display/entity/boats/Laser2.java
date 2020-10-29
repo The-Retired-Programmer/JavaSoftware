@@ -15,6 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -25,8 +28,8 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class Laser2 extends Boat {
 
-    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty) {
-        super(boatproperty, sketchproperty,
+    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+        super(boatproperty, sketchproperty, firstleg, windflow, waterflow,
                 new BoatMetricsBuilder()
                         .length(4)
                         .width(1.5)

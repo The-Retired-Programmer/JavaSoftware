@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.control.strategy;
+package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 /**
@@ -27,13 +26,13 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 public class Leg {
 
     private final Location startfrom;
-    private final Location marklocation;
+    private final Location endat;
     private final boolean portrounding;
     private Leg followingleg;
 
-    public Leg(Location startfrom, PropertyMark markproperties, boolean portrounding, Leg followingleg) {
+    public Leg(Location startfrom, Location endat, boolean portrounding, Leg followingleg) {
         this.startfrom = startfrom;
-        this.marklocation = markproperties.getLocation();
+        this.endat = endat;
         this.portrounding = portrounding;
         this.followingleg = followingleg;
     }
@@ -46,23 +45,23 @@ public class Leg {
         followingleg = leg;
     }
 
-    boolean isPortRounding() {
+    public boolean isPortRounding() {
         return portrounding;
     }
 
-    double getDistanceToEnd(Location here) {
-        return here.to(marklocation);
+    public double getDistanceToEnd(Location here) {
+        return here.to(endat);
     }
 
     public Location getEndLocation() {
-        return marklocation;
+        return endat;
     }
 
-    Angle getMarkMeanwinddirection(WindFlow windflow) {
-        return windflow.getMeanFlowAngle(marklocation);
+    public Angle endLegMeanwinddirection(WindFlow windflow) {
+        return windflow.getMeanFlowAngle(endat);
     }
 
-    Angle getAngleofLeg() {
-        return startfrom.angleto(marklocation);
+    public Angle getAngleofLeg() {
+        return startfrom.angleto(endat);
     }
 }

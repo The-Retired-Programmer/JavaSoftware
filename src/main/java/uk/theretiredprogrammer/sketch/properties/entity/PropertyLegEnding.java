@@ -22,23 +22,23 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.LegValue;
+import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
 
 /**
  *
  * @author richard
  */
-public class PropertyLegValue extends PropertyElement<LegValue> {
+public class PropertyLegEnding extends PropertyElement<LegEnding> {
 
     private final PropertyConstrainedString marknameproperty;
     private final PropertyConstrainedString roundingproperty;
 
-    public PropertyLegValue(ObservableList<String> marknames, ObservableList<String> roundings) {
+    public PropertyLegEnding(ObservableList<String> marknames, ObservableList<String> roundings) {
         marknameproperty = new PropertyConstrainedString(marknames);
         roundingproperty = new PropertyConstrainedString(roundings);
     }
 
-    public PropertyLegValue(LegValue defaultvalue, ObservableList<String> marknames, ObservableList<String> roundings) {
+    public PropertyLegEnding(LegEnding defaultvalue, ObservableList<String> marknames, ObservableList<String> roundings) {
         marknameproperty = new PropertyConstrainedString(marknames, defaultvalue.getMarkname());
         roundingproperty = new PropertyConstrainedString(roundings, defaultvalue.getRoundingdirection());
     }
@@ -52,22 +52,22 @@ public class PropertyLegValue extends PropertyElement<LegValue> {
     }
 
     @Override
-    public final LegValue get() {
-        return new LegValue(marknameproperty.get(), roundingproperty.get());
+    public final LegEnding get() {
+        return new LegEnding(marknameproperty.get(), roundingproperty.get());
     }
 
     @Override
-    public final void set(LegValue newleg) {
+    public final void set(LegEnding newleg) {
         marknameproperty.setValue(newleg.getMarkname());
         roundingproperty.set(newleg.getRoundingdirection());
     }
 
     @Override
-    public final LegValue parsevalue(JsonValue jvalue) {
+    public final LegEnding parsevalue(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new LegValue(
+                return new LegEnding(
                         marknameproperty.parsevalue(values.get(0)),
                         roundingproperty.parsevalue(values.get(1))
                 );

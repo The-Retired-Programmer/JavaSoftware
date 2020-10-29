@@ -26,7 +26,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 /**
  *

@@ -99,7 +99,7 @@ public class ExecuteAndCatch {
         dialog.getDialogPane().getButtonTypes().add(loginButtonType);
         dialog.setTitle(title + ex.getLocalizedMessage());
         dialog.setContentText(writer.toString());
-        dialog.setWidth(600);
+        dialog.setWidth(1000);
         dialog.setResizable(true);
         dialog.showAndWait();
     }

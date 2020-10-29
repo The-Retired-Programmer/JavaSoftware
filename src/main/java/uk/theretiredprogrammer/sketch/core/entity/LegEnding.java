@@ -24,12 +24,12 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class LegValue {
+public class LegEnding {
 
     private final String mark;
     private final String passing;
 
-    public LegValue(String mark, String passing) {
+    public LegEnding(String mark, String passing) {
         this.mark = mark;
         passing = passing.toLowerCase();
         if (passing.equals("port") || passing.equals("starboard")) {

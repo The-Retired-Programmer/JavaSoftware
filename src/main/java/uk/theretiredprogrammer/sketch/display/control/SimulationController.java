@@ -74,7 +74,7 @@ public class SimulationController implements Runnable {
                         decisioncontroller.setTime(simulationtime);
                         controller.windflow.timerAdvance(simulationtime, decisioncontroller);
                         controller.waterflow.timerAdvance(simulationtime, decisioncontroller);
-                        controller.boatstrategies.timerAdvance(sketchproperty, simulationtime, decisioncontroller,
+                        controller.boats.timerAdvance(sketchproperty, simulationtime, decisioncontroller,
                                 controller.windflow, controller.waterflow);
                         secondsperdisplay--;
                         simulationtime++;

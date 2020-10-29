@@ -30,7 +30,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
-import uk.theretiredprogrammer.sketch.display.control.strategy.BoatStrategies;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
@@ -48,7 +47,6 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     private FileSelectorController fileselectorcontroller;
     private SimulationController simulationcontroller;
     //
-    public BoatStrategies boatstrategies;
     public WindFlow windflow;
     public WaterFlow waterflow;
     public Course course;
@@ -81,8 +79,8 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         windflow = new WindFlow(sketchproperty);
         waterflow = new WaterFlow(sketchproperty);
         course = new Course(sketchproperty);
-        boats = new Boats(sketchproperty);
-        boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
+        boats = new Boats(sketchproperty, course.getFirstLeg(), windflow, waterflow);
+        //boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
     }
 
     private void showDisplayWindow(String fn) {

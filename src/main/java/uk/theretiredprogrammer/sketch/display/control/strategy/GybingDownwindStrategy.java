@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
@@ -28,25 +29,25 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
+public class GybingDownwindStrategy extends Strategy {
 
     private final GybingDownwindStarboardSailingDecisions starboarddecisions;
     private final GybingDownwindPortSailingDecisions portdecisions;
     private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
 
-    public BoatStrategyForGybingDownwindLeg(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public GybingDownwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg,
-                leg.getMarkMeanwinddirection(windflow).add(new Angle(-135)), leg.getMarkMeanwinddirection(windflow).add(new Angle(-45)),
-                leg.getMarkMeanwinddirection(windflow).add(new Angle(45)), leg.getMarkMeanwinddirection(windflow).add(new Angle(135)));
+                leg.endLegMeanwinddirection(windflow).add(new Angle(-135)), leg.endLegMeanwinddirection(windflow).add(new Angle(-45)),
+                leg.endLegMeanwinddirection(windflow).add(new Angle(45)), leg.endLegMeanwinddirection(windflow).add(new Angle(135)));
         portdecisions = new GybingDownwindPortSailingDecisions();
         starboarddecisions = new GybingDownwindStarboardSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new LeewardReachingPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
-                        : new LeewardReachingStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
+                        ? new GybingDownwindPortRoundingDecisions((windangle) -> boat.getPortCloseHauledCourse(windangle))
+                        : new GybingDownwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
             case OFFWIND ->
                 roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
@@ -63,7 +64,7 @@ public class BoatStrategyForGybingDownwindLeg extends BoatStrategyForLeg {
 
     @Override
     String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        Angle markMeanwinddirection = leg.getMarkMeanwinddirection(windflow);
+        Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         Angle winddirection = windflow.getFlow(boat.getProperty().getLocation()).getAngle();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);

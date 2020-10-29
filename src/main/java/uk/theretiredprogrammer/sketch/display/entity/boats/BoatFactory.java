@@ -16,6 +16,9 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
 import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 
@@ -25,10 +28,10 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
  */
 public class BoatFactory {
 
-    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty) {
+    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
         switch (boatproperty.getType()) {
             case "laser2" -> {
-                return new Laser2(boatproperty, sketchproperty);
+                return new Laser2(boatproperty, sketchproperty, firstleg, windflow, waterflow);
             }
             default ->
                 throw new IllegalStateFailure("Missing or Unknown class parameter in boat definition");

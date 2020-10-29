@@ -27,7 +27,7 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+    String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
         boolean onPort = legstrategy.boat.isPort(winddirection);
         Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.getProperty().getLocation(), onPort);

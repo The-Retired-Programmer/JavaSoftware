@@ -36,7 +36,7 @@ class WindwardStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+    final String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
         if (!legstrategy.boat.isPort(winddirection)) {
             if (legstrategy.boat.isStarboardRear90Quadrant(legstrategy.getMarkLocation())) {

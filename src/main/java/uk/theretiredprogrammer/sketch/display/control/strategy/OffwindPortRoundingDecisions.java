@@ -35,7 +35,7 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, BoatStrategyForLeg legstrategy, WindFlow windflow, WaterFlow waterflow) {
+    final String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
         if (atPortRoundingTurnPoint(legstrategy)) {
             return executePortRounding(getDirectionAfterTurn, winddirection, legstrategy);
