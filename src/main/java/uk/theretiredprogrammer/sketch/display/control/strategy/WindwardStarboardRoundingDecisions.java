@@ -36,29 +36,29 @@ class WindwardStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
-        if (!legstrategy.boat.isPort(winddirection)) {
-            if (legstrategy.boat.isStarboardRear90Quadrant(legstrategy.getMarkLocation())) {
-                legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
+    final String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
+        if (!strategy.boat.isPort(winddirection)) {
+            if (strategy.boat.isStarboardRear90Quadrant(strategy.getMarkLocation())) {
+                strategy.decision.setTURN(strategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                 return "pre markrounding action - tack to port - starboard tack - starboard rounding";
             }
-            if (adjustStarboardDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
+            if (adjustStarboardDirectCourseToWindwardMarkOffset(strategy, winddirection)) {
                 return "course adjustment - approaching mark - starboard tack - starboard rounding";
             }
-            legstrategy.decision.setTURN(legstrategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
+            strategy.decision.setTURN(strategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
             return "course adjustment - bearing away to hold port c/h - port tack - port rounding";
         }
-        if (atStarboardRoundingTurnPoint(legstrategy)) {
-            return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy);
+        if (atStarboardRoundingTurnPoint(strategy)) {
+            return executeStarboardRounding(getDirectionAfterTurn, winddirection, strategy);
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(legstrategy, winddirection)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(strategy, winddirection)) {
             return "course adjustment - approaching mark - port tack - starboard rounding";
         }
-        if (tackifonstarboardlayline(legstrategy, winddirection)) {
+        if (tackifonstarboardlayline(strategy, winddirection)) {
             return "tacking on starboard layline - port->starboard";
         }
-        legstrategy.decision.setTURN(legstrategy.boat.getPortCloseHauledCourse(winddirection), PORT);
+        strategy.decision.setTURN(strategy.boat.getPortCloseHauledCourse(winddirection), PORT);
         return "course adjustment - bearing away to hold port c/h - port tack - starboard rounding";
     }
 }

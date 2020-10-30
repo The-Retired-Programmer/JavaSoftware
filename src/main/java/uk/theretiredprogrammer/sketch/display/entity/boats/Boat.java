@@ -59,7 +59,7 @@ public abstract class Boat {
         this.sketchproperty = sketchproperty;
         this.metrics = metrics;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
-        this.strategy = Strategy.getLegStrategy(this, firstleg, windflow, waterflow);
+        this.strategy = Strategy.get(this, firstleg, windflow, waterflow);
     }
 
     public PropertyBoat getProperty() {

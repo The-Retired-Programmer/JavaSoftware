@@ -27,7 +27,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Strategy.g
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class SailingLegStrategyTest {
+public class SailingLegTest {
 
     private static final double DELTA = 0.0000001;
 

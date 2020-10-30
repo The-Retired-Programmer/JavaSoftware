@@ -52,7 +52,7 @@ public class SailingStrategyTest {
         }
         Leg leg = controller.course.getFirstLeg();
         winddirection = controller.windflow.getFlow(boat.getProperty().getLocation()).getAngle();
-        Strategy strategy = Strategy.getLegStrategy(boat, leg, controller.windflow, controller.waterflow);
+        Strategy strategy = Strategy.get(boat, leg, controller.windflow, controller.waterflow);
         strategy.nextBoatStrategyTimeInterval(controller.getProperty(), controller.windflow, controller.waterflow);
         return strategy.decision;
     }

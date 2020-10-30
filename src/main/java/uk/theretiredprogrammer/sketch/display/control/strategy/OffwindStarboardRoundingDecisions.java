@@ -35,12 +35,12 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
-        if (atStarboardRoundingTurnPoint(legstrategy)) {
-            return executeStarboardRounding(getDirectionAfterTurn, winddirection, legstrategy);
+    final String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
+        if (atStarboardRoundingTurnPoint(strategy)) {
+            return executeStarboardRounding(getDirectionAfterTurn, winddirection, strategy);
         }
-        adjustDirectCourseToDownwindMarkOffset(legstrategy, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(strategy, winddirection);
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

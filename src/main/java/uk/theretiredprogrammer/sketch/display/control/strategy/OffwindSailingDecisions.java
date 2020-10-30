@@ -27,12 +27,12 @@ import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
 class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(PropertySketch sketchproperty, Strategy legstrategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getFlow(legstrategy.boat.getProperty().getLocation()).getAngle();
-        boolean onPort = legstrategy.boat.isPort(winddirection);
-        Angle nextDirection = legstrategy.getAngletoSail(legstrategy.boat.getProperty().getLocation(), onPort);
-        if (nextDirection.neq(legstrategy.boat.getProperty().getDirection())) {
-            legstrategy.decision.setTURN(nextDirection, legstrategy.boat.getProperty().getDirection().gt(nextDirection));
+    String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
+        boolean onPort = strategy.boat.isPort(winddirection);
+        Angle nextDirection = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), onPort);
+        if (nextDirection.neq(strategy.boat.getProperty().getDirection())) {
+            strategy.decision.setTURN(nextDirection, strategy.boat.getProperty().getDirection().gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

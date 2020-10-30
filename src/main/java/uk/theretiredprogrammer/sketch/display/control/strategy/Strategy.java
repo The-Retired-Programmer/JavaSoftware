@@ -43,7 +43,7 @@ public abstract class Strategy {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    public static Strategy getLegStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public static Strategy get(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         LegType legtype = getLegType(boat, leg, windflow);
         switch (legtype) {
             case WINDWARD -> {
@@ -60,7 +60,7 @@ public abstract class Strategy {
         }
     }
 
-    public static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
+    static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
         if (leg == null) {
             return LegType.NONE;
         }
@@ -75,7 +75,7 @@ public abstract class Strategy {
         return LegType.OFFWIND;
     }
 
-    public static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
+    static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
         DistancePolar tomark = new DistancePolar(location, marklocation);
         Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);
         if (refangle2mark.gt(ANGLE90)) {
@@ -171,7 +171,7 @@ public abstract class Strategy {
             Leg nextleg = leg.getFollowingLeg();
             return nextleg == null
                     ? new AfterFinishStrategy(boat, leg)
-                    : Strategy.getLegStrategy(boat, nextleg, windflow, waterflow);
+                    : Strategy.get(boat, nextleg, windflow, waterflow);
         }
         return null;
     }
