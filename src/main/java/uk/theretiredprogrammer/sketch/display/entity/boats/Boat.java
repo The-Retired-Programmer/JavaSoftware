@@ -28,8 +28,7 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
@@ -69,12 +68,12 @@ public abstract class Boat {
     public String getName() {
         return boatproperty.getName();
     }
-    
+
     public Strategy getStrategy() {
         return strategy;
     }
-    
-    public void setStrategy(Strategy strategy){
+
+    public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
 

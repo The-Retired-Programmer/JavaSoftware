@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *
@@ -41,12 +41,12 @@ public class SimulationController implements Runnable {
         this.controller = controller;
         scheduler = Executors.newScheduledThreadPool(1);
     }
-    
+
     public void close() {
         stop();
         scheduler.shutdown();
     }
-    
+
     public void start() {
         if (isRunning) {
             return;

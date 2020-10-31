@@ -19,9 +19,9 @@ import javafx.scene.control.Menu;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *
@@ -34,17 +34,17 @@ public class PropertiesWindow extends AbstractWindow<PropertiesController> {
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
         setContent(new PropertiesPane(sketchproperty));
-        
+
         Menu boatmenu = UI.menu("Add Boat");
         for (var classname : PropertyBoat.getClasses()) {
             boatmenu.getItems().add(UI.menuitem(classname, ev -> controller.addNewBoat(classname)));
         }
         Menu windmenu = UI.menu("Add WindFlowComponent");
-        for(var typename : PropertyFlowComponent.getTypenames()){
+        for (var typename : PropertyFlowComponent.getTypenames()) {
             windmenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWindFlowComponent(typename)));
         }
         Menu watermenu = UI.menu("Add WaterFlowComponent");
-        for(var typename : PropertyFlowComponent.getTypenames()){
+        for (var typename : PropertyFlowComponent.getTypenames()) {
             watermenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWaterFlowComponent(typename)));
         }
         addtoMenubar(
@@ -52,8 +52,8 @@ public class PropertiesWindow extends AbstractWindow<PropertiesController> {
                 windmenu,
                 watermenu,
                 UI.menu("Add  Course Elements",
-                    UI.menuitem("Add Mark", ev -> controller.addNewMark()),
-                    UI.menuitem("Add Course Leg", ev -> controller.addNewLeg())
+                        UI.menuitem("Add Mark", ev -> controller.addNewMark()),
+                        UI.menuitem("Add Course Leg", ev -> controller.addNewLeg())
                 )
         );
         addtoToolbar(

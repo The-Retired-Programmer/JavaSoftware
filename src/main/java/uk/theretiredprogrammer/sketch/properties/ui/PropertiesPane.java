@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.sketch.properties.ui;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Accordion;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *

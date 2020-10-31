@@ -33,16 +33,16 @@ public class ExecuteAndCatch {
     private Consumer<Exception> illegalstatefailurereporting = (ex) -> catchDialog("Program Failure", ex);
     private Consumer<Exception> parsefailurereporting = (ex) -> catchDialog("Problem parsing Config file", ex);
     private Consumer<Exception> otherexceptionsreporting = (ex) -> catchDialog("Program Failure", ex);
-    private Runnable exceptionHandler = () -> nothing();
+    private Runnable exceptionHandler = () -> {};
     private Runnable parsefailureHandler = () -> exceptionHandler.run();
-    
+
     public static void runLater(Runnable work) {
         Platform.runLater(() -> new ExecuteAndCatch(work));
     }
-    
+
     public ExecuteAndCatch() {
     }
-    
+
     public ExecuteAndCatch(Runnable work) {
         run(work);
     }
@@ -85,9 +85,6 @@ public class ExecuteAndCatch {
             exceptionHandler.run();
             Platform.runLater(() -> otherexceptionsreporting.accept(ex));
         }
-    }
-
-    public void nothing() {
     }
 
     public void catchDialog(String title, Exception ex) {

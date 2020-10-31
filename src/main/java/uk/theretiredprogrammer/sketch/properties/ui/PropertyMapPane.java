@@ -22,11 +22,11 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyAny;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyElement;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyList;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyMap;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyAny;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyList;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 
 /**
  *

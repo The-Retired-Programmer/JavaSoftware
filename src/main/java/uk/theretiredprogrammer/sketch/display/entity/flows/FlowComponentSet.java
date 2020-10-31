@@ -19,7 +19,6 @@ import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
 
 /**
  *

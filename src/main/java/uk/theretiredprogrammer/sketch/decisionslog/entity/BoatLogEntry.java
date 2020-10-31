@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
+import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 
 /**
  *

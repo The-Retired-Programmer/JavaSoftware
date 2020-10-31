@@ -22,19 +22,19 @@ import javafx.scene.control.ContextMenu;
  * @author richard
  */
 public class DisplayContextMenu extends ContextMenu {
-    
+
     private double displayX;
     private double displayY;
-    
-    public void location(double x, double y){
+
+    public void location(double x, double y) {
         displayX = x;
         displayY = y;
     }
-    
+
     public double getDisplayX() {
         return displayX;
     }
-    
+
     public double getDisplayY() {
         return displayY;
     }

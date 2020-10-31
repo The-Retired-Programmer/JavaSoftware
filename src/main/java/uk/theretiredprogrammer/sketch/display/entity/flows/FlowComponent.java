@@ -19,11 +19,6 @@ import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyComplexFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyConstantFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyGradientFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponent;
 
 /**
  * Abstract Class describing a Flow Model. A Flow Model represents variable
@@ -49,7 +44,7 @@ public abstract class FlowComponent {
                 return new GradientFlowComponent((PropertyGradientFlowComponent) componentproperty);
             }
             default ->
-                throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition ("+type+")");
+                throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition (" + type + ")");
         }
     }
 

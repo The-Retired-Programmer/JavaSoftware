@@ -23,7 +23,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *

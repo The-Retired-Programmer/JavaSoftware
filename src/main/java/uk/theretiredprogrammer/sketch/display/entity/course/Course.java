@@ -17,9 +17,8 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyLegEndings;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyMarks;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLegEndings;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  * The Mark Class - represent course marks.
@@ -39,7 +38,7 @@ public class Course {
         this.startproperty = sketchproperty.getCourse().getStart();
         //
         //legvaluesproperty.stream().forEach(lv -> insertLeg(lv.get()));
-        for (var lv : legvaluesproperty.getList()){
+        for (var lv : legvaluesproperty.getList()) {
             insertLeg(lv.get());
         }
     }

@@ -20,10 +20,10 @@ import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponent;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
@@ -79,8 +79,8 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewMark() {
-            PropertyMark newmarkproperty = new PropertyMark();
-            sketchproperty.getMarks().add(newmarkproperty);
+        PropertyMark newmarkproperty = new PropertyMark();
+        sketchproperty.getMarks().add(newmarkproperty);
     }
 
     public void addNewBoat(String type) {
@@ -88,13 +88,13 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewWindFlowComponent(String flowtype) {
-            PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-            sketchproperty.getWind().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
+        sketchproperty.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
-            PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-            sketchproperty.getWater().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
+        sketchproperty.getWater().add(newflow);
     }
 
     public void addNewLeg() {

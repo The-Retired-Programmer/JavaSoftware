@@ -22,7 +22,7 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyTestFlowComponent;
 
 /**
  *

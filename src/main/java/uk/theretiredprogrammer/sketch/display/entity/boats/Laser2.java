@@ -18,8 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  * The Laser 2 Dinghy.

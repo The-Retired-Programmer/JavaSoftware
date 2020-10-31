@@ -22,14 +22,13 @@ import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90MINUS;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyDouble;
 
 /**
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
 public class Gradient {
-    
+
     public static final Gradient GRADIENTDEFAULT = new Gradient();
 
     private final String type;

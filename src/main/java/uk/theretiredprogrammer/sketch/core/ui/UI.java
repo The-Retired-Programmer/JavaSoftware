@@ -67,16 +67,16 @@ public class UI {
         menu.getItems().addAll(menuitems);
         return menu;
     }
-    
+
     public static DisplayContextMenu displayContextMenu(MenuItem... menuitems) {
         DisplayContextMenu menu = new DisplayContextMenu();
         menu.getItems().addAll(menuitems);
         return menu;
     }
-    
+
     public static MenuItem contextMenuitem(String itemtext, BiConsumer<ActionEvent, ContextMenu> action) {
         MenuItem menuitem = new MenuItem(itemtext);
-        menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e,menuitem.getParentPopup())));
+        menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e, menuitem.getParentPopup())));
         return menuitem;
     }
 }

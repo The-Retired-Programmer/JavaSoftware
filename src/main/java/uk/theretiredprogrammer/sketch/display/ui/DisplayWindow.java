@@ -20,7 +20,7 @@ import javafx.scene.text.Text;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *
@@ -58,7 +58,7 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.refreshrepaint()),
                 timetext = new Text("      ")
         );
-        setContent(pane , SCROLLABLE);
+        setContent(pane, SCROLLABLE);
         build();
         show();
     }

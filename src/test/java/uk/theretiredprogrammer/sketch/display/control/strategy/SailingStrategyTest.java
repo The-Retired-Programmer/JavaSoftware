@@ -25,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoolean;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyTestFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyTestFlowComponent;
 
 /**
  *

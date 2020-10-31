@@ -25,7 +25,7 @@ import javafx.scene.control.Dialog;
  * @author richard
  */
 public class PropertyMapDialog {
-    
+
     public static boolean showAndWait(String title, PropertyMapPane pane) {
         ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType doneButtonType = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
@@ -34,7 +34,7 @@ public class PropertyMapDialog {
         dialog.setTitle(title);
         dialog.getDialogPane().setContent(pane);
         dialog.setResizable(true);
-        Optional<ButtonType>  res = dialog.showAndWait();
-        return res.isPresent()? res.get() == doneButtonType: false;
+        Optional<ButtonType> res = dialog.showAndWait();
+        return res.isPresent() ? res.get() == doneButtonType : false;
     }
 }

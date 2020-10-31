@@ -33,9 +33,9 @@ import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyBoat;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyMark;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 

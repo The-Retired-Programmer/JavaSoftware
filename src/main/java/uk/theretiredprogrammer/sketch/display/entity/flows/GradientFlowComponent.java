@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyGradientFlowComponent;
 
 /**
  * The EastWestGradientFlow Class - represents a flow with differing parameters

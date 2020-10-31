@@ -18,22 +18,22 @@ package uk.theretiredprogrammer.sketch.display.control;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonWriter;
-import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
-import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 
 /**

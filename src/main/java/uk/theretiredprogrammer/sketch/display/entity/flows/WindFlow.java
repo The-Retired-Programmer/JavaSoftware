@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *

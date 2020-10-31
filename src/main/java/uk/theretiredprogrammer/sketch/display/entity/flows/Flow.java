@@ -23,9 +23,7 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowComponents;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertyFlowShifts;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *

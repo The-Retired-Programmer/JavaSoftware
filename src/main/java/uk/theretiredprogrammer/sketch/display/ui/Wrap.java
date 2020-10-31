@@ -28,73 +28,73 @@ import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
  * @author richard
  */
 public class Wrap {
-    
-    public static Node contextMenu(Node element, ContextMenu contextmenu, Cursor selectioncursor){
+
+    public static Node contextMenu(Node element, ContextMenu contextmenu, Cursor selectioncursor) {
         element.setCursor(selectioncursor);
         element.setOnContextMenuRequested(ev -> contextmenuhandler(ev, element, contextmenu));
         return element;
     }
-    
-    public static  Node[] contextMenu(Node[] elements, ContextMenu contextmenu, Cursor selectioncursor){
-        for (var element: elements){
+
+    public static Node[] contextMenu(Node[] elements, ContextMenu contextmenu, Cursor selectioncursor) {
+        for (var element : elements) {
             contextMenu(element, contextmenu, selectioncursor);
         }
         return elements;
     }
-    
-    public static Node contextMenu(Node element, ContextMenu contextmenu){
+
+    public static Node contextMenu(Node element, ContextMenu contextmenu) {
         element.setOnContextMenuRequested(ev -> contextmenuhandler(ev, element, contextmenu));
         return element;
     }
-    
-    public static  Node[] contextMenu(Node[] elements, ContextMenu contextmenu){
-        for (var element: elements){
+
+    public static Node[] contextMenu(Node[] elements, ContextMenu contextmenu) {
+        for (var element : elements) {
             contextMenu(element, contextmenu);
         }
         return elements;
     }
-    
+
     private static void contextmenuhandler(ContextMenuEvent event, Node element, ContextMenu contextmenu) {
         contextmenu.show(element, event.getScreenX(), event.getScreenY());
     }
-    
-     public static Node displayContextMenu(Node element, DisplayContextMenu contextmenu, Cursor selectioncursor){
+
+    public static Node displayContextMenu(Node element, DisplayContextMenu contextmenu, Cursor selectioncursor) {
         element.setCursor(selectioncursor);
         element.setOnContextMenuRequested(ev -> displaycontextmenuhandler(ev, element, contextmenu));
         return element;
     }
-    
-    public static  Node[] displayContextMenu(Node[] elements, DisplayContextMenu contextmenu, Cursor selectioncursor){
-        for (var element: elements){
+
+    public static Node[] displayContextMenu(Node[] elements, DisplayContextMenu contextmenu, Cursor selectioncursor) {
+        for (var element : elements) {
             contextMenu(element, contextmenu, selectioncursor);
         }
         return elements;
     }
-    
-    public static Node displayContextMenu(Node element, DisplayContextMenu contextmenu){
+
+    public static Node displayContextMenu(Node element, DisplayContextMenu contextmenu) {
         element.setOnContextMenuRequested(ev -> displaycontextmenuhandler(ev, element, contextmenu));
         return element;
     }
-    
-    public static  Node[] displayContextMenu(Node[] elements, DisplayContextMenu contextmenu){
-        for (var element: elements){
+
+    public static Node[] displayContextMenu(Node[] elements, DisplayContextMenu contextmenu) {
+        for (var element : elements) {
             displayContextMenu(element, contextmenu);
         }
         return elements;
     }
-    
+
     private static void displaycontextmenuhandler(ContextMenuEvent event, Node element, DisplayContextMenu contextmenu) {
         contextmenu.location(event.getX(), event.getY());
         contextmenu.show(element, event.getScreenX(), event.getScreenY());
     }
-    
-    public static Node globalTransform(Node element, Transform... transforms ){
+
+    public static Node globalTransform(Node element, Transform... transforms) {
         element.getTransforms().addAll(0, List.of(transforms));
         return element;
     }
-    
-    public static Node[] globalTransform(Node[] elements, Transform... transforms ){
-        for (var element: elements) {
+
+    public static Node[] globalTransform(Node[] elements, Transform... transforms) {
+        for (var element : elements) {
             Wrap.globalTransform(element, transforms);
         }
         return elements;

@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.properties.entity.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 
 /**
  *
@@ -34,7 +34,7 @@ public class Boats {
 
     private List<Boat> boats = new ArrayList<>();
 
-    public Boats(PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow)  {
+    public Boats(PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
         for (var boatproperty : sketchproperty.getBoats().getList()) {
             boats.add(BoatFactory.createBoat(boatproperty, sketchproperty, firstleg, windflow, waterflow));
         }
@@ -47,7 +47,7 @@ public class Boats {
     public Boat getBoat(String name) {
         return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
     }
-    
+
     public void timerAdvance(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         boats.forEach(boat -> {
             Strategy newstrategy = boat.getStrategy().nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
