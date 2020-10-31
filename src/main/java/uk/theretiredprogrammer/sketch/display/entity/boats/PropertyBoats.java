@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyListNamedWithSimpleCreator;
 
 /**

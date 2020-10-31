@@ -21,10 +21,9 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -40,14 +39,14 @@ public class PropertyTestFlowComponent extends PropertyFlowComponent {
     }
 
     public SpeedPolar getFlow() {
-        return flow.get(this, "PropertyTestFlowComponent flow");
+        return flow.get("PropertyTestFlowComponent flow");
     }
 
     public Angle getmean() {
-        return mean.get(this, "PropertyTestFlowComponent mean");
+        return mean.get("PropertyTestFlowComponent mean");
     }
 
     public void setFlow(SpeedPolar newvalue) {
-        flow.getProperty(this).set(newvalue);
+        flow.getProperty().set(newvalue);
     }
 }

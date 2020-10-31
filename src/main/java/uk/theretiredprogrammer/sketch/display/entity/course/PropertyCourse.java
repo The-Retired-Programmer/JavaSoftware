@@ -22,9 +22,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.MANDATORY;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.MANDATORY;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /**
  *
@@ -60,10 +59,10 @@ public class PropertyCourse extends PropertyMap {
     }
 
     public Location getStart() {
-        return start.get(this, "PropertyCourse start");
+        return start.get("PropertyCourse start");
     }
 
     public PropertyLegEndings getPropertyLegValues() {
-        return legs.get(this, "PropertyCourse legs");
+        return legs.get("PropertyCourse legs");
     }
 }

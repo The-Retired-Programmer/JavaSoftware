@@ -27,9 +27,8 @@ import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.MANDATORY;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.MANDATORY;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -89,23 +88,23 @@ public abstract class PropertyFlowComponent extends PropertyMap implements Prope
     }
 
     public String getName() {
-        return name.get(this, "PropertyFlowComponent name");
+        return name.get("PropertyFlowComponent name");
     }
 
     public PropertyString getNameProperty() {
-        return name.getProperty(this, "PropertyFlowComponent name");
+        return name.getProperty("PropertyFlowComponent name");
     }
 
     public int getZlevel() {
-        return zlevel.get(this, "PropertyFlowComponent zlevel");
+        return zlevel.get("PropertyFlowComponent zlevel");
     }
 
     public Area getArea() {
-        Area windarea = area.get(this, "PropertyFlowComponent area");
+        Area windarea = area.get("PropertyFlowComponent area");
         return windarea.equals(AREAZERO) ? getdisplayarea.get() : windarea;
     }
 
     public String getType() {
-        return type.get(this, "PropertyFlowComponent type");
+        return type.get("PropertyFlowComponent type");
     }
 }

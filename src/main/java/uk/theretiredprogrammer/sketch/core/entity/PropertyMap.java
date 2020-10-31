@@ -22,10 +22,13 @@ import jakarta.json.JsonValue;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableMap;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 /**
  *
@@ -59,9 +62,7 @@ public abstract class PropertyMap extends PropertyAny {
     @Override
     public void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.OBJECT) {
-            for (PropertyConfig config : configs.values()) {
-                config.parse(this, (JsonObject) jvalue);
-            }
+            configs.values().forEach(config -> config.parse((JsonObject) jvalue));
         }
     }
 
@@ -90,5 +91,81 @@ public abstract class PropertyMap extends PropertyAny {
         JsonObjectBuilder job = Json.createObjectBuilder();
         propertymap.entrySet().forEach(e -> job.add(e.getKey(), e.getValue().toJson()));
         return job.build();
+    }
+
+    public class PropertyConfig<P extends PropertyAny, C extends Object> {
+
+        public static final boolean MANDATORY = true;
+        public static final boolean OPTIONAL = false;
+
+        private final String key;
+        private final boolean mandatoryparse;
+        private final Function<String, P> creator;
+
+        public PropertyConfig(String key, boolean mandatoryparse, Function<String, P> creator) {
+            this.key = key;
+            this.mandatoryparse = mandatoryparse;
+            this.creator = creator;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public P create() {
+            return creator.apply(key);
+        }
+
+        public void parse(JsonObject parentobj) {
+            if (mandatoryparse) {
+                parseMandatoryProperty(key, parentobj);
+            } else {
+                parseOptionalProperty(key, parentobj);
+            }
+        }
+
+        public final P getProperty(String messageleader) {
+            P property = (P) propertymap.get(key);
+            if (property == null) {
+                throw new IllegalStateFailure(messageleader + " - missing key Property");
+            }
+            return property;
+        }
+
+        public P getProperty() {
+            return getProperty("PropertyConfig - getProperty");
+        }
+
+        public C get(String messageleader) {
+            P property = getProperty(messageleader);
+            var val = property.get();
+            if (val == null) {
+                throw new IllegalStateFailure(messageleader + " - null value");
+            }
+            return (C) val;
+        }
+
+        public C get() {
+            return get("PropertyConfig - get");
+        }
+
+        private void parseMandatoryProperty(String key, JsonObject parentobj) {
+            if (!parseOptionalProperty(key, parentobj)) {
+                throw new ParseFailure("Missing a Mandatory parameter: " + key);
+            }
+        }
+
+        private boolean parseOptionalProperty(String key, JsonObject parentobj) {
+            PropertyAny property = propertymap.get(key);
+            if (property == null) {
+                throw new IllegalStateFailure("Config parse - missing initialised Config");
+            }
+            JsonValue jvalue = parentobj.get(key);
+            if (jvalue == null) {
+                return false;
+            }
+            property.parse(jvalue);
+            return true;
+        }
     }
 }

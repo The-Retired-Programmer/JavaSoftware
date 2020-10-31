@@ -28,9 +28,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.MANDATORY;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.MANDATORY;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /**
  *
@@ -93,43 +92,43 @@ public class PropertySketch extends PropertyMap {
     }
 
     public String getType() {
-        return type.get(this, "PropertySketch type");
+        return type.get("PropertySketch type");
     }
 
     public PropertyMeta getMeta() {
-        return meta.get(this, "PropertySketch meta");
+        return meta.get("PropertySketch meta");
     }
 
     public PropertyDisplay getDisplay() {
-        return display.get(this, "PropertySketch display");
+        return display.get("PropertySketch display");
     }
 
     public PropertyFlowShifts getWindshifts() {
-        return windshifts.get(this, "PropertySketch windshifts");
+        return windshifts.get("PropertySketch windshifts");
     }
 
     public PropertyFlowComponents getWind() {
-        return wind.get(this, "PropertySketch wind");
+        return wind.get("PropertySketch wind");
     }
 
     public PropertyFlowShifts getWatershifts() {
-        return watershifts.get(this, "PropertySketch watershifts");
+        return watershifts.get("PropertySketch watershifts");
     }
 
     public PropertyFlowComponents getWater() {
-        return water.get(this, "PropertySketch water");
+        return water.get("PropertySketch water");
     }
 
     public final PropertyMarks getMarks() {
-        return marks.get(this, "PropertySketch marks");
+        return marks.get("PropertySketch marks");
     }
 
     public PropertyCourse getCourse() {
-        return course.get(this, "PropertySketch course");
+        return course.get("PropertySketch course");
     }
 
     public PropertyBoats getBoats() {
-        return boats.get(this, "PropertySketch boats");
+        return boats.get("PropertySketch boats");
     }
 
     public ObservableList<String> getMarkNames() {

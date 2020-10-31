@@ -22,8 +22,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /**
  * The Information to describe the Simulation "Field of play and display
@@ -52,23 +51,23 @@ public class PropertyDisplay extends PropertyMap {
     }
 
     public double getZoom() {
-        return zoom.get(this, "PropertyDisplay zoom");
+        return zoom.get("PropertyDisplay zoom");
     }
 
     public int getSecondsperdisplay() {
-        return secondsperdisplay.get(this, "PropertyDisplay secondsperdisplay");
+        return secondsperdisplay.get("PropertyDisplay secondsperdisplay");
     }
 
     public double getSpeedup() {
-        return speedup.get(this, "PropertyDisplay speedup");
+        return speedup.get("PropertyDisplay speedup");
     }
 
     public Area getSailingarea() {
-        Area area = sailingarea.get(this, "PropertyDisplay sailingarea");
+        Area area = sailingarea.get("PropertyDisplay sailingarea");
         return area.equals(AREAZERO) ? getDisplayarea() : area;
     }
 
     public Area getDisplayarea() {
-        return displayarea.get(this, "PropertyDisplay displayarea");
+        return displayarea.get("PropertyDisplay displayarea");
     }
 }

@@ -31,10 +31,9 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyNamed;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.MANDATORY;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.MANDATORY;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -96,18 +95,18 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     @SuppressWarnings("LeakingThisInConstructor")
     public PropertyBoat(String name, PropertyBoat clonefrom) {
         this(name, clonefrom.getType(), clonefrom.getLocation());
-        this.heading.getProperty(this, "PropertyBoat heading").set(clonefrom.heading.get(this, "PropertyBoat heading"));
-        this.colour.getProperty(this, "PropertyBoat colour").set(clonefrom.colour.get(this, "PropertyBoat colour"));
-        this.trackcolour.getProperty(this, "PropertyBoat trackcolour").set(clonefrom.trackcolour.get(this, "PropertyBoat trackcolour"));
-        this.upwindsailonbesttack.getProperty(this, "PropertyBoat upwindsailonbesttack").set(clonefrom.upwindsailonbesttack.get(this, "PropertyBoat upwindsailonbesttack"));
-        this.upwindtackifheaded.getProperty(this, "PropertyBoat upwindtackifheaded").set(clonefrom.upwindtackifheaded.get(this, "PropertyBoat upwindtackifheaded"));
-        this.upwindbearawayifheaded.getProperty(this, "PropertyBoat upwindbearawayifheaded").set(clonefrom.upwindbearawayifheaded.get(this, "PropertyBoat upwindbearawayifheaded"));
-        this.upwindluffupiflifted.getProperty(this, "PropertyBoat upwindluffupiflifted").set(clonefrom.upwindluffupiflifted.get(this, "PropertyBoat upwindluffupiflifted"));
-        this.reachdownwind.getProperty(this, "PropertyBoat lreachdownwind").set(clonefrom.reachdownwind.get(this, "PropertyBoat reachdownwind"));
-        this.downwindsailonbestgybe.getProperty(this, "PropertyBoat downwindsailonbestgybe").set(clonefrom.downwindsailonbestgybe.get(this, "PropertyBoat downwindsailonbestgybe"));
-        this.downwindbearawayifheaded.getProperty(this, "PropertyBoat downwindbearawayifheaded").set(clonefrom.downwindbearawayifheaded.get(this, "PropertyBoat downwindbearawayifheaded"));
-        this.downwindgybeiflifted.getProperty(this, "PropertyBoat downwindgybeiflifted").set(clonefrom.downwindgybeiflifted.get(this, "PropertyBoat downwindgybeiflifted"));
-        this.downwindluffupiflifted.getProperty(this, "PropertyBoat downwindluffupiflifted").set(clonefrom.downwindluffupiflifted.get(this, "PropertyBoat downwindluffupiflifted"));
+        this.heading.getProperty("PropertyBoat heading").set(clonefrom.heading.get("PropertyBoat heading"));
+        this.colour.getProperty("PropertyBoat colour").set(clonefrom.colour.get("PropertyBoat colour"));
+        this.trackcolour.getProperty("PropertyBoat trackcolour").set(clonefrom.trackcolour.get("PropertyBoat trackcolour"));
+        this.upwindsailonbesttack.getProperty("PropertyBoat upwindsailonbesttack").set(clonefrom.upwindsailonbesttack.get("PropertyBoat upwindsailonbesttack"));
+        this.upwindtackifheaded.getProperty("PropertyBoat upwindtackifheaded").set(clonefrom.upwindtackifheaded.get("PropertyBoat upwindtackifheaded"));
+        this.upwindbearawayifheaded.getProperty("PropertyBoat upwindbearawayifheaded").set(clonefrom.upwindbearawayifheaded.get("PropertyBoat upwindbearawayifheaded"));
+        this.upwindluffupiflifted.getProperty("PropertyBoat upwindluffupiflifted").set(clonefrom.upwindluffupiflifted.get("PropertyBoat upwindluffupiflifted"));
+        this.reachdownwind.getProperty("PropertyBoat lreachdownwind").set(clonefrom.reachdownwind.get("PropertyBoat reachdownwind"));
+        this.downwindsailonbestgybe.getProperty("PropertyBoat downwindsailonbestgybe").set(clonefrom.downwindsailonbestgybe.get("PropertyBoat downwindsailonbestgybe"));
+        this.downwindbearawayifheaded.getProperty("PropertyBoat downwindbearawayifheaded").set(clonefrom.downwindbearawayifheaded.get("PropertyBoat downwindbearawayifheaded"));
+        this.downwindgybeiflifted.getProperty("PropertyBoat downwindgybeiflifted").set(clonefrom.downwindgybeiflifted.get("PropertyBoat downwindgybeiflifted"));
+        this.downwindluffupiflifted.getProperty("PropertyBoat downwindluffupiflifted").set(clonefrom.downwindluffupiflifted.get("PropertyBoat downwindluffupiflifted"));
     }
 
     @Override
@@ -121,74 +120,74 @@ public class PropertyBoat extends PropertyMap implements PropertyNamed {
     }
 
     public final String getName() {
-        return name.get(this, "PropertyBoat name");
+        return name.get("PropertyBoat name");
     }
 
     public final PropertyString getNameProperty() {
-        return name.getProperty(this, "PropertyBoat name");
+        return name.getProperty("PropertyBoat name");
     }
 
     public final String getType() {
-        return type.get(this, "PropertyBoat type");
+        return type.get("PropertyBoat type");
     }
 
     public final Angle getDirection() {
-        return heading.get(this, "PropertyBoat heading");
+        return heading.get("PropertyBoat heading");
     }
 
     public final void setDirection(Angle newdirection) {
-        heading.getProperty(this, "PropertyBoat heading").set(newdirection);
+        heading.getProperty("PropertyBoat heading").set(newdirection);
     }
 
     public final Location getLocation() {
-        return location.get(this, "PropertyBoat location");
+        return location.get("PropertyBoat location");
     }
 
     public final void setLocation(Location newlocation) {
-        location.getProperty(this, "PropertyBoat location").set(newlocation);
+        location.getProperty("PropertyBoat location").set(newlocation);
     }
 
     public final Color getColour() {
-        return colour.get(this, "PropertyBoat colour");
+        return colour.get("PropertyBoat colour");
     }
 
     public final Color getTrackcolour() {
-        return trackcolour.get(this, "PropertyBoat trackcolour");
+        return trackcolour.get("PropertyBoat trackcolour");
     }
 
     public final boolean isUpwindsailonbesttack() {
-        return upwindsailonbesttack.get(this, "PropertyBoat upwindsailonbesttackr");
+        return upwindsailonbesttack.get("PropertyBoat upwindsailonbesttackr");
     }
 
     public final boolean isUpwindtackifheaded() {
-        return upwindtackifheaded.get(this, "PropertyBoat upwindtackifheaded");
+        return upwindtackifheaded.get("PropertyBoat upwindtackifheaded");
     }
 
     public final boolean isUpwindbearawayifheaded() {
-        return upwindbearawayifheaded.get(this, "PropertyBoat upwindbearawayifheadedr");
+        return upwindbearawayifheaded.get("PropertyBoat upwindbearawayifheadedr");
     }
 
     public final boolean isUpwindluffupiflifted() {
-        return upwindluffupiflifted.get(this, "PropertyBoat upwindluffupiflifted");
+        return upwindluffupiflifted.get("PropertyBoat upwindluffupiflifted");
     }
 
     public final boolean isReachdownwind() {
-        return reachdownwind.get(this, "PropertyBoat reachdownwind");
+        return reachdownwind.get("PropertyBoat reachdownwind");
     }
 
     public final boolean isDownwindsailonbestgybe() {
-        return downwindsailonbestgybe.get(this, "PropertyBoat downwindsailonbestgybe");
+        return downwindsailonbestgybe.get("PropertyBoat downwindsailonbestgybe");
     }
 
     public final boolean isDownwindbearawayifheaded() {
-        return downwindbearawayifheaded.get(this, "PropertyBoat downwindbearawayifheaded");
+        return downwindbearawayifheaded.get("PropertyBoat downwindbearawayifheaded");
     }
 
     public final boolean isDownwindgybeiflifted() {
-        return downwindgybeiflifted.get(this, "PropertyBoat downwindgybeiflifted");
+        return downwindgybeiflifted.get("PropertyBoat downwindgybeiflifted");
     }
 
     public final boolean isDownwindluffupiflifted() {
-        return downwindluffupiflifted.get(this, "PropertyBoat downwindluffupiflifted");
+        return downwindluffupiflifted.get("PropertyBoat downwindluffupiflifted");
     }
 }

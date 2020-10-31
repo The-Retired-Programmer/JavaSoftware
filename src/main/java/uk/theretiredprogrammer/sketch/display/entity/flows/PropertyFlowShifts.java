@@ -24,8 +24,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /**
  *
@@ -54,34 +53,34 @@ public class PropertyFlowShifts extends PropertyMap {
     }
 
     public boolean isShowflow() {
-        return showflow.get(this, "PropertyFlowShifts showflow");
+        return showflow.get("PropertyFlowShifts showflow");
     }
 
     public double getShowflowinterval() {
-        return showflowinterval.get(this, "PropertyFlowShifts showflowinterval");
+        return showflowinterval.get("PropertyFlowShifts showflowinterval");
     }
 
     public Color getShowflowcolour() {
-        return showflowcolour.get(this, "PropertyFlowShifts showflowcolour");
+        return showflowcolour.get("PropertyFlowShifts showflowcolour");
     }
 
     public Angle getSwingangle() {
-        return swingangle.get(this, "PropertyFlowShifts swingangle");
+        return swingangle.get("PropertyFlowShifts swingangle");
     }
 
     public int getSwingperiod() {
-        return swingperiod.get(this, "PropertyFlowShifts swingperiod");
+        return swingperiod.get("PropertyFlowShifts swingperiod");
     }
 
     public Angle getShiftangle() {
-        return shiftangle.get(this, "PropertyFlowShifts shiftangle");
+        return shiftangle.get("PropertyFlowShifts shiftangle");
     }
 
     public int getShiftperiod() {
-        return shiftperiod.get(this, "PropertyFlowShifts shiftperiod");
+        return shiftperiod.get("PropertyFlowShifts shiftperiod");
     }
 
     public boolean isRandomshifts() {
-        return randomshifts.get(this, "PropertyFlowShifts randomshifts");
+        return randomshifts.get("PropertyFlowShifts randomshifts");
     }
 }

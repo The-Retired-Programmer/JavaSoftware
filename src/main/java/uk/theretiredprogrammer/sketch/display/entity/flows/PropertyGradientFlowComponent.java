@@ -20,8 +20,7 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Gradient;
 import static uk.theretiredprogrammer.sketch.core.entity.Gradient.GRADIENTDEFAULT;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -36,6 +35,6 @@ public class PropertyGradientFlowComponent extends PropertyFlowComponent {
     }
 
     public Gradient getGradient() {
-        return gradient.get(this, "PropertyGradientFlowComponent gradient");
+        return gradient.get("PropertyGradientFlowComponent gradient");
     }
 }

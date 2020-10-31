@@ -15,13 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -39,19 +38,18 @@ public class PropertyComplexFlowComponent extends PropertyFlowComponent {
     }
 
     public SpeedPolar getNorthwestflow() {
-        return northwestflow.get(this, "PropertyComplexFlowcomponent northwestflow");
+        return northwestflow.get("PropertyComplexFlowcomponent northwestflow");
     }
 
     public SpeedPolar getNortheastflow() {
-        return northeastflow.get(this, "PropertyComplexFlowcomponent northeastflow");
+        return northeastflow.get("PropertyComplexFlowcomponent northeastflow");
     }
 
     public SpeedPolar getSoutheastflow() {
-        return southeastflow.get(this, "PropertyComplexFlowcomponent southeastflow");
+        return southeastflow.get("PropertyComplexFlowcomponent southeastflow");
     }
 
     public SpeedPolar getSouthwestflow() {
-        return southwestflow.get(this, "PropertyComplexFlowcomponent southwestflow");
+        return southwestflow.get("PropertyComplexFlowcomponent southwestflow");
     }
-
 }

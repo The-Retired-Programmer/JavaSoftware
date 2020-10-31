@@ -18,10 +18,9 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
 
 /*
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
@@ -36,6 +35,6 @@ public class PropertyConstantFlowComponent extends PropertyFlowComponent {
     }
 
     public SpeedPolar getFlow() {
-        return flow.get(this, "PropertyConstantFlowComponent flow");
+        return flow.get("PropertyConstantFlowComponent flow");
     }
 }

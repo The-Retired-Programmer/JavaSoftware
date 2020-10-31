@@ -25,9 +25,8 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConfig;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.MANDATORY;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyConfig.OPTIONAL;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.MANDATORY;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyConfig.OPTIONAL;
 
 /**
  * The Mark Class - represent course marks.
@@ -65,34 +64,34 @@ public class PropertyMark extends PropertyMap implements PropertyNamed {
     }
 
     public String getName() {
-        return name.get(this, "PropertyMark name");
+        return name.get("PropertyMark name");
     }
 
     public PropertyString getNameProperty() {
-        return name.getProperty(this, "PropertyMark name");
+        return name.getProperty("PropertyMark name");
     }
 
     public Location getLocation() {
-        return location.get(this, "PropertyMark location");
+        return location.get("PropertyMark location");
     }
 
     public boolean isWindwardlaylines() {
-        return windwardlaylines.get(this, "PropertyMark windwardlaylines");
+        return windwardlaylines.get("PropertyMark windwardlaylines");
     }
 
     public boolean isDownwindlaylines() {
-        return downwindlaylines.get(this, "PropertyMark downwindlaylines");
+        return downwindlaylines.get("PropertyMark downwindlaylines");
     }
 
     public double getLaylinelength() {
-        return laylinelength.get(this, "PropertyMark laylinelength");
+        return laylinelength.get("PropertyMark laylinelength");
     }
 
     public Color getLaylinecolour() {
-        return laylinecolour.get(this, "PropertyMark location");
+        return laylinecolour.get("PropertyMark location");
     }
 
     public Color getColour() {
-        return colour.get(this, "PropertyMark colour");
+        return colour.get("PropertyMark colour");
     }
 }
