@@ -35,7 +35,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.P
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 
@@ -53,7 +53,7 @@ public class DisplayPane extends Group {
     }
 
     public final void refreshParameters() {
-        PropertySketch sketchproperty = controller.getProperty();
+        SketchModel sketchproperty = controller.getProperty();
         this.zoom = sketchproperty.getDisplay().getZoom();
         mainscale = new Scale(zoom, -zoom);
         Area displayarea = sketchproperty.getDisplayArea();

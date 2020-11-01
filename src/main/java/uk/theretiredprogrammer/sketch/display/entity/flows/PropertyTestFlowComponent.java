@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,6 @@ import static uk.theretiredprogrammer.sketch.core.entity.PropertyMap.PropertyCon
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
-/*
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class PropertyTestFlowComponent extends PropertyFlowComponent {
 
     private final PropertyConfig<PropertySpeedPolar, SpeedPolar> flow = new PropertyConfig<>("flow", OPTIONAL, (s) -> new PropertySpeedPolar(s, FLOWZERO));

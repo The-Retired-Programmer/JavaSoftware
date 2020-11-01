@@ -45,7 +45,7 @@ public abstract class PropertyMap extends PropertyAny {
     }
 
     public void setOnChange(Runnable onchange) {
-        propertymap.addListener((MapChangeListener<String, PropertyAny>) (c) -> onchange.run());
+        setOnChange((c) -> onchange.run());
     }
 
     public void setOnChange(MapChangeListener<String, PropertyAny> ml) {

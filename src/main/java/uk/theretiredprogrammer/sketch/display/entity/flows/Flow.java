@@ -23,7 +23,7 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -44,7 +44,7 @@ public abstract class Flow {
     private final PropertyFlowShifts flowshiftsproperty;
     private final PropertyFlowComponents flowcomponentsproperty;
 
-    public Flow(PropertySketch sketchproperty, PropertyFlowShifts flowshiftsproperty, PropertyFlowComponents flowcomponentsproperty) {
+    public Flow(SketchModel sketchproperty, PropertyFlowShifts flowshiftsproperty, PropertyFlowComponents flowcomponentsproperty) {
         this.flowshiftsproperty = flowshiftsproperty;
         this.flowcomponentsproperty = flowcomponentsproperty;
         //

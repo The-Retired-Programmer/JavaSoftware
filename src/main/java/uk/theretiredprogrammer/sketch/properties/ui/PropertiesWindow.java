@@ -21,7 +21,7 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -29,24 +29,24 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class PropertiesWindow extends AbstractWindow<PropertiesController> {
 
-    public PropertiesWindow(String fn, PropertiesController controller, PropertySketch sketchproperty) {
+    public PropertiesWindow(String fn, PropertiesController controller, SketchModel sketchmodel) {
         super(PropertiesWindow.class, controller);
         setDefaultWindowLeftOffset(800);
         setTitle("SKETCH Properties Viewer - " + fn);
-        setContent(new PropertiesPane(sketchproperty));
+        setContent(new PropertiesPane(sketchmodel));
 
         Menu boatmenu = UI.menu("Add Boat");
-        for (var classname : PropertyBoat.getClasses()) {
+        PropertyBoat.getClasses().forEach(classname -> {
             boatmenu.getItems().add(UI.menuitem(classname, ev -> controller.addNewBoat(classname)));
-        }
+        });
         Menu windmenu = UI.menu("Add WindFlowComponent");
-        for (var typename : PropertyFlowComponent.getTypenames()) {
+        PropertyFlowComponent.getTypenames().forEach(typename -> {
             windmenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWindFlowComponent(typename)));
-        }
+        });
         Menu watermenu = UI.menu("Add WaterFlowComponent");
-        for (var typename : PropertyFlowComponent.getTypenames()) {
+        PropertyFlowComponent.getTypenames().forEach(typename -> {
             watermenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWaterFlowComponent(typename)));
-        }
+        });
         addtoMenubar(
                 boatmenu,
                 windmenu,

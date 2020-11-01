@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -33,10 +33,10 @@ public class SimulationController implements Runnable {
     private boolean isRunning = false;
     private final ScheduledExecutorService scheduler;
     private ScheduledFuture<?> ticker;
-    private final PropertySketch sketchproperty;
+    private final SketchModel sketchproperty;
     private final DisplayController controller;
 
-    public SimulationController(DisplayController controller, PropertySketch sketchproperty) {
+    public SimulationController(DisplayController controller, SketchModel sketchproperty) {
         this.sketchproperty = sketchproperty;
         this.controller = controller;
         scheduler = Executors.newScheduledThreadPool(1);

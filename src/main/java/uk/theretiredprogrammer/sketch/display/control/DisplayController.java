@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -75,7 +75,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     private void createDisplayEntities() {
-        PropertySketch sketchproperty = propertiescontroller.getProperty();
+        SketchModel sketchproperty = propertiescontroller.getProperty();
         windflow = new WindFlow(sketchproperty);
         waterflow = new WaterFlow(sketchproperty);
         course = new Course(sketchproperty);
@@ -116,7 +116,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         resetObjectProperties();
     }
 
-    public final PropertySketch getProperty() {
+    public final SketchModel getProperty() {
         return propertiescontroller.getProperty();
     }
 

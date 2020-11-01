@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  * The Laser 2 Dinghy.
@@ -27,7 +27,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class Laser2 extends Boat {
 
-    public Laser2(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+    public Laser2(PropertyBoat boatproperty, SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
         super(boatproperty, sketchproperty, firstleg, windflow, waterflow,
                 new BoatMetricsBuilder()
                         .length(4)

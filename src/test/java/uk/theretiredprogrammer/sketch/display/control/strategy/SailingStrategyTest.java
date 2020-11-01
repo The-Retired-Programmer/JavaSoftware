@@ -30,8 +30,8 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyTestFlowComponent;
 
 /**

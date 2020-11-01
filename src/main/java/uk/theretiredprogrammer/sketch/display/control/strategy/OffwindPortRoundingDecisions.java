@@ -19,7 +19,7 @@ import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -35,7 +35,7 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
         if (atPortRoundingTurnPoint(strategy)) {
             return executePortRounding(getDirectionAfterTurn, winddirection, strategy);

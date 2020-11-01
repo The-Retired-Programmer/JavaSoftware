@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.sketch.properties.ui;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Accordion;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -25,72 +25,72 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class PropertiesPane extends Accordion {
 
-    public PropertiesPane(PropertySketch sketchproperty) {
-        refreshcontent(sketchproperty);
+    public PropertiesPane(SketchModel sketchmodel) {
+        refreshcontent(sketchmodel);
     }
 
-    private void refreshcontent(PropertySketch sketchproperty) {
+    private void refreshcontent(SketchModel sketchmodel) {
         this.getPanes().clear();
-        this.getPanes().add(new PropertyMapPane(sketchproperty.getDisplay(), "Display"));
-        this.getPanes().add(new PropertyMapPane(sketchproperty.getWindshifts(), "Wind Shifts"));
-        createAllWindComponentPropertiesSection(sketchproperty);
-        this.getPanes().add(new PropertyMapPane(sketchproperty.getWatershifts(), "Water Shifts"));
-        createAllWaterComponentPropertiesSection(sketchproperty);
-        createCoursePropertiesSection(sketchproperty);
-        createAllMarksPropertiesSection(sketchproperty);
-        createAllBoatsPropertiesSection(sketchproperty);
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay(), "Display"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getWindshifts(), "Wind Shifts"));
+        createAllWindComponentPropertiesSection(sketchmodel);
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getWatershifts(), "Water Shifts"));
+        createAllWaterComponentPropertiesSection(sketchmodel);
+        createCoursePropertiesSection(sketchmodel);
+        createAllMarksPropertiesSection(sketchmodel);
+        createAllBoatsPropertiesSection(sketchmodel);
     }
 
-    private void createCoursePropertiesSection(PropertySketch sketchproperty) {
-        sketchproperty.getCourse().getPropertyLegValues().setOnChange(new ListChangeListener() {
+    private void createCoursePropertiesSection(SketchModel sketchmodel) {
+        sketchmodel.getCourse().getPropertyLegValues().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(sketchproperty);
+                refreshcontent(sketchmodel);
             }
         });
-        this.getPanes().add(new PropertyMapPane(sketchproperty.getCourse(), "Course"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getCourse(), "Course"));
     }
 
-    private void createAllWindComponentPropertiesSection(PropertySketch sketchproperty) {
-        sketchproperty.getWind().stream().forEach(
+    private void createAllWindComponentPropertiesSection(SketchModel sketchmodel) {
+        sketchmodel.getWind().stream().forEach(
                 component -> this.getPanes().add(new PropertyMapPane(component.get(), "Wind Component - ", component.getNameProperty()))
         );
-        sketchproperty.getWind().get().setOnChange(new ListChangeListener() {
+        sketchmodel.getWind().get().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(sketchproperty);
+                refreshcontent(sketchmodel);
             }
         });
     }
 
-    private void createAllWaterComponentPropertiesSection(PropertySketch sketchproperty) {
-        sketchproperty.getWater().stream().forEach(
+    private void createAllWaterComponentPropertiesSection(SketchModel sketchmodel) {
+        sketchmodel.getWater().stream().forEach(
                 component -> this.getPanes().add(new PropertyMapPane(component.get(), "Water Component - ", component.getNameProperty()))
         );
-        sketchproperty.getWater().get().setOnChange(new ListChangeListener() {
+        sketchmodel.getWater().get().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(sketchproperty);
+                refreshcontent(sketchmodel);
             }
         });
     }
 
-    private void createAllBoatsPropertiesSection(PropertySketch sketchproperty) {
-        sketchproperty.getBoats().stream().forEach(boatproperty -> this.getPanes().add(new PropertyMapPane(boatproperty, "Boat - ", boatproperty.getNameProperty())));
-        sketchproperty.getBoats().setOnChange(new ListChangeListener() {
+    private void createAllBoatsPropertiesSection(SketchModel sketchmodel) {
+        sketchmodel.getBoats().stream().forEach(boatproperty -> this.getPanes().add(new PropertyMapPane(boatproperty, "Boat - ", boatproperty.getNameProperty())));
+        sketchmodel.getBoats().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(sketchproperty);
+                refreshcontent(sketchmodel);
             }
         });
     }
 
-    private void createAllMarksPropertiesSection(PropertySketch sketchproperty) {
-        sketchproperty.getMarks().getList().forEach(markproperty -> this.getPanes().add(new PropertyMapPane(markproperty, "Mark - ", markproperty.getNameProperty())));
-        sketchproperty.getMarks().setOnChange(new ListChangeListener() {
+    private void createAllMarksPropertiesSection(SketchModel sketchmodel) {
+        sketchmodel.getMarks().getList().forEach(markproperty -> this.getPanes().add(new PropertyMapPane(markproperty, "Mark - ", markproperty.getNameProperty())));
+        sketchmodel.getMarks().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
-                refreshcontent(sketchproperty);
+                refreshcontent(sketchmodel);
             }
         });
     }

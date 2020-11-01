@@ -20,6 +20,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -39,6 +41,14 @@ public class PropertyString extends PropertyElement<String> {
     public PropertyString(String key, String defaultvalue) {
         setKey(key);
         stringproperty = new SimpleStringProperty(defaultvalue);
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        stringproperty.addListener(cl);
     }
 
     @Override

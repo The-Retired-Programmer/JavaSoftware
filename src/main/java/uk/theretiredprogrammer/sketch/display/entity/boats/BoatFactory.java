@@ -19,7 +19,7 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -27,7 +27,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class BoatFactory {
 
-    public static Boat createBoat(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+    public static Boat createBoat(PropertyBoat boatproperty, SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
         switch (boatproperty.getType()) {
             case "laser2" -> {
                 return new Laser2(boatproperty, sketchproperty, firstleg, windflow, waterflow);

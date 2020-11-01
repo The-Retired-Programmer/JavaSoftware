@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -23,7 +23,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class WaterFlow extends Flow {
 
-    public WaterFlow(PropertySketch sketchproperty) {
+    public WaterFlow(SketchModel sketchproperty) {
         super(sketchproperty, sketchproperty.getWatershifts(), sketchproperty.getWater());
     }
 }

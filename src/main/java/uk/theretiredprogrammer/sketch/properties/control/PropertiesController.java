@@ -23,7 +23,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
@@ -34,16 +34,16 @@ import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
  */
 public class PropertiesController extends AbstractController<PropertiesWindow> {
 
-    private PropertySketch sketchproperty;
+    private SketchModel sketchmodel;
 
     public PropertiesController(PathWithShortName pn) {
         initialisefromFile(pn.getPath());
-        setWindow(new PropertiesWindow(pn.toString(), this, sketchproperty), ExternalCloseAction.HIDE);
+        setWindow(new PropertiesWindow(pn.toString(), this, sketchmodel), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource, String fn) {
         initialisefromResource(resource);
-        setWindow(new PropertiesWindow(fn, this, sketchproperty), ExternalCloseAction.HIDE);
+        setWindow(new PropertiesWindow(fn, this, sketchmodel), ExternalCloseAction.HIDE);
     }
 
     public PropertiesController(String resource) {
@@ -61,8 +61,8 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
         } catch (IOException ex) {
             throw new Failure(ex);
         }
-        sketchproperty = new PropertySketch();
-        sketchproperty.parse(configfilecontroller.getParsedConfigFile());
+        sketchmodel = new SketchModel();
+        sketchmodel.parse(configfilecontroller.getParsedConfigFile());
     }
 
     private void initialisefromResource(String resourcename) {
@@ -70,34 +70,34 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
         if (configfilecontroller.needsUpgrade()) {
             configfilecontroller.upgrade();
         }
-        sketchproperty = new PropertySketch();
-        sketchproperty.parse(configfilecontroller.getParsedConfigFile());
+        sketchmodel = new SketchModel();
+        sketchmodel.parse(configfilecontroller.getParsedConfigFile());
     }
 
-    public PropertySketch getProperty() {
-        return sketchproperty;
+    public SketchModel getProperty() {
+        return sketchmodel;
     }
 
     public void addNewMark() {
         PropertyMark newmarkproperty = new PropertyMark();
-        sketchproperty.getMarks().add(newmarkproperty);
+        sketchmodel.getMarks().add(newmarkproperty);
     }
 
     public void addNewBoat(String type) {
-        sketchproperty.getBoats().add(new PropertyBoat(type));
+        sketchmodel.getBoats().add(new PropertyBoat(type));
     }
 
     public void addNewWindFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-        sketchproperty.getWind().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        sketchmodel.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchproperty.getDisplayArea());
-        sketchproperty.getWater().add(newflow);
+        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        sketchmodel.getWater().add(newflow);
     }
 
     public void addNewLeg() {
-        sketchproperty.getCourse().getPropertyLegValues().add();
+        sketchmodel.getCourse().getPropertyLegValues().add();
     }
 }

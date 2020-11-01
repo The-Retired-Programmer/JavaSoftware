@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -32,12 +32,12 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
  */
 public class Boats {
 
-    private List<Boat> boats = new ArrayList<>();
+    private final List<Boat> boats = new ArrayList<>();
 
-    public Boats(PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
-        for (var boatproperty : sketchproperty.getBoats().getList()) {
+    public Boats(SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+        sketchproperty.getBoats().getList().forEach(boatproperty -> {
             boats.add(BoatFactory.createBoat(boatproperty, sketchproperty, firstleg, windflow, waterflow));
-        }
+        });
     }
 
     public Stream<Boat> stream() {
@@ -48,7 +48,7 @@ public class Boats {
         return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
     }
 
-    public void timerAdvance(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+    public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         boats.forEach(boat -> {
             Strategy newstrategy = boat.getStrategy().nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {

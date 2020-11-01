@@ -31,7 +31,7 @@ import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -157,9 +157,9 @@ public abstract class Strategy {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    abstract String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow);
+    abstract String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow);
 
-    public Strategy nextTimeInterval(PropertySketch sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+    public Strategy nextTimeInterval(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
             String reason = nextBoatStrategyTimeInterval(sketchproperty, windflow, waterflow);

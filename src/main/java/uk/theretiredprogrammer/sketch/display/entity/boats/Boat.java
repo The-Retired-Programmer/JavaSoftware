@@ -28,10 +28,10 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 
 /**
@@ -43,7 +43,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
  */
 public abstract class Boat {
 
-    private final PropertySketch sketchproperty;
+    private final SketchModel sketchproperty;
     private final PropertyBoat boatproperty;
     public final Color sailcolor = Color.WHITE;
     public final BoatMetrics metrics;
@@ -53,7 +53,8 @@ public abstract class Boat {
     private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
     private Strategy strategy; // current leg strategy
 
-    public Boat(PropertyBoat boatproperty, PropertySketch sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    @SuppressWarnings("LeakingThisInConstructor")
+    public Boat(PropertyBoat boatproperty, SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this.boatproperty = boatproperty;
         this.sketchproperty = sketchproperty;
         this.metrics = metrics;

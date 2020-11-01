@@ -24,7 +24,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -64,7 +64,7 @@ public class OffwindStrategy extends Strategy {
     }
 
     @Override
-    String nextBoatStrategyTimeInterval(PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);

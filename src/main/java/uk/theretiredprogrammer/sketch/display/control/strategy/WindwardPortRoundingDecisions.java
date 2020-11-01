@@ -21,7 +21,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.P
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -36,7 +36,7 @@ class WindwardPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
         if (strategy.boat.isPort(winddirection)) {
             if (strategy.boat.isPortRear90Quadrant(strategy.getMarkLocation())) {

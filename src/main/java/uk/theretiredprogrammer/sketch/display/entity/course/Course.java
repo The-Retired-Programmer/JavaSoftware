@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLegEndings;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  * The Mark Class - represent course marks.
@@ -32,7 +32,7 @@ public class Course {
     private final PropertyMarks marksproperty;
     private final Location startproperty;
 
-    public Course(PropertySketch sketchproperty) {
+    public Course(SketchModel sketchproperty) {
         this.marksproperty = sketchproperty.getMarks();
         this.legvaluesproperty = sketchproperty.getCourse().getPropertyLegValues();
         this.startproperty = sketchproperty.getCourse().getStart();

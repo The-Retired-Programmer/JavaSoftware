@@ -15,12 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.display.ui;
 
-import javafx.scene.Group;
 import javafx.scene.text.Text;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -30,7 +29,7 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
 
     private final Text timetext;
 
-    public DisplayWindow(String fn, DisplayController controller, PropertySketch sketchproperty, DisplayPane pane) {
+    public DisplayWindow(String fn, DisplayController controller, SketchModel sketchproperty, DisplayPane pane) {
         super(DisplayWindow.class, controller);
         setTitle("SKETCH Scenario Viewer - " + fn);
         setDefaultWindow();

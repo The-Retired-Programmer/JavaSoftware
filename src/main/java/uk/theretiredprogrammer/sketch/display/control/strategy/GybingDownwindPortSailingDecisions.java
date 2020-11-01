@@ -20,7 +20,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.P
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
  *
@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.PropertySketch;
 class GybingDownwindPortSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(PropertySketch sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         Angle winddirection = windflow.getFlow(strategy.boat.getProperty().getLocation()).getAngle();
         Angle boatangletowind = strategy.boat.getProperty().getDirection().absAngleDiff(winddirection);
         Angle meanwinddirection = windflow.getMeanFlowAngle();
