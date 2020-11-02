@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import static org.junit.jupiter.api.Assertions.assertEquals;

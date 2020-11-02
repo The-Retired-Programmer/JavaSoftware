@@ -15,47 +15,91 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
+import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLegEndings;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 
 /**
  * The Mark Class - represent course marks.
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-public class Course {
+public class Course extends Model {
+    
+    private static final ObservableList<String> roundings;
 
+    static {
+        roundings = FXCollections.observableArrayList();
+        roundings.addAll("port", "starboard");
+    }
+    
+    private final PropertyLocation start = new PropertyLocation("start", LOCATIONZERO);
+    private final PropertyLegEndings legs;
+            
     private Leg firstcourseleg;
-    private final PropertyLegEndings legvaluesproperty;
-    private final PropertyMarks marksproperty;
-    private final Location startproperty;
+    private final PropertyMarks marks;
 
-    public Course(SketchModel sketchproperty) {
-        this.marksproperty = sketchproperty.getMarks();
-        this.legvaluesproperty = sketchproperty.getCourse().getPropertyLegValues();
-        this.startproperty = sketchproperty.getCourse().getStart();
-        //
-        //legvaluesproperty.stream().forEach(lv -> insertLeg(lv.get()));
-        for (var lv : legvaluesproperty.getList()) {
-            insertLeg(lv.get());
-        }
+    public Course(PropertyMarks marks, ObservableList<String> marknames) {
+        legs =  new PropertyLegEndings("legs", marknames, roundings);
+        this.marks = marks;
+        this.addProperty("start", start);
+        this.addProperty("legs", legs);
+    }
+    
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        parseMandatoryProperty("start", start, jobj);
+        parseOptionalProperty("legs", legs, jobj);
+        legs.getList().forEach(lv -> insertLeg(lv.get()));
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        start.setOnChange(onchange);
+        legs.setOnChange(onchange);
+    }
+
+    @Override
+    public JsonObject toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        job.add("start", start.toJson());
+        job.add("legs", legs.toJson());
+        return job.build();
     }
 
     private void insertLeg(LegEnding legending) {
         if (firstcourseleg == null) {
-            firstcourseleg = new Leg(startproperty, marksproperty.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
+            firstcourseleg = new Leg(start.get(), marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
         } else {
             Leg leg = firstcourseleg;
             while (leg.getFollowingLeg() != null) {
                 leg = leg.getFollowingLeg();
             }
-            Leg newleg = new Leg(leg.getEndLocation(), marksproperty.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
+            Leg newleg = new Leg(leg.getEndLocation(), marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
             leg.setFollowingLeg(newleg);
         }
     }
 
+    public Course get() {
+        return this;
+    }
+
+    public Location getStart() {
+        return start.get();
+    }
+
+    public PropertyLegEndings getPropertyLegValues() {
+        return legs.get();
+    }
+    
     public Leg getFirstLeg() {
         return firstcourseleg;
     }

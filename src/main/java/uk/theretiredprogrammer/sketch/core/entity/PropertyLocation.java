@@ -15,11 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -42,6 +41,11 @@ public class PropertyLocation extends PropertyElement<Location> {
         setKey(key);
         xlocationproperty = new PropertyDouble(defaultvalue.getX());
         ylocationproperty = new PropertyDouble(defaultvalue.getY());
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        xlocationproperty.setOnChange(onchange);
+        ylocationproperty.setOnChange(onchange);
     }
 
     @Override

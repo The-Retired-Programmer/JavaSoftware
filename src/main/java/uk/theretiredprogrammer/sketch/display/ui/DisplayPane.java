@@ -95,7 +95,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             PropertyMark newmark = new PropertyMark(new Location(x, y));
-            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
+                if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.propertymap, "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getProperty().getMarks().add(newmark);
             }
@@ -107,7 +107,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             PropertyBoat newboat = new PropertyBoat(new Location(x, y));
-            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {
+            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat.propertymap, "Boat"))) {
                 controller.getProperty().getBoats().add(newboat);
             }
         }

@@ -19,6 +19,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
@@ -39,6 +40,14 @@ public class PropertyDouble extends PropertyElement<Double> {
     public PropertyDouble(String key, Double defaultvalue) {
         setKey(key);
         doubleproperty = new SimpleDoubleProperty(defaultvalue);
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        doubleproperty.addListener(cl);
     }
 
     @Override

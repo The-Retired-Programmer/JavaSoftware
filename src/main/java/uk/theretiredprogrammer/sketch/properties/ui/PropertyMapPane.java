@@ -17,11 +17,13 @@ package uk.theretiredprogrammer.sketch.properties.ui;
 
 import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableMap;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyAny;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyList;
@@ -34,32 +36,34 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
  */
 public class PropertyMapPane extends TitledPane {
 
-    public PropertyMapPane(PropertyMap properties, String title) {
+    public PropertyMapPane(ObservableMap<String, PropertyAny> properties, String title) {
         this.setText(title);
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
-    public PropertyMapPane(PropertyMap properties, String titleroot, PropertyString propertyname) {
+    public PropertyMapPane(ObservableMap<String, PropertyAny> properties, String titleroot, PropertyString propertyname) {
         this.textProperty().bind(new SimpleStringProperty(titleroot)
                 .concat(propertyname.propertyString())
         );
         this.setContent(createpropertiescontent(properties));
     }
 
-    private ScrollPane createpropertiescontent(PropertyMap properties) {
+    private ScrollPane createpropertiescontent(ObservableMap<String, PropertyAny> properties) {
         GridPane propertiestable = new GridPane();
         int row = 0;
         createpropertymapcontent(propertiestable, row, properties);
         return new ScrollPane(propertiestable);
     }
 
-    private int createpropertymapcontent(GridPane propertiestable, int row, PropertyMap properties) {
-        for (var pe : properties.getMap().entrySet()) {
-            PropertyAny value = pe.getValue();
-            if (value instanceof PropertyList propertylist) {
+    private int createpropertymapcontent(GridPane propertiestable, int row, ObservableMap<String, PropertyAny> properties) {
+        for (var pe : properties.entrySet()) {
+            Object value = pe.getValue();
+            if (value instanceof Model model) {
+                row = createpropertymapcontent(propertiestable, row, model.getProperties());
+            } else if (value instanceof PropertyList propertylist) {
                 row = createpropertylistcontent(propertiestable, row, propertylist);
             } else if (value instanceof PropertyMap propertymap) {
-                row = createpropertymapcontent(propertiestable, row, propertymap);
+                row = createpropertymapcontent(propertiestable, row, propertymap.propertymap);
             } else if (value instanceof PropertyElement propertyelement) {
                 row = createpropertyelementcontent(propertiestable, row, propertyelement);
             } else {
@@ -74,7 +78,7 @@ public class PropertyMapPane extends TitledPane {
             if (value instanceof PropertyList propertylist) {
                 row = createpropertylistcontent(propertiestable, row, propertylist);
             } else if (value instanceof PropertyMap propertymap) {
-                row = createpropertymapcontent(propertiestable, row, propertymap);
+                row = createpropertymapcontent(propertiestable, row, propertymap.propertymap);
             } else if (value instanceof PropertyElement propertyelement) {
                 row = createpropertyelementcontent(propertiestable, row, propertyelement);
             } else {

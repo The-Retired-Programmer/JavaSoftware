@@ -78,7 +78,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         SketchModel sketchproperty = propertiescontroller.getProperty();
         windflow = new WindFlow(sketchproperty);
         waterflow = new WaterFlow(sketchproperty);
-        course = new Course(sketchproperty);
+        course = sketchproperty.getCourse();
         boats = new Boats(sketchproperty, course.getFirstLeg(), windflow, waterflow);
         //boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
     }

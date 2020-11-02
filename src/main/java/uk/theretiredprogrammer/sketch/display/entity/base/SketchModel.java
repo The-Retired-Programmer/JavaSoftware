@@ -18,22 +18,21 @@ package uk.theretiredprogrammer.sketch.display.entity.base;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.json.JsonValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyAny;
+import uk.theretiredprogrammer.sketch.core.entity.Model;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoats;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyCourse;
+import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMarks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponents;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowShifts;
 
-public class SketchModel {
+public class SketchModel extends Model {
 
     private final ObservableList<String> marknames = FXCollections.observableArrayList();
     private final PropertyString type = new PropertyString("type", null);
@@ -44,9 +43,9 @@ public class SketchModel {
     private final PropertyFlowShifts watershifts = new PropertyFlowShifts("watershifts");
     private final PropertyFlowComponents water = new PropertyFlowComponents("water", () -> getDisplayArea());
     private final PropertyMarks marks = new PropertyMarks("marks");
-    private final PropertyCourse course = new PropertyCourse("course", getMarkNames());
+    private final Course course = new Course(marks, getMarkNames());
     private final PropertyBoats boats = new PropertyBoats("boats");
-    
+
     public SketchModel() {
         marks.setOnChange((ListChangeListener<PropertyMark>) (c) -> marklistchanged((ListChangeListener.Change<PropertyMark>) c));
     }
@@ -63,36 +62,21 @@ public class SketchModel {
         assert marknames.size() == marks.getList().size();
     }
 
-    public void parse(JsonValue jvalue) {
-        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.OBJECT) {
-            parseMandatoryProperty("type", type, (JsonObject) jvalue);
-            parseOptionalProperty("meta", meta, (JsonObject) jvalue);
-            parseOptionalProperty("display", display, (JsonObject) jvalue);
-            parseOptionalProperty("windshifts", windshifts, (JsonObject) jvalue);
-            parseOptionalProperty("wind", wind, (JsonObject) jvalue);
-            parseOptionalProperty("watershifts", watershifts, (JsonObject) jvalue);
-            parseOptionalProperty("water", water, (JsonObject) jvalue);
-            parseMandatoryProperty("marks", marks, (JsonObject) jvalue);
-            parseMandatoryProperty("course", course, (JsonObject) jvalue);
-            parseMandatoryProperty("boats", boats, (JsonObject) jvalue);
-        }
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        parseMandatoryProperty("type", type, jobj);
+        parseOptionalProperty("meta", meta, jobj);
+        parseOptionalProperty("display", display, jobj);
+        parseOptionalProperty("windshifts", windshifts, jobj);
+        parseOptionalProperty("wind", wind, jobj);
+        parseOptionalProperty("watershifts", watershifts, jobj);
+        parseOptionalProperty("water", water, jobj);
+        parseMandatoryProperty("marks", marks, jobj);
+        parseMandatoryProperty("course", course, jobj);
+        parseMandatoryProperty("boats", boats, jobj);
     }
 
-    private void parseMandatoryProperty(String key, PropertyAny property, JsonObject parentobj) {
-        if (!parseOptionalProperty(key, property, parentobj)) {
-            throw new ParseFailure("Missing a Mandatory parameter: " + key);
-        }
-    }
-
-    private boolean parseOptionalProperty(String key, PropertyAny property, JsonObject parentobj) {
-        JsonValue jvalue = parentobj.get(key);
-        if (jvalue == null) {
-            return false;
-        }
-        property.parse(jvalue);
-        return true;
-    }
-
+    @Override
     public JsonObject toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("type", type.toJson());
@@ -108,6 +92,7 @@ public class SketchModel {
         return job.build();
     }
 
+    @Override
     public void setOnChange(Runnable onchange) {
         type.setOnChange(onchange);
         meta.setOnChange(onchange);
@@ -120,7 +105,7 @@ public class SketchModel {
         course.setOnChange(onchange);
         boats.setOnChange(onchange);
     }
-
+    
     public Area getDisplayArea() {
         return getDisplay().getDisplayarea();
     }
@@ -157,8 +142,8 @@ public class SketchModel {
         return marks.get();
     }
 
-    public PropertyCourse getCourse() {
-        return course.get();
+    public Course getCourse() {
+        return course;
     }
 
     public PropertyBoats getBoats() {
