@@ -34,8 +34,8 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 
@@ -94,8 +94,8 @@ public class DisplayPane extends Group {
         if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
-            PropertyMark newmark = new PropertyMark(new Location(x, y));
-                if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.propertymap, "Mark"))) {
+            Mark newmark = new Mark(new Location(x, y));
+                if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.getProperties(), "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getProperty().getMarks().add(newmark);
             }
@@ -174,40 +174,40 @@ public class DisplayPane extends Group {
 //        gc.setTransform(xform);
 //    }
     private void marksdraw() {
-        controller.getProperty().getMarks().getList().forEach(markproperty -> markdraw(markproperty));
+        controller.getProperty().getMarks().getProperties().forEach(mark -> markdraw(mark));
     }
 
     private void laylinesdraw() {
-        controller.getProperty().getMarks().getList().forEach(markproperty -> laylinesdraw(markproperty));
+        controller.getProperty().getMarks().getProperties().forEach(mark -> laylinesdraw(mark));
     }
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
-    private void markdraw(PropertyMark markproperty) {
+    private void markdraw(Mark mark) {
         getChildren().addAll(
                 Wrap.globalTransform(
-                        shapebuilder.drawmark(markproperty.getLocation(), SIZE, markproperty.getColour()),
+                        shapebuilder.drawmark(mark.getLocation(), SIZE, mark.getColour()),
                         maintranslate,
                         mainscale
                 )
         );
     }
 
-    private void laylinesdraw(PropertyMark markproperty) {
-        Angle windAngle = controller.windflow.getFlow(markproperty.getLocation()).getAngle();
-        if (markproperty.isWindwardlaylines()) {
+    private void laylinesdraw(Mark mark) {
+        Angle windAngle = controller.windflow.getFlow(mark.getLocation()).getAngle();
+        if (mark.isWindwardlaylines()) {
             getChildren().addAll(
                     Wrap.globalTransform(
-                            shapebuilder.drawwindwardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()),
+                            shapebuilder.drawwindwardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
                             maintranslate,
                             mainscale
                     )
             );
         }
-        if (markproperty.isDownwindlaylines()) {
+        if (mark.isDownwindlaylines()) {
             getChildren().addAll(
                     Wrap.globalTransform(
-                            shapebuilder.drawleewardlaylines(markproperty.getLocation(), windAngle, markproperty.getLaylinelength(), markproperty.getLaylinecolour()),
+                            shapebuilder.drawleewardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
                             maintranslate,
                             mainscale
                     )

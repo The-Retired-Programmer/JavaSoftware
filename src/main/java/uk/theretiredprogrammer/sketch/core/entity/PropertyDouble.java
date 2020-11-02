@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
-/**
- *
- * @author richard
- */
 public class PropertyDouble extends PropertyElement<Double> {
 
     private final SimpleDoubleProperty doubleproperty;

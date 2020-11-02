@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -36,6 +37,14 @@ public class PropertyBoolean extends PropertyElement<Boolean> {
     public PropertyBoolean(String key, Boolean defaultvalue) {
         setKey(key);
         booleanproperty = new SimpleBooleanProperty(defaultvalue);
+    }
+
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        booleanproperty.addListener(cl);
     }
 
     @Override

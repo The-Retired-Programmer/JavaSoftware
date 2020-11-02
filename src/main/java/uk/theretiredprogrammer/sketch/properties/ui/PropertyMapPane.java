@@ -23,7 +23,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Model;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyAny;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyList;
@@ -58,7 +58,7 @@ public class PropertyMapPane extends TitledPane {
     private int createpropertymapcontent(GridPane propertiestable, int row, ObservableMap<String, PropertyAny> properties) {
         for (var pe : properties.entrySet()) {
             Object value = pe.getValue();
-            if (value instanceof Model model) {
+            if (value instanceof ModelProperties model) {
                 row = createpropertymapcontent(propertiestable, row, model.getProperties());
             } else if (value instanceof PropertyList propertylist) {
                 row = createpropertylistcontent(propertiestable, row, propertylist);

@@ -31,7 +31,7 @@ public class PropertiesPane extends Accordion {
 
     private void refreshcontent(SketchModel sketchmodel) {
         this.getPanes().clear();
-        this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay().propertymap, "Display"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay().getProperties(), "Display"));
         this.getPanes().add(new PropertyMapPane(sketchmodel.getWindshifts().propertymap, "Wind Shifts"));
         createAllWindComponentPropertiesSection(sketchmodel);
         this.getPanes().add(new PropertyMapPane(sketchmodel.getWatershifts().propertymap, "Water Shifts"));
@@ -86,7 +86,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllMarksPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getMarks().getList().forEach(markproperty -> this.getPanes().add(new PropertyMapPane(markproperty.propertymap, "Mark - ", markproperty.getNameProperty())));
+        sketchmodel.getMarks().getProperties().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark.getProperties(), "Mark - ", mark.getNameProperty())));
         sketchmodel.getMarks().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {

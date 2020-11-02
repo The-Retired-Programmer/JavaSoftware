@@ -20,6 +20,7 @@ import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import java.lang.reflect.Field;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
@@ -40,6 +41,14 @@ public class PropertyColour extends PropertyElement<Color> {
     public PropertyColour(String key, Color defaultvalue) {
         setKey(key);
         colourproperty = new SimpleObjectProperty(defaultvalue);
+    }
+
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        colourproperty.addListener(cl);
     }
 
     @Override

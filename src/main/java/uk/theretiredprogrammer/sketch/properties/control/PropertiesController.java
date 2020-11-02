@@ -22,8 +22,8 @@ import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
@@ -79,8 +79,8 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewMark() {
-        PropertyMark newmarkproperty = new PropertyMark();
-        sketchmodel.getMarks().add(newmarkproperty);
+        Mark newmark = new Mark();
+        sketchmodel.getMarks().add(newmark);
     }
 
     public void addNewBoat(String type) {

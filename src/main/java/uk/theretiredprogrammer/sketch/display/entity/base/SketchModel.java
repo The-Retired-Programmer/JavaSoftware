@@ -22,35 +22,34 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Model;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMark;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyMarks;
+import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponents;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowShifts;
 
-public class SketchModel extends Model {
+public class SketchModel extends ModelProperties {
 
     private final ObservableList<String> marknames = FXCollections.observableArrayList();
     private final PropertyString type = new PropertyString("type", null);
-    private final PropertyMeta meta = new PropertyMeta("meta");
-    private final PropertyDisplay display = new PropertyDisplay("display");
+    private final MetaModel meta = new MetaModel();
+    private final DisplayModel display = new DisplayModel();
     private final PropertyFlowShifts windshifts = new PropertyFlowShifts("windshifts");
     private final PropertyFlowComponents wind = new PropertyFlowComponents("wind", () -> getDisplayArea());
     private final PropertyFlowShifts watershifts = new PropertyFlowShifts("watershifts");
     private final PropertyFlowComponents water = new PropertyFlowComponents("water", () -> getDisplayArea());
-    private final PropertyMarks marks = new PropertyMarks("marks");
+    private final Marks marks = new Marks();
     private final Course course = new Course(marks, getMarkNames());
     private final PropertyBoats boats = new PropertyBoats("boats");
 
     public SketchModel() {
-        marks.setOnChange((ListChangeListener<PropertyMark>) (c) -> marklistchanged((ListChangeListener.Change<PropertyMark>) c));
+        marks.setOnChange((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
     }
 
-    private void marklistchanged(ListChangeListener.Change<PropertyMark> c) {
+    private void marklistchanged(ListChangeListener.Change<Mark> c) {
         while (c.next()) {
             c.getRemoved().forEach(remitem -> {
                 marknames.remove(remitem.getName());
@@ -59,7 +58,7 @@ public class SketchModel extends Model {
                 marknames.add(additem.getName());
             });
         }
-        assert marknames.size() == marks.getList().size();
+        assert marknames.size() == marks.getProperties().size();
     }
 
     @Override
@@ -105,7 +104,7 @@ public class SketchModel extends Model {
         course.setOnChange(onchange);
         boats.setOnChange(onchange);
     }
-    
+
     public Area getDisplayArea() {
         return getDisplay().getDisplayarea();
     }
@@ -114,12 +113,12 @@ public class SketchModel extends Model {
         return type.get();
     }
 
-    public PropertyMeta getMeta() {
-        return meta.get();
+    public MetaModel getMeta() {
+        return meta;
     }
 
-    public PropertyDisplay getDisplay() {
-        return display.get();
+    public final DisplayModel getDisplay() {
+        return display;
     }
 
     public PropertyFlowShifts getWindshifts() {
@@ -138,8 +137,8 @@ public class SketchModel extends Model {
         return water.get();
     }
 
-    public final PropertyMarks getMarks() {
-        return marks.get();
+    public final Marks getMarks() {
+        return marks;
     }
 
     public Course getCourse() {

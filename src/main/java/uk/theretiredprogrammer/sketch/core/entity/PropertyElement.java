@@ -39,9 +39,9 @@ public abstract class PropertyElement<C extends Object> extends PropertyAny<C> {
         set(newvalue);
     }
 
-    abstract void set(C newvalue);
+    public abstract void set(C newvalue);
 
-    abstract C parsevalue(JsonValue jvalue);
+    public abstract C parsevalue(JsonValue jvalue);
 
     public abstract Node getField(int size);
 

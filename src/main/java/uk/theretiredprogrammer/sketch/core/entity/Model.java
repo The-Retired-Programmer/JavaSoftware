@@ -15,64 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import java.util.LinkedHashMap;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableMap;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
-public abstract class Model {
+public interface Model  {
     
-    private final ObservableMap<String, PropertyAny> properties = FXCollections.observableMap(new LinkedHashMap<>());;
+    public JsonValue toJson();
     
-    protected abstract void parseValues(JsonObject jobj);
-
-    public void parse(JsonValue jvalue) {
-        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.OBJECT) {
-            parseValues((JsonObject) jvalue);
-        }
-    }
-
-    protected void parseMandatoryProperty(String key, PropertyAny property, JsonObject parentobj) {
-        if (!parseOptionalProperty(key, property, parentobj)) {
-            throw new ParseFailure("Missing a Mandatory parameter: " + key);
-        }
-    }
-
-    protected boolean parseOptionalProperty(String key, PropertyAny property, JsonObject parentobj) {
-        JsonValue jvalue = parentobj.get(key);
-        if (jvalue == null) {
-            return false;
-        }
-        property.parse(jvalue);
-        return true;
-    }
+    public void setOnChange(Runnable onchange);
     
-    protected void parseMandatoryProperty(String key, Model model, JsonObject parentobj) {
-        if (!parseOptionalProperty(key, model, parentobj)) {
-            throw new ParseFailure("Missing a Mandatory parameter: " + key);
-        }
-    }
-
-    protected boolean parseOptionalProperty(String key, Model model, JsonObject parentobj) {
-        JsonValue jvalue = parentobj.get(key);
-        if (jvalue == null) {
-            return false;
-        }
-        model.parse(jvalue);
-        return true;
-    }
-
-    protected abstract void setOnChange(Runnable onchange);
-
-    protected abstract JsonObject toJson();
-    
-    public ObservableMap<String, PropertyAny> getProperties() {
-        return properties;
-    }
-    
-    protected void addProperty(String key, PropertyAny property) {
-        properties.put(key, property);
-    }
+    public void parse(JsonValue jvalue);
 }

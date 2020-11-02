@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core.entity;
+package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 
-/**
- * A leg is a mark name and passing (port / starboard)
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class LegEnding {
 
     private final String mark;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,17 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.Json;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
-/**
- *
- * @author richard
- */
 public class PropertyInteger extends PropertyElement<Integer> {
 
     private final SimpleIntegerProperty integerproperty;
@@ -41,6 +37,14 @@ public class PropertyInteger extends PropertyElement<Integer> {
     public PropertyInteger(String key, int defaultvalue) {
         setKey(key);
         integerproperty = new SimpleIntegerProperty(defaultvalue);
+    }
+
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        integerproperty.addListener(cl);
     }
 
     @Override

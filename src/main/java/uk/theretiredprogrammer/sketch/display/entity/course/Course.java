@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,39 +21,38 @@ import jakarta.json.JsonObjectBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.Model;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLegEndings;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 
-/**
- * The Mark Class - represent course marks.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
-public class Course extends Model {
-    
+public class Course extends ModelProperties {
+
     private static final ObservableList<String> roundings;
 
     static {
         roundings = FXCollections.observableArrayList();
         roundings.addAll("port", "starboard");
     }
-    
+
     private final PropertyLocation start = new PropertyLocation("start", LOCATIONZERO);
     private final PropertyLegEndings legs;
-            
-    private Leg firstcourseleg;
-    private final PropertyMarks marks;
 
-    public Course(PropertyMarks marks, ObservableList<String> marknames) {
-        legs =  new PropertyLegEndings("legs", marknames, roundings);
+    private Leg firstcourseleg;
+    private final Marks marks;
+
+    public Course(Marks marks, ObservableList<String> marknames) {
+        legs = new PropertyLegEndings("legs", marknames, roundings);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
+        marks.setOnChange(() -> updatelegs());
     }
-    
+
+    private void updatelegs() {
+        legs.getList().clear(); // not best way!!
+        legs.getList().forEach(lv -> insertLeg(lv.get()));
+    }
+
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("start", start, jobj);
@@ -99,7 +98,7 @@ public class Course extends Model {
     public PropertyLegEndings getPropertyLegValues() {
         return legs.get();
     }
-    
+
     public Leg getFirstLeg() {
         return firstcourseleg;
     }

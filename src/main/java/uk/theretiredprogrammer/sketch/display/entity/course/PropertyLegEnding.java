@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard@theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core.entity;
+package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
@@ -23,12 +22,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.LegEnding;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 
-/**
- *
- * @author richard
- */
 public class PropertyLegEnding extends PropertyElement<LegEnding> {
 
     private final PropertyConstrainedString marknameproperty;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,11 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 
-/**
- *
- * @author richard
- */
 public class PropertyArea extends PropertyElement<Area> {
 
     private final PropertyDouble xproperty;
@@ -45,6 +40,17 @@ public class PropertyArea extends PropertyElement<Area> {
         yproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getBottomleft().getY());
         widthproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getWidth());
         heightproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getHeight());
+    }
+
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        xproperty.propertyDouble().addListener(cl);
+        yproperty.propertyDouble().addListener(cl);
+        widthproperty.propertyDouble().addListener(cl);
+        heightproperty.propertyDouble().addListener(cl);
     }
 
     @Override
