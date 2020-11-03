@@ -26,9 +26,9 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
  */
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final PropertyConstantFlowComponent property;
+    private final ConstantFlowComponentModel property;
 
-    public ConstantFlowComponent(PropertyConstantFlowComponent constantflowcomponentproperty) {
+    public ConstantFlowComponent(ConstantFlowComponentModel constantflowcomponentproperty) {
         super(constantflowcomponentproperty);
         this.property = constantflowcomponentproperty;
     }

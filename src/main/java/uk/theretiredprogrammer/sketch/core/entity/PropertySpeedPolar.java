@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyAngle;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
-/**
- *
- * @author richard
- */
 public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
 
     private final PropertyDouble speedproperty;
@@ -44,6 +36,15 @@ public class PropertySpeedPolar extends PropertyElement<SpeedPolar> {
         setKey(key);
         speedproperty = new PropertyDouble(defaultvalue.getSpeed());
         directionproperty = new PropertyAngle(defaultvalue.getAngle());
+    }
+
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        speedproperty.propertyDouble().addListener(cl);
+        directionproperty.propertyAngle().addListener(cl);
     }
 
     @Override

@@ -26,16 +26,16 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  */
 public class FlowComponentSet {
 
-    private final ObservableList<PropertyFlowComponent> flows;
+    private final ObservableList<FlowComponentModel> flows;
 
-    public FlowComponentSet(ObservableList<PropertyFlowComponent> flows) {
+    public FlowComponentSet(ObservableList<FlowComponentModel> flows) {
         this.flows = flows;
     }
 
     public SpeedPolar getFlow(Location pos) {
         int zlevel = -1;
-        PropertyFlowComponent flowtouse = null;
-        for (PropertyFlowComponent flow : flows) {
+        FlowComponentModel flowtouse = null;
+        for (FlowComponentModel flow : flows) {
             if (flow.getArea().isWithinArea(pos) && flow.getZlevel() > zlevel) {
                 zlevel = flow.getZlevel();
                 flowtouse = flow;
@@ -45,7 +45,7 @@ public class FlowComponentSet {
     }
 
     public Angle meanWindAngle() {
-        for (PropertyFlowComponent flowproperty : flows) {
+        for (FlowComponentModel flowproperty : flows) {
             FlowComponent flow = FlowComponent.factory(flowproperty);
             Angle res = flow.meanWindAngle();
             if (res != null) {

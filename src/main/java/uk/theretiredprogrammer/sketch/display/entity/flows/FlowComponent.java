@@ -28,29 +28,29 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  */
 public abstract class FlowComponent {
 
-    public static FlowComponent factory(PropertyFlowComponent componentproperty) {
+    public static FlowComponent factory(FlowComponentModel componentproperty) {
         String type = componentproperty.getType();
         switch (type) {
             case "testflow" -> {
-                return new TestFlowComponent((PropertyTestFlowComponent) componentproperty);
+                return new TestFlowComponent((TestFlowComponentModel) componentproperty);
             }
             case "complexflow" -> {
-                return new ComplexFlowComponent((PropertyComplexFlowComponent) componentproperty);
+                return new ComplexFlowComponent((ComplexFlowComponentModel) componentproperty);
             }
             case "constantflow" -> {
-                return new ConstantFlowComponent((PropertyConstantFlowComponent) componentproperty);
+                return new ConstantFlowComponent((ConstantFlowComponentModel) componentproperty);
             }
             case "gradientflow" -> {
-                return new GradientFlowComponent((PropertyGradientFlowComponent) componentproperty);
+                return new GradientFlowComponent((GradientFlowComponentModel) componentproperty);
             }
             default ->
                 throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition (" + type + ")");
         }
     }
 
-    private final PropertyFlowComponent componentproperty;
+    private final FlowComponentModel componentproperty;
 
-    public FlowComponent(PropertyFlowComponent componentproperty) {
+    public FlowComponent(FlowComponentModel componentproperty) {
         this.componentproperty = componentproperty;
     }
 

@@ -27,9 +27,9 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
  */
 public class GradientFlowComponent extends FlowComponent {
 
-    private final PropertyGradientFlowComponent property;
+    private final GradientFlowComponentModel property;
 
-    public GradientFlowComponent(PropertyGradientFlowComponent gradientflowcomponentproperty) {
+    public GradientFlowComponent(GradientFlowComponentModel gradientflowcomponentproperty) {
         super(gradientflowcomponentproperty);
         this.property = gradientflowcomponentproperty;
     }

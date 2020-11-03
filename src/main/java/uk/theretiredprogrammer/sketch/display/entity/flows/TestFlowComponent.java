@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 
-/**
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class TestFlowComponent extends FlowComponent {
 
-    private final PropertyTestFlowComponent property;
+    private final TestFlowComponentModel property;
 
-    public TestFlowComponent(PropertyTestFlowComponent testflowcomponentproperty) {
+    public TestFlowComponent(TestFlowComponentModel testflowcomponentproperty) {
         super(testflowcomponentproperty);
         this.property = testflowcomponentproperty;
     }

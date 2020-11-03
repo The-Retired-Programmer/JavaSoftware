@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public abstract class Flow {
 
     final static int WIDTHSTEPS = 100;
@@ -41,10 +37,10 @@ public abstract class Flow {
     private Angle swingNow = new Angle(0);
     private Angle meanflowangle;
 
-    private final PropertyFlowShifts flowshiftsproperty;
-    private final PropertyFlowComponents flowcomponentsproperty;
+    private final FlowShiftsModel flowshiftsproperty;
+    private final FlowComponentsModel flowcomponentsproperty;
 
-    public Flow(SketchModel sketchproperty, PropertyFlowShifts flowshiftsproperty, PropertyFlowComponents flowcomponentsproperty) {
+    public Flow(SketchModel sketchproperty, FlowShiftsModel flowshiftsproperty, FlowComponentsModel flowcomponentsproperty) {
         this.flowshiftsproperty = flowshiftsproperty;
         this.flowcomponentsproperty = flowcomponentsproperty;
         //
@@ -55,7 +51,7 @@ public abstract class Flow {
     }
 
     public final void setFlows() {
-        FlowComponentSet flowcomponents = new FlowComponentSet(flowcomponentsproperty.getList());
+        FlowComponentSet flowcomponents = new FlowComponentSet(flowcomponentsproperty.getProperties());
         double hpos = area.getBottomleft().getY();
         double wpos = area.getBottomleft().getX();
         for (int h = 0; h < HEIGHTSTEPS + 1; h++) {

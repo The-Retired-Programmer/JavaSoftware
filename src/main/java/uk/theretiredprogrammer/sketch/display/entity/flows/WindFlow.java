@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author richard
- */
 public class WindFlow extends Flow {
 
     public WindFlow(SketchModel sketchproperty) {

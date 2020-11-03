@@ -19,7 +19,7 @@ import javafx.scene.control.Menu;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentModel;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
@@ -40,11 +40,11 @@ public class PropertiesWindow extends AbstractWindow<PropertiesController> {
             boatmenu.getItems().add(UI.menuitem(classname, ev -> controller.addNewBoat(classname)));
         });
         Menu windmenu = UI.menu("Add WindFlowComponent");
-        PropertyFlowComponent.getTypenames().forEach(typename -> {
+        FlowComponentModel.getTypenames().forEach(typename -> {
             windmenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWindFlowComponent(typename)));
         });
         Menu watermenu = UI.menu("Add WaterFlowComponent");
-        PropertyFlowComponent.getTypenames().forEach(typename -> {
+        FlowComponentModel.getTypenames().forEach(typename -> {
             watermenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWaterFlowComponent(typename)));
         });
         addtoMenubar(

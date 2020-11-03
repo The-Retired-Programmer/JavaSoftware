@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -97,6 +98,10 @@ public class PropertyConstrainedString extends PropertyElement<String> {
     @Override
     public final String get() {
         return constrainedproperty.get();
+    }
+    
+    public final SimpleStringProperty getProperty() {
+        return constrainedproperty.propertyString();
     }
 
     @Override

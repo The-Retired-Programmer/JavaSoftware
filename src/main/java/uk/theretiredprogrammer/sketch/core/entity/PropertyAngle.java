@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 
-/**
- *
- * @author richard
- */
 public class PropertyAngle extends PropertyElement<Angle> {
 
     private final PropertyDouble angleproperty;
@@ -36,13 +33,17 @@ public class PropertyAngle extends PropertyElement<Angle> {
         setKey(key);
         angleproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getDegrees());
     }
-    
+
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
     public void setOnChange(ChangeListener cl) {
         angleproperty.propertyDouble().addListener(cl);
+    }
+
+    public SimpleDoubleProperty propertyAngle() {
+        return angleproperty.propertyDouble();
     }
 
     @Override

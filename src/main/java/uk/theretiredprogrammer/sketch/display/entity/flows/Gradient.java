@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core.entity;
+package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90MINUS;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class Gradient {
 
     public static final Gradient GRADIENTDEFAULT = new Gradient();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.core.entity;
+package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
@@ -24,12 +22,15 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Gradient;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 
 /**
  *
@@ -54,6 +55,19 @@ public class PropertyGradient extends PropertyElement<Gradient> {
         setKey(key);
         typeproperty = new PropertyConstrainedString(types, defaultvalue == null ? null : defaultvalue.getType());
         speedsproperty = defaultvalue == null ? FXCollections.observableArrayList() : defaultvalue.getSpeeds();
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+        //speedsproperty.setOnChange(onchange);
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        typeproperty.getProperty().addListener(cl);
+    }
+    
+    private void change() {
+        
     }
 
     @Override

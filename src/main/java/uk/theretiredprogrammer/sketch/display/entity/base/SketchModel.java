@@ -28,8 +28,8 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponents;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowShifts;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentsModel;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftsModel;
 
 public class SketchModel extends ModelProperties {
 
@@ -37,10 +37,10 @@ public class SketchModel extends ModelProperties {
     private final PropertyString type = new PropertyString("type", null);
     private final MetaModel meta = new MetaModel();
     private final DisplayModel display = new DisplayModel();
-    private final PropertyFlowShifts windshifts = new PropertyFlowShifts("windshifts");
-    private final PropertyFlowComponents wind = new PropertyFlowComponents("wind", () -> getDisplayArea());
-    private final PropertyFlowShifts watershifts = new PropertyFlowShifts("watershifts");
-    private final PropertyFlowComponents water = new PropertyFlowComponents("water", () -> getDisplayArea());
+    private final FlowShiftsModel windshifts = new FlowShiftsModel();
+    private final FlowComponentsModel wind = new FlowComponentsModel(() -> getDisplayArea());
+    private final FlowShiftsModel watershifts = new FlowShiftsModel();
+    private final FlowComponentsModel water = new FlowComponentsModel(() -> getDisplayArea());
     private final Marks marks = new Marks();
     private final Course course = new Course(marks, getMarkNames());
     private final Boats boats = new Boats(this);
@@ -121,20 +121,20 @@ public class SketchModel extends ModelProperties {
         return display;
     }
 
-    public PropertyFlowShifts getWindshifts() {
-        return windshifts.get();
+    public FlowShiftsModel getWindshifts() {
+        return windshifts;
     }
 
-    public PropertyFlowComponents getWind() {
-        return wind.get();
+    public FlowComponentsModel getWind() {
+        return wind;
     }
 
-    public PropertyFlowShifts getWatershifts() {
-        return watershifts.get();
+    public FlowShiftsModel getWatershifts() {
+        return watershifts;
     }
 
-    public PropertyFlowComponents getWater() {
-        return water.get();
+    public FlowComponentsModel getWater() {
+        return water;
     }
 
     public final Marks getMarks() {

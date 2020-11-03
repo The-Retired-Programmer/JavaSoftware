@@ -20,7 +20,7 @@ import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentModel;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
@@ -90,12 +90,12 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewWindFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        FlowComponentModel newflow = FlowComponentModel.factory(flowtype, () -> sketchmodel.getDisplayArea());
         sketchmodel.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
-        PropertyFlowComponent newflow = PropertyFlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        FlowComponentModel newflow = FlowComponentModel.factory(flowtype, () -> sketchmodel.getDisplayArea());
         sketchmodel.getWater().add(newflow);
     }
 

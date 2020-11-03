@@ -27,9 +27,9 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
  */
 public class ComplexFlowComponent extends FlowComponent {
 
-    private final PropertyComplexFlowComponent property;
+    private final ComplexFlowComponentModel property;
 
-    public ComplexFlowComponent(PropertyComplexFlowComponent complexflowcomponentproperty) {
+    public ComplexFlowComponent(ComplexFlowComponentModel complexflowcomponentproperty) {
         super(complexflowcomponentproperty);
         this.property = complexflowcomponentproperty;
     }
