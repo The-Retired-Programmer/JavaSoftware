@@ -69,7 +69,7 @@ public abstract class Strategy {
         if (legtowind.lteq(metrics.getUpwindrelative())) {
             return LegType.WINDWARD;
         }
-        if (boat.getProperty().isReachdownwind() && legtowind.gteq(metrics.getDownwindrelative())) {
+        if (boat.isReachdownwind() && legtowind.gteq(metrics.getDownwindrelative())) {
             return LegType.GYBINGDOWNWIND;
         }
         return LegType.OFFWIND;
@@ -163,7 +163,7 @@ public abstract class Strategy {
         String boatname = boat.getName();
         if (decision.getAction() == SAILON) {
             String reason = nextBoatStrategyTimeInterval(sketchproperty, windflow, waterflow);
-            timerlog.add(new BoatLogEntry(boat.getProperty()));
+            timerlog.add(new BoatLogEntry(boat));
             timerlog.add(new DecisionLogEntry(boatname, decision));
             timerlog.add(new ReasonLogEntry(boatname, reason));
         }

@@ -46,27 +46,27 @@ public class SailingStrategyTest {
 
     public Decision makeDecision(String filename, Runnable... updateproperties) throws IOException {
         controller = new DisplayController(filename);
-        boat = controller.boats.getBoat("Red");
+        boat = controller.boats.get("Red");
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
         Leg leg = controller.course.getFirstLeg();
-        winddirection = controller.windflow.getFlow(boat.getProperty().getLocation()).getAngle();
+        winddirection = controller.windflow.getFlow(boat.getLocation()).getAngle();
         Strategy strategy = Strategy.get(boat, leg, controller.windflow, controller.waterflow);
         strategy.nextBoatStrategyTimeInterval(controller.getProperty(), controller.windflow, controller.waterflow);
         return strategy.decision;
     }
 
     void setboatdirection(double degrees) {
-        boat.getProperty().setDirection(new Angle(degrees));
+        boat.setDirection(new Angle(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        boat.getProperty().setLocation(new Location(x, y));
+        boat.setLocation(new Location(x, y));
     }
 
     void setboattrue(String... propertynames) {
-        boat.getProperty().stream().filter(p
+        boat.getProperties().entrySet().stream().filter(p
                 -> Arrays.asList(propertynames).stream()
                         .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
                 .forEach(p -> ((PropertyBoolean) p.getValue()).set(true));

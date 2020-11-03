@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
 
 /**
@@ -34,6 +35,14 @@ public class PropertyAngle extends PropertyElement<Angle> {
     public PropertyAngle(String key, Angle defaultvalue) {
         setKey(key);
         angleproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getDegrees());
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        angleproperty.propertyDouble().addListener(cl);
     }
 
     @Override

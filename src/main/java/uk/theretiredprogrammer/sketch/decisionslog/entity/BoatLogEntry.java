@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
 /**
  *
@@ -29,12 +29,12 @@ public class BoatLogEntry extends TimerLogEntry {
     private final double boaty;
     private final String boatname;
 
-    public BoatLogEntry(PropertyBoat boatproperty) {
-        Location loc = boatproperty.getLocation();
+    public BoatLogEntry(Boat boat) {
+        Location loc = boat.getLocation();
         this.boatx = loc.getX();
         this.boaty = loc.getY();
-        this.boatangle = boatproperty.getDirection().getDegrees();
-        this.boatname = boatproperty.getName();
+        this.boatangle = boat.getDirection().getDegrees();
+        this.boatname = boat.getName();
     }
 
     @Override

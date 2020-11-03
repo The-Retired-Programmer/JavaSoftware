@@ -36,7 +36,7 @@ public class TurnTest {
 
     Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
         controller = new DisplayController(filename);
-        boat = controller.boats.getBoat("Red");
+        boat = controller.boats.get("Red");
         //
         for (var updateaction : updateproperties) {
             updateaction.run();
@@ -63,11 +63,11 @@ public class TurnTest {
     }
 
     void setboatdirection(double degrees) {
-        boat.getProperty().setDirection(new Angle(degrees));
+        boat.setDirection(new Angle(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        boat.getProperty().setLocation(new Location(x, y));
+        boat.setLocation(new Location(x, y));
     }
 
     void setwindflow(double speed, double degrees) {

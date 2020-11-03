@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,16 @@ import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyFlowComponent;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
-/**
- * Controller for Properties Management, reading, parsing and saving
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     private SketchModel sketchmodel;
@@ -84,7 +82,11 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewBoat(String type) {
-        sketchmodel.getBoats().add(new PropertyBoat(type));
+        Boat newboat = BoatFactory.createBoat(type,
+                    sketchmodel.getCourse().getFirstLeg(),
+                    new WindFlow(sketchmodel),
+                    new WaterFlow(sketchmodel));
+        sketchmodel.getBoats().add(newboat);
     }
 
     public void addNewWindFlowComponent(String flowtype) {

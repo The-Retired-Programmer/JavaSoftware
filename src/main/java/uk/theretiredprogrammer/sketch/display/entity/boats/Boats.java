@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard Linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,41 +15,43 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
+import jakarta.json.JsonObject;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
-public class Boats {
+public class Boats extends ModelArray<Boat> {
 
-    private final List<Boat> boats = new ArrayList<>();
+    private final SketchModel model;
 
-    public Boats(SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
-        sketchproperty.getBoats().getList().forEach(boatproperty -> {
-            boats.add(BoatFactory.createBoat(boatproperty, sketchproperty, firstleg, windflow, waterflow));
-        });
+    public Boats(SketchModel model) {
+        this.model = model;
     }
 
-    public Stream<Boat> stream() {
-        return boats.stream();
+    @Override
+    protected Boat createAndParse(JsonObject jobj) {
+        Boat boat = BoatFactory.createBoat(
+                jobj.getString("type", "<undefined>"),
+                model.getCourse().getFirstLeg(),
+                new WindFlow(model),
+                new WaterFlow(model)
+        );
+        boat.parse(jobj);
+        return boat;
     }
 
-    public Boat getBoat(String name) {
-        return boats.stream().filter(boat -> boat.getName().equals(name)).findFirst().orElse(null);
+    @Override
+    public Boat get(String name) {
+        return getProperties().stream().filter(boat -> name.equals(boat.getName())).findFirst()
+                .orElseThrow(() -> new IllegalStateFailure("can't find Boat with name " + name));
     }
 
     public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
-        boats.forEach(boat -> {
+        getProperties().forEach(boat -> {
             Strategy newstrategy = boat.getStrategy().nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {
                 boat.setStrategy(newstrategy);

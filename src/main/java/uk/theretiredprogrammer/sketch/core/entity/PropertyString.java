@@ -15,13 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.Json;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.MapChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;

@@ -37,7 +37,7 @@ class GybingDownwindPortRoundingDecisions extends RoundingDecisions {
 
     @Override
     final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getMeanFlowAngle(strategy.boat.getProperty().getLocation());
+        Angle winddirection = windflow.getMeanFlowAngle(strategy.boat.getLocation());
         if (strategy.boat.isPort(winddirection)) {
             if (atPortRoundingTurnPoint(strategy)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, strategy);

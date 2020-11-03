@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoats;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
@@ -43,7 +43,7 @@ public class SketchModel extends ModelProperties {
     private final PropertyFlowComponents water = new PropertyFlowComponents("water", () -> getDisplayArea());
     private final Marks marks = new Marks();
     private final Course course = new Course(marks, getMarkNames());
-    private final PropertyBoats boats = new PropertyBoats("boats");
+    private final Boats boats = new Boats(this);
 
     public SketchModel() {
         marks.setOnChange((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
@@ -145,8 +145,8 @@ public class SketchModel extends ModelProperties {
         return course;
     }
 
-    public PropertyBoats getBoats() {
-        return boats.get();
+    public Boats getBoats() {
+        return boats;
     }
 
     public ObservableList<String> getMarkNames() {

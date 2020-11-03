@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,32 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
+import uk.theretiredprogrammer.sketch.core.entity.Channel;
+import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyAngle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -31,20 +48,39 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 
-/**
- * The Abstract Boat class - implements the core capabilities of a boat.
- * Subclass to generate the concrete classes for particular boats provides the
- * metrics information.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
-public abstract class Boat {
+public abstract class Boat extends ModelProperties {
 
-    private final SketchModel sketchproperty;
-    private final PropertyBoat boatproperty;
+    private static final ObservableList<String> classes;
+
+    static {
+        classes = FXCollections.observableArrayList();
+        classes.addAll("laser2");
+    }
+
+    public static ObservableList<String> getClasses() {
+        return classes;
+    }
+
+    public final Channel upwindchannel = CHANNELOFF;
+    public final Channel downwindchannel = CHANNELOFF;
+
+    private final PropertyString name;
+    private final PropertyConstrainedString type;
+    private final PropertyAngle heading = new PropertyAngle("heading", ANGLE0);
+    private final PropertyLocation location;
+    private final PropertyColour colour = new PropertyColour("colour", Color.BLACK);
+    private final PropertyColour trackcolour = new PropertyColour("trackcolour", Color.BLACK);
+    private final PropertyBoolean upwindsailonbesttack = new PropertyBoolean("upwindsailonbesttack", false);
+    private final PropertyBoolean upwindtackifheaded = new PropertyBoolean("upwindtackifheaded", false);
+    private final PropertyBoolean upwindbearawayifheaded = new PropertyBoolean("upwindbearawayifheaded", false);
+    private final PropertyBoolean upwindluffupiflifted = new PropertyBoolean("upwindluffupiflifted", false);
+    private final PropertyBoolean reachdownwind = new PropertyBoolean("reachdownwind", false);
+    private final PropertyBoolean downwindsailonbestgybe = new PropertyBoolean("downwindsailonbestgybe", false);
+    private final PropertyBoolean downwindbearawayifheaded = new PropertyBoolean("downwindbearawayifheaded", false);
+    private final PropertyBoolean downwindgybeiflifted = new PropertyBoolean("downwindgybeiflifted", false);
+    private final PropertyBoolean downwindluffupiflifted = new PropertyBoolean("downwindluffupiflifted", false);
     public final Color sailcolor = Color.WHITE;
     public final BoatMetrics metrics;
     //
@@ -53,21 +89,202 @@ public abstract class Boat {
     private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
     private Strategy strategy; // current leg strategy
 
+    public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", "laser2", LOCATIONZERO, firstleg, windflow, waterflow, metrics);
+    }
+
+    public Boat(String classtype, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", classtype, LOCATIONZERO, firstleg, windflow, waterflow, metrics);
+    }
+
+    public Boat(Location loc, Leg firstleg,WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
+    }
+    
+    public Boat(String classtype, Location loc, Leg firstleg,WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", classtype, loc, firstleg, windflow, waterflow, metrics);
+    }
+
     @SuppressWarnings("LeakingThisInConstructor")
-    public Boat(PropertyBoat boatproperty, SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this.boatproperty = boatproperty;
-        this.sketchproperty = sketchproperty;
+    public Boat(String newname, String classtype, Location loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        name = new PropertyString("name", newname);
+        location = new PropertyLocation("location", loc);
+        type = new PropertyConstrainedString("type", classes, classtype);
         this.metrics = metrics;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
         this.strategy = Strategy.get(this, firstleg, windflow, waterflow);
+        addProperty("name", name);
+        addProperty("type", type);
+        addProperty("heading", heading);
+        addProperty("location", location);
+        addProperty("colour", colour);
+        addProperty("trackcolour", trackcolour);
+        addProperty("upwindsailonbesttack", upwindsailonbesttack);
+        addProperty("upwindtackifheaded", upwindtackifheaded);
+        addProperty("upwindbearawayifheaded", upwindbearawayifheaded);
+        addProperty("upwindluffupiflifted", upwindluffupiflifted);
+        addProperty("reachdownwind", reachdownwind);
+        addProperty("downwindsailonbestgybe", downwindsailonbestgybe);
+        addProperty("downwindbearawayifheaded", downwindbearawayifheaded);
+        addProperty("downwindgybeiflifted", downwindgybeiflifted);
+        addProperty("downwindluffupiflifted", downwindluffupiflifted);
     }
 
-    public PropertyBoat getProperty() {
-        return boatproperty;
+    public Boat(String newname, Boat clonefrom) {
+        name = new PropertyString("name", newname);
+        location = new PropertyLocation("location", clonefrom.location.get());
+        type = new PropertyConstrainedString("type", classes, clonefrom.type.get());
+        metrics = clonefrom.metrics;
+        rotationAnglePerSecond = clonefrom.rotationAnglePerSecond;
+        strategy = clonefrom.strategy;
+        this.boatspeed = clonefrom.boatspeed;
+        this.heading.set(clonefrom.heading.get());
+        this.colour.set(clonefrom.colour.get());
+        this.trackcolour.set(clonefrom.trackcolour.get());
+        this.upwindsailonbesttack.set(clonefrom.upwindsailonbesttack.get());
+        this.upwindtackifheaded.set(clonefrom.upwindtackifheaded.get());
+        this.upwindbearawayifheaded.set(clonefrom.upwindbearawayifheaded.get());
+        this.upwindluffupiflifted.set(clonefrom.upwindluffupiflifted.get());
+        this.reachdownwind.set(clonefrom.reachdownwind.get());
+        this.downwindsailonbestgybe.set(clonefrom.downwindsailonbestgybe.get());
+        this.downwindbearawayifheaded.set(clonefrom.downwindbearawayifheaded.get());
+        this.downwindgybeiflifted.set(clonefrom.downwindgybeiflifted.get());
+        this.downwindluffupiflifted.set(clonefrom.downwindluffupiflifted.get());
+    }
+    
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        parseMandatoryProperty("name", name, jobj);
+        parseMandatoryProperty("type", type, jobj);
+        parseOptionalProperty("heading", heading, jobj);
+        parseOptionalProperty("location", location, jobj);
+        parseOptionalProperty("colour", colour, jobj);
+        parseOptionalProperty("trackcolour", trackcolour, jobj);
+        parseOptionalProperty("upwindsailonbesttack", upwindsailonbesttack, jobj);
+        parseOptionalProperty("upwindtackifheaded", upwindtackifheaded, jobj);
+        parseOptionalProperty("upwindbearawayifheaded", upwindbearawayifheaded, jobj);
+        parseOptionalProperty("upwindluffupiflifted", upwindluffupiflifted, jobj);
+        parseOptionalProperty("reachdownwind", reachdownwind, jobj);
+        parseOptionalProperty("downwindsailonbestgybe", downwindsailonbestgybe, jobj);
+        parseOptionalProperty("downwindbearawayifheaded", downwindbearawayifheaded, jobj);
+        parseOptionalProperty("downwindgybeiflifted", downwindgybeiflifted, jobj);
+        parseOptionalProperty("downwindluffupiflifted", downwindluffupiflifted, jobj);
     }
 
-    public String getName() {
-        return boatproperty.getName();
+    @Override
+    public JsonValue toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        job.add("name", name.toJson());
+        job.add("type", type.toJson());
+        job.add("heading", heading.toJson());
+        job.add("location", location.toJson());
+        job.add("colour", colour.toJson());
+        job.add("trackcolour", trackcolour.toJson());
+        job.add("upwindsailonbesttack", upwindsailonbesttack.toJson());
+        job.add("upwindtackifheaded", upwindtackifheaded.toJson());
+        job.add("upwindbearawayifheaded", upwindbearawayifheaded.toJson());
+        job.add("upwindluffupiflifted", upwindluffupiflifted.toJson());
+        job.add("reachdownwind", reachdownwind.toJson());
+        job.add("downwindsailonbestgybe", downwindsailonbestgybe.toJson());
+        job.add("downwindbearawayifheaded", downwindbearawayifheaded.toJson());
+        job.add("downwindgybeiflifted", downwindgybeiflifted.toJson());
+        job.add("downwindluffupiflifted", downwindluffupiflifted.toJson());
+        return job.build();
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        name.setOnChange(onchange);
+        type.setOnChange(onchange);
+        heading.setOnChange(onchange);
+        location.setOnChange(onchange);
+        colour.setOnChange(onchange);
+        trackcolour.setOnChange(onchange);
+        upwindsailonbesttack.setOnChange(onchange);
+        upwindtackifheaded.setOnChange(onchange);
+        upwindbearawayifheaded.setOnChange(onchange);
+        upwindluffupiflifted.setOnChange(onchange);
+        reachdownwind.setOnChange(onchange);
+        downwindsailonbestgybe.setOnChange(onchange);
+        downwindbearawayifheaded.setOnChange(onchange);
+        downwindgybeiflifted.setOnChange(onchange);
+        downwindluffupiflifted.setOnChange(onchange);
+    }
+    
+    public Boat get() {
+        return this;
+    }
+
+    public final String getName() {
+        return name.get();
+    }
+
+    public final PropertyString getNameProperty() {
+        return name;
+    }
+
+    public final String getType() {
+        return type.get();
+    }
+
+    public final Angle getDirection() {
+        return heading.get();
+    }
+
+    public final void setDirection(Angle newdirection) {
+        heading.set(newdirection);
+    }
+
+    public final Location getLocation() {
+        return location.get();
+    }
+
+    public final void setLocation(Location newlocation) {
+        location.set(newlocation);
+    }
+
+    public final Color getColour() {
+        return colour.get();
+    }
+
+    public final Color getTrackcolour() {
+        return trackcolour.get();
+    }
+
+    public final boolean isUpwindsailonbesttack() {
+        return upwindsailonbesttack.get();
+    }
+
+    public final boolean isUpwindtackifheaded() {
+        return upwindtackifheaded.get();
+    }
+
+    public final boolean isUpwindbearawayifheaded() {
+        return upwindbearawayifheaded.get();
+    }
+
+    public final boolean isUpwindluffupiflifted() {
+        return upwindluffupiflifted.get();
+    }
+
+    public final boolean isReachdownwind() {
+        return reachdownwind.get();
+    }
+
+    public final boolean isDownwindsailonbestgybe() {
+        return downwindsailonbestgybe.get();
+    }
+
+    public final boolean isDownwindbearawayifheaded() {
+        return downwindbearawayifheaded.get();
+    }
+
+    public final boolean isDownwindgybeiflifted() {
+        return downwindgybeiflifted.get();
+    }
+
+    public final boolean isDownwindluffupiflifted() {
+        return downwindluffupiflifted.get();
     }
 
     public Strategy getStrategy() {
@@ -79,7 +296,7 @@ public abstract class Boat {
     }
 
     public boolean isPort(Angle winddirection) {
-        return boatproperty.getDirection().gteq(winddirection);
+        return getDirection().gteq(winddirection);
     }
 
     public Angle getStarboardCloseHauledCourse(Angle winddirection) {
@@ -99,39 +316,39 @@ public abstract class Boat {
     }
 
     public boolean isPortRear90Quadrant(Location location) {
-        return isQuadrant(location, boatproperty.getDirection().inverse(), boatproperty.getDirection().sub(ANGLE90));
+        return isQuadrant(location, getDirection().inverse(), getDirection().sub(ANGLE90));
     }
 
     public boolean isStarboardRear90Quadrant(Location location) {
-        return isQuadrant(location, boatproperty.getDirection().add(ANGLE90), boatproperty.getDirection().inverse());
+        return isQuadrant(location, getDirection().add(ANGLE90), getDirection().inverse());
     }
 
     public boolean isPortTackingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, boatproperty.getDirection().inverse(), getStarboardCloseHauledCourse(winddirection));
+        return isQuadrant(location, getDirection().inverse(), getStarboardCloseHauledCourse(winddirection));
     }
 
     public boolean isStarboardTackingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, getPortCloseHauledCourse(winddirection), boatproperty.getDirection().inverse());
+        return isQuadrant(location, getPortCloseHauledCourse(winddirection), getDirection().inverse());
     }
 
     public boolean isPortGybingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, boatproperty.getDirection().inverse(), getPortReachingCourse(winddirection));
+        return isQuadrant(location, getDirection().inverse(), getPortReachingCourse(winddirection));
     }
 
     public boolean isStarboardGybingQuadrant(Location location, Angle winddirection) {
-        return isQuadrant(location, getStarboardReachingCourse(winddirection), boatproperty.getDirection().inverse());
+        return isQuadrant(location, getStarboardReachingCourse(winddirection), getDirection().inverse());
     }
 
     private boolean isQuadrant(Location location, Angle min, Angle max) {
-        return boatproperty.getLocation().angleto(location).between(min, max);
+        return getLocation().angleto(location).between(min, max);
     }
 
     public boolean moveUsingDecision(WindFlow windflow, WaterFlow waterflow, Decision decision) {
-        SpeedPolar windpolar = windflow.getFlow(boatproperty.getLocation());
-        SpeedPolar waterpolar = waterflow.getFlow(boatproperty.getLocation());
+        SpeedPolar windpolar = windflow.getFlow(getLocation());
+        SpeedPolar waterpolar = waterflow.getFlow(getLocation());
         switch (decision.getAction()) {
             case SAILON -> {
-                moveBoat(boatproperty.getDirection(), windpolar, waterpolar);
+                moveBoat(getDirection(), windpolar, waterpolar);
                 return false;
             }
             case STOP -> {
@@ -151,12 +368,12 @@ public abstract class Boat {
 
     private boolean turn(Decision decision, SpeedPolar windflow, SpeedPolar waterflow) {
         Angle newdirection = decision.getAngle();
-        if (boatproperty.getDirection().absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
+        if (getDirection().absAngleDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(newdirection, windflow, waterflow);
             decision.setSAILON();
             return true;
         }
-        moveBoat(boatproperty.getDirection().add(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
+        moveBoat(getDirection().add(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
         return false;
     }
 
@@ -174,9 +391,9 @@ public abstract class Boat {
         // start by calculating the vector components of the boats movement
         DistancePolar move = new DistancePolar(boatspeed, nextdirection)
                 .subtract(new DistancePolar(waterflow.getSpeedMetresPerSecond(), waterflow.getAngle()));
-        boatproperty.setLocation(move.polar2Location(boatproperty.getLocation())); // updated position calculated
-        track.add(boatproperty.getLocation()); // record it in track
-        boatproperty.setDirection(nextdirection); // and update the directionproperty
+        setLocation(move.polar2Location(getLocation())); // updated position calculated
+        track.add(getLocation()); // record it in track
+        setDirection(nextdirection); // and update the directionproperty
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
 }

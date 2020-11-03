@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,23 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- * The Laser 2 Dinghy.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class Laser2 extends Boat {
 
-    public Laser2(PropertyBoat boatproperty, SketchModel sketchproperty, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
-        super(boatproperty, sketchproperty, firstleg, windflow, waterflow,
-                new BoatMetricsBuilder()
+    public Laser2(Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+        super("laser2",firstleg, windflow, waterflow,getMetrics());
+    }
+    
+    public Laser2(Location location, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+        super("laser2",location, firstleg, windflow, waterflow,getMetrics());
+    }
+    
+    private static BoatMetrics getMetrics() {
+               return  new BoatMetricsBuilder()
                         .length(4)
                         .width(1.5)
                         .inertia(0.25)
@@ -50,7 +52,10 @@ public class Laser2 extends Boat {
                                         .vector(18, new double[]{-1.5, 0, 5.3, 5.3, 7.1, 14.5, 18, 15.8, 10.2, 7.8, 7.8})
                                         .vector(20, new double[]{-1.5, 0, 5.3, 5.3, 7.1, 15, 19, 17.5, 12, 9, 9})
                                         .build()
-                        ).build()
-        );
+                        ).build();
+    }
+    
+    public Laser2(String name, Laser2 clonefrom) {
+        super(name, clonefrom);
     }
 }

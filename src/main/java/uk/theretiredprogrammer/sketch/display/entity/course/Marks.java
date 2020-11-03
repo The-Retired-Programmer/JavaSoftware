@@ -33,5 +33,4 @@ public class Marks extends ModelArray<Mark> {
         return getProperties().stream().filter(mark -> name.equals(mark.getName())).findFirst()
                 .orElseThrow(() -> new IllegalStateFailure("can't find Mark with name "+name));
     }
-            
 }

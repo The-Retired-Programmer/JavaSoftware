@@ -112,17 +112,17 @@ public class BoatTurnTest extends TurnTest {
             Angle targetangle = new Angle(finishangleint);
             setupForTurn("/boat-turn-calculation.json", updateproperties);
             Boat boat = getUptospeed(secondstospeed);
-            Angle direction = boat.getProperty().getDirection();
+            Angle direction = boat.getDirection();
             assertEquals(startangle, direction);
-            startturnlocation = boat.getProperty().getLocation();
+            startturnlocation = boat.getLocation();
             assertAll("startturnlocation",
                     () -> assertEquals(expectedstartturnlocation.getY(), startturnlocation.getY(), DELTA),
                     () -> assertEquals(expectedstartturnlocation.getX(), startturnlocation.getX(), DELTA)
             );
             boat = makeTurn(targetangle, turndirection);
-            direction = boat.getProperty().getDirection();
+            direction = boat.getDirection();
             assertEquals(targetangle, direction);
-            endturnlocation = boat.getProperty().getLocation();
+            endturnlocation = boat.getLocation();
             assertAll("endturnlocation",
                     () -> assertEquals(expectedendturnlocation.getY(), endturnlocation.getY(), DELTA),
                     () -> assertEquals(expectedendturnlocation.getX(), endturnlocation.getX(), DELTA)

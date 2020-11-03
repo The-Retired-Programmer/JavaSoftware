@@ -76,7 +76,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllBoatsPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getBoats().stream().forEach(boatproperty -> this.getPanes().add(new PropertyMapPane(boatproperty.propertymap, "Boat - ", boatproperty.getNameProperty())));
+        sketchmodel.getBoats().getProperties().forEach(boatproperty -> this.getPanes().add(new PropertyMapPane(boatproperty.getProperties(), "Boat - ", boatproperty.getNameProperty())));
         sketchmodel.getBoats().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {

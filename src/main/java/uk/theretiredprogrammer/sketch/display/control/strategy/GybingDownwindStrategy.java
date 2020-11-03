@@ -65,7 +65,7 @@ public class GybingDownwindStrategy extends Strategy {
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
-        Angle winddirection = windflow.getFlow(boat.getProperty().getLocation()).getAngle();
+        Angle winddirection = windflow.getFlow(boat.getLocation()).getAngle();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
@@ -77,7 +77,7 @@ public class GybingDownwindStrategy extends Strategy {
     }
 
     boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getProperty().getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 }

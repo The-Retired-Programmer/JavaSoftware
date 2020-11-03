@@ -33,9 +33,11 @@ import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.boats.PropertyBoat;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 
@@ -95,7 +97,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             Mark newmark = new Mark(new Location(x, y));
-                if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.getProperties(), "Mark"))) {
+            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.getProperties(), "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getProperty().getMarks().add(newmark);
             }
@@ -106,8 +108,12 @@ public class DisplayPane extends Group {
         if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
-            PropertyBoat newboat = new PropertyBoat(new Location(x, y));
-            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat.propertymap, "Boat"))) {
+            SketchModel model = controller.getProperty();
+            Boat newboat = BoatFactory.createBoat("laser2", new Location(x, y),
+                    model.getCourse().getFirstLeg(),
+                    new WindFlow(model),
+                    new WaterFlow(model));
+            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat.getProperties(), "Boat"))) {
                 controller.getProperty().getBoats().add(newboat);
             }
         }
@@ -216,15 +222,15 @@ public class DisplayPane extends Group {
     }
 
     private void boatsdraw() {
-        controller.boats.stream().forEach(boat -> boatdraw(boat));
+        controller.boats.getProperties().forEach(boat -> boatdraw(boat));
     }
 
     private void boatdraw(Boat boat) {
         getChildren().addAll(
                 Wrap.globalTransform(
                         Wrap.contextMenu(
-                                shapebuilder.drawboat(boat.getProperty().getLocation(), boat.getProperty().getDirection(), boat.getProperty().getColour(),
-                                        controller.windflow.getFlow(boat.getProperty().getLocation()).getAngle(),
+                                shapebuilder.drawboat(boat.getLocation(), boat.getDirection(), boat.getColour(),
+                                        controller.windflow.getFlow(boat.getLocation()).getAngle(),
                                         boat.metrics.length, boat.metrics.width, boat.sailcolor),
                                 UI.contextMenu(
                                         UI.menuitem("tack", ev -> tack(boat)),
@@ -241,10 +247,9 @@ public class DisplayPane extends Group {
     }
 
     private void tack(Boat boat) {
-        PropertyBoat boatproperty = boat.getProperty();
-        Location position = boatproperty.getLocation();
+        Location position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
-        Angle delta = wind.angleDiff(boatproperty.getDirection());
+        Angle delta = wind.angleDiff(boat.getDirection());
         if (delta.gt(ANGLE0)) {
             // anti clockwise to starboard tack
             Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
@@ -259,10 +264,9 @@ public class DisplayPane extends Group {
     }
 
     private void gybe(Boat boat) {
-        PropertyBoat boatproperty = boat.getProperty();
-        Location position = boatproperty.getLocation();
+        Location position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
-        Angle delta = wind.angleDiff(boatproperty.getDirection());
+        Angle delta = wind.angleDiff(boat.getDirection());
         if (delta.gt(ANGLE0)) {
             // clockwise to starboard gybe
             Angle target = boat.getStarboardReachingCourse(wind.getAngle());
@@ -277,18 +281,14 @@ public class DisplayPane extends Group {
     }
 
     private void duplicatetack(Boat boat) {
-        String newname = boat.getName() + "-1";
-        PropertyBoat newboatproperty = new PropertyBoat(boat.getName() + "-1", boat.getProperty());
-        controller.getProperty().getBoats().add(newboatproperty);
-        Boat newboat = controller.boats.getBoat(newname);
+        Boat newboat = BoatFactory.cloneBoat(boat.getName() + "-1", boat);
+        controller.getProperty().getBoats().add(newboat);
         tack(newboat);
     }
 
     private void duplicategybe(Boat boat) {
-        String newname = boat.getName() + "-1";
-        PropertyBoat newboatproperty = new PropertyBoat(boat.getName() + "-1", boat.getProperty());
-        controller.getProperty().getBoats().add(newboatproperty);
-        Boat newboat = controller.boats.getBoat(newname);
+        Boat newboat = BoatFactory.cloneBoat(boat.getName() + "-1", boat);
+        controller.getProperty().getBoats().add(newboat);
         gybe(newboat);
     }
 }

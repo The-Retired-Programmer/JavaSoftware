@@ -33,7 +33,7 @@ class AfterFinishStrategy extends Strategy {
 
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        double fromfinishmark = boat.getProperty().getLocation().to(leg.getEndLocation());
+        double fromfinishmark = boat.getLocation().to(leg.getEndLocation());
         if (fromfinishmark > boat.metrics.getLength() * 5) {
             decision.setSTOP();
             return "Stopping at end of course";

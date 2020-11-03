@@ -22,7 +22,6 @@ import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.Location;

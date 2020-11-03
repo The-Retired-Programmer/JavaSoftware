@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
@@ -83,6 +84,14 @@ public class PropertyConstrainedString extends PropertyElement<String> {
             throw new IllegalStateFailure("Bad default value - not in constraints list");
         }
         constrainedproperty = new PropertyString(defaultvalue);
+    }
+    
+    public void setOnChange(Runnable onchange) {
+        //setOnChange((c) -> onchange.run());
+    }
+
+    public void setOnChange(ChangeListener cl) {
+        constrainedproperty.propertyString().addListener(cl);
     }
 
     @Override

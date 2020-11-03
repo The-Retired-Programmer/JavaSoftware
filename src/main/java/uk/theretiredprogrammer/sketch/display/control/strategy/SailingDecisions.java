@@ -63,54 +63,54 @@ abstract class SailingDecisions {
     }
 
     boolean adjustPortDirectCourseToWindwardMarkOffset(Strategy strategy, Angle winddirection) {
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), true);
+        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
         Angle closehauled = strategy.boat.getPortCloseHauledCourse(winddirection);
         if (coursetomark.lt(closehauled)) {
             return false;
         }
-        return adjustCourse(strategy.boat.getProperty().getDirection(),
+        return adjustCourse(strategy.boat.getDirection(),
                 coursetomark.gteq(closehauled) ? coursetomark : closehauled, strategy.decision);
     }
 
     boolean adjustStarboardDirectCourseToWindwardMarkOffset(Strategy strategy, Angle winddirection) {
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), false);
+        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
         Angle closehauled = strategy.boat.getStarboardCloseHauledCourse(winddirection);
         if (coursetomark.gt(closehauled)) {
             return false;
         }
-        return adjustCourse(strategy.boat.getProperty().getDirection(),
+        return adjustCourse(strategy.boat.getDirection(),
                 coursetomark.lteq(closehauled) ? coursetomark : closehauled, strategy.decision);
     }
 
     boolean adjustPortDirectCourseToLeewardMarkOffset(Strategy strategy, Angle winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), true);
+        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
         Angle reaching = strategy.boat.getPortReachingCourse(winddirection);
         if (coursetomark.gt(reaching)) {
             return false;
         }
-        return adjustCourse(strategy.boat.getProperty().getDirection(),
+        return adjustCourse(strategy.boat.getDirection(),
                 coursetomark.lteq(reaching) ? coursetomark : reaching, strategy.decision);
     }
 
     boolean adjustStarboardDirectCourseToLeewardMarkOffset(Strategy strategy, Angle winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), false);
+        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
         Angle reaching = strategy.boat.getStarboardReachingCourse(winddirection);
         if (coursetomark.lt(reaching)) {
             return false;
         }
-        return adjustCourse(strategy.boat.getProperty().getDirection(),
+        return adjustCourse(strategy.boat.getDirection(),
                 coursetomark.gteq(reaching) ? coursetomark : reaching, strategy.decision);
     }
 
     boolean adjustDirectCourseToDownwindMarkOffset(Strategy strategy, Angle winddirection) {
         if (strategy.boat.isPort(winddirection)) {
-            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), true);
-            return adjustCourse(strategy.boat.getProperty().getDirection(), coursetomark, strategy.decision);
+            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
+            return adjustCourse(strategy.boat.getDirection(), coursetomark, strategy.decision);
         } else {
-            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getProperty().getLocation(), false);
-            return adjustCourse(strategy.boat.getProperty().getDirection(), coursetomark, strategy.decision);
+            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
+            return adjustCourse(strategy.boat.getDirection(), coursetomark, strategy.decision);
         }
     }
 
