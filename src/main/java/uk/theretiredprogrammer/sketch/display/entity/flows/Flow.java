@@ -37,12 +37,12 @@ public abstract class Flow {
     private Angle swingNow = new Angle(0);
     private Angle meanflowangle;
 
-    private final FlowShiftsModel flowshiftsproperty;
-    private final FlowComponentsModel flowcomponentsproperty;
+    private final FlowShiftModel flowshiftsproperty;
+    private final FlowComponentSet flowcomponents;
 
-    public Flow(SketchModel sketchproperty, FlowShiftsModel flowshiftsproperty, FlowComponentsModel flowcomponentsproperty) {
+    public Flow(SketchModel sketchproperty, FlowShiftModel flowshiftsproperty, FlowComponentSet flowcomponents) {
         this.flowshiftsproperty = flowshiftsproperty;
-        this.flowcomponentsproperty = flowcomponentsproperty;
+        this.flowcomponents = flowcomponents;
         //
         this.area = sketchproperty.getDisplay().getSailingarea();
         hstepsize = area.getHeight() / HEIGHTSTEPS;
@@ -51,7 +51,6 @@ public abstract class Flow {
     }
 
     public final void setFlows() {
-        FlowComponentSet flowcomponents = new FlowComponentSet(flowcomponentsproperty.getProperties());
         double hpos = area.getBottomleft().getY();
         double wpos = area.getBottomleft().getX();
         for (int h = 0; h < HEIGHTSTEPS + 1; h++) {

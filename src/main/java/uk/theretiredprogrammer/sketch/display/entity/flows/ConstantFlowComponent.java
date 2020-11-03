@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,53 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
+import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
-/**
- * The ConstantFlow Class - represents a flow which is steady in speed and
- * direction across the entire plane.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final ConstantFlowComponentModel property;
+    private final PropertySpeedPolar flow = new PropertySpeedPolar("flow", FLOWZERO);
 
-    public ConstantFlowComponent(ConstantFlowComponentModel constantflowcomponentproperty) {
-        super(constantflowcomponentproperty);
-        this.property = constantflowcomponentproperty;
+    public ConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
+        addProperty("flow", flow);
+    }
+
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        super.parseValues(jobj);
+        parseOptionalProperty("flow", flow, jobj);
+    }
+
+    @Override
+    public JsonValue toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        super.toJson(job);
+        job.add("flow", flow.toJson());
+        return job.build();
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        super.setOnChange(onchange);
+        flow.setOnChange(onchange);
+    }
+
+    public SpeedPolar getFlow() {
+        return flow.get();
     }
 
     @Override
     public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return property.getFlow();
+        return getFlow();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,8 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponentModel;
+import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class TurnTest {
 
     private Boat boat;
@@ -78,7 +74,7 @@ public class TurnTest {
         controller.getProperty().getWind().getProperties().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponentModel) tfc).setFlow(new SpeedPolar(speed, degrees));
+                    ((TestFlowComponent) tfc).setFlow(new SpeedPolar(speed, degrees));
                     controller.windflow.setFlows();
                 });
     }

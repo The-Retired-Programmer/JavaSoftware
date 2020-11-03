@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@ import javafx.scene.control.Menu;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
-import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentModel;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
 
-/**
- *
- * @author richard
- */
 public class PropertiesWindow extends AbstractWindow<PropertiesController> {
 
     public PropertiesWindow(String fn, PropertiesController controller, SketchModel sketchmodel) {
@@ -40,11 +36,11 @@ public class PropertiesWindow extends AbstractWindow<PropertiesController> {
             boatmenu.getItems().add(UI.menuitem(classname, ev -> controller.addNewBoat(classname)));
         });
         Menu windmenu = UI.menu("Add WindFlowComponent");
-        FlowComponentModel.getTypenames().forEach(typename -> {
+        FlowComponent.getTypenames().forEach(typename -> {
             windmenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWindFlowComponent(typename)));
         });
         Menu watermenu = UI.menu("Add WaterFlowComponent");
-        FlowComponentModel.getTypenames().forEach(typename -> {
+        FlowComponent.getTypenames().forEach(typename -> {
             watermenu.getItems().add(UI.menuitem(typename, ev -> controller.addNewWaterFlowComponent(typename)));
         });
         addtoMenubar(

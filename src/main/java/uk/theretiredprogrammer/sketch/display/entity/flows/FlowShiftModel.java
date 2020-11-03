@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
-public class FlowShiftsModel extends ModelProperties {
+public class FlowShiftModel extends ModelProperties {
 
     private final PropertyBoolean showflow = new PropertyBoolean("showflow", false);
     private final PropertyDouble showflowinterval = new PropertyDouble("showflowinterval", 100.0);
@@ -40,7 +40,7 @@ public class FlowShiftsModel extends ModelProperties {
     private final PropertyInteger shiftperiod = new PropertyInteger("shiftperiod", 0);
     private final PropertyBoolean randomshifts = new PropertyBoolean("randomshifts", false);
 
-    public FlowShiftsModel() {
+    public FlowShiftModel() {
         addProperty("showflow",showflow);
         addProperty("showflowinterval",showflowinterval);
         addProperty("showflowcolour",showflowcolour);

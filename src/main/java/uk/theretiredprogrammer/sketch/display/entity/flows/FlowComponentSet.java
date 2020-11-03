@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,38 +15,52 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import javafx.collections.ObservableList;
+import jakarta.json.JsonObject;
+import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
-/**
- *
- * @author richard
- */
-public class FlowComponentSet {
+public class FlowComponentSet extends ModelArray<FlowComponent> {
 
-    private final ObservableList<FlowComponentModel> flows;
+    private final Supplier<Area> getdisplayarea;
 
-    public FlowComponentSet(ObservableList<FlowComponentModel> flows) {
-        this.flows = flows;
+    public FlowComponentSet(Supplier<Area> getdisplayarea) {
+        this.getdisplayarea = getdisplayarea;
+    }
+
+    @Override
+    protected FlowComponent createAndParse(JsonObject jobj) {
+        FlowComponent flowc = FlowComponent.factory(
+                jobj.getString("type", "<undefined>"),
+                getdisplayarea
+        );
+        flowc.parse(jobj);
+        return flowc;
+    }
+
+    @Override
+    public FlowComponent get(String name) {
+        throw new IllegalStateFailure("get(name) in not to be used");
     }
 
     public SpeedPolar getFlow(Location pos) {
         int zlevel = -1;
-        FlowComponentModel flowtouse = null;
-        for (FlowComponentModel flow : flows) {
+        FlowComponent flowtouse = null;
+        for (FlowComponent flow : getProperties()) {
             if (flow.getArea().isWithinArea(pos) && flow.getZlevel() > zlevel) {
                 zlevel = flow.getZlevel();
                 flowtouse = flow;
             }
         }
-        return flowtouse != null ? FlowComponent.factory(flowtouse).getFlow(pos) : SpeedPolar.FLOWZERO;
+        return flowtouse != null ? flowtouse.getFlow(pos) : SpeedPolar.FLOWZERO;
     }
 
     public Angle meanWindAngle() {
-        for (FlowComponentModel flowproperty : flows) {
-            FlowComponent flow = FlowComponent.factory(flowproperty);
+        for (FlowComponent flow : getProperties()) {
             Angle res = flow.meanWindAngle();
             if (res != null) {
                 return res;

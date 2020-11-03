@@ -20,11 +20,11 @@ import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentModel;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
@@ -90,12 +90,12 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewWindFlowComponent(String flowtype) {
-        FlowComponentModel newflow = FlowComponentModel.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        FlowComponent newflow = FlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
         sketchmodel.getWind().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
-        FlowComponentModel newflow = FlowComponentModel.factory(flowtype, () -> sketchmodel.getDisplayArea());
+        FlowComponent newflow = FlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
         sketchmodel.getWater().add(newflow);
     }
 

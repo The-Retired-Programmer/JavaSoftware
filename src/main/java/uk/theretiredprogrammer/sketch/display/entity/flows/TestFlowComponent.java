@@ -15,27 +15,74 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyAngle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
+import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
 public class TestFlowComponent extends FlowComponent {
 
-    private final TestFlowComponentModel property;
+    private final PropertySpeedPolar flow = new PropertySpeedPolar("flow", FLOWZERO);
+    private final PropertyAngle mean = new PropertyAngle("mean", ANGLE0);
 
-    public TestFlowComponent(TestFlowComponentModel testflowcomponentproperty) {
-        super(testflowcomponentproperty);
-        this.property = testflowcomponentproperty;
+    public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
+        addProperty("flow", flow);
+        addProperty("mean", mean);
+    }
+
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        super.parseValues(jobj);
+        parseOptionalProperty("flow", flow, jobj);
+        parseOptionalProperty("mean", mean, jobj);
+    }
+
+    @Override
+    public JsonValue toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        super.toJson(job);
+        job.add("flow", flow.toJson());
+        job.add("mean", mean.toJson());
+        return job.build();
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        super.setOnChange(onchange);
+        flow.setOnChange(onchange);
+        mean.setOnChange(onchange);
+    }
+
+    public SpeedPolar getFlow() {
+        return flow.get();
+    }
+
+    public Angle getmean() {
+        return mean.get();
+    }
+
+    public void setFlow(SpeedPolar newvalue) {
+        flow.set(newvalue);
     }
 
     @Override
     public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return property.getFlow();
+        return getFlow();
     }
 
     @Override
     public Angle meanWindAngle() {
-        return property.getmean();
+        return getmean();
     }
 }

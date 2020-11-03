@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,28 +15,52 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
+import java.util.function.Supplier;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADIENTDEFAULT;
 
-/**
- * The EastWestGradientFlow Class - represents a flow with differing parameters
- * (direction and speed) in a east-west direction. Intermediate positions are
- * interpolated to provide the changing flow.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class GradientFlowComponent extends FlowComponent {
 
-    private final GradientFlowComponentModel property;
+    private final PropertyGradient gradient = new PropertyGradient("gradient", GRADIENTDEFAULT);
 
-    public GradientFlowComponent(GradientFlowComponentModel gradientflowcomponentproperty) {
-        super(gradientflowcomponentproperty);
-        this.property = gradientflowcomponentproperty;
+    public GradientFlowComponent(Supplier<Area> getdisplayarea, String type) {
+        super(getdisplayarea, type);
+        addProperty("gradient", gradient);
+    }
+
+    @Override
+    protected void parseValues(JsonObject jobj) {
+        super.parseValues(jobj);
+        parseOptionalProperty("gradient", gradient, jobj);
+    }
+
+    @Override
+    public JsonValue toJson() {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+        super.toJson(job);
+        job.add("gradient", gradient.toJson());
+        return job.build();
+    }
+
+    @Override
+    public void setOnChange(Runnable onchange) {
+        super.setOnChange(onchange);
+        gradient.setOnChange(onchange);
+    }
+
+    public Gradient getGradient() {
+        return gradient.get();
     }
 
     @Override
     public SpeedPolar getFlow(Location pos) {
         testLocationWithinArea(pos);
-        return property.getGradient().getFlow(pos);
+        return getGradient().getFlow(pos);
     }
 }

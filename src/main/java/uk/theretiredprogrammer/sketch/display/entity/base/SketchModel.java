@@ -28,8 +28,8 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
-import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentsModel;
-import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftsModel;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
 
 public class SketchModel extends ModelProperties {
 
@@ -37,10 +37,10 @@ public class SketchModel extends ModelProperties {
     private final PropertyString type = new PropertyString("type", null);
     private final MetaModel meta = new MetaModel();
     private final DisplayModel display = new DisplayModel();
-    private final FlowShiftsModel windshifts = new FlowShiftsModel();
-    private final FlowComponentsModel wind = new FlowComponentsModel(() -> getDisplayArea());
-    private final FlowShiftsModel watershifts = new FlowShiftsModel();
-    private final FlowComponentsModel water = new FlowComponentsModel(() -> getDisplayArea());
+    private final FlowShiftModel windshifts = new FlowShiftModel();
+    private final FlowComponentSet wind = new FlowComponentSet(() -> getDisplayArea());
+    private final FlowShiftModel watershifts = new FlowShiftModel();
+    private final FlowComponentSet water = new FlowComponentSet(() -> getDisplayArea());
     private final Marks marks = new Marks();
     private final Course course = new Course(marks, getMarkNames());
     private final Boats boats = new Boats(this);
@@ -121,19 +121,19 @@ public class SketchModel extends ModelProperties {
         return display;
     }
 
-    public FlowShiftsModel getWindshifts() {
+    public FlowShiftModel getWindshifts() {
         return windshifts;
     }
 
-    public FlowComponentsModel getWind() {
+    public FlowComponentSet getWind() {
         return wind;
     }
 
-    public FlowShiftsModel getWatershifts() {
+    public FlowShiftModel getWatershifts() {
         return watershifts;
     }
 
-    public FlowComponentsModel getWater() {
+    public FlowComponentSet getWater() {
         return water;
     }
 
