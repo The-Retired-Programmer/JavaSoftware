@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author richard
- */
 public class WindSwingLogEntry extends TimerLogEntry {
 
     private final double windswing;
 
-    public WindSwingLogEntry(Angle swing) {
-        this.windswing = swing.getDegrees();
+    public WindSwingLogEntry(PropertyDegrees swing) {
+        this.windswing = swing.get();
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,20 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingStrategyTest {
 
-    private static final Angle DELTAANGLE = new Angle(5);
+    private static final PropertyDegrees DELTAANGLE = new PropertyDegrees(5);
 
     @Test
     public void testStarboardlayline1A() throws IOException {
         System.out.println("starboard layline 1A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocation(52, 84));
-        Angle starboardclosedhauled = getStarboardCloseHauled();
+        PropertyDegrees starboardclosedhauled = getStarboardCloseHauled();
         assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
@@ -42,7 +37,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 2A");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding.json",
                 () -> setboatlocation(50, 86));
-        Angle starboardclosedhauled = getStarboardCloseHauled();
+        PropertyDegrees starboardclosedhauled = getStarboardCloseHauled();
         assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
@@ -85,8 +80,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 1A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocation(44, 88));
-        Angle portclosedhauled = getPortCloseHauled();
-        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
+        PropertyDegrees portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.plus(DELTAANGLE));
     }
 
     @Test
@@ -94,8 +89,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 2A");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding.json",
                 () -> setboatlocation(46, 90));
-        Angle portclosedhauled = getPortCloseHauled();
-        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
+        PropertyDegrees portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.plus(DELTAANGLE));
     }
 
     @Test
@@ -137,7 +132,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 1B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocation(44, 88));
-        Angle starboardclosedhauled = getStarboardCloseHauled();
+        PropertyDegrees starboardclosedhauled = getStarboardCloseHauled();
         assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
@@ -146,7 +141,7 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("starboard layline 2B");
         Decision decision = makeDecision("/upwind-starboardtack-starboardrounding-90Wind.json",
                 () -> setboatlocation(46, 90));
-        Angle starboardclosedhauled = getStarboardCloseHauled();
+        PropertyDegrees starboardclosedhauled = getStarboardCloseHauled();
         assertSailing(decision, starboardclosedhauled.sub(DELTAANGLE), starboardclosedhauled);
     }
 
@@ -189,8 +184,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 1B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocation(48, 96));
-        Angle portclosedhauled = getPortCloseHauled();
-        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
+        PropertyDegrees portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.plus(DELTAANGLE));
     }
 
     @Test
@@ -198,8 +193,8 @@ public class WindwardtoAnyOffwindStarboardRoundingStrategyTest extends SailingSt
         System.out.println("port layline 2B");
         Decision decision = makeDecision("/upwind-porttack-starboardrounding-90Wind.json",
                 () -> setboatlocation(50, 94));
-        Angle portclosedhauled = getPortCloseHauled();
-        assertSailing(decision, portclosedhauled, portclosedhauled.add(DELTAANGLE));
+        PropertyDegrees portclosedhauled = getPortCloseHauled();
+        assertSailing(decision, portclosedhauled, portclosedhauled.plus(DELTAANGLE));
     }
 
     @Test

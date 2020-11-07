@@ -15,113 +15,40 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyArea extends PropertyElement<Area> {
+public class PropertyArea extends SimpleObjectProperty<Area> implements ModelProperty<Area> {
 
-    private final PropertyDouble xproperty;
-    private final PropertyDouble yproperty;
-    private final PropertyDouble widthproperty;
-    private final PropertyDouble heightproperty;
-
-    public PropertyArea(Area defaultvalue) {
-        this(null, defaultvalue);
+    public PropertyArea(Area value){
+        set(value);
     }
-
-    public PropertyArea(String key, Area defaultvalue) {
-        setKey(key);
-        xproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getBottomleft().getX());
-        yproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getBottomleft().getY());
-        widthproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getWidth());
-        heightproperty = new PropertyDouble(defaultvalue == null ? null : defaultvalue.getHeight());
-    }
-
+    
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        xproperty.propertyDouble().addListener(cl);
-        yproperty.propertyDouble().addListener(cl);
-        widthproperty.propertyDouble().addListener(cl);
-        heightproperty.propertyDouble().addListener(cl);
-    }
-
-    @Override
-    public final Area get() {
-        Double xval = xproperty.get();
-        return xval == null ? null
-                : new Area(new Location(xval, yproperty.get()), widthproperty.get(), heightproperty.get());
-    }
-
-    @Override
-    public final void set(Area newarea) {
-        xproperty.set(newarea == null ? null : newarea.getBottomleft().getX());
-        yproperty.set(newarea == null ? null : newarea.getBottomleft().getY());
-        widthproperty.set(newarea == null ? null : newarea.getWidth());
-        heightproperty.set(newarea == null ? null : newarea.getHeight());
-    }
-
     @Override
     public final Area parsevalue(JsonValue value) {
-        if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
-            JsonArray values = (JsonArray) value;
-            if (values.size() == 4) {
-                return new Area(
-                        xproperty.parsevalue(values.get(0)),
-                        yproperty.parsevalue(values.get(1)),
-                        widthproperty.parsevalue(values.get(2)),
-                        heightproperty.parsevalue(values.get(3))
-                );
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - List of 4 numbers expected");
+        return ParseHelper.areaParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        Double xval = xproperty.get();
-        return xval == null ? JsonValue.NULL
-                : Json.createArrayBuilder()
-                        .add(xval)
-                        .add(yproperty.get())
-                        .add(widthproperty.get())
-                        .add(heightproperty.get())
-                        .build();
+        return ParseHelper.areaToJson(get());
     }
 
     @Override
     public Node getField() {
-        return new HBox(
-                createTextFor("["),
-                xproperty.getField(7),
-                createTextFor(","),
-                yproperty.getField(7),
-                createTextFor("] "),
-                widthproperty.getField(7),
-                createTextFor("x"),
-                heightproperty.getField(7)
-        );
+        return getField(7);
     }
 
     @Override
     public Node getField(int size) {
-        return new HBox(
-                createTextFor("["),
-                xproperty.getField(size),
-                createTextFor(","),
-                yproperty.getField(size),
-                createTextFor("] "),
-                widthproperty.getField(size),
-                createTextFor("x"),
-                heightproperty.getField(size)
-        );
+        return FieldBuilder.getAreaField(size,this);
     }
 
     @Override

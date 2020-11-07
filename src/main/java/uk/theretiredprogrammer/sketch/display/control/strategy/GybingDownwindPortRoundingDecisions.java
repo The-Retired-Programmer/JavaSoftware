@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -29,15 +29,15 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
  */
 class GybingDownwindPortRoundingDecisions extends RoundingDecisions {
 
-    private final Function<Angle, Angle> getDirectionAfterTurn;
+    private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
 
-    GybingDownwindPortRoundingDecisions(Function<Angle, Angle> getDirectionAfterTurn) {
+    GybingDownwindPortRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
     final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getMeanFlowAngle(strategy.boat.getLocation());
+        PropertyDegrees winddirection = windflow.getMeanFlowAngle(strategy.boat.getLocation());
         if (strategy.boat.isPort(winddirection)) {
             if (atPortRoundingTurnPoint(strategy)) {
                 return executePortRounding(getDirectionAfterTurn, winddirection, strategy);

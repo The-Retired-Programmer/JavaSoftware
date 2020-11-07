@@ -29,16 +29,13 @@ public abstract class ModelArray<P extends Model> implements Model {
 
     private final ObservableList<P> list = FXCollections.observableArrayList();
 
-    protected abstract P createAndParse(JsonObject jobj);
+    protected abstract P createAndParse(JsonValue jobj);
 
     @Override
     public final void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             ((JsonArray) jvalue).forEach(jval -> {
-                if (jval.getValueType() != JsonValue.ValueType.OBJECT) {
-                    throw new ParseFailure("Malformed Definition File - array contains items other than Objects");
-                }
-                list.add(createAndParse((JsonObject) jval));
+                list.add(createAndParse(jval));
             });
         }
     }

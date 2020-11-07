@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,17 +18,13 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class WindwardStrategy extends Strategy {
 
     private final WindwardStarboardSailingDecisions starboarddecisions;
@@ -38,8 +34,8 @@ public class WindwardStrategy extends Strategy {
 
     public WindwardStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg,
-                leg.endLegMeanwinddirection(windflow).add(new Angle(135)), leg.endLegMeanwinddirection(windflow).add(new Angle(45)),
-                leg.endLegMeanwinddirection(windflow).add(new Angle(-45)), leg.endLegMeanwinddirection(windflow).add(new Angle(-135)));
+                leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(135)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(45)),
+                leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-45)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-135)));
         starboarddecisions = new WindwardStarboardSailingDecisions();
         portdecisions = new WindwardPortSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
@@ -54,8 +50,8 @@ public class WindwardStrategy extends Strategy {
                         : new WindwardStarboardRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle));
             case NONE ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new WindwardPortRoundingDecisions((windangle) -> windangle.sub(ANGLE90))
-                        : new WindwardStarboardRoundingDecisions((windangle) -> windangle.add(ANGLE90));
+                        ? new WindwardPortRoundingDecisions((windangle) -> windangle.sub(DEGREES90))
+                        : new WindwardStarboardRoundingDecisions((windangle) -> windangle.plus(DEGREES90));
             default ->
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported WindwardRounding: " + followinglegtype.toString());
         }
@@ -63,8 +59,8 @@ public class WindwardStrategy extends Strategy {
 
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
-        Angle winddirection = windflow.getFlow(boat.getLocation()).getAngle();
+        PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
@@ -75,7 +71,7 @@ public class WindwardStrategy extends Strategy {
         return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(sketchproperty, this, windflow, waterflow);
     }
 
-    boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
+    boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
         Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection);
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }

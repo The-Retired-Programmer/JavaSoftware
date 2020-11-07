@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +22,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class SpeedPolarTest {
 
     public SpeedPolarTest() {
@@ -51,10 +45,9 @@ public class SpeedPolarTest {
 
     @Test
     public void testCreation() {
-        System.out.println("creation<distance,angle>");
-        SpeedPolar instance = new SpeedPolar(100, new Angle(90));
+        System.out.println("creation<distance,degrees>");
+        SpeedPolar instance = new SpeedPolar(100, new PropertyDegrees(90));
         assertEquals(100, instance.getSpeed());
-        assertEquals(new Angle(90), instance.getAngle());
+        assertEquals(90, instance.getDegrees());
     }
-
 }

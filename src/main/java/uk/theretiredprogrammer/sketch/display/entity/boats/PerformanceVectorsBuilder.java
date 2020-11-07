@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 rRichard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class PerformanceVectorsBuilder {
 
     private final Map<Double, double[]> vectors = new HashMap<>();
-    private Angle[] angles;
+    private PropertyDegrees[] angles;
     private int anglescount = 0;
 
     public PerformanceVectorsBuilder defineAngles(int[] inputangles) {
@@ -37,9 +33,9 @@ public class PerformanceVectorsBuilder {
             throw new IllegalStateFailure("PerformanceVectorsBuilder: duplicate angles definition");
         }
         anglescount = inputangles.length;
-        angles = new Angle[anglescount];
+        angles = new PropertyDegrees[anglescount];
         for (int i = 0; i < anglescount; i++) {
-            angles[i] = new Angle(inputangles[i]);
+            angles[i] = new PropertyDegrees(inputangles[i]);
         }
         return this;
     }

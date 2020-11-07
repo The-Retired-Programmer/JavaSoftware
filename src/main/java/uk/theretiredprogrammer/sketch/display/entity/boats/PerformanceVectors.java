@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,29 +15,25 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class PerformanceVectors {
 
-    private final Angle[] windAngleData;
+    private final PropertyDegrees[] windAngleData;
     private final double[] windSpeedData;
     private final double[][] boatSpeedData;
 
-    public PerformanceVectors(double[][] boatSpeedData, Angle[] windAngleData, double[] windSpeedData) {
+    public PerformanceVectors(double[][] boatSpeedData, PropertyDegrees[] windAngleData, double[] windSpeedData) {
         this.boatSpeedData = boatSpeedData;
         this.windAngleData = windAngleData;
         this.windSpeedData = windSpeedData;
     }
 
-    double getPotentialBoatSpeed(Angle angle, double windSpeed) {
+    double getPotentialBoatSpeed(PropertyDegrees degrees, double windSpeed) {
         // find the lookup point for wind direction
         int angleindex = -1;
-        for (Angle windangldata : windAngleData) {
-            if (windangldata.gteq(angle)) {
+        for (PropertyDegrees windangldata : windAngleData) {
+            if (windangldata.gteq(degrees)) {
                 // found higher
                 break;
             }
@@ -55,12 +51,12 @@ public class PerformanceVectors {
             speedindex++;
         }
         // now extrapolate the boat speed, firstly on two windspeed curves and then between them.
-        double boatspeedlower = extrapolateFromTable(boatSpeedData, windAngleData, angle, speedindex, angleindex);
-        double boatspeedupper = extrapolateFromTable(boatSpeedData, windAngleData, angle, speedindex + 1, angleindex);
+        double boatspeedlower = extrapolateFromTable(boatSpeedData, windAngleData, degrees, speedindex, angleindex);
+        double boatspeedupper = extrapolateFromTable(boatSpeedData, windAngleData, degrees, speedindex + 1, angleindex);
         return extrapolateSpeed(boatspeedlower, boatspeedupper, windSpeed, windSpeedData, speedindex);
     }
 
-    private double extrapolateFromTable(double[][] boatSpeedData, Angle[] windAngleData, Angle relative,
+    private double extrapolateFromTable(double[][] boatSpeedData, PropertyDegrees[] windAngleData, PropertyDegrees relative,
             int speedindex, int angleindex) {
         double boatspeedlower = boatSpeedData[speedindex][angleindex];
         double boatspeedupper = boatSpeedData[speedindex][angleindex + 1];

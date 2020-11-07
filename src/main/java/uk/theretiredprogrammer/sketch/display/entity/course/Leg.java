@@ -15,8 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class Leg {
@@ -53,11 +53,11 @@ public class Leg {
         return endat;
     }
 
-    public Angle endLegMeanwinddirection(WindFlow windflow) {
+    public PropertyDegrees endLegMeanwinddirection(WindFlow windflow) {
         return windflow.getMeanFlowAngle(endat);
     }
 
-    public Angle getAngleofLeg() {
+    public PropertyDegrees getAngleofLeg() {
         return startfrom.angleto(endat);
     }
 }

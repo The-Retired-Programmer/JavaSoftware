@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,15 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-/**
- *
- * @author richard
- */
-public interface PropertyNamed {
+import jakarta.json.JsonValue;
+import javafx.scene.Node;
 
-    abstract boolean hasName(String name);
+public interface ModelProperty<C extends Object> extends Model {
+
+public C parsevalue(JsonValue jvalue);
+
+public Node getField(int size);
+
+public Node getField();
 
 }

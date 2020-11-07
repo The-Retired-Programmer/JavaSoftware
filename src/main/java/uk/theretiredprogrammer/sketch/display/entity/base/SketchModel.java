@@ -21,6 +21,7 @@ import jakarta.json.JsonObjectBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
@@ -34,7 +35,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
 public class SketchModel extends ModelProperties {
 
     private final ObservableList<String> marknames = FXCollections.observableArrayList();
-    private final PropertyString type = new PropertyString("type", null);
+    private final PropertyString type = new PropertyString(null);
     private final MetaModel meta = new MetaModel();
     private final DisplayModel display = new DisplayModel();
     private final FlowShiftModel windshifts = new FlowShiftModel();
@@ -58,7 +59,10 @@ public class SketchModel extends ModelProperties {
                 marknames.add(additem.getName());
             });
         }
-        assert marknames.size() == marks.getProperties().size();
+        if (marknames.size() != marks.getProperties().size()) {
+            // trap - maybe removed later
+            throw new IllegalStateFailure("Number of Marks does not equal number of Marknames");
+        }
     }
 
     @Override

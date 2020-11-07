@@ -15,66 +15,30 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
-import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyInteger extends PropertyElement<Integer> {
-
-    private final SimpleIntegerProperty integerproperty;
+public class PropertyInteger extends SimpleIntegerProperty implements ModelProperty<Integer> {
 
     public PropertyInteger(int defaultvalue) {
-        this(null, defaultvalue);
+        set(defaultvalue);
     }
 
-    public PropertyInteger(String key, int defaultvalue) {
-        setKey(key);
-        integerproperty = new SimpleIntegerProperty(defaultvalue);
-    }
-
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        integerproperty.addListener(cl);
-    }
-
-    @Override
-    public final Integer get() {
-        return integerproperty.get();
-    }
-
-    @Override
-    public final void set(Integer newint) {
-        integerproperty.set(newint);
-    }
-
-    public SimpleIntegerProperty propertyInteger() {
-        return integerproperty;
-    }
-
     @Override
     public Integer parsevalue(JsonValue value) {
-        if (value != null & value.getValueType() == JsonValue.ValueType.NUMBER) {
-            try {
-                return ((JsonNumber) value).intValueExact();
-            } catch (ArithmeticException ex) {
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - Integer expected");
+        return ParseHelper.integerParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return Json.createValue(get());
+        return ParseHelper.integerToJson(get());
     }
 
     @Override
@@ -84,12 +48,7 @@ public class PropertyInteger extends PropertyElement<Integer> {
 
     @Override
     public Node getField(int size) {
-        TextField intfield = new TextField(Integer.toString(integerproperty.get()));
-        intfield.setPrefColumnCount(size);
-        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
-        intfield.setTextFormatter(textformatter);
-        textformatter.valueProperty().bindBidirectional(integerproperty);
-        return intfield;
+        return FieldBuilder.getIntegerField(size, this);
     }
 
     @Override

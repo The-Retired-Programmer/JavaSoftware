@@ -15,10 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
@@ -33,9 +33,9 @@ public abstract class Flow {
     private final Area area;
     private final double wstepsize;
     private final double hstepsize;
-    private Angle shiftNow = new Angle(0);
-    private Angle swingNow = new Angle(0);
-    private Angle meanflowangle;
+    private PropertyDegrees shiftNow = new PropertyDegrees(0);
+    private PropertyDegrees swingNow = new PropertyDegrees(0);
+    private PropertyDegrees meanflowangle;
 
     private final FlowShiftModel flowshiftsproperty;
     private final FlowComponentSet flowcomponents;
@@ -84,15 +84,15 @@ public abstract class Flow {
         return flowarray[w][h];
     }
 
-    public Angle getMeanFlowAngle(Location pos) {
-        return getFlowwithoutswing(pos).getAngle();
+    public PropertyDegrees getMeanFlowAngle(Location pos) {
+        return getFlowwithoutswing(pos).getDegreesProperty();
     }
 
-    public Angle getMeanFlowAngle() {
+    public PropertyDegrees getMeanFlowAngle() {
         return meanflowangle;
     }
 
-    private Angle calcMeanFlowAngle() {
+    private PropertyDegrees calcMeanFlowAngle() {
         return SpeedPolar.meanAngle(flowarray);
     }
 
@@ -103,10 +103,10 @@ public abstract class Flow {
             swingNow = flowshiftsproperty.getSwingangle().mult(Math.sin(radians));
             timerlog.add(new WindSwingLogEntry(swingNow));
         } else {
-            swingNow = ANGLE0;
+            swingNow = DEGREES0;
         }
         // now deal with shifts
-        Angle shiftval = ANGLE0;
+        PropertyDegrees shiftval = DEGREES0;
         boolean shifting = false;
         if (flowshiftsproperty.getShiftperiod() != 0) {
             double delta = flowshiftsproperty.isRandomshifts()
@@ -114,11 +114,11 @@ public abstract class Flow {
                     : simulationtime % flowshiftsproperty.getShiftperiod();
             double quarterPeriod = flowshiftsproperty.getShiftperiod() / 4;
             if (delta < quarterPeriod) {
-                shiftval = ANGLE0;
+                shiftval = DEGREES0;
             } else if (delta < quarterPeriod * 2) {
-                shiftval = flowshiftsproperty.getShiftangle().negate();
+                shiftval = flowshiftsproperty.getShiftangle().negative();
             } else if (delta < quarterPeriod * 3) {
-                shiftval = ANGLE0;
+                shiftval = DEGREES0;
             } else {
                 shiftval = flowshiftsproperty.getShiftangle();
             }
@@ -141,10 +141,10 @@ public abstract class Flow {
     public SpeedPolar getFlow(Location pos) {
         SpeedPolar f = getFlowwithoutswing(pos);
         if (flowshiftsproperty.getSwingperiod() > 0) {
-            f = new SpeedPolar(f.getSpeed(), f.getAngle().add(swingNow));
+            f = new SpeedPolar(f.getSpeed(), f.getDegreesProperty().plus(swingNow));
         }
         if (flowshiftsproperty.getShiftperiod() > 0 || flowshiftsproperty.isRandomshifts()) {
-            f = new SpeedPolar(f.getSpeed(), f.getAngle().add(shiftNow));
+            f = new SpeedPolar(f.getSpeed(), f.getDegreesProperty().plus(shiftNow));
         }
         return f;
     }

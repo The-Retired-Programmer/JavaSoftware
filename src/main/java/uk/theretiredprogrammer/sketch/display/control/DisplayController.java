@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,6 @@ import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
 import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class DisplayController extends AbstractController<DisplayWindow> {
 
     private PropertiesController propertiescontroller;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,78 +17,35 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-/**
- *
- * @author richard
- */
-public class PropertyBoolean extends PropertyElement<Boolean> {
-
-    private final SimpleBooleanProperty booleanproperty;
+public class PropertyBoolean extends SimpleBooleanProperty implements ModelProperty<Boolean> {
 
     public PropertyBoolean(Boolean defaultvalue) {
-        this(null, defaultvalue);
+        super(defaultvalue);
     }
 
-    public PropertyBoolean(String key, Boolean defaultvalue) {
-        setKey(key);
-        booleanproperty = new SimpleBooleanProperty(defaultvalue);
-    }
-
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        booleanproperty.addListener(cl);
-    }
-
-    @Override
-    public final Boolean get() {
-        return booleanproperty.get();
-    }
-
-    @Override
-    public final void set(Boolean newboolean) {
-        booleanproperty.set(newboolean);
-    }
-
-    public SimpleBooleanProperty propertyBoolean() {
-        return booleanproperty;
-    }
-
     @Override
     public final Boolean parsevalue(JsonValue value) {
-        if (value != null) {
-            switch (value.getValueType()) {
-                case TRUE -> {
-                    return true;
-                }
-                case FALSE -> {
-                    return false;
-                }
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - Boolean expected");
+        return ParseHelper.booleanParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return get() ? JsonValue.TRUE : JsonValue.FALSE;
+        return ParseHelper.booleanToJson(get());
     }
 
     @Override
     public Node getField() {
-        CheckBox booleanfield = new CheckBox();
-        booleanfield.setSelected(get());
-        booleanfield.selectedProperty().bindBidirectional(booleanproperty);
-        return booleanfield;
+        return FieldBuilder.getBooleanField(this);
     }
-
+    
     @Override
     public Node getField(int size) {
         return getField();

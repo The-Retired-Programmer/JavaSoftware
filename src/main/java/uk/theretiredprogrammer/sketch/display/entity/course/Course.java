@@ -34,14 +34,14 @@ public class Course extends ModelProperties {
         roundings.addAll("port", "starboard");
     }
 
-    private final PropertyLocation start = new PropertyLocation("start", LOCATIONZERO);
+    private final PropertyLocation start = new PropertyLocation(LOCATIONZERO);
     private final PropertyLegEndings legs;
 
     private Leg firstcourseleg;
     private final Marks marks;
 
     public Course(Marks marks, ObservableList<String> marknames) {
-        legs = new PropertyLegEndings("legs", marknames, roundings);
+        legs = new PropertyLegEndings(marknames, roundings);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
@@ -49,15 +49,15 @@ public class Course extends ModelProperties {
     }
 
     private void updatelegs() {
-        legs.getList().clear(); // not best way!!
-        legs.getList().forEach(lv -> insertLeg(lv.get()));
+        legs.getProperties().clear(); // not best way!!
+        legs.getProperties().forEach(lv -> insertLeg(lv.get()));
     }
 
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("start", start, jobj);
         parseOptionalProperty("legs", legs, jobj);
-        legs.getList().forEach(lv -> insertLeg(lv.get()));
+        legs.getProperties().forEach(lv -> insertLeg(lv.get()));
     }
 
     @Override
@@ -87,19 +87,15 @@ public class Course extends ModelProperties {
         }
     }
 
-    public Course get() {
-        return this;
-    }
-
     public Location getStart() {
         return start.get();
     }
 
-    public PropertyLegEndings getPropertyLegValues() {
-        return legs.get();
-    }
-
     public Leg getFirstLeg() {
         return firstcourseleg;
+    }
+    
+    public PropertyLegEndings getLegEndings() {
+        return legs;
     }
 }

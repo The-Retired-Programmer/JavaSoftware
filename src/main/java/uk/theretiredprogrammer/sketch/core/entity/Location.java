@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,31 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class Location {
 
     public final static Location LOCATIONZERO = new Location(0.0, 0.0);
 
-    private final double x;
-    private final double y;
+    private final SimpleDoubleProperty x = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty y = new SimpleDoubleProperty();
 
     public Location(double x, double y) {
-        this.x = x;
-        this.y = y;
+        this.x.set(x);
+        this.y.set(y);
     }
 
     public Location(Location pos) {
-        x = pos.x;
-        y = pos.y;
+        this.x.set(pos.getX());
+        this.y.set(pos.getY());
+    }
+
+    public SimpleDoubleProperty getXProperty() {
+        return x;
+    }
+
+    public SimpleDoubleProperty getYProperty() {
+        return y;
     }
 
     public double to(Location target) {
@@ -42,31 +48,31 @@ public class Location {
         return Math.sqrt(deltax * deltax + deltay * deltay);
     }
 
-    public Angle angleto(Location target) {
-        return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
+    public PropertyDegrees angleto(Location target) {
+        return new PropertyDegrees(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
     }
 
     public Location getFractionalLocation(Location lowerleft, double width, double height) {
         // note this location uses fractional units - not metres
         return new Location(
-                (this.x - lowerleft.x) / (width),
-                (this.y - lowerleft.y) / (height)
+                (getX() - lowerleft.getX()) / (width),
+                (getY() - lowerleft.getY()) / (height)
         );
     }
 
     public double getX() {
-        return x;
+        return x.get();
     }
 
     public double getY() {
-        return y;
+        return y.get();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-        hash = 67 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(x.get()) ^ (Double.doubleToLongBits(x.get()) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(y.get()) ^ (Double.doubleToLongBits(y.get()) >>> 32));
         return hash;
     }
 
@@ -82,14 +88,14 @@ public class Location {
             return false;
         }
         final Location other = (Location) obj;
-        if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {
+        if (Double.doubleToLongBits(this.x.get()) != Double.doubleToLongBits(other.x.get())) {
             return false;
         }
-        return Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
+        return Double.doubleToLongBits(this.y.get()) == Double.doubleToLongBits(other.y.get());
     }
 
     @Override
     public String toString() {
-        return "[" + x + "," + y + "]";
+        return "[" + x.get() + "," + y.getName() + "]";
     }
 }

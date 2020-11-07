@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
 import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
@@ -29,14 +27,12 @@ import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public abstract class Strategy {
 
     public static enum LegType {
@@ -65,7 +61,7 @@ public abstract class Strategy {
             return LegType.NONE;
         }
         BoatMetrics metrics = boat.metrics;
-        Angle legtowind = leg.getAngleofLeg().absAngleDiff(windflow.getMeanFlowAngle());
+        PropertyDegrees legtowind = leg.getAngleofLeg().absDegreesDiff(windflow.getMeanFlowAngle());
         if (legtowind.lteq(metrics.getUpwindrelative())) {
             return LegType.WINDWARD;
         }
@@ -75,21 +71,21 @@ public abstract class Strategy {
         return LegType.OFFWIND;
     }
 
-    static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
+    static Optional<Double> getRefDistance(Location location, Location marklocation, PropertyDegrees refangle) {
         DistancePolar tomark = new DistancePolar(location, marklocation);
-        Angle refangle2mark = refangletomark(tomark.getAngle(), refangle);
-        if (refangle2mark.gt(ANGLE90)) {
+        PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
+        if (refangle2mark.gt(DEGREES90)) {
             return Optional.empty();
         }
         return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
     }
 
-    private static double refdistancetomark(double distancetomark, Angle refangle2mark) {
+    private static double refdistancetomark(double distancetomark, PropertyDegrees refangle2mark) {
         return distancetomark * Math.cos(refangle2mark.getRadians());
     }
 
-    private static Angle refangletomark(Angle tomarkangle, Angle refangle) {
-        return tomarkangle.absAngleDiff(refangle);
+    private static PropertyDegrees refangletomark(PropertyDegrees tomarkangle, PropertyDegrees refangle) {
+        return tomarkangle.absDegreesDiff(refangle);
     }
 
     public final Boat boat;
@@ -97,12 +93,12 @@ public abstract class Strategy {
     public final Decision decision;
 
     private final double length;
-    private final Angle portoffsetangle;
-    private final Angle starboardoffsetangle;
+    private final PropertyDegrees portoffsetangle;
+    private final PropertyDegrees starboardoffsetangle;
 
     public Strategy(Boat boat, Leg leg,
-            Angle portroundingportoffsetangle, Angle portroundingstarboardoffsetangle,
-            Angle starboardroundingportoffsetangle, Angle starboardroundingstarboardoffsetangle) {
+            PropertyDegrees portroundingportoffsetangle, PropertyDegrees portroundingstarboardoffsetangle,
+            PropertyDegrees starboardroundingportoffsetangle, PropertyDegrees starboardroundingstarboardoffsetangle) {
         this.boat = boat;
         this.leg = leg;
         this.decision = new Decision(boat);
@@ -117,7 +113,7 @@ public abstract class Strategy {
     }
 
     public Strategy(Boat boat, Leg leg,
-            Angle portroundingoffsetangle, Angle starboardroundingoffsetangle) {
+            PropertyDegrees portroundingoffsetangle, PropertyDegrees starboardroundingoffsetangle) {
         this.boat = boat;
         this.decision = new Decision(boat);
         this.leg = leg;
@@ -153,7 +149,7 @@ public abstract class Strategy {
                 .polar2Location(leg.getEndLocation());
     }
 
-    Angle getAngletoSail(Location here, boolean onPort) {
+    PropertyDegrees getPropertyDegreestoSail(Location here, boolean onPort) {
         return here.angleto(getSailToLocation(onPort));
     }
 

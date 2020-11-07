@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,20 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class BoatMetrics {
 
     public final double length;// metres
     public final double width;// metres
     private final double inertia;// fraction of speed lost or gained in changing winds
-    private final Angle maxTurningAnglePerSecond;
-    public final Angle upwindrelative;
-    public final Angle downwindrelative;
+    private final PropertyDegrees maxTurningAnglePerSecond;
+    public final PropertyDegrees upwindrelative;
+    public final PropertyDegrees downwindrelative;
     private final PerformanceVectors performancevectors;
 
-    BoatMetrics(double length, double width, double inertia, Angle maxTurningAnglePerSecond,
-            Angle upwindrelative, Angle downwindrelative, PerformanceVectors performancevectors) {
+    BoatMetrics(double length, double width, double inertia, PropertyDegrees maxTurningAnglePerSecond,
+            PropertyDegrees upwindrelative, PropertyDegrees downwindrelative, PerformanceVectors performancevectors) {
         this.length = length;
         this.width = width;
         this.inertia = inertia;
@@ -54,15 +50,15 @@ public class BoatMetrics {
         return inertia;
     }
 
-    public Angle getMaxTurningAnglePerSecond() {
+    public PropertyDegrees getMaxTurningAnglePerSecond() {
         return maxTurningAnglePerSecond;
     }
 
-    public Angle getUpwindrelative() {
+    public PropertyDegrees getUpwindrelative() {
         return upwindrelative;
     }
 
-    public Angle getDownwindrelative() {
+    public PropertyDegrees getDownwindrelative() {
         return downwindrelative;
     }
 
@@ -70,7 +66,7 @@ public class BoatMetrics {
         return performancevectors;
     }
 
-    public double getPotentialBoatSpeed(Angle angle, double windSpeed) {
-        return performancevectors.getPotentialBoatSpeed(angle, windSpeed);
+    public double getPotentialBoatSpeed(PropertyDegrees degrees, double windSpeed) {
+        return performancevectors.getPotentialBoatSpeed(degrees, windSpeed);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,21 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
+import javafx.beans.property.SimpleDoubleProperty;
+import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+
 public class Area {
 
     public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
 
-    private final Location bottomleft;
-    private final double width;
-    private final double height;
+    private final PropertyLocation bottomleft = new PropertyLocation(LOCATIONZERO);
+    private final SimpleDoubleProperty width = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty height = new SimpleDoubleProperty();
 
     public Area(Location bottomleft, double width, double height) {
-        this.bottomleft = bottomleft;
-        this.width = width;
-        this.height = height;
+        this.bottomleft.set(bottomleft);
+        this.width.set(width);
+        this.height.set(height);
     }
 
     public Area(double left, double bottom, double width, double height) {
@@ -38,28 +37,40 @@ public class Area {
     }
 
     public Location getBottomleft() {
+        return bottomleft.get();
+    }
+    
+    public PropertyLocation getBottomLeftProperty() {
         return bottomleft;
     }
 
     public double getWidth() {
+        return width.get();
+    }
+    
+    public SimpleDoubleProperty getWidthProperty() {
         return width;
     }
 
     public double getHeight() {
+        return height.get();
+    }
+    
+    public SimpleDoubleProperty getHeightProperty() {
         return height;
     }
 
     public boolean isWithinArea(Location location) {
-        return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width
-                && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height;
+        return location.getX() >= bottomleft.get().getX() && location.getX() <= bottomleft.get().getX() + width.get()
+                && location.getY() >= bottomleft.get().getY() && location.getY() <= bottomleft.get().getY() + height.get();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 67 * hash + bottomleft.hashCode();
-        hash = 67 * hash + (int) (Double.doubleToLongBits(width) ^ (Double.doubleToLongBits(width) >>> 32));
-        hash = 67 * hash + (int) (Double.doubleToLongBits(height) ^ (Double.doubleToLongBits(height) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(width.get()) ^ (Double.doubleToLongBits(width.get()) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(height.get()) ^ (Double.doubleToLongBits(height.get()) >>> 32));
         return hash;
     }
 
@@ -78,9 +89,9 @@ public class Area {
         if (!this.bottomleft.equals(other.bottomleft)) {
             return false;
         }
-        if (Double.doubleToLongBits(this.width) != Double.doubleToLongBits(other.width)) {
+        if (Double.doubleToLongBits(this.width.get()) != Double.doubleToLongBits(other.width.get())) {
             return false;
         }
-        return Double.doubleToLongBits(this.height) == Double.doubleToLongBits(other.height);
+        return Double.doubleToLongBits(this.height.get()) == Double.doubleToLongBits(other.height.get());
     }
 }

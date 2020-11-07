@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,121 +15,53 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
-import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import java.util.function.Supplier;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-/**
- *
- * @author richard
- */
-public class PropertyConstrainedString extends PropertyElement<String> {
+public class PropertyConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
 
-    private final PropertyString constrainedproperty;
     private final ObservableList<String> constraints;
-    private final Supplier<ObservableList<String>> constraintslookup;
-
-    public PropertyConstrainedString(String key, ObservableList<String> constraints) {
-        setKey(key);
-        constrainedproperty = new PropertyString(null);
-        this.constraints = constraints;
-        constraintslookup = () -> constraints;
-    }
 
     public PropertyConstrainedString(ObservableList<String> constraints) {
         this(null, constraints);
     }
 
-    public PropertyConstrainedString(ObservableList<String> constraints, String defaultvalue) {
-        this(null, constraints, defaultvalue);
-    }
-
-    public PropertyConstrainedString(String key, ObservableList<String> constraints, String defaultvalue) {
-        setKey(key);
+    public PropertyConstrainedString(String defaultvalue, ObservableList<String> constraints) {
         this.constraints = constraints;
-        constraintslookup = () -> constraints;
         if (defaultvalue != null && (!constraints.contains(defaultvalue))) {
             throw new IllegalStateFailure("Bad default value - not in constraints list");
         }
-        constrainedproperty = new PropertyString(defaultvalue);
+        super.set(defaultvalue);
     }
 
-    public PropertyConstrainedString(String key, Supplier<ObservableList<String>> constraintslookup) {
-        setKey(key);
-        constrainedproperty = new PropertyString(null);
-        this.constraints = null;
-        this.constraintslookup = constraintslookup;
-    }
 
-    public PropertyConstrainedString(Supplier<ObservableList<String>> constraintslookup) {
-        this(null, constraintslookup);
-    }
-
-    public PropertyConstrainedString(Supplier<ObservableList<String>> constraintslookup, String defaultvalue) {
-        this(null, constraintslookup, defaultvalue);
-    }
-
-    public PropertyConstrainedString(String key, Supplier<ObservableList<String>> constraintslookup, String defaultvalue) {
-        setKey(key);
-        this.constraints = null;
-        this.constraintslookup = constraintslookup;
-        if (defaultvalue != null && (!constraints.contains(defaultvalue))) {
-            throw new IllegalStateFailure("Bad default value - not in constraints list");
-        }
-        constrainedproperty = new PropertyString(defaultvalue);
-    }
-    
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        constrainedproperty.propertyString().addListener(cl);
-    }
-
-    @Override
-    public final String get() {
-        return constrainedproperty.get();
-    }
-    
-    public final SimpleStringProperty getProperty() {
-        return constrainedproperty.propertyString();
-    }
-
     @Override
     public final void set(String newvalue) {
-        if (constraintslookup.get().stream().anyMatch(v -> newvalue.equals(v))) {
-            constrainedproperty.set(newvalue);
+        if (constraints.contains(newvalue)) {
+           super.set(newvalue);
         } else {
-            throw new ParseFailure("Constrained String - value not in constrained set");
+            throw new ParseFailure("Constrained String - value not in allowed set");
         }
     }
 
     @Override
-    public String parsevalue(JsonValue value) {
-        String val = "Bad Json value";
-        if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
-            val = ((JsonString) value).getString();
-            for (var v : constraintslookup.get()) {
-                if (val.equals(v)) {
-                    return val;
-                }
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - value not in constrained set: key: " + getKey() + "; value: " + val);
+    public String parsevalue(JsonValue jvalue) {
+        return ParseHelper.constrainedStringParse(jvalue, constraints);
     }
 
     @Override
     public JsonValue toJson() {
-        return constrainedproperty.toJson();
+        return ParseHelper.constrainedStringToJson(get());
     }
 
     @Override
@@ -139,13 +71,11 @@ public class PropertyConstrainedString extends PropertyElement<String> {
 
     @Override
     public ComboBox getField(int size) {
-        ComboBox combofield = new ComboBox(constraints);
-        combofield.valueProperty().bindBidirectional(constrainedproperty.propertyString());
-        return combofield;
+        return FieldBuilder.getConstrainedStringField(this, constraints);
     }
 
     @Override
     public final void parse(JsonValue jvalue) {
-        constrainedproperty.set(parsevalue(jvalue));
+        super.set(parsevalue(jvalue));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import jakarta.json.JsonObjectBuilder;
 import java.util.function.Supplier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
@@ -28,16 +27,11 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
-/**
- * Abstract Class describing a Flow Model. A Flow Model represents variable
- * flows over a area.
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public abstract class FlowComponent extends ModelProperties {
 
     public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
@@ -70,15 +64,15 @@ public abstract class FlowComponent extends ModelProperties {
         return typenames;
     }
 
-    private final PropertyString name = new PropertyString("name", "<newname>");
-    private final PropertyInteger zlevel = new PropertyInteger("zlevel", 0);
-    private final PropertyArea area = new PropertyArea("area", AREAZERO);
+    private final PropertyString name = new PropertyString("<newname>");
+    private final PropertyInteger zlevel = new PropertyInteger(0);
+    private final PropertyArea area = new PropertyArea(AREAZERO);
     private final PropertyConstrainedString type;
     private final Supplier<Area> getdisplayarea;
 
     public FlowComponent(Supplier<Area> getdisplayarea, String flowtype) {
         this.getdisplayarea = getdisplayarea;
-        type = new PropertyConstrainedString("type", typenames, flowtype);
+        type = new PropertyConstrainedString(flowtype, typenames);
         addProperty("name", name);
         addProperty("zlevel", zlevel);
         addProperty("area", area);
@@ -137,7 +131,7 @@ public abstract class FlowComponent extends ModelProperties {
         }
     }
 
-    public Angle meanWindAngle() {
+    public PropertyDegrees meanWindAngle() {
         return null; // should override if manual control  of mean wind angle required
     }
 }

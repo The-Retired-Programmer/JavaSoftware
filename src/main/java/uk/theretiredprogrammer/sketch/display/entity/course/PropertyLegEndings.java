@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard Linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,30 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
+import jakarta.json.JsonValue;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyListWithSimpleCreator;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
-public class PropertyLegEndings extends PropertyListWithSimpleCreator<PropertyLegEnding> {
+public class PropertyLegEndings extends ModelArray<PropertyLegEnding> {
 
     private final ObservableList<String> marknames;
     private final ObservableList<String> roundings;
 
-    public PropertyLegEndings(String key, ObservableList<String> marknames, ObservableList<String> roundings) {
-        super(() -> new PropertyLegEnding(marknames, roundings));
-        setKey(key);
+    public PropertyLegEndings(ObservableList<String> marknames, ObservableList<String> roundings) {
         this.marknames = marknames;
         this.roundings = roundings;
     }
 
+     @Override
+    protected PropertyLegEnding createAndParse(JsonValue jval) {
+        PropertyLegEnding p = new PropertyLegEnding(marknames, roundings);
+        p.parse(jval);
+        return p;
+    }
+    
     @Override
-    public PropertyLegEndings get() {
-        return this;
-    }
-
-    public void add() {
-        super.add(new PropertyLegEnding(marknames, roundings));
-    }
-
-    public void add(LegEnding legvalue) {
-        super.add(new PropertyLegEnding(legvalue, marknames, roundings));
+    public PropertyLegEnding get(String name) {
+        throw new IllegalStateFailure("PropertyLegEnding cannot be selected by name");
     }
 }

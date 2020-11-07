@@ -30,16 +30,16 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
 public class Mark extends ModelProperties {
 
-    private final PropertyString name = new PropertyString("name", "<newname>");
+    private final PropertyString name = new PropertyString("<newname>");
     private final PropertyLocation location;
-    private final PropertyBoolean windwardlaylines = new PropertyBoolean("windwardlaylines", false);
-    private final PropertyBoolean downwindlaylines = new PropertyBoolean("downwindlaylines", false);
-    private final PropertyDouble laylinelength = new PropertyDouble("laylinelength", 0.0);
-    private final PropertyColour laylinecolour = new PropertyColour("laylinecolour", Color.BLACK);
-    private final PropertyColour colour = new PropertyColour("colour", Color.RED);
+    private final PropertyBoolean windwardlaylines = new PropertyBoolean(false);
+    private final PropertyBoolean downwindlaylines = new PropertyBoolean(false);
+    private final PropertyDouble laylinelength = new PropertyDouble(0.0);
+    private final PropertyColour laylinecolour = new PropertyColour( Color.BLACK);
+    private final PropertyColour colour = new PropertyColour(Color.RED);
 
     public Mark() {
-        location = new PropertyLocation("location", LOCATIONZERO);
+        location = new PropertyLocation(LOCATIONZERO);
         registerproperties();
     }
 
@@ -54,7 +54,7 @@ public class Mark extends ModelProperties {
     }
 
     public Mark(Location loc) {
-        location = new PropertyLocation("location", loc);
+        location = new PropertyLocation(loc);
         registerproperties();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,21 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTest {
 
-    private static final Angle DELTAANGLE = new Angle(5);
+    private static final PropertyDegrees DELTAANGLE = new PropertyDegrees(5);
 
     @Test
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setboatlocation(47, 12));
-        this.assertSailing(decision, ANGLE180.add(DELTAANGLE), ANGLE180);
+        this.assertSailing(decision, DEGREES180.plus(DELTAANGLE), DEGREES180);
     }
 
     @Test
@@ -42,7 +37,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setboatlocation(47, 11));
-        this.assertSailing(decision, ANGLE180.add(DELTAANGLE), ANGLE180);
+        this.assertSailing(decision, DEGREES180.plus(DELTAANGLE), DEGREES180);
     }
 
     @Test
@@ -67,8 +62,8 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setwindflow(4, 45),
                 () -> setboatlocation(50, 13));
-        Angle target = new Angle(-135);
-        this.assertSailing(decision, target, target.add(DELTAANGLE));
+        PropertyDegrees target = new PropertyDegrees(-135);
+        this.assertSailing(decision, target, target.plus(DELTAANGLE));
     }
 
     @Test

@@ -16,7 +16,9 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
@@ -33,7 +35,11 @@ public class Boats extends ModelArray<Boat> {
     }
 
     @Override
-    protected Boat createAndParse(JsonObject jobj) {
+    protected Boat createAndParse(JsonValue jval) {
+        if (jval.getValueType() != JsonValue.ValueType.OBJECT) {
+            throw new ParseFailure("Malformed Definition File - array contains items other than Objects");
+        }
+        JsonObject jobj = (JsonObject) jval;
         Boat boat = BoatFactory.createBoat(
                 jobj.getString("type", "<undefined>"),
                 model.getCourse().getFirstLeg(),

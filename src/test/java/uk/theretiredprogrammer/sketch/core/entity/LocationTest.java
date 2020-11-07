@@ -15,8 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,11 +66,11 @@ public class LocationTest {
     public void testAngleto() {
         System.out.println("angleto");
         Location instance = new Location(10.0, 20.0);
-        assertEquals(new Angle(45), instance.angleto(new Location(13.0, 23.0)));
-        assertEquals(new Angle(0), instance.angleto(new Location(10.0, 23.0)));
-        assertEquals(new Angle(180), instance.angleto(new Location(10.0, 13.0)));
-        assertEquals(new Angle(135), instance.angleto(new Location(13.0, 17.0)));
-        assertEquals(new Angle(-45), instance.angleto(new Location(7.0, 23.0)));
-        assertEquals(new Angle(-135), instance.angleto(new Location(7.0, 17.0)));
+        assertEquals(45, instance.angleto(new Location(13.0, 23.0)).get());
+        assertEquals(0, instance.angleto(new Location(10.0, 23.0)).get());
+        assertEquals(180, instance.angleto(new Location(10.0, 13.0)).get());
+        assertEquals(135, instance.angleto(new Location(13.0, 17.0)).get());
+        assertEquals(-45, instance.angleto(new Location(7.0, 23.0)).get());
+        assertEquals(-135, instance.angleto(new Location(7.0, 17.0)).get());
     }
 }

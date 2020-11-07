@@ -23,8 +23,8 @@ import javafx.collections.ObservableMap;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 public abstract class ModelProperties implements Model {
-    
-    private final ObservableMap<String, PropertyAny> properties = FXCollections.observableMap(new LinkedHashMap<>());;
+
+    private final ObservableMap<String, Model> properties = FXCollections.observableMap(new LinkedHashMap<>());
     
     protected abstract void parseValues(JsonObject jobj);
 
@@ -35,21 +35,6 @@ public abstract class ModelProperties implements Model {
         }
     }
 
-    protected void parseMandatoryProperty(String key, PropertyAny property, JsonObject parentobj) {
-        if (!parseOptionalProperty(key, property, parentobj)) {
-            throw new ParseFailure("Missing a Mandatory parameter: " + key);
-        }
-    }
-
-    protected boolean parseOptionalProperty(String key, PropertyAny property, JsonObject parentobj) {
-        JsonValue jvalue = parentobj.get(key);
-        if (jvalue == null) {
-            return false;
-        }
-        property.parse(jvalue);
-        return true;
-    }
-    
     protected void parseMandatoryProperty(String key, Model model, JsonObject parentobj) {
         if (!parseOptionalProperty(key, model, parentobj)) {
             throw new ParseFailure("Missing a Mandatory parameter: " + key);
@@ -64,12 +49,12 @@ public abstract class ModelProperties implements Model {
         model.parse(jvalue);
         return true;
     }
-    
-    public ObservableMap<String, PropertyAny> getProperties() {
+
+    public ObservableMap<String, Model> getProperties() {
         return properties;
     }
-    
-    protected void addProperty(String key, PropertyAny property) {
+
+    protected void addProperty(String key, Model property) {
         properties.put(key, property);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,73 +15,72 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-/**
- * A Polar
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 abstract class Polar<P extends Polar> {
 
-    private final Angle angle;
+    final PropertyDegrees degreesproperty = new PropertyDegrees(0);
 
-    abstract P create(double dimension, Angle angle);
+    abstract P create(double dimension, PropertyDegrees angle);
 
     abstract double getDimension();
 
-    Polar(Angle angle) {
-        this.angle = angle;
+    Polar(PropertyDegrees degrees) {
+        this.degreesproperty.set(degrees);
     }
 
-    public P add(P p) {
+    public P plus(P p) {
         double dimension = getDimension();
         double pdimension = p.getDimension();
-        double x = dimension * Math.sin(angle.getRadians()) + pdimension * Math.sin(p.getAngle().getRadians());
-        double y = dimension * Math.cos(angle.getRadians()) + pdimension * Math.cos(p.getAngle().getRadians());
+        double x = dimension * Math.sin(degreesproperty.getRadians()) + pdimension * Math.sin(p.degreesproperty.getRadians());
+        double y = dimension * Math.cos(degreesproperty.getRadians()) + pdimension * Math.cos(p.degreesproperty.getRadians());
         //
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle(Math.toDegrees(Math.atan2(x, y))));
+                new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
     }
 
-    public P subtract(P p) {
+    public P sub(P p) {
         double dimension = getDimension();
         double pdimension = p.getDimension();
-        double x = dimension * Math.sin(angle.getRadians()) - pdimension * Math.sin(p.getAngle().getRadians());
-        double y = dimension * Math.cos(angle.getRadians()) - pdimension * Math.cos(p.getAngle().getRadians());
+        double x = dimension * Math.sin(degreesproperty.getRadians()) - pdimension * Math.sin(p.degreesproperty.getRadians());
+        double y = dimension * Math.cos(degreesproperty.getRadians()) - pdimension * Math.cos(p.degreesproperty.getRadians());
         //
         return create(
                 Math.sqrt(x * x + y * y),
-                new Angle(Math.toDegrees(Math.atan2(x, y))));
+                new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
     }
 
     public P mult(double multiplier) {
         return multiplier < 0
-                ? create(-getDimension() * multiplier, angle.inverse())
-                : create(getDimension() * multiplier, angle);
+                ? create(-getDimension() * multiplier, degreesproperty.inverse())
+                : create(getDimension() * multiplier, degreesproperty);
     }
 
-    public Angle angleDiff(Angle angle) {
-        return this.angle.angleDiff(angle);
+    public PropertyDegrees degreesDiff(PropertyDegrees degrees) {
+        return this.degreesproperty.degreesDiff(degrees);
     }
 
-    public Angle angleDiff(Polar p) {
-        return angle.angleDiff(p.angle);
+    public PropertyDegrees degreesDiff(Polar p) {
+        return degreesDiff(p.degreesproperty);
     }
 
-    public Angle getAngle() {
-        return angle;
+    public double getDegrees() {
+        return degreesproperty.get();
     }
 
-    public static Angle meanAngle(Polar[][] array) {
+    public PropertyDegrees getDegreesProperty() {
+        return degreesproperty;
+    }
+
+    public static PropertyDegrees meanAngle(Polar[][] array) {
         double x = 0;
         double y = 0;
         for (Polar[] column : array) {
             for (Polar cell : column) {
-                double r = cell.angle.getRadians();
+                double r = cell.degreesproperty.getRadians();
                 x += Math.sin(r);
                 y += Math.cos(r);
             }
         }
-        return new Angle(Math.toDegrees(Math.atan2(x, y)));
+        return new PropertyDegrees(Math.toDegrees(Math.atan2(x, y)));
     }
 }

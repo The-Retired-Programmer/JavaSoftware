@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +23,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class DistancePolarTest {
 
     private final static double DELTA = 0.0000001;
@@ -56,9 +49,9 @@ public class DistancePolarTest {
     @Test
     public void testCreation() {
         System.out.println("creation<distance,angle>");
-        DistancePolar instance = new DistancePolar(100, new Angle(90));
+        DistancePolar instance = new DistancePolar(100, new PropertyDegrees(90));
         assertEquals(100, instance.getDistance());
-        assertEquals(new Angle(90), instance.getAngle());
+        assertEquals(90, instance.getDegrees());
     }
 
     @Test
@@ -66,35 +59,32 @@ public class DistancePolarTest {
         System.out.println("creation<location.location>");
         DistancePolar instance = new DistancePolar(LOCATIONZERO, new Location(10, 0));
         assertEquals(10, instance.getDistance());
-        assertEquals(new Angle(90), instance.getAngle());
+        assertEquals(90, instance.getDegrees());
         instance = new DistancePolar(LOCATIONZERO, new Location(0, 10));
         assertEquals(10, instance.getDistance());
-        assertEquals(new Angle(0), instance.getAngle());
+        assertEquals(0, instance.getDegrees());
     }
 
-    /**
-     * Test of polar2Location method, of class DistancePolar.
-     */
     @Test
     public void testPolar2Location() {
         System.out.println("polar2Location");
-        DistancePolar instance = new DistancePolar(100, new Angle(90));
+        DistancePolar instance = new DistancePolar(100, new PropertyDegrees(90));
         Location res = instance.polar2Location(new Location(10, 10));
         assertEquals(110, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
-        instance = new DistancePolar(100, new Angle(180));
+        instance = new DistancePolar(100, new PropertyDegrees(180));
         res = instance.polar2Location(new Location(10, 10));
         assertEquals(10, res.getX(), DELTA);
         assertEquals(-90, res.getY(), DELTA);
-        instance = new DistancePolar(100, new Angle(-90));
+        instance = new DistancePolar(100, new PropertyDegrees(-90));
         res = instance.polar2Location(new Location(10, 10));
         assertEquals(-90, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
-        instance = new DistancePolar(1, new Angle(45));
+        instance = new DistancePolar(1, new PropertyDegrees(45));
         res = instance.polar2Location(LOCATIONZERO);
         assertEquals(1 / Math.sqrt(2), res.getX(), DELTA);
         assertEquals(1 / Math.sqrt(2), res.getY(), DELTA);
         assertEquals(1, instance.getDistance());
-        assertEquals(new Angle(45), instance.getAngle());
+        assertEquals(45, instance.getDegrees());
     }
 }

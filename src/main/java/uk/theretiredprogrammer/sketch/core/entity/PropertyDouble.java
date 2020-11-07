@@ -15,62 +15,29 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
-import jakarta.json.JsonNumber;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyDouble extends PropertyElement<Double> {
+public class PropertyDouble extends SimpleDoubleProperty implements ModelProperty<Double> {
 
-    private final SimpleDoubleProperty doubleproperty;
-
-    public PropertyDouble(double defaultvalue) {
-        this(null, defaultvalue);
+    public PropertyDouble(Double value) {
+        set(value);
     }
 
-    public PropertyDouble(String key, Double defaultvalue) {
-        setKey(key);
-        doubleproperty = new SimpleDoubleProperty(defaultvalue);
-    }
-    
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        doubleproperty.addListener(cl);
-    }
-
-    @Override
-    public final Double get() {
-        return doubleproperty.get();
-    }
-
-    @Override
-    public final void set(Double newdouble) {
-        doubleproperty.set(newdouble);
-    }
-
-    public SimpleDoubleProperty propertyDouble() {
-        return doubleproperty;
-    }
-
     @Override
     public Double parsevalue(JsonValue jvalue) {
-        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
-            return ((JsonNumber) jvalue).doubleValue();
-        }
-        throw new ParseFailure("Malformed Definition file - Decimal expected");
+        return ParseHelper.doubleParse(jvalue);
     }
 
     @Override
     public JsonValue toJson() {
-        return Json.createValue(get());
+        return ParseHelper.doubleToJson(get());
     }
 
     @Override
@@ -80,12 +47,7 @@ public class PropertyDouble extends PropertyElement<Double> {
 
     @Override
     public TextField getField(int size) {
-        TextField doublefield = new TextField(Double.toString(doubleproperty.get()));
-        doublefield.setPrefColumnCount(size);
-        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, doubleFilter);
-        doublefield.setTextFormatter(textformatter);
-        textformatter.valueProperty().bindBidirectional(doubleproperty);
-        return doublefield;
+        return FieldBuilder.getDoubleField(size, this);
     }
 
     @Override

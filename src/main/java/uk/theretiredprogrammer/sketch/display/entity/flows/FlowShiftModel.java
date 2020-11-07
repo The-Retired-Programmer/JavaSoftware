@@ -21,60 +21,59 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyAngle;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 
 public class FlowShiftModel extends ModelProperties {
 
-    private final PropertyBoolean showflow = new PropertyBoolean("showflow", false);
-    private final PropertyDouble showflowinterval = new PropertyDouble("showflowinterval", 100.0);
-    private final PropertyColour showflowcolour = new PropertyColour("showflowcolour", Color.BLACK);
-    private final PropertyAngle swingangle = new PropertyAngle("swingangle", ANGLE0);
-    private final PropertyInteger swingperiod = new PropertyInteger("swingperiod", 0);
-    private final PropertyAngle shiftangle = new PropertyAngle("shiftangle", ANGLE0);
-    private final PropertyInteger shiftperiod = new PropertyInteger("shiftperiod", 0);
-    private final PropertyBoolean randomshifts = new PropertyBoolean("randomshifts", false);
+    private final PropertyBoolean showflow = new PropertyBoolean(false);
+    private final PropertyDouble showflowinterval = new PropertyDouble(100.0);
+    private final PropertyColour showflowcolour = new PropertyColour(Color.BLACK);
+    private final PropertyDegrees swingangle = new PropertyDegrees(DEGREES0);
+    private final PropertyInteger swingperiod = new PropertyInteger(0);
+    private final PropertyDegrees shiftangle = new PropertyDegrees(DEGREES0);
+    private final PropertyInteger shiftperiod = new PropertyInteger(0);
+    private final PropertyBoolean randomshifts = new PropertyBoolean(false);
 
     public FlowShiftModel() {
-        addProperty("showflow",showflow);
-        addProperty("showflowinterval",showflowinterval);
-        addProperty("showflowcolour",showflowcolour);
-        addProperty("swingangle",swingangle);
-        addProperty("swingperiod",swingperiod);
-        addProperty("shiftangle",shiftangle);
-        addProperty("shiftperiod",shiftperiod);
-        addProperty("randomshifts",randomshifts);
+        addProperty("showflow", showflow);
+        addProperty("showflowinterval", showflowinterval);
+        addProperty("showflowcolour", showflowcolour);
+        addProperty("swingangle", swingangle);
+        addProperty("swingperiod", swingperiod);
+        addProperty("shiftangle", shiftangle);
+        addProperty("shiftperiod", shiftperiod);
+        addProperty("randomshifts", randomshifts);
     }
-    
+
     @Override
     protected void parseValues(JsonObject jobj) {
-        parseOptionalProperty("showflow",showflow, jobj);
-        parseOptionalProperty("showflowinterval",showflowinterval, jobj);
-        parseOptionalProperty("showflowcolour",showflowcolour, jobj);
-        parseOptionalProperty("swingangle",swingangle, jobj);
-        parseOptionalProperty("swingperiod",swingperiod, jobj);
-        parseOptionalProperty("shiftangle",shiftangle, jobj);
-        parseOptionalProperty("shiftperiod",shiftperiod, jobj);
-        parseOptionalProperty("randomshifts",randomshifts, jobj);
+        parseOptionalProperty("showflow", showflow, jobj);
+        parseOptionalProperty("showflowinterval", showflowinterval, jobj);
+        parseOptionalProperty("showflowcolour", showflowcolour, jobj);
+        parseOptionalProperty("swingangle", swingangle, jobj);
+        parseOptionalProperty("swingperiod", swingperiod, jobj);
+        parseOptionalProperty("shiftangle", shiftangle, jobj);
+        parseOptionalProperty("shiftperiod", shiftperiod, jobj);
+        parseOptionalProperty("randomshifts", randomshifts, jobj);
     }
 
     @Override
     public JsonValue toJson() {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        job.add("showflow",showflow.toJson());
-        job.add("showflowinterval",showflowinterval.toJson());
-        job.add("showflowcolour",showflowcolour.toJson());
-        job.add("swingangle",swingangle.toJson());
-        job.add("swingperiod",swingperiod.toJson());
-        job.add("shiftangle",shiftangle.toJson());
-        job.add("shiftperiod",shiftperiod.toJson());
-        job.add("randomshifts",randomshifts.toJson());
-       return job.build();
+        job.add("showflow", showflow.toJson());
+        job.add("showflowinterval", showflowinterval.toJson());
+        job.add("showflowcolour", showflowcolour.toJson());
+        job.add("swingangle", swingangle.toJson());
+        job.add("swingperiod", swingperiod.toJson());
+        job.add("shiftangle", shiftangle.toJson());
+        job.add("shiftperiod", shiftperiod.toJson());
+        job.add("randomshifts", randomshifts.toJson());
+        return job.build();
     }
 
     @Override
@@ -101,16 +100,16 @@ public class FlowShiftModel extends ModelProperties {
         return showflowcolour.get();
     }
 
-    public Angle getSwingangle() {
-        return swingangle.get();
+    public PropertyDegrees getSwingangle() {
+        return swingangle;
     }
 
     public int getSwingperiod() {
         return swingperiod.get();
     }
 
-    public Angle getShiftangle() {
-        return shiftangle.get();
+    public PropertyDegrees getShiftangle() {
+        return shiftangle;
     }
 
     public int getShiftperiod() {

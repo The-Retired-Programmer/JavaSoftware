@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,18 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
-/**
- *
- * @author richard
- */
 public class TestFlowComponentTest extends FlowComponentTest {
 
     @Test
     public void testGetTestFlow() throws IOException {
         System.out.println("getTestFlow");
         initialiseFlow("/testwindflow.json");
-        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, ANGLE0));
-        assertMeanFlowAngle(new Angle(-30));
+        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
+        assertMeanFlowAngle(new PropertyDegrees(-30));
     }
 }

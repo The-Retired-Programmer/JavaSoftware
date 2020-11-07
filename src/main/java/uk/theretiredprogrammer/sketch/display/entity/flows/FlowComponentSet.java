@@ -16,12 +16,14 @@
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
 public class FlowComponentSet extends ModelArray<FlowComponent> {
@@ -33,7 +35,11 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
     }
 
     @Override
-    protected FlowComponent createAndParse(JsonObject jobj) {
+    protected FlowComponent createAndParse(JsonValue jval) {
+        if (jval.getValueType() != JsonValue.ValueType.OBJECT) {
+            throw new ParseFailure("Malformed Definition File - array contains items other than Objects");
+        }
+        JsonObject jobj = (JsonObject) jval;
         FlowComponent flowc = FlowComponent.factory(
                 jobj.getString("type", "<undefined>"),
                 getdisplayarea
@@ -59,9 +65,9 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
         return flowtouse != null ? flowtouse.getFlow(pos) : SpeedPolar.FLOWZERO;
     }
 
-    public Angle meanWindAngle() {
+    public PropertyDegrees meanWindAngle() {
         for (FlowComponent flow : getProperties()) {
-            Angle res = flow.meanWindAngle();
+            PropertyDegrees res = flow.meanWindAngle();
             if (res != null) {
                 return res;
             }

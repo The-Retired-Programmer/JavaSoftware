@@ -27,15 +27,15 @@ import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
-public class DisplayModel extends ModelProperties{
+public class DisplayModel extends ModelProperties {
 
     public static final Area DISPLAYAREADEFAULT = new Area(new Location(-500, -500), 1000, 1000);
 
-    private final PropertyDouble zoom = new PropertyDouble("zoom", 1.0);
-    private final PropertyInteger secondsperdisplay = new PropertyInteger("secondsperdisplay", 1);
-    private final PropertyDouble speedup = new PropertyDouble("speedup", 1.0);
-    private final PropertyArea displayarea = new PropertyArea("displayarea", DISPLAYAREADEFAULT);
-    private final PropertyArea sailingarea = new PropertyArea("sailingarea", AREAZERO);
+    private final PropertyDouble zoom = new PropertyDouble(1.0);
+    private final PropertyInteger secondsperdisplay = new PropertyInteger(1);
+    private final PropertyDouble speedup = new PropertyDouble(1.0);
+    private final PropertyArea displayarea = new PropertyArea(DISPLAYAREADEFAULT);
+    private final PropertyArea sailingarea = new PropertyArea(AREAZERO);
 
     public DisplayModel() {
         addProperty("zoom", zoom);
@@ -73,7 +73,7 @@ public class DisplayModel extends ModelProperties{
         displayarea.setOnChange(onchange);
         sailingarea.setOnChange(onchange);
     }
-    
+
     public DisplayModel get() {
         return this;
     }

@@ -15,84 +15,53 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
+import uk.theretiredprogrammer.sketch.core.entity.ParseHelper;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyLegEnding extends PropertyElement<LegEnding> {
+public class PropertyLegEnding extends SimpleObjectProperty<LegEnding>  implements ModelProperty<LegEnding> {
 
-    private final PropertyConstrainedString marknameproperty;
-    private final PropertyConstrainedString roundingproperty;
+    private final ObservableList<String> marknames;
+    private final ObservableList<String> roundings;
 
     public PropertyLegEnding(ObservableList<String> marknames, ObservableList<String> roundings) {
-        marknameproperty = new PropertyConstrainedString(marknames);
-        roundingproperty = new PropertyConstrainedString(roundings);
+        this.marknames = marknames;
+        this.roundings = roundings;
     }
 
     public PropertyLegEnding(LegEnding defaultvalue, ObservableList<String> marknames, ObservableList<String> roundings) {
-        marknameproperty = new PropertyConstrainedString(marknames, defaultvalue.getMarkname());
-        roundingproperty = new PropertyConstrainedString(roundings, defaultvalue.getRoundingdirection());
+        this.marknames = marknames;
+        this.roundings = roundings;
+        set(defaultvalue);
     }
-
-    public String getMarkname() {
-        return marknameproperty.get();
-    }
-
-    public String getRounding() {
-        return roundingproperty.get();
-    }
-
+    
     @Override
-    public final LegEnding get() {
-        return new LegEnding(marknameproperty.get(), roundingproperty.get());
+    public void setOnChange(Runnable onchange) {
     }
-
-    @Override
-    public final void set(LegEnding newleg) {
-        marknameproperty.setValue(newleg.getMarkname());
-        roundingproperty.set(newleg.getRoundingdirection());
-    }
-
+    
     @Override
     public final LegEnding parsevalue(JsonValue jvalue) {
-        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
-            JsonArray values = (JsonArray) jvalue;
-            if (values.size() == 2) {
-                return new LegEnding(
-                        marknameproperty.parsevalue(values.get(0)),
-                        roundingproperty.parsevalue(values.get(1))
-                );
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
+        return ParseHelper.legEndingParse(jvalue, marknames, roundings);
     }
 
     @Override
     public JsonArray toJson() {
-        return Json.createArrayBuilder()
-                .add(marknameproperty.get())
-                .add(roundingproperty.get())
-                .build();
+        return ParseHelper.legEndingToJson(get());
     }
 
     @Override
     public Node getField() {
-        return new HBox(marknameproperty.getField(), roundingproperty.getField());
+        return FieldBuilder.getLegEndingField(this, marknames, roundings);
     }
 
     @Override
     public Node getField(int size) {
-        return getField(size, size);
-    }
-
-    private Node getField(int sizemark, int sizerounding) {
-        return new HBox(marknameproperty.getField(sizemark), roundingproperty.getField(sizerounding));
+        return getField();
     }
 
     @Override

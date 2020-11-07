@@ -16,7 +16,8 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
 /**
  *
@@ -34,7 +35,7 @@ public class Decision {
     private final Boat boat;
 
     private DecisionAction action = DecisionAction.SAILON;
-    private Angle angle = null;
+    private PropertyDegrees degrees = null;
     private boolean turndirection = STARBOARD;
 
     public Decision(Boat boat) {
@@ -45,21 +46,21 @@ public class Decision {
         set(DecisionAction.SAILON, null, STARBOARD);
     }
 
-    public void setTURN(Angle angle, boolean turndirection) {
-        set(DecisionAction.TURN, angle, turndirection);
+    public void setTURN(PropertyDegrees degrees, boolean turndirection) {
+        set(DecisionAction.TURN, degrees, turndirection);
     }
 
-    public void setMARKROUNDING(Angle angle, boolean turndirection) {
-        set(DecisionAction.MARKROUNDING, angle, turndirection);
+    public void setMARKROUNDING(PropertyDegrees degrees, boolean turndirection) {
+        set(DecisionAction.MARKROUNDING, degrees, turndirection);
     }
 
     public void setSTOP() {
         set(DecisionAction.STOP, null, STARBOARD);
     }
 
-    private void set(DecisionAction action, Angle angle, boolean turndirection) {
+    private void set(DecisionAction action, PropertyDegrees degrees, boolean turndirection) {
         this.action = action;
-        this.angle = angle;
+        this.degrees = degrees;
         this.turndirection = turndirection;
     }
 
@@ -71,8 +72,8 @@ public class Decision {
         return action.equals(DecisionAction.TURN) || action.equals(DecisionAction.MARKROUNDING);
     }
 
-    public Angle getAngle() {
-        return isRotating() ? angle : boat.getDirection();
+    public PropertyDegrees getDegrees() {
+        return isRotating() ? degrees : boat.getDirection();
     }
 
     public boolean isPort() {

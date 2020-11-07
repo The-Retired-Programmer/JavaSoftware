@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,65 +15,30 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
-import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-/**
- *
- * @author richard
- */
-public class PropertyString extends PropertyElement<String> {
+public class PropertyString extends SimpleStringProperty implements ModelProperty<String> {
 
-    private final SimpleStringProperty stringproperty;
-
-    public PropertyString(String defaultvalue) {
-        this(null, defaultvalue);
+    public PropertyString(String value) {
+        set(value);
     }
 
-    public PropertyString(String key, String defaultvalue) {
-        setKey(key);
-        stringproperty = new SimpleStringProperty(defaultvalue);
-    }
-    
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
-    public void setOnChange(ChangeListener cl) {
-        stringproperty.addListener(cl);
-    }
-
-    @Override
-    public final String get() {
-        return stringproperty.get();
-    }
-
-    @Override
-    public final void set(String newvalue) {
-        stringproperty.set(newvalue);
-    }
-
-    public SimpleStringProperty propertyString() {
-        return stringproperty;
-    }
-
     @Override
     public final String parsevalue(JsonValue value) {
-        if (value != null && value.getValueType() == JsonValue.ValueType.STRING) {
-            return ((JsonString) value).getString();
-        }
-        throw new ParseFailure("Malformed Definition file - String expected");
+        return ParseHelper.stringParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return Json.createValue(stringproperty.get());
+        return ParseHelper.stringToJson(get());
     }
 
     @Override
@@ -83,9 +48,7 @@ public class PropertyString extends PropertyElement<String> {
 
     @Override
     public Node getField(int size) {
-        TextField stringfield = new TextField(stringproperty.get());
-        stringfield.textProperty().bindBidirectional(stringproperty);
-        return stringfield;
+        return FieldBuilder.getStringField(this);
     }
 
     @Override

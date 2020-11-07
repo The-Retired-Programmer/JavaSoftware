@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,70 +15,30 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import javafx.scene.text.TextFlow;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-/**
- *
- * @author richard
- */
-public class PropertyLocation extends PropertyElement<Location> {
-
-    private final PropertyDouble xlocationproperty;
-    private final PropertyDouble ylocationproperty;
+public class PropertyLocation extends SimpleObjectProperty<Location> implements ModelProperty<Location> {
 
     public PropertyLocation(Location defaultvalue) {
-        this(null, defaultvalue);
+        set(defaultvalue);
     }
 
-    public PropertyLocation(String key, Location defaultvalue) {
-        setKey(key);
-        xlocationproperty = new PropertyDouble(defaultvalue.getX());
-        ylocationproperty = new PropertyDouble(defaultvalue.getY());
-    }
-    
+    @Override
     public void setOnChange(Runnable onchange) {
-        xlocationproperty.setOnChange(onchange);
-        ylocationproperty.setOnChange(onchange);
-    }
-
-    @Override
-    public final Location get() {
-        return new Location(xlocationproperty.get(), ylocationproperty.get());
-    }
-
-    @Override
-    public final void set(Location newlocation) {
-        xlocationproperty.set(newlocation.getX());
-        ylocationproperty.set(newlocation.getY());
     }
 
     @Override
     public Location parsevalue(JsonValue jvalue) {
-        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
-            JsonArray values = (JsonArray) jvalue;
-            if (values.size() == 2) {
-                return new Location(
-                        xlocationproperty.parsevalue(values.get(0)),
-                        ylocationproperty.parsevalue(values.get(1))
-                );
-            }
-        }
-        throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
+        return ParseHelper.locationParse(jvalue);
     }
 
     @Override
     public JsonArray toJson() {
-        return Json.createArrayBuilder()
-                .add(xlocationproperty.get())
-                .add(ylocationproperty.get())
-                .build();
+        return ParseHelper.locationToJson(get());
     }
 
     @Override
@@ -88,13 +48,7 @@ public class PropertyLocation extends PropertyElement<Location> {
 
     @Override
     public Node getField(int size) {
-        return new TextFlow(
-                createTextFor("["),
-                xlocationproperty.getField(size),
-                createTextFor(","),
-                ylocationproperty.getField(size),
-                createTextFor("]")
-        );
+        return FieldBuilder.getLocationField(size, this);
     }
 
     @Override

@@ -15,7 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -30,7 +31,7 @@ abstract class SailingDecisions {
 
     abstract String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow);
 
-    boolean tackifonstarboardlayline(Strategy strategy, Angle winddirection) {
+    boolean tackifonstarboardlayline(Strategy strategy, PropertyDegrees winddirection) {
         if (strategy.boat.isPortTackingQuadrant(strategy.getSailToLocation(false), winddirection)) {
             strategy.decision.setTURN(strategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
             return true;
@@ -38,7 +39,7 @@ abstract class SailingDecisions {
         return false;
     }
 
-    boolean gybeifonstarboardlayline(Strategy strategy, Angle winddirection) {
+    boolean gybeifonstarboardlayline(Strategy strategy, PropertyDegrees winddirection) {
         if (strategy.boat.isStarboardGybingQuadrant(strategy.getSailToLocation(false), winddirection)) {
             strategy.decision.setTURN(strategy.boat.getStarboardReachingCourse(winddirection), STARBOARD);
             return true;
@@ -46,7 +47,7 @@ abstract class SailingDecisions {
         return false;
     }
 
-    boolean tackifonportlayline(Strategy strategy, Angle winddirection) {
+    boolean tackifonportlayline(Strategy strategy, PropertyDegrees winddirection) {
         if (strategy.boat.isStarboardTackingQuadrant(strategy.getSailToLocation(true), winddirection)) {
             strategy.decision.setTURN(strategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
             return true;
@@ -54,7 +55,7 @@ abstract class SailingDecisions {
         return false;
     }
 
-    boolean gybeifonportlayline(Strategy strategy, Angle winddirection) {
+    boolean gybeifonportlayline(Strategy strategy, PropertyDegrees winddirection) {
         if (strategy.boat.isPortGybingQuadrant(strategy.getSailToLocation(true), winddirection)) {
             strategy.decision.setTURN(strategy.boat.getPortReachingCourse(winddirection), PORT);
             return true;
@@ -62,9 +63,9 @@ abstract class SailingDecisions {
         return false;
     }
 
-    boolean adjustPortDirectCourseToWindwardMarkOffset(Strategy strategy, Angle winddirection) {
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
-        Angle closehauled = strategy.boat.getPortCloseHauledCourse(winddirection);
+    boolean adjustPortDirectCourseToWindwardMarkOffset(Strategy strategy, PropertyDegrees winddirection) {
+        PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), true);
+        PropertyDegrees closehauled = strategy.boat.getPortCloseHauledCourse(winddirection);
         if (coursetomark.lt(closehauled)) {
             return false;
         }
@@ -72,9 +73,9 @@ abstract class SailingDecisions {
                 coursetomark.gteq(closehauled) ? coursetomark : closehauled, strategy.decision);
     }
 
-    boolean adjustStarboardDirectCourseToWindwardMarkOffset(Strategy strategy, Angle winddirection) {
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
-        Angle closehauled = strategy.boat.getStarboardCloseHauledCourse(winddirection);
+    boolean adjustStarboardDirectCourseToWindwardMarkOffset(Strategy strategy, PropertyDegrees winddirection) {
+        PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), false);
+        PropertyDegrees closehauled = strategy.boat.getStarboardCloseHauledCourse(winddirection);
         if (coursetomark.gt(closehauled)) {
             return false;
         }
@@ -82,10 +83,10 @@ abstract class SailingDecisions {
                 coursetomark.lteq(closehauled) ? coursetomark : closehauled, strategy.decision);
     }
 
-    boolean adjustPortDirectCourseToLeewardMarkOffset(Strategy strategy, Angle winddirection) {
+    boolean adjustPortDirectCourseToLeewardMarkOffset(Strategy strategy, PropertyDegrees winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
-        Angle reaching = strategy.boat.getPortReachingCourse(winddirection);
+        PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), true);
+        PropertyDegrees reaching = strategy.boat.getPortReachingCourse(winddirection);
         if (coursetomark.gt(reaching)) {
             return false;
         }
@@ -93,10 +94,10 @@ abstract class SailingDecisions {
                 coursetomark.lteq(reaching) ? coursetomark : reaching, strategy.decision);
     }
 
-    boolean adjustStarboardDirectCourseToLeewardMarkOffset(Strategy strategy, Angle winddirection) {
+    boolean adjustStarboardDirectCourseToLeewardMarkOffset(Strategy strategy, PropertyDegrees winddirection) {
         // check and adjust if boat can sail dirctly to next mark (offset)
-        Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
-        Angle reaching = strategy.boat.getStarboardReachingCourse(winddirection);
+        PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), false);
+        PropertyDegrees reaching = strategy.boat.getStarboardReachingCourse(winddirection);
         if (coursetomark.lt(reaching)) {
             return false;
         }
@@ -104,17 +105,17 @@ abstract class SailingDecisions {
                 coursetomark.gteq(reaching) ? coursetomark : reaching, strategy.decision);
     }
 
-    boolean adjustDirectCourseToDownwindMarkOffset(Strategy strategy, Angle winddirection) {
+    boolean adjustDirectCourseToDownwindMarkOffset(Strategy strategy, PropertyDegrees winddirection) {
         if (strategy.boat.isPort(winddirection)) {
-            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), true);
+            PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), true);
             return adjustCourse(strategy.boat.getDirection(), coursetomark, strategy.decision);
         } else {
-            Angle coursetomark = strategy.getAngletoSail(strategy.boat.getLocation(), false);
+            PropertyDegrees coursetomark = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), false);
             return adjustCourse(strategy.boat.getDirection(), coursetomark, strategy.decision);
         }
     }
 
-    private boolean adjustCourse(Angle current, Angle target, Decision decision) {
+    private boolean adjustCourse(PropertyDegrees current, PropertyDegrees target, Decision decision) {
         if (target.neq(current)) {
             decision.setTURN(target, target.lteq(current));
             return true;

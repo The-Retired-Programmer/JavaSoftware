@@ -17,43 +17,51 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 
 public class LegEnding {
 
-    private final String mark;
-    private final String passing;
+    private static final ObservableList<String> roundingdirections;
 
-    public LegEnding(String mark, String passing) {
-        this.mark = mark;
-        passing = passing.toLowerCase();
-        if (passing.equals("port") || passing.equals("starboard")) {
-            this.passing = passing;
-        } else {
-            throw new IllegalStateFailure("Malformed Definition file - 2nd parameter in leg must be port or starboard");
-        }
+    static {
+        roundingdirections = FXCollections.observableArrayList();
+        roundingdirections.addAll("port", "starboard");
+    }
+
+    public static ObservableList<String> getRoundingdirections() {
+        return roundingdirections;
+    }
+
+    private final PropertyConstrainedString mark;
+    private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
+
+    public LegEnding(String mark, String passing, ObservableList<String> marknames) {
+        this.mark = new PropertyConstrainedString(mark, marknames);
+        this.passing.set(passing.toLowerCase());
     }
 
     public String getRoundingdirection() {
+        return passing.get();
+    }
+
+    public PropertyConstrainedString getRoundingdirectionProperty() {
         return passing;
     }
 
     public boolean isPortRounding() {
-        return passing.equals("port");
-    }
-
-    public static ObservableList<String> getRoundingdirections() {
-        ObservableList<String> values = FXCollections.observableArrayList();
-        values.addAll("port", "starboard");
-        return values;
+        return passing.get().equals("port");
     }
 
     public String getMarkname() {
+        return mark.get();
+    }
+
+    public PropertyConstrainedString getMarknameProperty() {
         return mark;
     }
 
     @Override
     public String toString() {
-        return mark + " to " + passing;
+        return mark.get() + " to " + passing.get();
     }
 }

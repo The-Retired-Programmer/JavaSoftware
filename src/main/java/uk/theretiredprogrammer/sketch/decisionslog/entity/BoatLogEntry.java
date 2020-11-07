@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ package uk.theretiredprogrammer.sketch.decisionslog.entity;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
-/**
- *
- * @author richard
- */
 public class BoatLogEntry extends TimerLogEntry {
 
     private final double boatangle;
@@ -33,7 +29,7 @@ public class BoatLogEntry extends TimerLogEntry {
         Location loc = boat.getLocation();
         this.boatx = loc.getX();
         this.boaty = loc.getY();
-        this.boatangle = boat.getDirection().getDegrees();
+        this.boatangle = boat.getDirection().get();
         this.boatname = boat.getName();
     }
 

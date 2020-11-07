@@ -28,10 +28,10 @@ import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
 public class ComplexFlowComponent extends FlowComponent {
 
-    private final PropertySpeedPolar northwestflow = new PropertySpeedPolar("northwestflow", FLOWZERO);
-    private final PropertySpeedPolar northeastflow = new PropertySpeedPolar("northeastflow", FLOWZERO);
-    private final PropertySpeedPolar southeastflow = new PropertySpeedPolar("southeastflow", FLOWZERO);
-    private final PropertySpeedPolar southwestflow = new PropertySpeedPolar("southwestflow", FLOWZERO);
+    private final PropertySpeedPolar northwestflow = new PropertySpeedPolar(FLOWZERO);
+    private final PropertySpeedPolar northeastflow = new PropertySpeedPolar(FLOWZERO);
+    private final PropertySpeedPolar southeastflow = new PropertySpeedPolar(FLOWZERO);
+    private final PropertySpeedPolar southwestflow = new PropertySpeedPolar(FLOWZERO);
 
     public ComplexFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);

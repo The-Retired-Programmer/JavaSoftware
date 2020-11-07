@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -27,16 +27,16 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
  */
 class OffwindStarboardRoundingDecisions extends RoundingDecisions {
 
-    private final Function<Angle, Angle> getDirectionAfterTurn;
+    private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
 
     OffwindStarboardRoundingDecisions(
-            Function<Angle, Angle> getDirectionAfterTurn) {
+            Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
     final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        Angle winddirection = windflow.getFlow(strategy.boat.getLocation()).getAngle();
+        PropertyDegrees winddirection = windflow.getFlow(strategy.boat.getLocation()).getDegreesProperty();
         if (atStarboardRoundingTurnPoint(strategy)) {
             return executeStarboardRounding(getDirectionAfterTurn, winddirection, strategy);
         }

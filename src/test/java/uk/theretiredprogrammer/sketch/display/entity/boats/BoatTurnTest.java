@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,14 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class BoatTurnTest extends TurnTest {
 
     final static double DELTA = 0.005;
@@ -103,16 +99,17 @@ public class BoatTurnTest extends TurnTest {
         testradiusX(7.80);
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     private void runturntest(int startangleint, int finishangleint,
             boolean turndirection, int secondstospeed,
             Location expectedstartturnlocation, Location expectedendturnlocation,
             Runnable... updateproperties) {
         try {
-            Angle startangle = new Angle(startangleint);
-            Angle targetangle = new Angle(finishangleint);
+            PropertyDegrees startangle = new PropertyDegrees(startangleint);
+            PropertyDegrees targetangle = new PropertyDegrees(finishangleint);
             setupForTurn("/boat-turn-calculation.json", updateproperties);
             Boat boat = getUptospeed(secondstospeed);
-            Angle direction = boat.getDirection();
+            PropertyDegrees direction = boat.getDirection();
             assertEquals(startangle, direction);
             startturnlocation = boat.getLocation();
             assertAll("startturnlocation",

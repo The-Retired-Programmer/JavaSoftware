@@ -16,13 +16,14 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 
 public class Marks extends ModelArray<Mark> {
 
     @Override
-    protected Mark createAndParse(JsonObject jobj) {
+    protected Mark createAndParse(JsonValue jobj) {
         Mark mark = new Mark();
         mark.parse(jobj);
         return mark;

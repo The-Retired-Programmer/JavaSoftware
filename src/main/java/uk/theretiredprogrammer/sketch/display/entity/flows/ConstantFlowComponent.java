@@ -28,7 +28,7 @@ import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final PropertySpeedPolar flow = new PropertySpeedPolar("flow", FLOWZERO);
+    private final PropertySpeedPolar flow = new PropertySpeedPolar(FLOWZERO);
 
     public ConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);

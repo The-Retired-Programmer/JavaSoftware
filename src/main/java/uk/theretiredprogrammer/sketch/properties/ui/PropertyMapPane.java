@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,56 +15,62 @@
  */
 package uk.theretiredprogrammer.sketch.properties.ui;
 
-import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableMap;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.Model;
+import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyAny;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyList;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyMap;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 
-/**
- *
- * @author richard
- */
 public class PropertyMapPane extends TitledPane {
 
-    public PropertyMapPane(ObservableMap<String, PropertyAny> properties, String title) {
+    public PropertyMapPane(ModelProperties properties, String title) {
         this.setText(title);
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
-    public PropertyMapPane(ObservableMap<String, PropertyAny> properties, String titleroot, PropertyString propertyname) {
+    public PropertyMapPane(ModelProperties properties, String titleroot, PropertyString propertyname) {
         this.textProperty().bind(new SimpleStringProperty(titleroot)
-                .concat(propertyname.propertyString())
+                .concat(propertyname.get())
         );
         this.setContent(createpropertiescontent(properties));
     }
 
-    private ScrollPane createpropertiescontent(ObservableMap<String, PropertyAny> properties) {
+    private ScrollPane createpropertiescontent(ModelProperties properties) {
         GridPane propertiestable = new GridPane();
         int row = 0;
         createpropertymapcontent(propertiestable, row, properties);
         return new ScrollPane(propertiestable);
     }
 
-    private int createpropertymapcontent(GridPane propertiestable, int row, ObservableMap<String, PropertyAny> properties) {
-        for (var pe : properties.entrySet()) {
+    private int createpropertymapcontent(GridPane propertiestable, int row, ModelProperties properties) {
+        for (var pe : properties.getProperties().entrySet()) {
             Object value = pe.getValue();
             if (value instanceof ModelProperties model) {
-                row = createpropertymapcontent(propertiestable, row, model.getProperties());
-            } else if (value instanceof PropertyList propertylist) {
+                row = createpropertymapcontent(propertiestable, row, model);
+            } else if (value instanceof ModelArray propertylist) {
                 row = createpropertylistcontent(propertiestable, row, propertylist);
-            } else if (value instanceof PropertyMap propertymap) {
-                row = createpropertymapcontent(propertiestable, row, propertymap.propertymap);
-            } else if (value instanceof PropertyElement propertyelement) {
+            } else if (value instanceof ModelProperty propertyelement) {
+                row = createpropertyelementcontent(propertiestable, row, pe.getKey(), propertyelement);
+            } else {
+                throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
+            }
+        }
+        return row;
+    }
+
+    private int createpropertylistcontent(GridPane propertiestable, int row, ModelArray<? extends Model> properties) {
+        for (Model value : properties.getProperties()) {
+            if (value instanceof ModelArray propertylist) {
+                row = createpropertylistcontent(propertiestable, row, propertylist);
+            } else if (value instanceof ModelProperties propertymap) {
+                row = createpropertymapcontent(propertiestable, row, propertymap);
+            } else if (value instanceof ModelProperty propertyelement) {
                 row = createpropertyelementcontent(propertiestable, row, propertyelement);
             } else {
                 throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
@@ -73,24 +79,12 @@ public class PropertyMapPane extends TitledPane {
         return row;
     }
 
-    private int createpropertylistcontent(GridPane propertiestable, int row, PropertyList<? extends PropertyAny> properties) {
-        for (PropertyAny value : properties.getList()) {
-            if (value instanceof PropertyList propertylist) {
-                row = createpropertylistcontent(propertiestable, row, propertylist);
-            } else if (value instanceof PropertyMap propertymap) {
-                row = createpropertymapcontent(propertiestable, row, propertymap.propertymap);
-            } else if (value instanceof PropertyElement propertyelement) {
-                row = createpropertyelementcontent(propertiestable, row, propertyelement);
-            } else {
-                throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
-            }
-        }
-        return row;
+    private int createpropertyelementcontent(GridPane propertiestable, int row, ModelProperty propertyelement) {
+        return createpropertyelementcontent(propertiestable, row, "", propertyelement);
     }
-
-    private int createpropertyelementcontent(GridPane propertiestable, int row, PropertyElement propertyelement) {
-        Optional<String> okey = propertyelement.getOptionalKey();
-        propertiestable.add(new Label(okey.orElse("")), 0, row, 1, 1);
+    
+    private int createpropertyelementcontent(GridPane propertiestable, int row, String key, ModelProperty propertyelement) {
+        propertiestable.add(new Label(key), 0, row, 1, 1);
         propertiestable.add(propertyelement.getField(), 1, row++, 1, 1);
         return row;
     }

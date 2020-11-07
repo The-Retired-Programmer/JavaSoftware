@@ -15,13 +15,11 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
-import uk.theretiredprogrammer.sketch.core.entity.Polar;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 
 /**
  *
@@ -34,96 +32,96 @@ public class PolarTest {
     @Test
     public void testAdd() {
         System.out.println("add");
-        DistancePolar instance = new DistancePolar(100, new Angle(0));
-        DistancePolar res = (DistancePolar) instance.add(instance);
-        assertEquals(new Angle(0), res.getAngle());
+        DistancePolar instance = new DistancePolar(100, DEGREES0);
+        DistancePolar res = (DistancePolar) instance.plus(instance);
+        assertEquals(DEGREES0, res.getDegreesProperty());
         assertEquals(200, res.getDistance());
         assertEquals(100, instance.getDistance());
-        assertEquals(new Angle(0), instance.getAngle());
-        DistancePolar other = new DistancePolar(100, new Angle(90));
-        res = (DistancePolar) instance.add(other);
-        assertEquals(45, res.getAngle().getDegrees());
+        assertEquals(DEGREES0, instance.getDegreesProperty());
+        DistancePolar other = new DistancePolar(100, DEGREES90);
+        res = (DistancePolar) instance.plus(other);
+        assertEquals(45, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
-        other = new DistancePolar(100, new Angle(180));
-        res = (DistancePolar) instance.add(other);
-        assertEquals(90, res.getAngle().getDegrees());
+        other = new DistancePolar(100, DEGREES180);
+        res = (DistancePolar) instance.plus(other);
+        assertEquals(90, res.getDegrees());
         assertEquals(0, res.getDistance(), DELTA);
     }
 
     @Test
     public void testSubtract() {
         System.out.println("subtract");
-        DistancePolar instance = new DistancePolar(100, new Angle(0));
-        DistancePolar other = new DistancePolar(50, new Angle(0));
-        DistancePolar res = (DistancePolar) instance.subtract(other);
-        assertEquals(new Angle(0), res.getAngle());
+        DistancePolar instance = new DistancePolar(100, DEGREES0);
+        DistancePolar other = new DistancePolar(50, DEGREES0);
+        DistancePolar res = (DistancePolar) instance.sub(other);
+        assertEquals(DEGREES0, res.getDegreesProperty());
         assertEquals(50, res.getDistance());
         assertEquals(100, instance.getDistance());
-        assertEquals(new Angle(0), instance.getAngle());
-        other = new DistancePolar(100, new Angle(90));
-        res = (DistancePolar) instance.subtract(other);
-        assertEquals(-45, res.getAngle().getDegrees());
+        assertEquals(DEGREES0, instance.getDegreesProperty());
+        other = new DistancePolar(100, DEGREES90);
+        res = (DistancePolar) instance.sub(other);
+        assertEquals(-45, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
-        other = new DistancePolar(100, new Angle(180));
-        res = (DistancePolar) instance.subtract(other);
-        assertEquals(0, res.getAngle().getDegrees(), DELTA);
+        other = new DistancePolar(100, DEGREES180);
+        res = (DistancePolar) instance.sub(other);
+        assertEquals(0, res.getDegrees(), DELTA);
         assertEquals(200, res.getDistance(), DELTA);
     }
 
     @Test
     public void testMult() {
         System.out.println("mult");
-        DistancePolar instance = new DistancePolar(100, new Angle(0));
+        DistancePolar instance = new DistancePolar(100, DEGREES0);
         DistancePolar res = (DistancePolar) instance.mult(2);
-        assertEquals(new Angle(0), res.getAngle());
+        assertEquals(DEGREES0, res.getDegreesProperty());
         assertEquals(200, res.getDistance());
         res = (DistancePolar) instance.mult(0.655);
-        assertEquals(new Angle(0), res.getAngle());
+        assertEquals(DEGREES0, res.getDegreesProperty());
         assertEquals(65.5, res.getDistance(), DELTA);
         res = (DistancePolar) instance.mult(-0.655);
-        assertEquals(180, res.getAngle().getDegrees());
+        assertEquals(180, res.getDegrees());
         assertEquals(65.5, res.getDistance(), DELTA);
     }
 
     @Test
-    public void testAngleDiff_Angle() {
-        System.out.println("angleDiff<Angle>");
-        DistancePolar instance = new DistancePolar(1, new Angle(88));
-        assertEquals(92, instance.angleDiff(new Angle(180)).getDegrees());
+    public void testDegreesDiff_Angle() {
+        System.out.println("degreesDiff<PropertyDegrees>");
+        DistancePolar instance = new DistancePolar(1.0, new PropertyDegrees(88));
+        assertEquals(92, instance.degreesDiff(DEGREES180).get());
     }
-
+    
     @Test
-    public void testAngleDiff_Polar() {
-        System.out.println("angleDiff<Polar>");
-        DistancePolar instance = new DistancePolar(1, new Angle(88));
-        DistancePolar other = new DistancePolar(1, new Angle(180));
-        assertEquals(92, instance.angleDiff(other).getDegrees());
+    public void testDegreesDiff_Polar() {
+        System.out.println("degreesDiff<Polar>");
+        DistancePolar instance = new DistancePolar(1, new PropertyDegrees(88));
+        DistancePolar other = new DistancePolar(1, DEGREES180);
+        assertEquals(92, instance.degreesDiff(other).get());
     }
 
     @Test
     public void testGetAngle() {
         System.out.println("getAngle");
-        DistancePolar instance = new DistancePolar(1, new Angle(88));
-        assertEquals(88, instance.getAngle().getDegrees());
+        DistancePolar instance = new DistancePolar(1, new PropertyDegrees(88));
+        assertEquals(88, instance.getDegrees());
     }
 
     @Test
     public void testMeanAngle1() {
         System.out.println("meanAngle1");
         Polar[][] array = new Polar[2][1];
-        array[0][0] = new SpeedPolar(1, ANGLE0);
-        array[1][0] = new SpeedPolar(10, new Angle(50));
-        assertEquals(new Angle(25), Polar.meanAngle(array));
+        array[0][0] = new SpeedPolar(1, DEGREES0);
+        array[1][0] = new SpeedPolar(10, new PropertyDegrees(50));
+        assertEquals(new PropertyDegrees(25), Polar.meanAngle(array));
     }
 
     @Test
     public void testMeanAngle2() {
         System.out.println("meanAngle2");
         Polar[][] array = new Polar[2][2];
-        array[0][0] = new SpeedPolar(1, ANGLE0);
-        array[1][0] = new SpeedPolar(5, ANGLE0);
-        array[0][1] = new SpeedPolar(10, ANGLE0);
-        array[1][1] = new SpeedPolar(15, new Angle(45));
-        assertEquals(10.7990805, Polar.meanAngle(array).getDegrees(), DELTA);
+        array[0][0] = new SpeedPolar(1, DEGREES0);
+        array[1][0] = new SpeedPolar(5, DEGREES0);
+        array[0][1] = new SpeedPolar(10, DEGREES0);
+        array[1][1] = new SpeedPolar(15, new PropertyDegrees(45));
+        assertEquals(10.7990805, Polar.meanAngle(array).get(), DELTA);
     }
 }

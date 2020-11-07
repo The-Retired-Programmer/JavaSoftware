@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale (richard at theretiredprogrammer.uk)
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
@@ -97,7 +97,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             Mark newmark = new Mark(new Location(x, y));
-            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark.getProperties(), "Mark"))) {
+            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getProperty().getMarks().add(newmark);
             }
@@ -113,7 +113,7 @@ public class DisplayPane extends Group {
                     model.getCourse().getFirstLeg(),
                     new WindFlow(model),
                     new WaterFlow(model));
-            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat.getProperties(), "Boat"))) {
+            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {
                 controller.getProperty().getBoats().add(newboat);
             }
         }
@@ -200,7 +200,7 @@ public class DisplayPane extends Group {
     }
 
     private void laylinesdraw(Mark mark) {
-        Angle windAngle = controller.windflow.getFlow(mark.getLocation()).getAngle();
+        PropertyDegrees windAngle = controller.windflow.getFlow(mark.getLocation()).getDegreesProperty();
         if (mark.isWindwardlaylines()) {
             getChildren().addAll(
                     Wrap.globalTransform(
@@ -230,7 +230,7 @@ public class DisplayPane extends Group {
                 Wrap.globalTransform(
                         Wrap.contextMenu(
                                 shapebuilder.drawboat(boat.getLocation(), boat.getDirection(), boat.getColour(),
-                                        controller.windflow.getFlow(boat.getLocation()).getAngle(),
+                                        controller.windflow.getFlow(boat.getLocation()).getDegreesProperty(),
                                         boat.metrics.length, boat.metrics.width, boat.sailcolor),
                                 UI.contextMenu(
                                         UI.menuitem("tack", ev -> tack(boat)),
@@ -249,15 +249,15 @@ public class DisplayPane extends Group {
     private void tack(Boat boat) {
         Location position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
-        Angle delta = wind.angleDiff(boat.getDirection());
-        if (delta.gt(ANGLE0)) {
+        PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
+        if (delta.gt(DEGREES0)) {
             // anti clockwise to starboard tack
-            Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
+            PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, PORT);
         } else {
             // clockwise to port tack
-            Angle target = boat.getPortCloseHauledCourse(wind.getAngle());
+            PropertyDegrees target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, STARBOARD);
         }
@@ -266,15 +266,15 @@ public class DisplayPane extends Group {
     private void gybe(Boat boat) {
         Location position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
-        Angle delta = wind.angleDiff(boat.getDirection());
-        if (delta.gt(ANGLE0)) {
+        PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
+        if (delta.gt(DEGREES0)) {
             // clockwise to starboard gybe
-            Angle target = boat.getStarboardReachingCourse(wind.getAngle());
+            PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, STARBOARD);
         } else {
             // anticlockwise to port gybe
-            Angle target = boat.getPortReachingCourse(wind.getAngle());
+            PropertyDegrees target = boat.getPortReachingCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;
             decision.setTURN(target, PORT);
         }

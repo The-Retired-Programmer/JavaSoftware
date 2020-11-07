@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale.
+ * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,44 +15,40 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-/**
- * A Polar location is the relative value (distance, flow etc from a logical
- * origin with direction
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class DistancePolar extends Polar<DistancePolar> {
 
-    private final double distance;
+    private final SimpleDoubleProperty distanceproperty = new SimpleDoubleProperty(0);
 
-    public DistancePolar(double distance, Angle angle) {
-        super(angle);
-        this.distance = distance;
+    public DistancePolar(double distance, PropertyDegrees degrees) {
+        super(degrees);
+        distanceproperty.set(distance);
     }
 
     public DistancePolar(Location origin, Location pos) {
-        super(new Angle(Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))));
+        super(new PropertyDegrees(Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))));
         double deltax = (pos.getX() - origin.getX());
         double deltay = (pos.getY() - origin.getY());
-        distance = Math.sqrt(deltax * deltax + deltay * deltay);
+        distanceproperty.set(Math.sqrt(deltax * deltax + deltay * deltay));
     }
 
     public Location polar2Location(Location origin) {
-        return new Location(origin.getX() + distance * Math.sin(getAngle().getRadians()),
-                origin.getY() + distance * Math.cos(getAngle().getRadians()));
+        return new Location(origin.getX() + distanceproperty.get() * Math.sin(getDegreesProperty().getRadians()),
+                origin.getY() + distanceproperty.get() * Math.cos(getDegreesProperty().getRadians()));
     }
 
     public double getDistance() {
-        return distance;
+        return distanceproperty.get();
     }
 
     @Override
     double getDimension() {
-        return distance;
+        return distanceproperty.get();
     }
 
     @Override
-    DistancePolar create(double dimension, Angle angle) {
-        return new DistancePolar(dimension, angle);
+    DistancePolar create(double dimension, PropertyDegrees degrees) {
+        return new DistancePolar(dimension, degrees);
     }
 }

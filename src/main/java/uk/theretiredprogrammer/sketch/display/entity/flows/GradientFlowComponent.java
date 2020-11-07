@@ -27,7 +27,7 @@ import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADI
 
 public class GradientFlowComponent extends FlowComponent {
 
-    private final PropertyGradient gradient = new PropertyGradient("gradient", GRADIENTDEFAULT);
+    private final PropertyGradient gradient = new PropertyGradient(GRADIENTDEFAULT);
 
     public GradientFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);

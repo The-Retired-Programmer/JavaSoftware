@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,14 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class OffwindStrategy extends Strategy {
 
     private final OffwindSailingDecisions decisions;
@@ -37,7 +33,7 @@ public class OffwindStrategy extends Strategy {
     private boolean useroundingdecisions = false;
 
     public OffwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
-        super(boat, leg, leg.getAngleofLeg().add(ANGLE90), leg.getAngleofLeg().sub(ANGLE90));
+        super(boat, leg, leg.getAngleofLeg().plus(DEGREES90), leg.getAngleofLeg().sub(DEGREES90));
         decisions = new OffwindSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
         switch (followinglegtype) {
@@ -55,8 +51,8 @@ public class OffwindStrategy extends Strategy {
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
             case NONE ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.add(ANGLE90))
-                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(ANGLE90));
+                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.plus(DEGREES90))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(DEGREES90));
             default ->
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());
@@ -65,7 +61,7 @@ public class OffwindStrategy extends Strategy {
 
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
+        PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
@@ -76,9 +72,8 @@ public class OffwindStrategy extends Strategy {
         return decisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
     }
 
-    boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+    boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(DEGREES180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
-
 }

@@ -27,10 +27,10 @@ public class PropertiesPane extends Accordion {
 
     private void refreshcontent(SketchModel sketchmodel) {
         this.getPanes().clear();
-        this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay().getProperties(), "Display"));
-        this.getPanes().add(new PropertyMapPane(sketchmodel.getWindshifts().getProperties(), "Wind Shifts"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay(), "Display"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getWindshifts(), "Wind Shifts"));
         createAllWindComponentPropertiesSection(sketchmodel);
-        this.getPanes().add(new PropertyMapPane(sketchmodel.getWatershifts().getProperties(), "Water Shifts"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getWatershifts(), "Water Shifts"));
         createAllWaterComponentPropertiesSection(sketchmodel);
         createCoursePropertiesSection(sketchmodel);
         createAllMarksPropertiesSection(sketchmodel);
@@ -38,18 +38,18 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createCoursePropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getCourse().getPropertyLegValues().setOnChange(new ListChangeListener() {
+        sketchmodel.getCourse().getLegEndings().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
                 refreshcontent(sketchmodel);
             }
         });
-        this.getPanes().add(new PropertyMapPane(sketchmodel.getCourse().getProperties(), "Course"));
+        this.getPanes().add(new PropertyMapPane(sketchmodel.getCourse(), "Course"));
     }
 
     private void createAllWindComponentPropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getWind().getProperties().forEach(
-                component -> this.getPanes().add(new PropertyMapPane(component.getProperties(), "Wind Component - ", component.getNameProperty()))
+                component -> this.getPanes().add(new PropertyMapPane(component, "Wind Component - ", component.getNameProperty()))
         );
         sketchmodel.getWind().setOnChange(new ListChangeListener() {
             @Override
@@ -61,7 +61,7 @@ public class PropertiesPane extends Accordion {
 
     private void createAllWaterComponentPropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getWater().getProperties().forEach(
-                component -> this.getPanes().add(new PropertyMapPane(component.getProperties(), "Water Component - ", component.getNameProperty()))
+                component -> this.getPanes().add(new PropertyMapPane(component, "Water Component - ", component.getNameProperty()))
         );
         sketchmodel.getWater().setOnChange(new ListChangeListener() {
             @Override
@@ -72,7 +72,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllBoatsPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getBoats().getProperties().forEach(boat -> this.getPanes().add(new PropertyMapPane(boat.getProperties(), "Boat - ", boat.getNameProperty())));
+        sketchmodel.getBoats().getProperties().forEach(boat -> this.getPanes().add(new PropertyMapPane(boat, "Boat - ", boat.getNameProperty())));
         sketchmodel.getBoats().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
@@ -82,7 +82,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllMarksPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getMarks().getProperties().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark.getProperties(), "Mark - ", mark.getNameProperty())));
+        sketchmodel.getMarks().getProperties().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark, "Mark - ", mark.getNameProperty())));
         sketchmodel.getMarks().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {

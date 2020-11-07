@@ -21,18 +21,17 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyAngle;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
 public class TestFlowComponent extends FlowComponent {
 
-    private final PropertySpeedPolar flow = new PropertySpeedPolar("flow", FLOWZERO);
-    private final PropertyAngle mean = new PropertyAngle("mean", ANGLE0);
+    private final PropertySpeedPolar flow = new PropertySpeedPolar(FLOWZERO);
+    private final PropertyDegrees mean = new PropertyDegrees(DEGREES0);
 
     public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
@@ -67,8 +66,8 @@ public class TestFlowComponent extends FlowComponent {
         return flow.get();
     }
 
-    public Angle getmean() {
-        return mean.get();
+    public PropertyDegrees getmean() {
+        return mean;
     }
 
     public void setFlow(SpeedPolar newvalue) {
@@ -82,7 +81,7 @@ public class TestFlowComponent extends FlowComponent {
     }
 
     @Override
-    public Angle meanWindAngle() {
+    public PropertyDegrees meanWindAngle() {
         return getmean();
     }
 }

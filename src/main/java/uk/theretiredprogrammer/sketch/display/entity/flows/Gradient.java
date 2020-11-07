@@ -17,30 +17,43 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE0;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE90MINUS;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREESMINUS90;
 
 public class Gradient {
+    
+    private static final ObservableList<String> typenames;
+
+    static {
+        typenames = FXCollections.observableArrayList();
+        typenames.addAll("north", "south", "east", "west");
+    }
+
+    public static ObservableList<String> getTypenames() {
+        return typenames;
+    }
 
     public static final Gradient GRADIENTDEFAULT = new Gradient();
 
-    private final String type;
+    private final PropertyConstrainedString type = new PropertyConstrainedString(typenames);
     private final ObservableList<PropertyDouble> speeds;
 
     public Gradient() {
-        this.type = "north";
-        this.speeds = new SimpleListProperty<>();
+        this("north", new SimpleListProperty<>());
     }
 
     public Gradient(String type, ObservableList<PropertyDouble> speeds) {
-        this.type = type;
+        this.type.set(type);
         this.speeds = speeds;
     }
 
@@ -48,33 +61,31 @@ public class Gradient {
         return speeds;
     }
 
-    public String getType() {
+    public SimpleStringProperty getTypeProperty() {
         return type;
     }
-
-    public ObservableList<String> getTypes() {
-        ObservableList<String> types = new SimpleListProperty<>();
-        types.addAll("north", "south", "east", "west");
-        return types;
+    
+    public String getType() {
+        return type.get();
     }
 
     public SpeedPolar getFlow(Location pos) {
         return null;  //TODO - getFlow not yet implemented - return null
     }
 
-    public Angle getMeanFlowDirection() throws IOException {
-        switch (type) {
+    public PropertyDegrees getMeanFlowDirection() throws IOException {
+        switch (type.get()) {
             case "north" -> {
-                return ANGLE0;
+                return DEGREES0;
             }
             case "south" -> {
-                return ANGLE180;
+                return DEGREES180;
             }
             case "east" -> {
-                return ANGLE90;
+                return DEGREES90;
             }
             case "west" -> {
-                return ANGLE90MINUS;
+                return DEGREESMINUS90;
             }
             default ->
                 throw new IOException("Illegal gradient direction");

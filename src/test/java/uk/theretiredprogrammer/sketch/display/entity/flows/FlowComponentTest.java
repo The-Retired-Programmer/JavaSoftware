@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,11 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
-/**
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public abstract class FlowComponentTest {
 
     final static double DELTA = 0.0000001;
@@ -36,11 +33,11 @@ public abstract class FlowComponentTest {
 
     void assertFlowAt(Location at, SpeedPolar expected) throws IOException {
         SpeedPolar flow = controller.windflow.getFlow(at);
-        assertEquals(expected.getAngle().getDegrees(), flow.getAngle().getDegrees(), DELTA);
+        assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
 
-    void assertMeanFlowAngle(Angle expected) throws IOException {
-        assertEquals(expected.getDegrees(), controller.windflow.getMeanFlowAngle().getDegrees(), DELTA);
+    void assertMeanFlowAngle(PropertyDegrees expected) throws IOException {
+        assertEquals(expected.get(), controller.windflow.getMeanFlowAngle().get(), DELTA);
     }
 }

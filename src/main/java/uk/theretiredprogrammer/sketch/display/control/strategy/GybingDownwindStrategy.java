@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import static uk.theretiredprogrammer.sketch.core.entity.Angle.ANGLE180;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -38,8 +38,8 @@ public class GybingDownwindStrategy extends Strategy {
 
     public GybingDownwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg,
-                leg.endLegMeanwinddirection(windflow).add(new Angle(-135)), leg.endLegMeanwinddirection(windflow).add(new Angle(-45)),
-                leg.endLegMeanwinddirection(windflow).add(new Angle(45)), leg.endLegMeanwinddirection(windflow).add(new Angle(135)));
+                leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-135)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-45)),
+                leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(45)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(135)));
         portdecisions = new GybingDownwindPortSailingDecisions();
         starboarddecisions = new GybingDownwindStarboardSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
@@ -64,8 +64,8 @@ public class GybingDownwindStrategy extends Strategy {
 
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        Angle markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
-        Angle winddirection = windflow.getFlow(boat.getLocation()).getAngle();
+        PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
         }
@@ -76,8 +76,8 @@ public class GybingDownwindStrategy extends Strategy {
         return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(sketchproperty, this, windflow, waterflow);
     }
 
-    boolean isNear2Mark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(ANGLE180));
+    boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(DEGREES180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 }

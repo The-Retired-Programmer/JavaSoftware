@@ -15,28 +15,16 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonNumber;
-import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyElement;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
+import uk.theretiredprogrammer.sketch.core.entity.ParseHelper;
+import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-/**
- *
- * @author richard
- */
-public class PropertyGradient extends PropertyElement<Gradient> {
+public class PropertyGradient extends SimpleObjectProperty<Gradient> implements ModelProperty<Gradient> {
 
     private static final ObservableList<String> types = FXCollections.observableArrayList();
 
@@ -44,100 +32,32 @@ public class PropertyGradient extends PropertyElement<Gradient> {
         types.addAll("north", "south", "east", "west");
     }
 
-    private final PropertyConstrainedString typeproperty;
-    private ObservableList<PropertyDouble> speedsproperty;
-
     public PropertyGradient(Gradient defaultvalue) {
-        this(null, defaultvalue);
+        set(defaultvalue);
     }
 
-    public PropertyGradient(String key, Gradient defaultvalue) {
-        setKey(key);
-        typeproperty = new PropertyConstrainedString(types, defaultvalue == null ? null : defaultvalue.getType());
-        speedsproperty = defaultvalue == null ? FXCollections.observableArrayList() : defaultvalue.getSpeeds();
-    }
-    
+    @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
-        //speedsproperty.setOnChange(onchange);
-    }
-
-    public void setOnChange(ChangeListener cl) {
-        typeproperty.getProperty().addListener(cl);
-    }
-    
-    private void change() {
-        
-    }
-
-    @Override
-    public final Gradient get() {
-        String type = typeproperty.get();
-        return type == null ? null : new Gradient(type, speedsproperty);
-    }
-
-    @Override
-    public final void set(Gradient newgradient) {
-        typeproperty.setValue(newgradient == null ? null : newgradient.getType());
-        speedsproperty = newgradient == null ? FXCollections.observableArrayList() : newgradient.getSpeeds();
     }
 
     @Override
     public Gradient parsevalue(JsonValue value) {
-        String newtype = "north";
-        if (value != null && value.getValueType() == JsonValue.ValueType.ARRAY) {
-            JsonArray values = (JsonArray) value;
-            int count = -1;
-            ObservableList<PropertyDouble> enteredspeeds = new SimpleListProperty<>();
-            for (JsonValue val : values) {
-                switch (val.getValueType()) {
-                    case STRING -> {
-                        if (count >= 0) {
-                            throw new ParseFailure("Illegal parameter in gradient definition");
-                        }
-                        newtype = ((JsonString) val).getString();
-                    }
-                    case NUMBER -> {
-                        if (count < 0) {
-                            throw new ParseFailure("Illegal parameter in gradient definition");
-                        }
-                        enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
-                    }
-                    default ->
-                        throw new ParseFailure("Illegal parameter in gradient definition");
-                }
-                count++;
-            }
-            return new Gradient(newtype, enteredspeeds);
-        }
-        throw new ParseFailure("Illegal number in gradient definition");
+        return ParseHelper.gradientParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        String type = typeproperty.get();
-        if (type == null) {
-            return JsonValue.NULL;
-        } else {
-            JsonArrayBuilder jab = Json.createArrayBuilder()
-                    .add(typeproperty.get());
-            speedsproperty.forEach(speed -> jab.add(speed.get()));
-            return jab.build();
-        }
+        return ParseHelper.gradientToJson(get());
     }
 
     @Override
     public Node getField() {
-        HBox hbox = new HBox(typeproperty.getField());
-        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField()));
-        return hbox;
+        return getField(7);
     }
 
     @Override
     public Node getField(int size) {
-        HBox hbox = new HBox(typeproperty.getField());
-        speedsproperty.forEach(speed -> hbox.getChildren().add(speed.getField()));
-        return hbox;
+        return FieldBuilder.getGradientField(size, this, types);
     }
 
     @Override

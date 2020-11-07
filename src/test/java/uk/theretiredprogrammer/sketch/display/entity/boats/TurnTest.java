@@ -16,8 +16,8 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import java.io.IOException;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
@@ -33,7 +33,6 @@ public class TurnTest {
     Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
         controller = new DisplayController(filename);
         boat = controller.boats.get("Red");
-        //
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
@@ -50,7 +49,7 @@ public class TurnTest {
         return boat;
     }
 
-    Boat makeTurn(Angle finalangle, boolean turndirection) throws IOException {
+    Boat makeTurn(PropertyDegrees finalangle, boolean turndirection) throws IOException {
         decision.setTURN(finalangle, turndirection);
         while (decision.getAction() != SAILON) {
             boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
@@ -59,7 +58,7 @@ public class TurnTest {
     }
 
     void setboatdirection(double degrees) {
-        boat.setDirection(new Angle(degrees));
+        boat.setDirection(new PropertyDegrees(degrees));
     }
 
     void setboatlocation(double x, double y) {
@@ -74,7 +73,7 @@ public class TurnTest {
         controller.getProperty().getWind().getProperties().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new SpeedPolar(speed, degrees));
+                    ((TestFlowComponent) tfc).setFlow(new SpeedPolar(speed, new PropertyDegrees(degrees)));
                     controller.windflow.setFlows();
                 });
     }
