@@ -21,7 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class DistancePolarTest {
 
@@ -57,10 +57,10 @@ public class DistancePolarTest {
     @Test
     public void testCreation2() {
         System.out.println("creation<location.location>");
-        DistancePolar instance = new DistancePolar(LOCATIONZERO, new Location(10, 0));
+        DistancePolar instance = new DistancePolar(LOCATIONZERO, new PropertyLocation(10, 0));
         assertEquals(10, instance.getDistance());
         assertEquals(90, instance.getDegrees());
-        instance = new DistancePolar(LOCATIONZERO, new Location(0, 10));
+        instance = new DistancePolar(LOCATIONZERO, new PropertyLocation(0, 10));
         assertEquals(10, instance.getDistance());
         assertEquals(0, instance.getDegrees());
     }
@@ -69,15 +69,15 @@ public class DistancePolarTest {
     public void testPolar2Location() {
         System.out.println("polar2Location");
         DistancePolar instance = new DistancePolar(100, new PropertyDegrees(90));
-        Location res = instance.polar2Location(new Location(10, 10));
+        PropertyLocation res = instance.polar2Location(new PropertyLocation(10, 10));
         assertEquals(110, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
         instance = new DistancePolar(100, new PropertyDegrees(180));
-        res = instance.polar2Location(new Location(10, 10));
+        res = instance.polar2Location(new PropertyLocation(10, 10));
         assertEquals(10, res.getX(), DELTA);
         assertEquals(-90, res.getY(), DELTA);
         instance = new DistancePolar(100, new PropertyDegrees(-90));
-        res = instance.polar2Location(new Location(10, 10));
+        res = instance.polar2Location(new PropertyLocation(10, 10));
         assertEquals(-90, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
         instance = new DistancePolar(1, new PropertyDegrees(45));

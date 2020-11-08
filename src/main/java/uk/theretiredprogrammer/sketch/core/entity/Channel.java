@@ -50,7 +50,7 @@ public class Channel {
         return east;
     }
 
-    public boolean isInchannel(Location location) {
+    public boolean isInchannel(PropertyLocation location) {
         if (enabled) {
             double ew = location.getX();
             return ew > west && ew < east;
@@ -58,7 +58,7 @@ public class Channel {
         return true; // if no channel then OK
     }
 
-    public double getInneroffset(Location mark) {
+    public double getInneroffset(PropertyLocation mark) {
         double mx = mark.getX();
         return mx < west ? west - mx : (mx > east ? mx - east : 0);
     }

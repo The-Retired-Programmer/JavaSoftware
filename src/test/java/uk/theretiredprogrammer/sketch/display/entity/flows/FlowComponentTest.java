@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
@@ -31,7 +31,7 @@ public abstract class FlowComponentTest {
         controller = new DisplayController(filename);
     }
 
-    void assertFlowAt(Location at, SpeedPolar expected) throws IOException {
+    void assertFlowAt(PropertyLocation at, SpeedPolar expected) throws IOException {
         SpeedPolar flow = controller.windflow.getFlow(at);
         assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);

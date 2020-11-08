@@ -15,18 +15,18 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class Leg {
 
-    private final Location startfrom;
-    private final Location endat;
+    private final PropertyLocation startfrom;
+    private final PropertyLocation endat;
     private final boolean portrounding;
     private Leg followingleg;
 
-    public Leg(Location startfrom, Location endat, boolean portrounding, Leg followingleg) {
+    public Leg(PropertyLocation startfrom, PropertyLocation endat, boolean portrounding, Leg followingleg) {
         this.startfrom = startfrom;
         this.endat = endat;
         this.portrounding = portrounding;
@@ -45,11 +45,11 @@ public class Leg {
         return portrounding;
     }
 
-    public double getDistanceToEnd(Location here) {
+    public double getDistanceToEnd(PropertyLocation here) {
         return here.to(endat);
     }
 
-    public Location getEndLocation() {
+    public PropertyLocation getEndLocation() {
         return endat;
     }
 

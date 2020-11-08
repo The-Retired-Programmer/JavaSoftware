@@ -19,13 +19,12 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
 public class Mark extends ModelProperties {
@@ -35,7 +34,7 @@ public class Mark extends ModelProperties {
     private final PropertyBoolean windwardlaylines = new PropertyBoolean(false);
     private final PropertyBoolean downwindlaylines = new PropertyBoolean(false);
     private final PropertyDouble laylinelength = new PropertyDouble(0.0);
-    private final PropertyColour laylinecolour = new PropertyColour( Color.BLACK);
+    private final PropertyColour laylinecolour = new PropertyColour(Color.BLACK);
     private final PropertyColour colour = new PropertyColour(Color.RED);
 
     public Mark() {
@@ -53,7 +52,7 @@ public class Mark extends ModelProperties {
         addProperty("colour", colour);
     }
 
-    public Mark(Location loc) {
+    public Mark(PropertyLocation loc) {
         location = new PropertyLocation(loc);
         registerproperties();
     }
@@ -109,8 +108,8 @@ public class Mark extends ModelProperties {
         return name;
     }
 
-    public Location getLocation() {
-        return location.get();
+    public PropertyLocation getLocation() {
+        return location;
     }
 
     public boolean isWindwardlaylines() {

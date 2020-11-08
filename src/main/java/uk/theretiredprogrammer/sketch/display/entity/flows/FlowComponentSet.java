@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
@@ -53,7 +53,7 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
         throw new IllegalStateFailure("get(name) in not to be used");
     }
 
-    public SpeedPolar getFlow(Location pos) {
+    public SpeedPolar getFlow(PropertyLocation pos) {
         int zlevel = -1;
         FlowComponent flowtouse = null;
         for (FlowComponent flow : getProperties()) {

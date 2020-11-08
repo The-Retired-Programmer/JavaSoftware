@@ -23,12 +23,12 @@ import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
@@ -123,11 +123,11 @@ public abstract class FlowComponent extends ModelProperties {
         return type.get();
     }
 
-    public abstract SpeedPolar getFlow(Location pos);
+    public abstract SpeedPolar getFlow(PropertyLocation pos);
 
-    void testLocationWithinArea(Location pos) {
+    void testLocationWithinArea(PropertyLocation pos) {
         if (!(getArea().isWithinArea(pos))) {
-            throw new IllegalStateFailure("Location is not with the Area " + pos);
+            throw new IllegalStateFailure("PropertyLocation is not with the Area " + pos);
         }
     }
 

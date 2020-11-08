@@ -17,8 +17,8 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
@@ -30,11 +30,11 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow");
         initialiseFlow("/complexwindflow.json");
         assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 0), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(0, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(50, 50), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(10, 80), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 0), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(0, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(10, 80), new SpeedPolar(4, DEGREES0));
         assertMeanFlowAngle(DEGREES0);
     }
 
@@ -43,11 +43,11 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow2");
         initialiseFlow("/complexwindflow2.json");
         assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 0), new SpeedPolar(2, DEGREES0));
-        assertFlowAt(new Location(0, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 100), new SpeedPolar(2, DEGREES0));
-        assertFlowAt(new Location(50, 50), new SpeedPolar(3, DEGREES0));
-        assertFlowAt(new Location(10, 80), new SpeedPolar(3.8, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 0), new SpeedPolar(2, DEGREES0));
+        assertFlowAt(new PropertyLocation(0, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 100), new SpeedPolar(2, DEGREES0));
+        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(3, DEGREES0));
+        assertFlowAt(new PropertyLocation(10, 80), new SpeedPolar(3.8, DEGREES0));
         assertMeanFlowAngle(DEGREES0);
     }
 
@@ -57,11 +57,11 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         initialiseFlow("/complexwindflow3.json");
         //
         assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 0), new SpeedPolar(4, new PropertyDegrees(45)));
-        assertFlowAt(new Location(0, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 100), new SpeedPolar(4, new PropertyDegrees(45)));
-        assertFlowAt(new Location(50, 50), new SpeedPolar(4, new PropertyDegrees(22.5)));
-        assertFlowAt(new Location(10, 80), new SpeedPolar(4, new PropertyDegrees(4.1663085)));
+        assertFlowAt(new PropertyLocation(100, 0), new SpeedPolar(4, new PropertyDegrees(45)));
+        assertFlowAt(new PropertyLocation(0, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 100), new SpeedPolar(4, new PropertyDegrees(45)));
+        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(4, new PropertyDegrees(22.5)));
+        assertFlowAt(new PropertyLocation(10, 80), new SpeedPolar(4, new PropertyDegrees(4.1663085)));
         assertMeanFlowAngle(new PropertyDegrees(22.5));
     }
 
@@ -71,11 +71,11 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         initialiseFlow("/complexwindflow4.json");
         //
         assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 0), new SpeedPolar(2, new PropertyDegrees(45)));
-        assertFlowAt(new Location(0, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 100), new SpeedPolar(2, new PropertyDegrees(45)));
-        assertFlowAt(new Location(50, 50), new SpeedPolar(3, new PropertyDegrees(22.5)));
-        assertFlowAt(new Location(10, 80), new SpeedPolar(3.8, new PropertyDegrees(4.1663085)));
+        assertFlowAt(new PropertyLocation(100, 0), new SpeedPolar(2, new PropertyDegrees(45)));
+        assertFlowAt(new PropertyLocation(0, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 100), new SpeedPolar(2, new PropertyDegrees(45)));
+        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(3, new PropertyDegrees(22.5)));
+        assertFlowAt(new PropertyLocation(10, 80), new SpeedPolar(3.8, new PropertyDegrees(4.1663085)));
         assertMeanFlowAngle(new PropertyDegrees(22.5));
     }
 
@@ -85,11 +85,11 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         initialiseFlow("/complexwindflow5.json");
         //
         assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 0), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(0, 100), new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new Location(100, 100), new SpeedPolar(4, new PropertyDegrees(45)));
-        assertFlowAt(new Location(50, 50), new SpeedPolar(4, new PropertyDegrees(11.25)));
-        assertFlowAt(new Location(10, 80), new SpeedPolar(4, new PropertyDegrees(3.4683275)));
+        assertFlowAt(new PropertyLocation(100, 0), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(0, 100), new SpeedPolar(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(100, 100), new SpeedPolar(4, new PropertyDegrees(45)));
+        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(4, new PropertyDegrees(11.25)));
+        assertFlowAt(new PropertyLocation(10, 80), new SpeedPolar(4, new PropertyDegrees(3.4683275)));
         assertMeanFlowAngle(new PropertyDegrees(11.1957483));
     }
 }

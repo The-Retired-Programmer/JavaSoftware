@@ -27,6 +27,10 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
     public static final PropertyDegrees DEGREES180 = new PropertyDegrees(180);
     public static final PropertyDegrees DEGREESMINUS90 = new PropertyDegrees(-90);
 
+    public PropertyDegrees() {
+        set(DEGREES0);
+    }
+    
     public PropertyDegrees(PropertyDegrees degrees) {
         set(degrees);
     }

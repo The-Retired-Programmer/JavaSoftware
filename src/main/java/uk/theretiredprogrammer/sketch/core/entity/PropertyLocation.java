@@ -17,14 +17,52 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyLocation extends SimpleObjectProperty<Location> implements ModelProperty<Location> {
+public class PropertyLocation implements ModelProperty<PropertyLocation> {
 
-    public PropertyLocation(Location defaultvalue) {
-        set(defaultvalue);
+    public final static PropertyLocation LOCATIONZERO = new PropertyLocation(0.0, 0.0);
+
+    private final SimpleDoubleProperty x = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty y = new SimpleDoubleProperty();
+
+    public PropertyLocation() {
+        set(0.0, 0.0);
+    }
+    
+    public PropertyLocation(PropertyLocation defaultvalue) {
+        set(defaultvalue.getX(), defaultvalue.getY());
+    }
+
+    public PropertyLocation(double x, double y) {
+        set(x, y);
+    }
+
+    public final void set(PropertyLocation locationproperty) {
+        set(locationproperty.getXProperty().get(), locationproperty.getYProperty().get());
+    }
+
+    public final void set(double x, double y) {
+        this.x.set(x);
+        this.y.set(y);
+    }
+
+    public double getX() {
+        return x.get();
+    }
+
+    public double getY() {
+        return y.get();
+    }
+
+    public SimpleDoubleProperty getXProperty() {
+        return x;
+    }
+
+    public SimpleDoubleProperty getYProperty() {
+        return y;
     }
 
     @Override
@@ -32,13 +70,13 @@ public class PropertyLocation extends SimpleObjectProperty<Location> implements 
     }
 
     @Override
-    public Location parsevalue(JsonValue jvalue) {
+    public PropertyLocation parsevalue(JsonValue jvalue) {
         return ParseHelper.locationParse(jvalue);
     }
 
     @Override
     public JsonArray toJson() {
-        return ParseHelper.locationToJson(get());
+        return ParseHelper.locationToJson(this);
     }
 
     @Override
@@ -54,5 +92,46 @@ public class PropertyLocation extends SimpleObjectProperty<Location> implements 
     @Override
     public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
+    }
+
+    public double to(PropertyLocation target) {
+        double deltax = (target.getX() - this.getX());
+        double deltay = (target.getY() - this.getY());
+        return Math.sqrt(deltax * deltax + deltay * deltay);
+    }
+
+    public PropertyDegrees angleto(PropertyLocation target) {
+        return new PropertyDegrees(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (int) (Double.doubleToLongBits(getX()) ^ (Double.doubleToLongBits(getX()) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(getY()) ^ (Double.doubleToLongBits(getY()) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PropertyLocation other = (PropertyLocation) obj;
+        if (Double.doubleToLongBits(this.getX()) != Double.doubleToLongBits(other.getX())) {
+            return false;
+        }
+        return Double.doubleToLongBits(this.getY()) == Double.doubleToLongBits(other.getY());
+    }
+
+    @Override
+    public String toString() {
+        return "[" + getX() + "," + getY() + "]";
     }
 }

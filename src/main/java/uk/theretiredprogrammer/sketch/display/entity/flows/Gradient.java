@@ -20,7 +20,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
@@ -69,7 +69,7 @@ public class Gradient {
         return type.get();
     }
 
-    public SpeedPolar getFlow(Location pos) {
+    public SpeedPolar getFlow(PropertyLocation pos) {
         return null;  //TODO - getFlow not yet implemented - return null
     }
 

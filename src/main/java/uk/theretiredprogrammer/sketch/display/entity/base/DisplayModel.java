@@ -24,12 +24,12 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
 public class DisplayModel extends ModelProperties {
 
-    public static final Area DISPLAYAREADEFAULT = new Area(new Location(-500, -500), 1000, 1000);
+    public static final Area DISPLAYAREADEFAULT = new Area(new PropertyLocation(-500, -500), 1000, 1000);
 
     private final PropertyDouble zoom = new PropertyDouble(1.0);
     private final PropertyInteger secondsperdisplay = new PropertyInteger(1);

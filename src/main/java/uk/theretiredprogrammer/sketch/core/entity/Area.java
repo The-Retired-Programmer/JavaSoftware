@@ -16,30 +16,29 @@
 package uk.theretiredprogrammer.sketch.core.entity;
 
 import javafx.beans.property.SimpleDoubleProperty;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
 
 public class Area {
 
-    public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
+    public static final Area AREAZERO = new Area(new PropertyLocation(0, 0), 0, 0);
 
-    private final PropertyLocation bottomleft = new PropertyLocation(LOCATIONZERO);
+    private final PropertyLocation bottomleft = new PropertyLocation();
     private final SimpleDoubleProperty width = new SimpleDoubleProperty();
     private final SimpleDoubleProperty height = new SimpleDoubleProperty();
 
-    public Area(Location bottomleft, double width, double height) {
+    public Area(PropertyLocation bottomleft, double width, double height) {
         this.bottomleft.set(bottomleft);
         this.width.set(width);
         this.height.set(height);
     }
 
     public Area(double left, double bottom, double width, double height) {
-        this(new Location(left, bottom), width, height);
+        this(new PropertyLocation(left, bottom), width, height);
     }
 
-    public Location getBottomleft() {
-        return bottomleft.get();
+    public PropertyLocation getBottomleft() {
+        return bottomleft;
     }
-    
+
     public PropertyLocation getBottomLeftProperty() {
         return bottomleft;
     }
@@ -47,7 +46,7 @@ public class Area {
     public double getWidth() {
         return width.get();
     }
-    
+
     public SimpleDoubleProperty getWidthProperty() {
         return width;
     }
@@ -55,14 +54,14 @@ public class Area {
     public double getHeight() {
         return height.get();
     }
-    
+
     public SimpleDoubleProperty getHeightProperty() {
         return height;
     }
 
-    public boolean isWithinArea(Location location) {
-        return location.getX() >= bottomleft.get().getX() && location.getX() <= bottomleft.get().getX() + width.get()
-                && location.getY() >= bottomleft.get().getY() && location.getY() <= bottomleft.get().getY() + height.get();
+    public boolean isWithinArea(PropertyLocation location) {
+        return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width.get()
+                && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height.get();
     }
 
     @Override

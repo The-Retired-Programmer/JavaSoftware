@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
-public class LocationTest {
+public class PropertyLocationTest {
 
     private final static double DELTA = 0.0000001;
 
-    public LocationTest() {
+    public PropertyLocationTest() {
     }
 
     @BeforeAll
@@ -50,27 +46,27 @@ public class LocationTest {
     }
 
     /**
-     * Test of to method, of class Location.
+     * Test of to method, of class PropertyLocation.
      */
     @Test
     public void testTo() {
         System.out.println("to");
-        Location instance = new Location(10.0, 20.0);
-        assertEquals(5.0, instance.to(new Location(13.0, 24.0)), DELTA);
-        assertEquals(5.0, instance.to(new Location(13.0, 16.0)), DELTA);
-        assertEquals(5.0, instance.to(new Location(7.0, 24.0)), DELTA);
-        assertEquals(5.0, instance.to(new Location(7.0, 16.0)), DELTA);
+        PropertyLocation instance = new PropertyLocation(10.0, 20.0);
+        assertEquals(5.0, instance.to(new PropertyLocation(13.0, 24.0)), DELTA);
+        assertEquals(5.0, instance.to(new PropertyLocation(13.0, 16.0)), DELTA);
+        assertEquals(5.0, instance.to(new PropertyLocation(7.0, 24.0)), DELTA);
+        assertEquals(5.0, instance.to(new PropertyLocation(7.0, 16.0)), DELTA);
     }
 
     @Test
     public void testAngleto() {
         System.out.println("angleto");
-        Location instance = new Location(10.0, 20.0);
-        assertEquals(45, instance.angleto(new Location(13.0, 23.0)).get());
-        assertEquals(0, instance.angleto(new Location(10.0, 23.0)).get());
-        assertEquals(180, instance.angleto(new Location(10.0, 13.0)).get());
-        assertEquals(135, instance.angleto(new Location(13.0, 17.0)).get());
-        assertEquals(-45, instance.angleto(new Location(7.0, 23.0)).get());
-        assertEquals(-135, instance.angleto(new Location(7.0, 17.0)).get());
+        PropertyLocation instance = new PropertyLocation(10.0, 20.0);
+        assertEquals(45, instance.angleto(new PropertyLocation(13.0, 23.0)).get());
+        assertEquals(0, instance.angleto(new PropertyLocation(10.0, 23.0)).get());
+        assertEquals(180, instance.angleto(new PropertyLocation(10.0, 13.0)).get());
+        assertEquals(135, instance.angleto(new PropertyLocation(13.0, 17.0)).get());
+        assertEquals(-45, instance.angleto(new PropertyLocation(7.0, 23.0)).get());
+        assertEquals(-135, instance.angleto(new PropertyLocation(7.0, 17.0)).get());
     }
 }

@@ -16,9 +16,9 @@
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
@@ -57,7 +57,7 @@ public abstract class Flow {
             double y = hpos + hstepsize * h;
             for (int w = 0; w < WIDTHSTEPS + 1; w++) {
                 double x = wpos + wstepsize * w;
-                flowarray[w][h] = flowcomponents.getFlow(new Location(x, y));
+                flowarray[w][h] = flowcomponents.getFlow(new PropertyLocation(x, y));
             }
         }
         meanflowangle = flowcomponents.meanWindAngle(); // check if we are using a forced mean
@@ -66,7 +66,7 @@ public abstract class Flow {
         }
     }
 
-    private SpeedPolar getFlowwithoutswing(Location pos) {
+    private SpeedPolar getFlowwithoutswing(PropertyLocation pos) {
         int w = (int) Math.floor((pos.getX() - area.getBottomleft().getX()) / wstepsize);
         if (w < 0) {
             w = 0;
@@ -84,7 +84,7 @@ public abstract class Flow {
         return flowarray[w][h];
     }
 
-    public PropertyDegrees getMeanFlowAngle(Location pos) {
+    public PropertyDegrees getMeanFlowAngle(PropertyLocation pos) {
         return getFlowwithoutswing(pos).getDegreesProperty();
     }
 
@@ -138,7 +138,7 @@ public abstract class Flow {
         }
     }
 
-    public SpeedPolar getFlow(Location pos) {
+    public SpeedPolar getFlow(PropertyLocation pos) {
         SpeedPolar f = getFlowwithoutswing(pos);
         if (flowshiftsproperty.getSwingperiod() > 0) {
             f = new SpeedPolar(f.getSpeed(), f.getDegreesProperty().plus(swingNow));

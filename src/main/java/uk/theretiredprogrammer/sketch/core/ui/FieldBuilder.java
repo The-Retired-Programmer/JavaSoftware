@@ -35,7 +35,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
@@ -89,12 +88,12 @@ public class FieldBuilder {
         return picker;
     }
 
-    public static TextFlow getLocationField(int size, SimpleObjectProperty<Location> property) {
+    public static TextFlow getLocationField(int size, PropertyLocation property) {
         return new TextFlow(
                 createTextFor("["),
-                getDoubleField(size, property.get().getXProperty()),
+                getDoubleField(size, property.getXProperty()),
                 createTextFor(","),
-                getDoubleField(size, property.get().getYProperty()),
+                getDoubleField(size, property.getYProperty()),
                 createTextFor("]")
         );
     }
@@ -111,9 +110,9 @@ public class FieldBuilder {
         PropertyLocation bottomleft = property.get().getBottomLeftProperty();
         return new HBox(
                 createTextFor("["),
-                getDoubleField(size, bottomleft.get().getXProperty()),
+                getDoubleField(size, bottomleft.getXProperty()),
                 createTextFor(","),
-                getDoubleField(size, bottomleft.get().getYProperty()),
+                getDoubleField(size, bottomleft.getYProperty()),
                 createTextFor("] "),
                 getDoubleField(size, property.get().getWidthProperty()),
                 createTextFor("x"),

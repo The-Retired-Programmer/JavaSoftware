@@ -20,10 +20,9 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class Course extends ModelProperties {
 
@@ -76,7 +75,7 @@ public class Course extends ModelProperties {
 
     private void insertLeg(LegEnding legending) {
         if (firstcourseleg == null) {
-            firstcourseleg = new Leg(start.get(), marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
+            firstcourseleg = new Leg(start, marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
         } else {
             Leg leg = firstcourseleg;
             while (leg.getFollowingLeg() != null) {
@@ -87,14 +86,14 @@ public class Course extends ModelProperties {
         }
     }
 
-    public Location getStart() {
-        return start.get();
+    public PropertyLocation getStart() {
+        return start;
     }
 
     public Leg getFirstLeg() {
         return firstcourseleg;
     }
-    
+
     public PropertyLegEndings getLegEndings() {
         return legs;
     }

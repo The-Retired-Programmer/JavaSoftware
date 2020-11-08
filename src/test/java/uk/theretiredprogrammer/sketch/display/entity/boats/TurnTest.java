@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import java.io.IOException;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
@@ -62,7 +62,7 @@ public class TurnTest {
     }
 
     void setboatlocation(double x, double y) {
-        boat.setLocation(new Location(x, y));
+        boat.setLocation(new PropertyLocation(x, y));
     }
 
     void setwindflow(double speed, double degrees) {

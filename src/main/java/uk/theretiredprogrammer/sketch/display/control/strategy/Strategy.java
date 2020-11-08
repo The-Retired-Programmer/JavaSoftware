@@ -20,7 +20,7 @@ import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
 import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
@@ -71,7 +71,7 @@ public abstract class Strategy {
         return LegType.OFFWIND;
     }
 
-    static Optional<Double> getRefDistance(Location location, Location marklocation, PropertyDegrees refangle) {
+    static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
         DistancePolar tomark = new DistancePolar(location, marklocation);
         PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
         if (refangle2mark.gt(DEGREES90)) {
@@ -136,20 +136,20 @@ public abstract class Strategy {
         this.starboardoffsetangle = null;
     }
 
-    double getDistanceToMark(Location here) {
+    double getDistanceToMark(PropertyLocation here) {
         return leg.getDistanceToEnd(here);
     }
 
-    Location getMarkLocation() {
+    PropertyLocation getMarkLocation() {
         return leg.getEndLocation();
     }
 
-    Location getSailToLocation(boolean onPort) {
+    PropertyLocation getSailToLocation(boolean onPort) {
         return new DistancePolar(length, onPort ? portoffsetangle : starboardoffsetangle)
                 .polar2Location(leg.getEndLocation());
     }
 
-    PropertyDegrees getPropertyDegreestoSail(Location here, boolean onPort) {
+    PropertyDegrees getPropertyDegreestoSail(PropertyLocation here, boolean onPort) {
         return here.angleto(getSailToLocation(onPort));
     }
 

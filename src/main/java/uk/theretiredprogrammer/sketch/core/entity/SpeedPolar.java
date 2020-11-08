@@ -78,7 +78,7 @@ public class SpeedPolar extends Polar<SpeedPolar> {
                 extrapolateAngle(other.getDegreesProperty(), fraction));
     }
 
-    public SpeedPolar extrapolate(SpeedPolar nw, SpeedPolar ne, SpeedPolar se, Location fractions) {
+    public SpeedPolar extrapolate(SpeedPolar nw, SpeedPolar ne, SpeedPolar se, PropertyLocation fractions) {
         SpeedPolar w = this.extrapolate(nw, fractions.getY());
         SpeedPolar e = se.extrapolate(ne, fractions.getY());
         return w.extrapolate(e, fractions.getX());

@@ -26,15 +26,15 @@ public class DistancePolar extends Polar<DistancePolar> {
         distanceproperty.set(distance);
     }
 
-    public DistancePolar(Location origin, Location pos) {
+    public DistancePolar(PropertyLocation origin, PropertyLocation pos) {
         super(new PropertyDegrees(Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))));
         double deltax = (pos.getX() - origin.getX());
         double deltay = (pos.getY() - origin.getY());
         distanceproperty.set(Math.sqrt(deltax * deltax + deltay * deltay));
     }
 
-    public Location polar2Location(Location origin) {
-        return new Location(origin.getX() + distanceproperty.get() * Math.sin(getDegreesProperty().getRadians()),
+    public PropertyLocation polar2Location(PropertyLocation origin) {
+        return new PropertyLocation(origin.getX() + distanceproperty.get() * Math.sin(getDegreesProperty().getRadians()),
                 origin.getY() + distanceproperty.get() * Math.cos(getDegreesProperty().getRadians()));
     }
 

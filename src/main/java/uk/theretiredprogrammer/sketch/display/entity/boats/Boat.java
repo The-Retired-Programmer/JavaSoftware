@@ -29,8 +29,7 @@ import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Channel;
 import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
-import static uk.theretiredprogrammer.sketch.core.entity.Location.LOCATIONZERO;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
@@ -84,7 +83,7 @@ public abstract class Boat extends ModelProperties {
     //
     private double boatspeed = 0;
     private PropertyDegrees rotationAnglePerSecond;
-    private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
+    private final List<PropertyLocation> track = Collections.synchronizedList(new ArrayList<PropertyLocation>());
     private Strategy strategy; // current leg strategy
 
     public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
@@ -95,16 +94,16 @@ public abstract class Boat extends ModelProperties {
         this("<newname>", classtype, LOCATIONZERO, firstleg, windflow, waterflow, metrics);
     }
 
-    public Boat(Location loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
     }
 
-    public Boat(String classtype, Location loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String classtype, PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, loc, firstleg, windflow, waterflow, metrics);
     }
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Boat(String newname, String classtype, Location loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String newname, String classtype, PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         name = new PropertyString(newname);
         location = new PropertyLocation(loc);
         type = new PropertyConstrainedString(classtype, classes);
@@ -130,7 +129,7 @@ public abstract class Boat extends ModelProperties {
 
     public Boat(String newname, Boat clonefrom) {
         name = new PropertyString(newname);
-        location = new PropertyLocation(clonefrom.location.get());
+        location = new PropertyLocation(clonefrom.location);
         type = new PropertyConstrainedString(clonefrom.type.get(), classes);
         metrics = clonefrom.metrics;
         rotationAnglePerSecond = clonefrom.rotationAnglePerSecond;
@@ -233,11 +232,11 @@ public abstract class Boat extends ModelProperties {
         heading.set(newdirection);
     }
 
-    public final Location getLocation() {
-        return location.get();
+    public final PropertyLocation getLocation() {
+        return location;
     }
 
-    public final void setLocation(Location newlocation) {
+    public final void setLocation(PropertyLocation newlocation) {
         location.set(newlocation);
     }
 
@@ -313,31 +312,31 @@ public abstract class Boat extends ModelProperties {
         return winddirection.plus(metrics.downwindrelative);
     }
 
-    public boolean isPortRear90Quadrant(Location location) {
+    public boolean isPortRear90Quadrant(PropertyLocation location) {
         return isQuadrant(location, heading.inverse(), heading.sub(DEGREES90));
     }
 
-    public boolean isStarboardRear90Quadrant(Location location) {
+    public boolean isStarboardRear90Quadrant(PropertyLocation location) {
         return isQuadrant(location, heading.plus(DEGREES90), heading.inverse());
     }
 
-    public boolean isPortTackingQuadrant(Location location, PropertyDegrees winddirection) {
+    public boolean isPortTackingQuadrant(PropertyLocation location, PropertyDegrees winddirection) {
         return isQuadrant(location, heading.inverse(), getStarboardCloseHauledCourse(winddirection));
     }
 
-    public boolean isStarboardTackingQuadrant(Location location, PropertyDegrees winddirection) {
+    public boolean isStarboardTackingQuadrant(PropertyLocation location, PropertyDegrees winddirection) {
         return isQuadrant(location, getPortCloseHauledCourse(winddirection), getDirection().inverse());
     }
 
-    public boolean isPortGybingQuadrant(Location location, PropertyDegrees winddirection) {
+    public boolean isPortGybingQuadrant(PropertyLocation location, PropertyDegrees winddirection) {
         return isQuadrant(location, getDirection().inverse(), getPortReachingCourse(winddirection));
     }
 
-    public boolean isStarboardGybingQuadrant(Location location, PropertyDegrees winddirection) {
+    public boolean isStarboardGybingQuadrant(PropertyLocation location, PropertyDegrees winddirection) {
         return isQuadrant(location, getStarboardReachingCourse(winddirection), getDirection().inverse());
     }
 
-    private boolean isQuadrant(Location location, PropertyDegrees min, PropertyDegrees max) {
+    private boolean isQuadrant(PropertyLocation location, PropertyDegrees min, PropertyDegrees max) {
         return getLocation().angleto(location).between(min, max);
     }
 

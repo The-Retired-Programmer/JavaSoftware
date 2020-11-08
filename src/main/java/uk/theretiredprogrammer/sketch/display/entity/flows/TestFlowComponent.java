@@ -22,7 +22,7 @@ import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
@@ -75,7 +75,7 @@ public class TestFlowComponent extends FlowComponent {
     }
 
     @Override
-    public SpeedPolar getFlow(Location pos) {
+    public SpeedPolar getFlow(PropertyLocation pos) {
         testLocationWithinArea(pos);
         return getFlow();
     }

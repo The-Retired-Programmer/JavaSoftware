@@ -126,18 +126,18 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static JsonArray locationToJson(Location location) {
+    public static JsonArray locationToJson(PropertyLocation location) {
         return Json.createArrayBuilder()
                 .add(location.getX())
                 .add(location.getY())
                 .build();
     }
 
-    public static Location locationParse(JsonValue jvalue) {
+    public static PropertyLocation locationParse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new Location(
+                return new PropertyLocation(
                         doubleParse(values.get(0)),
                         doubleParse(values.get(1))
                 );

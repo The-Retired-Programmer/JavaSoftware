@@ -22,7 +22,7 @@ import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADIENTDEFAULT;
 
 public class GradientFlowComponent extends FlowComponent {
@@ -59,7 +59,7 @@ public class GradientFlowComponent extends FlowComponent {
     }
 
     @Override
-    public SpeedPolar getFlow(Location pos) {
+    public SpeedPolar getFlow(PropertyLocation pos) {
         testLocationWithinArea(pos);
         return getGradient().getFlow(pos);
     }

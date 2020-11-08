@@ -28,7 +28,7 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
@@ -48,12 +48,12 @@ public class Shapes2D {
         };
     }
 
-    public Shape[] drawmark(Location location, double diameter, Color fill) {
+    public Shape[] drawmark(PropertyLocation location, double diameter, Color fill) {
         Shape mark = drawcircle(location, (diameter < 8 / zoom ? 8 / zoom : diameter) / 2, fill);
         return new Shape[]{mark};
     }
 
-    public Shape[] drawwindwardlaylines(Location location, PropertyDegrees windAngle, double laylinelength, Color laylinecolour) {
+    public Shape[] drawwindwardlaylines(PropertyLocation location, PropertyDegrees windAngle, double laylinelength, Color laylinecolour) {
         final PropertyDegrees WINDWARDLAYLINEANGLE = new PropertyDegrees(135);
         return new Shape[]{
             drawLine(location, laylinelength, windAngle.plus(WINDWARDLAYLINEANGLE), 1, laylinecolour),
@@ -61,7 +61,7 @@ public class Shapes2D {
         };
     }
 
-    public Shape[] drawleewardlaylines(Location location, PropertyDegrees windAngle, double laylinelength, Color laylinecolour) {
+    public Shape[] drawleewardlaylines(PropertyLocation location, PropertyDegrees windAngle, double laylinelength, Color laylinecolour) {
         final PropertyDegrees LEEWARDLAYLINEANGLE = new PropertyDegrees(45);
         return new Shape[]{
             drawLine(location, laylinelength, windAngle.plus(LEEWARDLAYLINEANGLE), 1, laylinecolour),
@@ -69,7 +69,7 @@ public class Shapes2D {
         };
     }
 
-    public Shape[] drawboat(Location location, PropertyDegrees direction, Color fill, PropertyDegrees winddirection,
+    public Shape[] drawboat(PropertyLocation location, PropertyDegrees direction, Color fill, PropertyDegrees winddirection,
             double length, double width, Color sailcolour) {
         if (length < 17 / zoom) {
             length = 17 / zoom;
@@ -143,7 +143,7 @@ public class Shapes2D {
 //        gc.setColor(trackcolor);
 //        int count = 0;
 //        synchronized (track) {
-//            for (Location tp : track) {
+//            for (PropertyLocation tp : track) {
 //                gc.setStroke(count % 60 == 0 ? heavystroke : stroke);
 //                Shape s = new Line2D.Double(tp.getX(), tp.getY(), tp.getX(), tp.getY());
 //                gc.draw(s);
@@ -153,7 +153,7 @@ public class Shapes2D {
 
     }
 
-    public Shape[] displayWindGraphic(Location location, SpeedPolar flow, double size, Color colour) {
+    public Shape[] displayWindGraphic(PropertyLocation location, SpeedPolar flow, double size, Color colour) {
         return new Shape[]{drawLine(location, size / zoom, flow.getDegreesProperty(), 1, colour)};
     }
 
@@ -167,7 +167,7 @@ public class Shapes2D {
 //        AffineTransform xform = gc.getTransform();
 //        gc.translate(x, y);
 //        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedPolar flow = getFlow(new Location(x, y));
+//        SpeedPolar flow = getFlow(new PropertyLocation(x, y));
 //        gc.rotate(flow.getAngle().getRadians());
 //        gc.setColor(showflowcolor);
 //        gc.setStroke(new BasicStroke(1));
@@ -195,19 +195,19 @@ public class Shapes2D {
         return rect;
     }
 
-    private Shape drawcircle(Location pt, double radius, Color fill) {
+    private Shape drawcircle(PropertyLocation pt, double radius, Color fill) {
         Circle circle = new Circle(pt.getX(), pt.getY(), radius, fill);
         return circle;
     }
 
-    private Shape drawLine(Location fromPoint, Location toPoint, double width, Color colour) {
+    private Shape drawLine(PropertyLocation fromPoint, PropertyLocation toPoint, double width, Color colour) {
         Line line = new Line(fromPoint.getX(), fromPoint.getY(), toPoint.getX(), toPoint.getY());
         line.setStroke(colour);
         line.setStrokeWidth(width / zoom); // ??? was gc.setLineWidth(width / zoom);
         return line;
     }
 
-    private Shape drawLine(Location fromPoint, double linelength, PropertyDegrees degrees, int width, Color colour) {
+    private Shape drawLine(PropertyLocation fromPoint, double linelength, PropertyDegrees degrees, int width, Color colour) {
         DistancePolar line = new DistancePolar(linelength, degrees);
         return drawLine(fromPoint, line.polar2Location(fromPoint), width, colour);
     }

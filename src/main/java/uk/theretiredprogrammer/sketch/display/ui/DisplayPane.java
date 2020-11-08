@@ -23,7 +23,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
@@ -96,7 +96,7 @@ public class DisplayPane extends Group {
         if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
-            Mark newmark = new Mark(new Location(x, y));
+            Mark newmark = new Mark(new PropertyLocation(x, y));
             if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getProperty().getMarks().add(newmark);
@@ -109,7 +109,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             SketchModel model = controller.getProperty();
-            Boat newboat = BoatFactory.createBoat("laser2", new Location(x, y),
+            Boat newboat = BoatFactory.createBoat("laser2", new PropertyLocation(x, y),
                     model.getCourse().getFirstLeg(),
                     new WindFlow(model),
                     new WaterFlow(model));
@@ -121,7 +121,7 @@ public class DisplayPane extends Group {
 
     private void windflowdraw() {
         Area area = controller.getProperty().getDisplayArea();
-        Location sw = area.getBottomleft();
+        PropertyLocation sw = area.getBottomleft();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();
         double southedge = sw.getY();
@@ -132,7 +132,7 @@ public class DisplayPane extends Group {
             while (x < eastedge) {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
-                    Location here = new Location(x, y);
+                    PropertyLocation here = new PropertyLocation(x, y);
                     getChildren().addAll(
                             Wrap.globalTransform(
                                     shapebuilder.displayWindGraphic(here, controller.windflow.getFlow(here), 10, controller.getProperty().getWindshifts().getShowflowcolour()),
@@ -158,7 +158,7 @@ public class DisplayPane extends Group {
 //        AffineTransform xform = gc.getTransform();
 //        gc.translate(x, y);
 //        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedPolar flow = getFlow(new Location(x, y));
+//        SpeedPolar flow = getFlow(new PropertyLocation(x, y));
 //        gc.rotate(flow.getAngle().getRadians());
 //        gc.setColor(showflowcolor);
 //        gc.setStroke(new BasicStroke(1));
@@ -247,7 +247,7 @@ public class DisplayPane extends Group {
     }
 
     private void tack(Boat boat) {
-        Location position = boat.getLocation();
+        PropertyLocation position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(DEGREES0)) {
@@ -264,7 +264,7 @@ public class DisplayPane extends Group {
     }
 
     private void gybe(Boat boat) {
-        Location position = boat.getLocation();
+        PropertyLocation position = boat.getLocation();
         SpeedPolar wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(DEGREES0)) {
