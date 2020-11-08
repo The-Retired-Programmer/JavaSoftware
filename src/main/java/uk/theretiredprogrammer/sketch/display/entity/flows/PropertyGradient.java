@@ -21,8 +21,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
-import uk.theretiredprogrammer.sketch.core.entity.ParseHelper;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.entity.FromJson;
+import uk.theretiredprogrammer.sketch.core.entity.ToJson;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyGradient extends SimpleObjectProperty<Gradient> implements ModelProperty<Gradient> {
 
@@ -42,22 +43,22 @@ public class PropertyGradient extends SimpleObjectProperty<Gradient> implements 
 
     @Override
     public Gradient parsevalue(JsonValue value) {
-        return ParseHelper.gradientParse(value);
+        return FromJson.gradientProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.gradientToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return getField(7);
+    public Node getControl() {
+        return getControl(7);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getGradientField(size, this, types);
+    public Node getControl(int size) {
+        return UI.control(size, this, types);
     }
 
     @Override

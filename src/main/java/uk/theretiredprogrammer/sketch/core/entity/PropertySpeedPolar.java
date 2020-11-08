@@ -19,17 +19,16 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertySpeedPolar extends SimpleObjectProperty<SpeedPolar> implements ModelProperty<SpeedPolar> {
 
 //    private final PropertyDouble speedproperty;
 //    private final PropertyAngle directionproperty;
-    
     public PropertySpeedPolar(SpeedPolar value) {
         set(value);
     }
-    
+
     @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
@@ -37,26 +36,26 @@ public class PropertySpeedPolar extends SimpleObjectProperty<SpeedPolar> impleme
 
     @Override
     public final SpeedPolar parsevalue(JsonValue value) {
-        return ParseHelper.speedpolarParse(value);
+        return FromJson.speedpolarProperty(value);
     }
 
     @Override
     public JsonArray toJson() {
-        return ParseHelper.speedpolarToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
+    public Node getControl() {
         return getField(6, 7);
     }
 
     @Override
-    public Node getField(int size) {
+    public Node getControl(int size) {
         return getField(size, size);
     }
 
     private Node getField(int speedsize, int directionsize) {
-        return FieldBuilder.getSpeedPolarField(speedsize, directionsize, this);
+        return UI.control(speedsize, directionsize, this);
     }
 
     @Override

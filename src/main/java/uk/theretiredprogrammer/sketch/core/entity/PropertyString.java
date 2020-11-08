@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyString extends SimpleStringProperty implements ModelProperty<String> {
 
@@ -33,22 +33,22 @@ public class PropertyString extends SimpleStringProperty implements ModelPropert
 
     @Override
     public final String parsevalue(JsonValue value) {
-        return ParseHelper.stringParse(value);
+        return FromJson.stringProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.stringToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return getField(0);
+    public Node getControl() {
+        return getControl(0);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getStringField(this);
+    public Node getControl(int size) {
+        return UI.control(this);
     }
 
     @Override

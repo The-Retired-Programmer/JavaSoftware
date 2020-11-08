@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyDegrees extends SimpleDoubleProperty implements ModelProperty<PropertyDegrees> {
 
@@ -28,9 +28,9 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
     public static final PropertyDegrees DEGREESMINUS90 = new PropertyDegrees(-90);
 
     public PropertyDegrees() {
-        set(DEGREES0);
+        set(0);
     }
-    
+
     public PropertyDegrees(PropertyDegrees degrees) {
         set(degrees);
     }
@@ -64,22 +64,22 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
 
     @Override
     public final PropertyDegrees parsevalue(JsonValue jvalue) {
-        return ParseHelper.degreesParse(jvalue);
+        return FromJson.degreesProperty(jvalue);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.degreesToJson(this);
+        return ToJson.serialise(this);
     }
 
     @Override
-    public TextField getField() {
-        return getField(7);
+    public TextField getControl() {
+        return getControl(7);
     }
 
     @Override
-    public TextField getField(int size) {
-        return FieldBuilder.getDoubleField(size, this);
+    public TextField getControl(int size) {
+        return UI.control(size, this);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
     public final PropertyDegrees div(double div) {
         return new PropertyDegrees(get() / div);
     }
-    
+
     public final double div(PropertyDegrees div) {
         return get() / div.get();
     }

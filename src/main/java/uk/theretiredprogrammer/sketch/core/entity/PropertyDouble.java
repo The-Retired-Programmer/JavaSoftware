@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyDouble extends SimpleDoubleProperty implements ModelProperty<Double> {
 
@@ -32,22 +32,22 @@ public class PropertyDouble extends SimpleDoubleProperty implements ModelPropert
 
     @Override
     public Double parsevalue(JsonValue jvalue) {
-        return ParseHelper.doubleParse(jvalue);
+        return FromJson.doubleProperty(jvalue);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.doubleToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public TextField getField() {
-        return getField(10);
+    public TextField getControl() {
+        return getControl(10);
     }
 
     @Override
-    public TextField getField(int size) {
-        return FieldBuilder.getDoubleField(size, this);
+    public TextField getControl(int size) {
+        return UI.control(size, this);
     }
 
     @Override

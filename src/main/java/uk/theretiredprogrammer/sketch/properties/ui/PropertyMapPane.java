@@ -85,7 +85,7 @@ public class PropertyMapPane extends TitledPane {
     
     private int createpropertyelementcontent(GridPane propertiestable, int row, String key, ModelProperty propertyelement) {
         propertiestable.add(new Label(key), 0, row, 1, 1);
-        propertiestable.add(propertyelement.getField(), 1, row++, 1, 1);
+        propertiestable.add(propertyelement.getControl(), 1, row++, 1, 1);
         return row;
     }
 }

@@ -15,13 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import java.lang.reflect.Field;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -29,13 +26,9 @@ import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
-public class ParseHelper {
+public class FromJson {
 
-    public static JsonValue integerToJson(Integer value) {
-        return Json.createValue(value);
-    }
-
-    public static Integer integerParse(JsonValue jvalue) {
+    public static Integer integerProperty(JsonValue jvalue) {
         if (jvalue != null & jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             try {
                 return ((JsonNumber) jvalue).intValueExact();
@@ -45,22 +38,14 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - Integer expected");
     }
 
-    public static JsonValue doubleToJson(Double value) {
-        return Json.createValue(value);
-    }
-
-    public static Double doubleParse(JsonValue jvalue) {
+    public static Double doubleProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             return ((JsonNumber) jvalue).doubleValue();
         }
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static JsonValue booleanToJson(Boolean value) {
-        return value ? JsonValue.TRUE : JsonValue.FALSE;
-    }
-
-    public static Boolean booleanParse(JsonValue jvalue) {
+    public static Boolean booleanProperty(JsonValue jvalue) {
         if (jvalue != null) {
             switch (jvalue.getValueType()) {
                 case TRUE -> {
@@ -74,22 +59,14 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - Boolean expected");
     }
 
-    public static JsonValue stringToJson(String string) {
-        return Json.createValue(string);
-    }
-
-    public static String stringParse(JsonValue jvalue) {
+    public static String stringProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
             return ((JsonString) jvalue).getString();
         }
         throw new ParseFailure("Malformed Definition file - String expected");
     }
 
-    public static JsonValue constrainedStringToJson(String string) {
-        return stringToJson(string);
-    }
-
-    public static String constrainedStringParse(JsonValue jvalue, ObservableList<String> constraints) {
+    public static String constrainedStringProperty(JsonValue jvalue, ObservableList<String> constraints) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
             String val = ((JsonString) jvalue).getString();
             for (var v : constraints) {
@@ -101,11 +78,7 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - value not in constrained set");
     }
 
-    public static JsonValue colourToJson(Color colour) {
-        return Json.createValue(color2String(colour));
-    }
-
-    public static Color colourParse(JsonValue jvalue) {
+    public static Color colourProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
             Color color = string2color(((JsonString) jvalue).getString());
             if (color != null) {
@@ -115,95 +88,61 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - Colour name or hex string expected");
     }
 
-    public static JsonValue degreesToJson(PropertyDegrees value) {
-        return Json.createValue(value.get());
-    }
-
-    public static PropertyDegrees degreesParse(JsonValue jvalue) {
+    public static PropertyDegrees degreesProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             return new PropertyDegrees(((JsonNumber) jvalue).doubleValue());
         }
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static JsonArray locationToJson(PropertyLocation location) {
-        return Json.createArrayBuilder()
-                .add(location.getX())
-                .add(location.getY())
-                .build();
-    }
-
-    public static PropertyLocation locationParse(JsonValue jvalue) {
+    public static PropertyLocation locationProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
                 return new PropertyLocation(
-                        doubleParse(values.get(0)),
-                        doubleParse(values.get(1))
+                        doubleProperty(values.get(0)),
+                        doubleProperty(values.get(1))
                 );
             }
         }
         throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
     }
 
-    public static JsonArray areaToJson(PropertyArea value) {
-        return Json.createArrayBuilder()
-                .add(value.getLocationProperty().getX())
-                .add(value.getLocationProperty().getY())
-                .add(value.getWidth())
-                .add(value.getHeight())
-                .build();
-    }
-
-    public static PropertyArea areaParse(JsonValue jvalue) {
+    public static PropertyArea areaProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 4) {
                 return new PropertyArea(
-                        doubleParse(values.get(0)),
-                        doubleParse(values.get(1)),
-                        doubleParse(values.get(2)),
-                        doubleParse(values.get(3))
+                        doubleProperty(values.get(0)),
+                        doubleProperty(values.get(1)),
+                        doubleProperty(values.get(2)),
+                        doubleProperty(values.get(3))
                 );
             }
         }
         throw new ParseFailure("Malformed Definition file - Area expects a list of 4 numbers");
     }
 
-    public static JsonArray speedpolarToJson(SpeedPolar value) {
-        return Json.createArrayBuilder()
-                .add(value.getSpeed())
-                .add(value.getDegrees())
-                .build();
-    }
-
-    public static SpeedPolar speedpolarParse(JsonValue jvalue) {
+    public static SpeedPolar speedpolarProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
                 return new SpeedPolar(
-                        doubleParse(values.get(0)),
-                        degreesParse(values.get(1))
+                        doubleProperty(values.get(0)),
+                        degreesProperty(values.get(1))
                 );
             }
         }
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
 
-    public static JsonArray legEndingToJson(LegEnding value) {
-        return Json.createArrayBuilder()
-                .add(value.getMarkname())
-                .add(value.getRoundingdirection())
-                .build();
-    }
-
-    public static LegEnding legEndingParse(JsonValue jvalue, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
+    public static LegEnding legEndingProperty(JsonValue jvalue, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
                 return new LegEnding(
-                        constrainedStringParse(values.get(0), markconstraints),
-                        constrainedStringParse(values.get(1), roundingconstraints),
+                        constrainedStringProperty(values.get(0), markconstraints),
+                        constrainedStringProperty(values.get(1), roundingconstraints),
                         markconstraints
                 );
             }
@@ -211,13 +150,7 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
     }
 
-    public static JsonArray gradientToJson(Gradient value) {
-        JsonArrayBuilder jab = Json.createArrayBuilder().add(value.getType());
-        value.getSpeeds().forEach(speed -> jab.add(speed.get()));
-        return jab.build();
-    }
-
-    public static Gradient gradientParse(JsonValue jvalue) {
+    public static Gradient gradientProperty(JsonValue jvalue) {
         String newtype = "north";
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
@@ -253,22 +186,5 @@ public class ParseHelper {
         } catch (IllegalArgumentException ex) {
             return null;
         }
-    }
-
-    private static String color2String(Color color) {
-        final Field[] fields = Color.class.getFields(); // only want public
-        for (final Field field : fields) {
-            if (field.getType() == Color.class) {
-                try {
-                    final Color clr = (Color) field.get(null);
-                    if (color.equals(clr)) {
-                        return field.getName();
-                    }
-                } catch (IllegalAccessException ex) {
-                    return "Securty Manager does not allow access to field '" + field.getName() + "'.";
-                }
-            }
-        }
-        return color.toString();
     }
 }

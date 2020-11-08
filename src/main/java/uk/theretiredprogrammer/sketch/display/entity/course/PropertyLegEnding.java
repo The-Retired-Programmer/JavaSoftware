@@ -21,10 +21,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
-import uk.theretiredprogrammer.sketch.core.entity.ParseHelper;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.entity.FromJson;
+import uk.theretiredprogrammer.sketch.core.entity.ToJson;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyLegEnding extends SimpleObjectProperty<LegEnding>  implements ModelProperty<LegEnding> {
+public class PropertyLegEnding extends SimpleObjectProperty<LegEnding> implements ModelProperty<LegEnding> {
 
     private final ObservableList<String> marknames;
     private final ObservableList<String> roundings;
@@ -39,29 +40,29 @@ public class PropertyLegEnding extends SimpleObjectProperty<LegEnding>  implemen
         this.roundings = roundings;
         set(defaultvalue);
     }
-    
+
     @Override
     public void setOnChange(Runnable onchange) {
     }
-    
+
     @Override
     public final LegEnding parsevalue(JsonValue jvalue) {
-        return ParseHelper.legEndingParse(jvalue, marknames, roundings);
+        return FromJson.legEndingProperty(jvalue, marknames, roundings);
     }
 
     @Override
     public JsonArray toJson() {
-        return ParseHelper.legEndingToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return FieldBuilder.getLegEndingField(this, marknames, roundings);
+    public Node getControl() {
+        return UI.control(this, marknames, roundings);
     }
 
     @Override
-    public Node getField(int size) {
-        return getField();
+    public Node getControl(int size) {
+        return getControl();
     }
 
     @Override

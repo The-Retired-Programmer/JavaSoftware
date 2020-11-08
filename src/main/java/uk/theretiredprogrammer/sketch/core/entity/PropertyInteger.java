@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyInteger extends SimpleIntegerProperty implements ModelProperty<Integer> {
 
@@ -33,22 +33,22 @@ public class PropertyInteger extends SimpleIntegerProperty implements ModelPrope
 
     @Override
     public Integer parsevalue(JsonValue value) {
-        return ParseHelper.integerParse(value);
+        return FromJson.integerProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.integerToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return getField(5);
+    public Node getControl() {
+        return getControl(5);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getIntegerField(size, this);
+    public Node getControl(int size) {
+        return UI.control(size, this);
     }
 
     @Override

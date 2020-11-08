@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyArea implements ModelProperty<PropertyArea> {
 
@@ -44,17 +44,17 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
         set(x, y, width, height);
     }
 
-    public void set(PropertyArea area) {
+    public final void set(PropertyArea area) {
         set(area.bottomleft, area.getWidth(), area.getHeight());
     }
 
-    public void set(PropertyLocation bottomleft, double width, double height) {
+    public final void set(PropertyLocation bottomleft, double width, double height) {
         this.bottomleft.set(bottomleft);
         this.width.set(width);
         this.height.set(height);
     }
 
-    public void set(double x, double y, double width, double height) {
+    public final void set(double x, double y, double width, double height) {
         set(new PropertyLocation(x, y), width, height);
     }
 
@@ -85,22 +85,22 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
 
     @Override
     public final PropertyArea parsevalue(JsonValue value) {
-        return ParseHelper.areaParse(value);
+        return FromJson.areaProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.areaToJson(this);
+        return ToJson.serialise(this);
     }
 
     @Override
-    public Node getField() {
-        return getField(7);
+    public Node getControl() {
+        return getControl(7);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getAreaField(size, this);
+    public Node getControl(int size) {
+        return UI.control(size, this);
     }
 
     @Override

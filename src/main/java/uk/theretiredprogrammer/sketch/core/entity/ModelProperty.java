@@ -22,8 +22,8 @@ public interface ModelProperty<C extends Object> extends Model {
 
 public C parsevalue(JsonValue jvalue);
 
-public Node getField(int size);
+public Node getControl(int size);
 
-public Node getField();
+public Node getControl();
 
 }

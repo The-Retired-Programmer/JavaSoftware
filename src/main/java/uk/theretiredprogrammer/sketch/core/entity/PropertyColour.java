@@ -19,7 +19,7 @@ import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyColour extends SimpleObjectProperty<Color> implements ModelProperty<Color> {
 
@@ -27,28 +27,29 @@ public class PropertyColour extends SimpleObjectProperty<Color> implements Model
         set(value);
     }
 
+    @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
     @Override
     public Color parsevalue(JsonValue value) {
-        return ParseHelper.colourParse(value);
+        return FromJson.colourProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.colourToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return getField(0);
+    public Node getControl() {
+        return getControl(0);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getColourField(this);
+    public Node getControl(int size) {
+        return UI.control(this);
     }
 
     @Override

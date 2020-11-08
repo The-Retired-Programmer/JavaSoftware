@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyBoolean extends SimpleBooleanProperty implements ModelProperty<Boolean> {
 
@@ -33,22 +33,22 @@ public class PropertyBoolean extends SimpleBooleanProperty implements ModelPrope
 
     @Override
     public final Boolean parsevalue(JsonValue value) {
-        return ParseHelper.booleanParse(value);
+        return FromJson.booleanProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.booleanToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public Node getField() {
-        return FieldBuilder.getBooleanField(this);
+    public Node getControl() {
+        return UI.control(this);
     }
-    
+
     @Override
-    public Node getField(int size) {
-        return getField();
+    public Node getControl(int size) {
+        return getControl();
     }
 
     @Override

@@ -19,7 +19,7 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyLocation implements ModelProperty<PropertyLocation> {
 
@@ -31,7 +31,7 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
     public PropertyLocation() {
         set(0.0, 0.0);
     }
-    
+
     public PropertyLocation(PropertyLocation defaultvalue) {
         set(defaultvalue.getX(), defaultvalue.getY());
     }
@@ -71,22 +71,22 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
 
     @Override
     public PropertyLocation parsevalue(JsonValue jvalue) {
-        return ParseHelper.locationParse(jvalue);
+        return FromJson.locationProperty(jvalue);
     }
 
     @Override
     public JsonArray toJson() {
-        return ParseHelper.locationToJson(this);
+        return ToJson.serialise(this);
     }
 
     @Override
-    public Node getField() {
-        return getField(7);
+    public Node getControl() {
+        return getControl(7);
     }
 
     @Override
-    public Node getField(int size) {
-        return FieldBuilder.getLocationField(size, this);
+    public Node getControl(int size) {
+        return UI.control(size, this);
     }
 
     @Override

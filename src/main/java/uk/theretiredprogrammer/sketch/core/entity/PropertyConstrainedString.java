@@ -21,7 +21,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
 
@@ -39,7 +39,6 @@ public class PropertyConstrainedString extends SimpleStringProperty implements M
         super.set(defaultvalue);
     }
 
-
     @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
@@ -48,7 +47,7 @@ public class PropertyConstrainedString extends SimpleStringProperty implements M
     @Override
     public final void set(String newvalue) {
         if (constraints.contains(newvalue)) {
-           super.set(newvalue);
+            super.set(newvalue);
         } else {
             throw new ParseFailure("Constrained String - value not in allowed set");
         }
@@ -56,22 +55,22 @@ public class PropertyConstrainedString extends SimpleStringProperty implements M
 
     @Override
     public String parsevalue(JsonValue jvalue) {
-        return ParseHelper.constrainedStringParse(jvalue, constraints);
+        return FromJson.constrainedStringProperty(jvalue, constraints);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.constrainedStringToJson(get());
+        return ToJson.serialise(get());
     }
 
     @Override
-    public ComboBox getField() {
-        return getField(0);
+    public ComboBox getControl() {
+        return getControl(0);
     }
 
     @Override
-    public ComboBox getField(int size) {
-        return FieldBuilder.getConstrainedStringField(this, constraints);
+    public ComboBox getControl(int size) {
+        return UI.control(this, constraints);
     }
 
     @Override
