@@ -21,8 +21,8 @@ import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
@@ -58,8 +58,8 @@ public class DisplayPane extends Group {
         SketchModel sketchproperty = controller.getProperty();
         this.zoom = sketchproperty.getDisplay().getZoom();
         mainscale = new Scale(zoom, -zoom);
-        Area displayarea = sketchproperty.getDisplayArea();
-        maintranslate = new Translate(-displayarea.getBottomleft().getX(), -displayarea.getHeight() - displayarea.getBottomleft().getY());
+        PropertyArea displayarea = sketchproperty.getDisplayArea();
+        maintranslate = new Translate(-displayarea.getLocationProperty().getX(), -displayarea.getHeight() - displayarea.getLocationProperty().getY());
         shapebuilder = new Shapes2D(zoom);
         repaint();
     }
@@ -75,8 +75,8 @@ public class DisplayPane extends Group {
     }
 
     private void displaydraw() {
-        Area displayarea = controller.getProperty().getDisplayArea();
-        Area sailingarea = controller.getProperty().getDisplay().getSailingarea();
+        PropertyArea displayarea = controller.getProperty().getDisplayArea();
+        PropertyArea sailingarea = controller.getProperty().getDisplay().getSailingarea();
         getChildren().addAll(
                 Wrap.globalTransform(
                         Wrap.displayContextMenu(
@@ -120,8 +120,8 @@ public class DisplayPane extends Group {
     }
 
     private void windflowdraw() {
-        Area area = controller.getProperty().getDisplayArea();
-        PropertyLocation sw = area.getBottomleft();
+        PropertyArea area = controller.getProperty().getDisplayArea();
+        PropertyLocation sw = area.getLocationProperty();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();
         double southedge = sw.getY();

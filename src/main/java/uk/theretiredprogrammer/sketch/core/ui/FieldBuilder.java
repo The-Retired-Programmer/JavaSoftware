@@ -34,7 +34,7 @@ import static javafx.scene.text.FontWeight.NORMAL;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
@@ -106,17 +106,17 @@ public class FieldBuilder {
                 createTextFor("˚"));
     }
 
-    public static HBox getAreaField(int size, SimpleObjectProperty<Area> property) {
-        PropertyLocation bottomleft = property.get().getBottomLeftProperty();
+    public static HBox getAreaField(int size, PropertyArea property) {
+        PropertyLocation bottomleft = property.getLocationProperty();
         return new HBox(
                 createTextFor("["),
                 getDoubleField(size, bottomleft.getXProperty()),
                 createTextFor(","),
                 getDoubleField(size, bottomleft.getYProperty()),
                 createTextFor("] "),
-                getDoubleField(size, property.get().getWidthProperty()),
+                getDoubleField(size, property.getWidthProperty()),
                 createTextFor("x"),
-                getDoubleField(size, property.get().getHeightProperty())
+                getDoubleField(size, property.getHeightProperty())
         );
     }
 

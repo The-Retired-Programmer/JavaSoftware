@@ -20,7 +20,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
@@ -33,7 +33,7 @@ public class ComplexFlowComponent extends FlowComponent {
     private final PropertySpeedPolar southeastflow = new PropertySpeedPolar(FLOWZERO);
     private final PropertySpeedPolar southwestflow = new PropertySpeedPolar(FLOWZERO);
 
-    public ComplexFlowComponent(Supplier<Area> getdisplayarea, String type) {
+    public ComplexFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("northwestflow", northwestflow);
         addProperty("northeastflow", northeastflow);
@@ -89,7 +89,7 @@ public class ComplexFlowComponent extends FlowComponent {
     @Override
     public SpeedPolar getFlow(PropertyLocation pos) {
         testLocationWithinArea(pos);
-        PropertyLocation bottomleft = getArea().getBottomleft();
+        PropertyLocation bottomleft = getArea().getLocationProperty();
         double xfraction = (pos.getX() - bottomleft.getX()) / getArea().getWidth();
         double yfraction = (pos.getY() - bottomleft.getY()) / getArea().getHeight();
         PropertyLocation fractions = new PropertyLocation(xfraction, yfraction);

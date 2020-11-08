@@ -22,20 +22,19 @@ import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
-import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
 
 public class DisplayModel extends ModelProperties {
 
-    public static final Area DISPLAYAREADEFAULT = new Area(new PropertyLocation(-500, -500), 1000, 1000);
+    public static final PropertyArea DISPLAYAREADEFAULT = new PropertyArea(new PropertyLocation(-500, -500), 1000, 1000);
 
     private final PropertyDouble zoom = new PropertyDouble(1.0);
     private final PropertyInteger secondsperdisplay = new PropertyInteger(1);
     private final PropertyDouble speedup = new PropertyDouble(1.0);
     private final PropertyArea displayarea = new PropertyArea(DISPLAYAREADEFAULT);
-    private final PropertyArea sailingarea = new PropertyArea(AREAZERO);
+    private final PropertyArea sailingarea = new PropertyArea();
 
     public DisplayModel() {
         addProperty("zoom", zoom);
@@ -90,12 +89,12 @@ public class DisplayModel extends ModelProperties {
         return speedup.get();
     }
 
-    public Area getSailingarea() {
-        Area area = sailingarea.get();
+    public PropertyArea getSailingarea() {
+        PropertyArea area = sailingarea;
         return area.equals(AREAZERO) ? getDisplayarea() : area;
     }
 
-    public Area getDisplayarea() {
-        return displayarea.get();
+    public PropertyArea getDisplayarea() {
+        return displayarea;
     }
 }

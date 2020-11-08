@@ -20,17 +20,17 @@ import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
 public class FlowComponentSet extends ModelArray<FlowComponent> {
 
-    private final Supplier<Area> getdisplayarea;
+    private final Supplier<PropertyArea> getdisplayarea;
 
-    public FlowComponentSet(Supplier<Area> getdisplayarea) {
+    public FlowComponentSet(Supplier<PropertyArea> getdisplayarea) {
         this.getdisplayarea = getdisplayarea;
     }
 

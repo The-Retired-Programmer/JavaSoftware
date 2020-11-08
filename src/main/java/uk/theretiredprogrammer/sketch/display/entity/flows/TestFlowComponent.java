@@ -21,19 +21,18 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
 import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
 
 public class TestFlowComponent extends FlowComponent {
 
     private final PropertySpeedPolar flow = new PropertySpeedPolar(FLOWZERO);
-    private final PropertyDegrees mean = new PropertyDegrees(DEGREES0);
+    private final PropertyDegrees mean = new PropertyDegrees();
 
-    public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
+    public TestFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("flow", flow);
         addProperty("mean", mean);

@@ -26,8 +26,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
@@ -41,7 +41,7 @@ public class Shapes2D {
         this.zoom = zoom;
     }
 
-    public Shape[] drawfieldofplay(Area canvasarea, Area sailingarea) {
+    public Shape[] drawfieldofplay(PropertyArea canvasarea, PropertyArea sailingarea) {
         return new Shape[]{
             drawrectangle(canvasarea, Color.OLIVEDRAB),
             drawrectangle(sailingarea, Color.LIGHTSEAGREEN)
@@ -188,8 +188,8 @@ public class Shapes2D {
 //        gc.drawString(windspeedText, 0, 0);
 //        gc.setTransform(xform);
     // drawing primatives
-    private Shape drawrectangle(Area area, Color fill) {
-        Rectangle rect = new Rectangle(area.getBottomleft().getX(), area.getBottomleft().getY(),
+    private Shape drawrectangle(PropertyArea area, Color fill) {
+        Rectangle rect = new Rectangle(area.getLocationProperty().getX(), area.getLocationProperty().getY(),
                 area.getWidth(), area.getHeight());
         rect.setFill(fill);
         return rect;

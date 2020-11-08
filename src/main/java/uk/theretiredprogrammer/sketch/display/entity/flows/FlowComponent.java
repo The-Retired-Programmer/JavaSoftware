@@ -21,10 +21,9 @@ import java.util.function.Supplier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
-import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
@@ -34,7 +33,7 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 
 public abstract class FlowComponent extends ModelProperties {
 
-    public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
+    public static FlowComponent factory(String type, Supplier<PropertyArea> getdisplayarea) {
         switch (type) {
             case "testflow" -> {
                 return new TestFlowComponent(getdisplayarea, type);
@@ -66,11 +65,11 @@ public abstract class FlowComponent extends ModelProperties {
 
     private final PropertyString name = new PropertyString("<newname>");
     private final PropertyInteger zlevel = new PropertyInteger(0);
-    private final PropertyArea area = new PropertyArea(AREAZERO);
+    private final PropertyArea area = new PropertyArea();
     private final PropertyConstrainedString type;
-    private final Supplier<Area> getdisplayarea;
+    private final Supplier<PropertyArea> getdisplayarea;
 
-    public FlowComponent(Supplier<Area> getdisplayarea, String flowtype) {
+    public FlowComponent(Supplier<PropertyArea> getdisplayarea, String flowtype) {
         this.getdisplayarea = getdisplayarea;
         type = new PropertyConstrainedString(flowtype, typenames);
         addProperty("name", name);
@@ -114,8 +113,8 @@ public abstract class FlowComponent extends ModelProperties {
         return zlevel.get();
     }
 
-    public Area getArea() {
-        Area windarea = area.get();
+    public PropertyArea getArea() {
+        PropertyArea windarea = area;
         return windarea.equals(AREAZERO) ? getdisplayarea.get() : windarea;
     }
 

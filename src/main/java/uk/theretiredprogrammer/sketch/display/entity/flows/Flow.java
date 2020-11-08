@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
@@ -30,11 +30,11 @@ public abstract class Flow {
     final static int WIDTHSTEPS = 100;
     final static int HEIGHTSTEPS = 100;
     private final SpeedPolar[][] flowarray = new SpeedPolar[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
-    private final Area area;
+    private final PropertyArea area;
     private final double wstepsize;
     private final double hstepsize;
-    private PropertyDegrees shiftNow = new PropertyDegrees(0);
-    private PropertyDegrees swingNow = new PropertyDegrees(0);
+    private PropertyDegrees shiftNow = new PropertyDegrees();
+    private PropertyDegrees swingNow = new PropertyDegrees();
     private PropertyDegrees meanflowangle;
 
     private final FlowShiftModel flowshiftsproperty;
@@ -51,8 +51,8 @@ public abstract class Flow {
     }
 
     public final void setFlows() {
-        double hpos = area.getBottomleft().getY();
-        double wpos = area.getBottomleft().getX();
+        double hpos = area.getLocationProperty().getY();
+        double wpos = area.getLocationProperty().getX();
         for (int h = 0; h < HEIGHTSTEPS + 1; h++) {
             double y = hpos + hstepsize * h;
             for (int w = 0; w < WIDTHSTEPS + 1; w++) {
@@ -67,14 +67,14 @@ public abstract class Flow {
     }
 
     private SpeedPolar getFlowwithoutswing(PropertyLocation pos) {
-        int w = (int) Math.floor((pos.getX() - area.getBottomleft().getX()) / wstepsize);
+        int w = (int) Math.floor((pos.getX() - area.getLocationProperty().getX()) / wstepsize);
         if (w < 0) {
             w = 0;
         }
         if (w > WIDTHSTEPS) {
             w = WIDTHSTEPS;
         }
-        int h = (int) Math.floor((pos.getY() - area.getBottomleft().getY()) / hstepsize);
+        int h = (int) Math.floor((pos.getY() - area.getLocationProperty().getY()) / hstepsize);
         if (h < 0) {
             h = 0;
         }

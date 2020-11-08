@@ -22,8 +22,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
@@ -109,7 +109,7 @@ public class SketchModel extends ModelProperties {
         boats.setOnChange(onchange);
     }
 
-    public Area getDisplayArea() {
+    public PropertyArea getDisplayArea() {
         return getDisplay().getDisplayarea();
     }
 

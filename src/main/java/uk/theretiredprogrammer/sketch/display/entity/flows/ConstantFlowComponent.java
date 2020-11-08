@@ -20,7 +20,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
@@ -30,7 +30,7 @@ public class ConstantFlowComponent extends FlowComponent {
 
     private final PropertySpeedPolar flow = new PropertySpeedPolar(FLOWZERO);
 
-    public ConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
+    public ConstantFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("flow", flow);
     }

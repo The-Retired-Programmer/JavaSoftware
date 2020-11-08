@@ -146,20 +146,20 @@ public class ParseHelper {
         throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
     }
 
-    public static JsonArray areaToJson(Area value) {
+    public static JsonArray areaToJson(PropertyArea value) {
         return Json.createArrayBuilder()
-                .add(value.getBottomleft().getX())
-                .add(value.getBottomleft().getY())
+                .add(value.getLocationProperty().getX())
+                .add(value.getLocationProperty().getY())
                 .add(value.getWidth())
                 .add(value.getHeight())
                 .build();
     }
 
-    public static Area areaParse(JsonValue jvalue) {
+    public static PropertyArea areaParse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 4) {
-                return new Area(
+                return new PropertyArea(
                         doubleParse(values.get(0)),
                         doubleParse(values.get(1)),
                         doubleParse(values.get(2)),

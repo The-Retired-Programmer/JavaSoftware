@@ -16,29 +16,81 @@
 package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.FieldBuilder;
 
-public class PropertyArea extends SimpleObjectProperty<Area> implements ModelProperty<Area> {
+public class PropertyArea implements ModelProperty<PropertyArea> {
 
-    public PropertyArea(Area value){
-        set(value);
+    public static final PropertyArea AREAZERO = new PropertyArea(new PropertyLocation(0, 0), 0, 0);
+
+    private final PropertyLocation bottomleft = new PropertyLocation();
+    private final SimpleDoubleProperty width = new SimpleDoubleProperty();
+    private final SimpleDoubleProperty height = new SimpleDoubleProperty();
+
+    public PropertyArea() {
+        set(AREAZERO);
     }
-    
+
+    public PropertyArea(PropertyArea area) {
+        set(area);
+    }
+
+    public PropertyArea(PropertyLocation bottomleft, double width, double height) {
+        set(bottomleft, width, height);
+    }
+
+    public PropertyArea(double x, double y, double width, double height) {
+        set(x, y, width, height);
+    }
+
+    public void set(PropertyArea area) {
+        set(area.bottomleft, area.getWidth(), area.getHeight());
+    }
+
+    public void set(PropertyLocation bottomleft, double width, double height) {
+        this.bottomleft.set(bottomleft);
+        this.width.set(width);
+        this.height.set(height);
+    }
+
+    public void set(double x, double y, double width, double height) {
+        set(new PropertyLocation(x, y), width, height);
+    }
+
+    public PropertyLocation getLocationProperty() {
+        return bottomleft;
+    }
+
+    public double getWidth() {
+        return width.get();
+    }
+
+    public SimpleDoubleProperty getWidthProperty() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height.get();
+    }
+
+    public SimpleDoubleProperty getHeightProperty() {
+        return height;
+    }
+
     @Override
     public void setOnChange(Runnable onchange) {
         //setOnChange((c) -> onchange.run());
     }
 
     @Override
-    public final Area parsevalue(JsonValue value) {
+    public final PropertyArea parsevalue(JsonValue value) {
         return ParseHelper.areaParse(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ParseHelper.areaToJson(get());
+        return ParseHelper.areaToJson(this);
     }
 
     @Override
@@ -48,11 +100,46 @@ public class PropertyArea extends SimpleObjectProperty<Area> implements ModelPro
 
     @Override
     public Node getField(int size) {
-        return FieldBuilder.getAreaField(size,this);
+        return FieldBuilder.getAreaField(size, this);
     }
 
     @Override
     public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
+    }
+
+    public boolean isWithinArea(PropertyLocation location) {
+        return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width.get()
+                && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height.get();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + bottomleft.hashCode();
+        hash = 67 * hash + (int) (Double.doubleToLongBits(width.get()) ^ (Double.doubleToLongBits(width.get()) >>> 32));
+        hash = 67 * hash + (int) (Double.doubleToLongBits(height.get()) ^ (Double.doubleToLongBits(height.get()) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PropertyArea other = (PropertyArea) obj;
+        if (!this.bottomleft.equals(other.bottomleft)) {
+            return false;
+        }
+        if (Double.doubleToLongBits(this.width.get()) != Double.doubleToLongBits(other.width.get())) {
+            return false;
+        }
+        return Double.doubleToLongBits(this.height.get()) == Double.doubleToLongBits(other.height.get());
     }
 }
