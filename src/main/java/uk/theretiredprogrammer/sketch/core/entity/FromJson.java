@@ -123,11 +123,24 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - Area expects a list of 4 numbers");
     }
 
-    public static SpeedPolar speedpolarProperty(JsonValue jvalue) {
+    public static PropertyDistanceVector distanceVectorProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new SpeedPolar(
+                return new PropertyDistanceVector(
+                        doubleProperty(values.get(0)),
+                        degreesProperty(values.get(1))
+                );
+            }
+        }
+        throw new ParseFailure("Malformed Definition file - two numbers expected");
+    }
+    
+    public static PropertySpeedVector speedVectorProperty(JsonValue jvalue) {
+        if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
+            JsonArray values = (JsonArray) jvalue;
+            if (values.size() == 2) {
+                return new PropertySpeedVector(
                         doubleProperty(values.get(0)),
                         degreesProperty(values.get(1))
                 );

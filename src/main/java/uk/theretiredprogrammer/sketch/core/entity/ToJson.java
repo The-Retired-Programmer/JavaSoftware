@@ -57,32 +57,39 @@ public class ToJson {
                 .build();
     }
 
-    public static JsonArray serialise(PropertyArea value) {
+    public static JsonArray serialise(PropertyArea area) {
         return Json.createArrayBuilder()
-                .add(value.getLocationProperty().getX())
-                .add(value.getLocationProperty().getY())
-                .add(value.getWidth())
-                .add(value.getHeight())
+                .add(area.getLocationProperty().getX())
+                .add(area.getLocationProperty().getY())
+                .add(area.getWidth())
+                .add(area.getHeight())
+                .build();
+    }
+    
+    public static JsonArray serialise(PropertyDistanceVector distancevector) {
+        return Json.createArrayBuilder()
+                .add(distancevector.getDistance())
+                .add(distancevector.getDegrees())
+                .build();
+    }
+    
+    public static JsonArray serialise(PropertySpeedVector speedvector) {
+        return Json.createArrayBuilder()
+                .add(speedvector.getSpeed())
+                .add(speedvector.getDegrees())
                 .build();
     }
 
-    public static JsonArray serialise(SpeedPolar value) {
+    public static JsonArray serialise(LegEnding legending) {
         return Json.createArrayBuilder()
-                .add(value.getSpeed())
-                .add(value.getDegrees())
+                .add(legending.getMarkname())
+                .add(legending.getRoundingdirection())
                 .build();
     }
 
-    public static JsonArray serialise(LegEnding value) {
-        return Json.createArrayBuilder()
-                .add(value.getMarkname())
-                .add(value.getRoundingdirection())
-                .build();
-    }
-
-    public static JsonArray serialise(Gradient value) {
-        JsonArrayBuilder jab = Json.createArrayBuilder().add(value.getType());
-        value.getSpeeds().forEach(speed -> jab.add(speed.get()));
+    public static JsonArray serialise(Gradient gradient) {
+        JsonArrayBuilder jab = Json.createArrayBuilder().add(gradient.getType());
+        gradient.getSpeeds().forEach(speed -> jab.add(speed.get()));
         return jab.build();
     }
 

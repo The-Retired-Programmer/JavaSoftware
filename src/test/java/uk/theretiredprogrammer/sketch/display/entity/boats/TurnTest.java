@@ -18,10 +18,10 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 import java.io.IOException;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
 public class TurnTest {
@@ -73,7 +73,7 @@ public class TurnTest {
         controller.getProperty().getWind().getProperties().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new SpeedPolar(speed, new PropertyDegrees(degrees)));
+                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, new PropertyDegrees(degrees)));
                     controller.windflow.setFlows();
                 });
     }

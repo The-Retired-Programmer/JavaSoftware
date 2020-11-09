@@ -21,7 +21,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class FlowComponentSetTest extends FlowComponentTest {
 
@@ -29,15 +29,15 @@ public class FlowComponentSetTest extends FlowComponentTest {
     public void testFlowElementSet() throws IOException {
         System.out.println("FlowElementSet");
         initialiseFlow("/windflowset.json");
-        assertFlowAt(LOCATIONZERO, new SpeedPolar(4, DEGREES0));
-        assertFlowAt(new PropertyLocation(50, 50), new SpeedPolar(8, new PropertyDegrees(10)));
-        assertFlowAt(new PropertyLocation(90, 65), new SpeedPolar(8, new PropertyDegrees(10)));
-        assertFlowAt(new PropertyLocation(50, 65), new SpeedPolar(8, new PropertyDegrees(10)));
-        assertFlowAt(new PropertyLocation(90, 50), new SpeedPolar(8, new PropertyDegrees(10)));
-        assertFlowAt(new PropertyLocation(60, 40), new SpeedPolar(12, new PropertyDegrees(-15)));
-        assertFlowAt(new PropertyLocation(80, 40), new SpeedPolar(12, new PropertyDegrees(-15)));
-        assertFlowAt(new PropertyLocation(60, 60), new SpeedPolar(12, new PropertyDegrees(-15)));
-        assertFlowAt(new PropertyLocation(80, 60), new SpeedPolar(12, new PropertyDegrees(-15)));
+        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, DEGREES0));
+        assertFlowAt(new PropertyLocation(50, 50), new PropertySpeedVector(8, new PropertyDegrees(10)));
+        assertFlowAt(new PropertyLocation(90, 65), new PropertySpeedVector(8, new PropertyDegrees(10)));
+        assertFlowAt(new PropertyLocation(50, 65), new PropertySpeedVector(8, new PropertyDegrees(10)));
+        assertFlowAt(new PropertyLocation(90, 50), new PropertySpeedVector(8, new PropertyDegrees(10)));
+        assertFlowAt(new PropertyLocation(60, 40), new PropertySpeedVector(12, new PropertyDegrees(-15)));
+        assertFlowAt(new PropertyLocation(80, 40), new PropertySpeedVector(12, new PropertyDegrees(-15)));
+        assertFlowAt(new PropertyLocation(60, 60), new PropertySpeedVector(12, new PropertyDegrees(-15)));
+        assertFlowAt(new PropertyLocation(80, 60), new PropertySpeedVector(12, new PropertyDegrees(-15)));
         assertMeanFlowAngle(new PropertyDegrees(-0.2270468));
     }
 }

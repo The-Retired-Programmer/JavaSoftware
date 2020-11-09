@@ -21,8 +21,8 @@ import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADIENTDEFAULT;
 
 public class GradientFlowComponent extends FlowComponent {
@@ -59,7 +59,7 @@ public class GradientFlowComponent extends FlowComponent {
     }
 
     @Override
-    public SpeedPolar getFlow(PropertyLocation pos) {
+    public PropertySpeedVector getFlow(PropertyLocation pos) {
         testLocationWithinArea(pos);
         return getGradient().getFlow(pos);
     }

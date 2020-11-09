@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class FlowComponentSet extends ModelArray<FlowComponent> {
 
@@ -53,7 +53,7 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
         throw new IllegalStateFailure("get(name) in not to be used");
     }
 
-    public SpeedPolar getFlow(PropertyLocation pos) {
+    public PropertySpeedVector getFlow(PropertyLocation pos) {
         int zlevel = -1;
         FlowComponent flowtouse = null;
         for (FlowComponent flow : getProperties()) {
@@ -62,7 +62,7 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
                 flowtouse = flow;
             }
         }
-        return flowtouse != null ? flowtouse.getFlow(pos) : SpeedPolar.FLOWZERO;
+        return flowtouse != null ? flowtouse.getFlow(pos) : new PropertySpeedVector();
     }
 
     public PropertyDegrees meanWindAngle() {

@@ -19,7 +19,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
-import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
@@ -72,7 +72,7 @@ public abstract class Strategy {
     }
 
     static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
-        DistancePolar tomark = new DistancePolar(location, marklocation);
+        PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
         PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
         if (refangle2mark.gt(DEGREES90)) {
             return Optional.empty();
@@ -145,8 +145,8 @@ public abstract class Strategy {
     }
 
     PropertyLocation getSailToLocation(boolean onPort) {
-        return new DistancePolar(length, onPort ? portoffsetangle : starboardoffsetangle)
-                .polar2Location(leg.getEndLocation());
+        return new PropertyDistanceVector(length, onPort ? portoffsetangle : starboardoffsetangle)
+                .toLocation(leg.getEndLocation());
     }
 
     PropertyDegrees getPropertyDegreestoSail(PropertyLocation here, boolean onPort) {

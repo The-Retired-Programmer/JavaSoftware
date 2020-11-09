@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
@@ -49,7 +49,7 @@ public class DisplayPane extends Group {
     private Scale mainscale;
     private Translate maintranslate;
 
-    public DisplayPane(DisplayController controller) { //PropertySketch sketchproperty, WindFlow windflow, WaterFlow waterflow, Boats boats, BoatStrategies strategies) {
+    public DisplayPane(DisplayController controller) { 
         this.controller = controller;
         refreshParameters();
     }
@@ -158,7 +158,7 @@ public class DisplayPane extends Group {
 //        AffineTransform xform = gc.getTransform();
 //        gc.translate(x, y);
 //        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedPolar flow = getFlow(new PropertyLocation(x, y));
+//        PropertySpeedVector flow = getFlow(new PropertyLocation(x, y));
 //        gc.rotate(flow.getAngle().getRadians());
 //        gc.setColor(showflowcolor);
 //        gc.setStroke(new BasicStroke(1));
@@ -248,7 +248,7 @@ public class DisplayPane extends Group {
 
     private void tack(Boat boat) {
         PropertyLocation position = boat.getLocation();
-        SpeedPolar wind = controller.windflow.getFlow(position);
+        PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(DEGREES0)) {
             // anti clockwise to starboard tack
@@ -265,7 +265,7 @@ public class DisplayPane extends Group {
 
     private void gybe(Boat boat) {
         PropertyLocation position = boat.getLocation();
-        SpeedPolar wind = controller.windflow.getFlow(position);
+        PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(DEGREES0)) {
             // clockwise to starboard gybe

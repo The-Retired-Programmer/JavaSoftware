@@ -19,7 +19,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
@@ -29,7 +29,7 @@ public abstract class Flow {
 
     final static int WIDTHSTEPS = 100;
     final static int HEIGHTSTEPS = 100;
-    private final SpeedPolar[][] flowarray = new SpeedPolar[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
+    private final PropertySpeedVector[][] flowarray = new PropertySpeedVector[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
     private final PropertyArea area;
     private final double wstepsize;
     private final double hstepsize;
@@ -66,7 +66,7 @@ public abstract class Flow {
         }
     }
 
-    private SpeedPolar getFlowwithoutswing(PropertyLocation pos) {
+    private PropertySpeedVector getFlowwithoutswing(PropertyLocation pos) {
         int w = (int) Math.floor((pos.getX() - area.getLocationProperty().getX()) / wstepsize);
         if (w < 0) {
             w = 0;
@@ -93,7 +93,7 @@ public abstract class Flow {
     }
 
     private PropertyDegrees calcMeanFlowAngle() {
-        return SpeedPolar.meanAngle(flowarray);
+        return PropertySpeedVector.meanAngle(flowarray);
     }
 
     public void timerAdvance(int simulationtime, DecisionController timerlog) {
@@ -138,13 +138,13 @@ public abstract class Flow {
         }
     }
 
-    public SpeedPolar getFlow(PropertyLocation pos) {
-        SpeedPolar f = getFlowwithoutswing(pos);
+    public PropertySpeedVector getFlow(PropertyLocation pos) {
+        PropertySpeedVector f = getFlowwithoutswing(pos);
         if (flowshiftsproperty.getSwingperiod() > 0) {
-            f = new SpeedPolar(f.getSpeed(), f.getDegreesProperty().plus(swingNow));
+            f = new PropertySpeedVector(f.getSpeed(), f.getDegreesProperty().plus(swingNow));
         }
         if (flowshiftsproperty.getShiftperiod() > 0 || flowshiftsproperty.isRandomshifts()) {
-            f = new SpeedPolar(f.getSpeed(), f.getDegreesProperty().plus(shiftNow));
+            f = new PropertySpeedVector(f.getSpeed(), f.getDegreesProperty().plus(shiftNow));
         }
         return f;
     }

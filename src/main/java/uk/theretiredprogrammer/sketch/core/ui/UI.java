@@ -46,8 +46,9 @@ import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
@@ -99,9 +100,8 @@ public class UI {
         menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e, menuitem.getParentPopup())));
         return menuitem;
     }
-    
+
     // 
-    
     public static TextField control(int size, SimpleIntegerProperty property) {
         TextField intfield = new TextField(Integer.toString(property.get()));
         intfield.setPrefColumnCount(size);
@@ -158,11 +158,19 @@ public class UI {
         );
     }
 
-    public static TextFlow control(int speedsize, int directionsize, SimpleObjectProperty<SpeedPolar> property) {
+    public static TextFlow control(int distancesize, int directionsize, PropertyDistanceVector property) {
         return new TextFlow(
-                control(speedsize, property.get().getSpeedProperty()),
+                control(distancesize, property.getDistanceProperty()),
                 createTextFor("@"),
-                control(directionsize, property.get().getDegreesProperty()),
+                control(directionsize, property.getDegreesProperty()),
+                createTextFor("˚"));
+    }
+
+    public static TextFlow control(int speedsize, int directionsize, PropertySpeedVector property) {
+        return new TextFlow(
+                control(speedsize, property.getSpeedProperty()),
+                createTextFor("@"),
+                control(directionsize, property.getDegreesProperty()),
                 createTextFor("˚"));
     }
 

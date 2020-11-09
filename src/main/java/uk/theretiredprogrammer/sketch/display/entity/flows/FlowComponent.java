@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public abstract class FlowComponent extends ModelProperties {
 
@@ -122,7 +122,7 @@ public abstract class FlowComponent extends ModelProperties {
         return type.get();
     }
 
-    public abstract SpeedPolar getFlow(PropertyLocation pos);
+    public abstract PropertySpeedVector getFlow(PropertyLocation pos);
 
     void testLocationWithinArea(PropertyLocation pos) {
         if (!(getArea().isWithinArea(pos))) {

@@ -20,16 +20,14 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedPolar;
-import static uk.theretiredprogrammer.sketch.core.entity.SpeedPolar.FLOWZERO;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class TestFlowComponent extends FlowComponent {
 
-    private final PropertySpeedPolar flow = new PropertySpeedPolar(FLOWZERO);
+    private final PropertySpeedVector flow = new PropertySpeedVector();
     private final PropertyDegrees mean = new PropertyDegrees();
 
     public TestFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
@@ -61,20 +59,20 @@ public class TestFlowComponent extends FlowComponent {
         mean.setOnChange(onchange);
     }
 
-    public SpeedPolar getFlow() {
-        return flow.get();
+    public PropertySpeedVector getFlow() {
+        return flow;
     }
 
     public PropertyDegrees getmean() {
         return mean;
     }
 
-    public void setFlow(SpeedPolar newvalue) {
+    public void setFlow(PropertySpeedVector newvalue) {
         flow.set(newvalue);
     }
 
     @Override
-    public SpeedPolar getFlow(PropertyLocation pos) {
+    public PropertySpeedVector getFlow(PropertyLocation pos) {
         testLocationWithinArea(pos);
         return getFlow();
     }

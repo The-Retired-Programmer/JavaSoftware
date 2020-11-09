@@ -25,7 +25,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Channel;
 import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
@@ -37,8 +37,8 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -341,8 +341,8 @@ public abstract class Boat extends ModelProperties {
     }
 
     public boolean moveUsingDecision(WindFlow windflow, WaterFlow waterflow, Decision decision) {
-        SpeedPolar windpolar = windflow.getFlow(getLocation());
-        SpeedPolar waterpolar = waterflow.getFlow(getLocation());
+        PropertySpeedVector windpolar = windflow.getFlow(getLocation());
+        PropertySpeedVector waterpolar = waterflow.getFlow(getLocation());
         switch (decision.getAction()) {
             case SAILON -> {
                 moveBoat(heading, windpolar, waterpolar);
@@ -363,7 +363,7 @@ public abstract class Boat extends ModelProperties {
         }
     }
 
-    private boolean turn(Decision decision, SpeedPolar windflow, SpeedPolar waterflow) {
+    private boolean turn(Decision decision, PropertySpeedVector windflow, PropertySpeedVector waterflow) {
         PropertyDegrees newdirection = decision.getDegrees();
         if (heading.absDegreesDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(newdirection, windflow, waterflow);
@@ -379,16 +379,16 @@ public abstract class Boat extends ModelProperties {
      *
      * @param nextdirection the required directionproperty
      */
-    void moveBoat(PropertyDegrees nextdirection, SpeedPolar windflow, SpeedPolar waterflow) {
+    void moveBoat(PropertyDegrees nextdirection, PropertySpeedVector windflow, PropertySpeedVector waterflow) {
         // calculate the potential boat speed - based on wind speed and relative angle 
-        double potentialBoatspeed = SpeedPolar.convertKnots2MetresPerSecond(
+        double potentialBoatspeed = PropertySpeedVector.convertKnots2MetresPerSecond(
                 metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windflow.getDegreesProperty()),
                         windflow.getSpeed()));
         boatspeed += metrics.getInertia() * (potentialBoatspeed - boatspeed);
         // start by calculating the vector components of the boats movement
-        DistancePolar move = new DistancePolar(boatspeed, nextdirection)
-                .sub(new DistancePolar(waterflow.getSpeedMetresPerSecond(), waterflow.getDegreesProperty()));
-        setLocation(move.polar2Location(getLocation())); // updated position calculated
+        PropertyDistanceVector move = new PropertyDistanceVector(boatspeed, nextdirection)
+                .sub(new PropertyDistanceVector(waterflow.getSpeedMetresPerSecond(), waterflow.getDegreesProperty()));
+        setLocation(move.toLocation(getLocation())); // updated position calculated
         track.add(getLocation()); // record it in track
         setDirection(nextdirection); // and update the directionproperty
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();

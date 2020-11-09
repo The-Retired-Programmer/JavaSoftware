@@ -26,12 +26,12 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-import uk.theretiredprogrammer.sketch.core.entity.DistancePolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class Shapes2D {
 
@@ -153,7 +153,7 @@ public class Shapes2D {
 
     }
 
-    public Shape[] displayWindGraphic(PropertyLocation location, SpeedPolar flow, double size, Color colour) {
+    public Shape[] displayWindGraphic(PropertyLocation location, PropertySpeedVector flow, double size, Color colour) {
         return new Shape[]{drawLine(location, size / zoom, flow.getDegreesProperty(), 1, colour)};
     }
 
@@ -167,7 +167,7 @@ public class Shapes2D {
 //        AffineTransform xform = gc.getTransform();
 //        gc.translate(x, y);
 //        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedPolar flow = getFlow(new PropertyLocation(x, y));
+//        PropertySpeedVector flow = getFlow(new PropertyLocation(x, y));
 //        gc.rotate(flow.getAngle().getRadians());
 //        gc.setColor(showflowcolor);
 //        gc.setStroke(new BasicStroke(1));
@@ -208,7 +208,7 @@ public class Shapes2D {
     }
 
     private Shape drawLine(PropertyLocation fromPoint, double linelength, PropertyDegrees degrees, int width, Color colour) {
-        DistancePolar line = new DistancePolar(linelength, degrees);
-        return drawLine(fromPoint, line.polar2Location(fromPoint), width, colour);
+        PropertyDistanceVector line = new PropertyDistanceVector(linelength, degrees);
+        return drawLine(fromPoint, line.toLocation(fromPoint), width, colour);
     }
 }

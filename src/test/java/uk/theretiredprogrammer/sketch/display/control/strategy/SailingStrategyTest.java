@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
@@ -77,7 +77,7 @@ public class SailingStrategyTest {
         controller.getProperty().getWind().getProperties().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new SpeedPolar(speed, propertydegrees));
+                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, propertydegrees));
                     controller.windflow.setFlows();
                 });
     }

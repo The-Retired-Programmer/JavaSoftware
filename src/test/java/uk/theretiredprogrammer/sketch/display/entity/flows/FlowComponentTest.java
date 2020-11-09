@@ -19,7 +19,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedPolar;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 public abstract class FlowComponentTest {
@@ -31,8 +31,8 @@ public abstract class FlowComponentTest {
         controller = new DisplayController(filename);
     }
 
-    void assertFlowAt(PropertyLocation at, SpeedPolar expected) throws IOException {
-        SpeedPolar flow = controller.windflow.getFlow(at);
+    void assertFlowAt(PropertyLocation at, PropertySpeedVector expected) throws IOException {
+        PropertySpeedVector flow = controller.windflow.getFlow(at);
         assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
