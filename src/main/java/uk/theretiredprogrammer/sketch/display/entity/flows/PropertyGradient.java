@@ -16,25 +16,125 @@
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
+import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
+import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREESMINUS90;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyGradient extends SimpleObjectProperty<Gradient> implements ModelProperty<Gradient> {
+public class PropertyGradient implements ModelProperty<PropertyGradient> {
 
-    private static final ObservableList<String> types = FXCollections.observableArrayList();
+    private static final ObservableList<String> typenames;
 
     static {
-        types.addAll("north", "south", "east", "west");
+        typenames = FXCollections.observableArrayList();
+        typenames.addAll("north", "south", "east", "west");
     }
 
-    public PropertyGradient(Gradient defaultvalue) {
-        set(defaultvalue);
+    public static ObservableList<String> getTypenames() {
+        return typenames;
+    }
+
+    public static final PropertyGradient GRADIENTDEFAULT = new PropertyGradient();
+
+    private final PropertyConstrainedString type = new PropertyConstrainedString(typenames);
+    private final ObservableList<PropertyDouble> speeds = FXCollections.observableArrayList();
+
+    public PropertyGradient() {
+        setType("north");
+    }
+
+    public PropertyGradient(String type) {
+        setType(type);
+    }
+
+    public PropertyGradient(PropertyGradient value) {
+        set(value);
+    }
+
+    public PropertyGradient(String type, Collection<PropertyDouble> speeds) {
+        setType(type);
+        addAllSpeedProperties(speeds);
+    }
+
+    public PropertyGradient(String type, List<Double> speeds) {
+        setType(type);
+        addAllSpeeds(speeds);
+    }
+
+    public PropertyGradient(String type, Double... speeds) {
+        setType(type);
+        addAllSpeeds(speeds);
+    }
+
+    public final void set(PropertyGradient value) {
+        setType(value.getType());
+        addAllSpeedProperties(value.getSpeeds());
+    }
+
+    public final void setType(String type) {
+        this.type.set(type);
+    }
+
+    public final void clearSpeeds() {
+        speeds.clear();
+    }
+
+    public final void add(PropertyDouble speed) {
+        speeds.add(speed);
+    }
+
+    public final void add(double speed) {
+        speeds.add(new PropertyDouble(speed));
+    }
+
+    public final void addAllSpeedProperties(Collection<PropertyDouble> speeds) {
+        this.speeds.addAll(speeds);
+    }
+
+    public final void addAllSpeeds(Collection<Double> speeds) {
+        addAllSpeedProperties(collectiontoList(speeds));
+    }
+
+    private List<PropertyDouble> collectiontoList(Collection<Double> speeds) {
+        return speeds.stream().map(s -> new PropertyDouble(s)).collect(Collectors.toList());
+    }
+
+    public final void addAllSpeeds(Double... speeds) {
+        addAllSpeedProperties(arraytoList(speeds));
+    }
+
+    private List<PropertyDouble> arraytoList(Double... speeds) {
+        return Arrays.asList(speeds).stream().map(s -> new PropertyDouble(s)).collect(Collectors.toList());
+    }
+
+    public ObservableList<PropertyDouble> getSpeeds() {
+        return speeds;
+    }
+
+    public SimpleStringProperty getTypeProperty() {
+        return type;
+    }
+
+    public String getType() {
+        return type.get();
     }
 
     @Override
@@ -42,13 +142,13 @@ public class PropertyGradient extends SimpleObjectProperty<Gradient> implements 
     }
 
     @Override
-    public Gradient parsevalue(JsonValue value) {
+    public PropertyGradient parsevalue(JsonValue value) {
         return FromJson.gradientProperty(value);
     }
 
     @Override
     public JsonValue toJson() {
-        return ToJson.serialise(get());
+        return ToJson.serialise(this);
     }
 
     @Override
@@ -58,11 +158,34 @@ public class PropertyGradient extends SimpleObjectProperty<Gradient> implements 
 
     @Override
     public Node getControl(int size) {
-        return UI.control(size, this, types);
+        return UI.control(size, this, typenames);
     }
 
     @Override
     public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
+    }
+
+    public PropertySpeedVector getFlow(PropertyLocation pos) {
+        return null;  //TODO - getFlow not yet implemented - return null
+    }
+
+    public PropertyDegrees getMeanFlowDirection() throws IOException {
+        switch (type.get()) {
+            case "north" -> {
+                return DEGREES0;
+            }
+            case "south" -> {
+                return DEGREES180;
+            }
+            case "east" -> {
+                return DEGREES90;
+            }
+            case "west" -> {
+                return DEGREESMINUS90;
+            }
+            default ->
+                throw new IOException("Illegal gradient direction");
+        }
     }
 }

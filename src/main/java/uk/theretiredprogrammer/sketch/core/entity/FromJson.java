@@ -24,7 +24,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
-import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
 public class FromJson {
 
@@ -163,7 +163,7 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
     }
 
-    public static Gradient gradientProperty(JsonValue jvalue) {
+    public static PropertyGradient gradientProperty(JsonValue jvalue) {
         String newtype = "north";
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
@@ -188,7 +188,7 @@ public class FromJson {
                 }
                 count++;
             }
-            return new Gradient(newtype, enteredspeeds);
+            return new PropertyGradient(newtype, enteredspeeds);
         }
         throw new ParseFailure("Illegal number in gradient definition");
     }

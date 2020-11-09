@@ -50,7 +50,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
-import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
 public class UI {
 
@@ -195,9 +195,9 @@ public class UI {
         );
     }
 
-    public static HBox control(int size, SimpleObjectProperty<Gradient> property, ObservableList<String> typeconstraints) {
-        HBox hbox = new HBox(control(property.get().getTypeProperty(), typeconstraints));
-        property.get().getSpeeds().forEach(speedproperty -> hbox.getChildren().add(control(size, speedproperty)));
+    public static HBox control(int size, PropertyGradient property, ObservableList<String> typeconstraints) {
+        HBox hbox = new HBox(control(property.getTypeProperty(), typeconstraints));
+        property.getSpeeds().forEach(speedproperty -> hbox.getChildren().add(control(size, speedproperty)));
         return hbox;
     }
 

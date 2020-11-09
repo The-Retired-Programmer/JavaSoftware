@@ -22,7 +22,7 @@ import jakarta.json.JsonValue;
 import java.lang.reflect.Field;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
-import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
+import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
 public class ToJson {
 
@@ -87,7 +87,7 @@ public class ToJson {
                 .build();
     }
 
-    public static JsonArray serialise(Gradient gradient) {
+    public static JsonArray serialise(PropertyGradient gradient) {
         JsonArrayBuilder jab = Json.createArrayBuilder().add(gradient.getType());
         gradient.getSpeeds().forEach(speed -> jab.add(speed.get()));
         return jab.build();
