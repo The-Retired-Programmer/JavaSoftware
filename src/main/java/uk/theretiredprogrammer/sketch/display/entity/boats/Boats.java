@@ -52,12 +52,12 @@ public class Boats extends ModelArray<Boat> {
 
     @Override
     public Boat get(String name) {
-        return getProperties().stream().filter(boat -> name.equals(boat.getName())).findFirst()
+        return stream().filter(boat -> name.equals(boat.getName())).findFirst()
                 .orElseThrow(() -> new IllegalStateFailure("can't find Boat with name " + name));
     }
 
     public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
-        getProperties().forEach(boat -> {
+        stream().forEach(boat -> {
             Strategy newstrategy = boat.getStrategy().nextTimeInterval(sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {
                 boat.setStrategy(newstrategy);

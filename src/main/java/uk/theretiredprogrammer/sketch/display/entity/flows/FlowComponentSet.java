@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import java.util.Comparator;
 import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -54,24 +55,18 @@ public class FlowComponentSet extends ModelArray<FlowComponent> {
     }
 
     public PropertySpeedVector getFlow(PropertyLocation pos) {
-        int zlevel = -1;
-        FlowComponent flowtouse = null;
-        for (FlowComponent flow : getProperties()) {
-            if (flow.getArea().isWithinArea(pos) && flow.getZlevel() > zlevel) {
-                zlevel = flow.getZlevel();
-                flowtouse = flow;
-            }
-        }
-        return flowtouse != null ? flowtouse.getFlow(pos) : new PropertySpeedVector();
+        return this.stream()
+                .filter(flow -> flow.getArea().isWithinArea(pos))
+                .sorted(Comparator.comparingInt(FlowComponent::getZlevel).reversed())
+                .findFirst()
+                .map(flow -> flow.getFlow(pos))
+                .orElse(new PropertySpeedVector());
+                
     }
 
     public PropertyDegrees meanWindAngle() {
-        for (FlowComponent flow : getProperties()) {
-            PropertyDegrees res = flow.meanWindAngle();
-            if (res != null) {
-                return res;
-            }
-        }
-        return null;
+        return stream().map(flow -> flow.meanWindAngle())
+                .filter(angle -> angle != null)
+                .findFirst().orElse(null);
     }
 }

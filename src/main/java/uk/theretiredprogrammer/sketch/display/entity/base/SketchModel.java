@@ -59,7 +59,7 @@ public class SketchModel extends ModelProperties {
                 marknames.add(additem.getName());
             });
         }
-        if (marknames.size() != marks.getProperties().size()) {
+        if (marknames.size() != marks.stream().count()) {
             // trap - maybe removed later
             throw new IllegalStateFailure("Number of Marks does not equal number of Marknames");
         }

@@ -62,7 +62,7 @@ public class SailingStrategyTest {
     }
 
     void setboattrue(String... propertynames) {
-        boat.getProperties().entrySet().stream().filter(p
+        boat.stream().filter(p
                 -> Arrays.asList(propertynames).stream()
                         .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
                 .forEach(p -> ((PropertyBoolean) p.getValue()).set(true));
@@ -74,7 +74,7 @@ public class SailingStrategyTest {
 
     void setwindflow(double speed, double degrees, int zlevel) {
         PropertyDegrees propertydegrees = new PropertyDegrees(degrees);
-        controller.getProperty().getWind().getProperties().stream()
+        controller.getProperty().getWind().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
                     ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, propertydegrees));

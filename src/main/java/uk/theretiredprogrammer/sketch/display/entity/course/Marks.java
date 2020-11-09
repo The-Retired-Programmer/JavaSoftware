@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
@@ -28,10 +27,10 @@ public class Marks extends ModelArray<Mark> {
         mark.parse(jobj);
         return mark;
     }
-    
+
     @Override
     public Mark get(String name) {
-        return getProperties().stream().filter(mark -> name.equals(mark.getName())).findFirst()
-                .orElseThrow(() -> new IllegalStateFailure("can't find Mark with name "+name));
+        return stream().filter(mark -> name.equals(mark.getName())).findFirst()
+                .orElseThrow(() -> new IllegalStateFailure("can't find Mark with name " + name));
     }
 }

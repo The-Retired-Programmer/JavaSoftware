@@ -48,7 +48,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllWindComponentPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getWind().getProperties().forEach(
+        sketchmodel.getWind().stream().forEach(
                 component -> this.getPanes().add(new PropertyMapPane(component, "Wind Component - ", component.getNameProperty()))
         );
         sketchmodel.getWind().setOnChange(new ListChangeListener() {
@@ -60,7 +60,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllWaterComponentPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getWater().getProperties().forEach(
+        sketchmodel.getWater().stream().forEach(
                 component -> this.getPanes().add(new PropertyMapPane(component, "Water Component - ", component.getNameProperty()))
         );
         sketchmodel.getWater().setOnChange(new ListChangeListener() {
@@ -72,7 +72,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllBoatsPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getBoats().getProperties().forEach(boat -> this.getPanes().add(new PropertyMapPane(boat, "Boat - ", boat.getNameProperty())));
+        sketchmodel.getBoats().stream().forEach(boat -> this.getPanes().add(new PropertyMapPane(boat, "Boat - ", boat.getNameProperty())));
         sketchmodel.getBoats().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
@@ -82,7 +82,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createAllMarksPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getMarks().getProperties().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark, "Mark - ", mark.getNameProperty())));
+        sketchmodel.getMarks().stream().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark, "Mark - ", mark.getNameProperty())));
         sketchmodel.getMarks().setOnChange(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {

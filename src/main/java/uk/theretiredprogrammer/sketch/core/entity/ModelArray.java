@@ -18,12 +18,11 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 public abstract class ModelArray<P extends Model> implements Model {
 
@@ -56,8 +55,12 @@ public abstract class ModelArray<P extends Model> implements Model {
         return jab.build();
     }
 
-    public final ObservableList<P> getProperties() {
-        return list;
+    public final Stream<P> stream() {
+        return list.stream();
+    }
+    
+    public final void clear() {
+        list.clear();
     }
 
     public abstract P get(String name);

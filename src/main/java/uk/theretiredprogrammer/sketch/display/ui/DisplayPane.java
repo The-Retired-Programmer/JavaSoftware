@@ -180,11 +180,11 @@ public class DisplayPane extends Group {
 //        gc.setTransform(xform);
 //    }
     private void marksdraw() {
-        controller.getProperty().getMarks().getProperties().forEach(mark -> markdraw(mark));
+        controller.getProperty().getMarks().stream().forEach(mark -> markdraw(mark));
     }
 
     private void laylinesdraw() {
-        controller.getProperty().getMarks().getProperties().forEach(mark -> laylinesdraw(mark));
+        controller.getProperty().getMarks().stream().forEach(mark -> laylinesdraw(mark));
     }
 
     private static final double SIZE = 1; // set up as 1 metre diameter object
@@ -222,7 +222,7 @@ public class DisplayPane extends Group {
     }
 
     private void boatsdraw() {
-        controller.boats.getProperties().forEach(boat -> boatdraw(boat));
+        controller.boats.stream().forEach(boat -> boatdraw(boat));
     }
 
     private void boatdraw(Boat boat) {

@@ -28,6 +28,8 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 
 public class PropertyMapPane extends TitledPane {
+    
+    private int row = 0;
 
     public PropertyMapPane(ModelProperties properties, String title) {
         this.setText(title);
@@ -43,49 +45,46 @@ public class PropertyMapPane extends TitledPane {
 
     private ScrollPane createpropertiescontent(ModelProperties properties) {
         GridPane propertiestable = new GridPane();
-        int row = 0;
-        createpropertymapcontent(propertiestable, row, properties);
+        row = 0;
+        createpropertymapcontent(propertiestable, properties);
         return new ScrollPane(propertiestable);
     }
 
-    private int createpropertymapcontent(GridPane propertiestable, int row, ModelProperties properties) {
-        for (var pe : properties.getProperties().entrySet()) {
-            Object value = pe.getValue();
-            if (value instanceof ModelProperties model) {
-                row = createpropertymapcontent(propertiestable, row, model);
+    private void createpropertymapcontent(GridPane propertiestable, ModelProperties properties) {
+        properties.stream().forEach( entry -> {
+            Model value = entry.getValue();
+            if (value instanceof ModelProperties propertymap) {
+                createpropertymapcontent(propertiestable, propertymap);
             } else if (value instanceof ModelArray propertylist) {
-                row = createpropertylistcontent(propertiestable, row, propertylist);
+                createpropertylistcontent(propertiestable, propertylist);
             } else if (value instanceof ModelProperty propertyelement) {
-                row = createpropertyelementcontent(propertiestable, row, pe.getKey(), propertyelement);
+                createpropertyelementcontent(propertiestable, entry.getKey(), propertyelement);
             } else {
                 throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
             }
-        }
-        return row;
+        });
     }
 
-    private int createpropertylistcontent(GridPane propertiestable, int row, ModelArray<? extends Model> properties) {
-        for (Model value : properties.getProperties()) {
+    private void createpropertylistcontent(GridPane propertiestable, ModelArray<? extends Model> properties) {
+        properties.stream().forEach(value -> {
             if (value instanceof ModelArray propertylist) {
-                row = createpropertylistcontent(propertiestable, row, propertylist);
+                createpropertylistcontent(propertiestable, propertylist);
             } else if (value instanceof ModelProperties propertymap) {
-                row = createpropertymapcontent(propertiestable, row, propertymap);
+                createpropertymapcontent(propertiestable, propertymap);
             } else if (value instanceof ModelProperty propertyelement) {
-                row = createpropertyelementcontent(propertiestable, row, propertyelement);
+                createpropertyelementcontent(propertiestable, propertyelement);
             } else {
                 throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
             }
-        }
-        return row;
+        });
     }
 
-    private int createpropertyelementcontent(GridPane propertiestable, int row, ModelProperty propertyelement) {
-        return createpropertyelementcontent(propertiestable, row, "", propertyelement);
+    private void createpropertyelementcontent(GridPane propertiestable, ModelProperty propertyelement) {
+        createpropertyelementcontent(propertiestable,  "", propertyelement);
     }
     
-    private int createpropertyelementcontent(GridPane propertiestable, int row, String key, ModelProperty propertyelement) {
+    private void createpropertyelementcontent(GridPane propertiestable, String key, ModelProperty propertyelement) {
         propertiestable.add(new Label(key), 0, row, 1, 1);
         propertiestable.add(propertyelement.getControl(), 1, row++, 1, 1);
-        return row;
     }
 }

@@ -48,15 +48,15 @@ public class Course extends ModelProperties {
     }
 
     private void updatelegs() {
-        legs.getProperties().clear(); // not best way!!
-        legs.getProperties().forEach(lv -> insertLeg(lv.get()));
+        legs.clear(); // not best way!!
+        legs.stream().forEach(lv -> insertLeg(lv.get()));
     }
 
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("start", start, jobj);
         parseOptionalProperty("legs", legs, jobj);
-        legs.getProperties().forEach(lv -> insertLeg(lv.get()));
+        legs.stream().forEach(lv -> insertLeg(lv.get()));
     }
 
     @Override

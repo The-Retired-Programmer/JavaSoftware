@@ -18,6 +18,8 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
@@ -50,8 +52,8 @@ public abstract class ModelProperties implements Model {
         return true;
     }
 
-    public ObservableMap<String, Model> getProperties() {
-        return properties;
+    public Stream<Entry<String,Model>> stream(){
+        return properties.entrySet().stream();
     }
 
     protected void addProperty(String key, Model property) {
