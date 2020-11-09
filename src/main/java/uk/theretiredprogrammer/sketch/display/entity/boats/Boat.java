@@ -29,8 +29,8 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Channel;
 import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
@@ -47,7 +47,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 
-public abstract class Boat extends ModelProperties {
+public abstract class Boat extends ModelMap {
 
     private static final ObservableList<String> classes;
 

@@ -17,9 +17,9 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 
-public class Marks extends ModelArray<Mark> {
+public class Marks extends ModelList<Mark> {
 
     @Override
     protected Mark createAndParse(JsonValue jobj) {

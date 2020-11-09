@@ -24,7 +24,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
-public abstract class ModelProperties implements Model {
+public abstract class ModelMap implements Model {
 
     private final ObservableMap<String, Model> properties = FXCollections.observableMap(new LinkedHashMap<>());
     

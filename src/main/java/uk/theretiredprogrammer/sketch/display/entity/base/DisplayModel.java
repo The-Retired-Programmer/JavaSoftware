@@ -19,14 +19,14 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
 
-public class DisplayModel extends ModelProperties {
+public class DisplayModel extends ModelMap {
 
     public static final PropertyArea DISPLAYAREADEFAULT = new PropertyArea(new PropertyLocation(-500, -500), 1000, 1000);
 

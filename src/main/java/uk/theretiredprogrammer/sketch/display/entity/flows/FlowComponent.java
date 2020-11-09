@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
@@ -31,7 +31,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
-public abstract class FlowComponent extends ModelProperties {
+public abstract class FlowComponent extends ModelMap {
 
     public static FlowComponent factory(String type, Supplier<PropertyArea> getdisplayarea) {
         switch (type) {

@@ -22,7 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
@@ -32,7 +32,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
 
-public class SketchModel extends ModelProperties {
+public class SketchModel extends ModelMap {
 
     private final ObservableList<String> marknames = FXCollections.observableArrayList();
     private final PropertyString type = new PropertyString(null);
@@ -47,7 +47,7 @@ public class SketchModel extends ModelProperties {
     private final Boats boats = new Boats(this);
 
     public SketchModel() {
-        marks.setOnChange((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
+        marks.addListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
     }
 
     private void marklistchanged(ListChangeListener.Change<Mark> c) {

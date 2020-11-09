@@ -24,11 +24,11 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 
-public class FlowShiftModel extends ModelProperties {
+public class FlowShiftModel extends ModelMap {
 
     private final PropertyBoolean showflow = new PropertyBoolean(false);
     private final PropertyDouble showflowinterval = new PropertyDouble(100.0);

@@ -23,11 +23,11 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import javafx.scene.paint.Color;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
 
-public class Mark extends ModelProperties {
+public class Mark extends ModelMap {
 
     private final PropertyString name = new PropertyString("<newname>");
     private final PropertyLocation location;

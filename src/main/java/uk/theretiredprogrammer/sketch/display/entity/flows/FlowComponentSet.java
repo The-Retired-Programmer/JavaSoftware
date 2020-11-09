@@ -22,12 +22,12 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
-public class FlowComponentSet extends ModelArray<FlowComponent> {
+public class FlowComponentSet extends ModelList<FlowComponent> {
 
     private final Supplier<PropertyArea> getdisplayarea;
 

@@ -22,8 +22,8 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Model;
-import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.ModelList;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 
@@ -31,31 +31,31 @@ public class PropertyMapPane extends TitledPane {
     
     private int row = 0;
 
-    public PropertyMapPane(ModelProperties properties, String title) {
+    public PropertyMapPane(ModelMap properties, String title) {
         this.setText(title);
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
-    public PropertyMapPane(ModelProperties properties, String titleroot, PropertyString propertyname) {
+    public PropertyMapPane(ModelMap properties, String titleroot, PropertyString propertyname) {
         this.textProperty().bind(new SimpleStringProperty(titleroot)
                 .concat(propertyname.get())
         );
         this.setContent(createpropertiescontent(properties));
     }
 
-    private ScrollPane createpropertiescontent(ModelProperties properties) {
+    private ScrollPane createpropertiescontent(ModelMap properties) {
         GridPane propertiestable = new GridPane();
         row = 0;
         createpropertymapcontent(propertiestable, properties);
         return new ScrollPane(propertiestable);
     }
 
-    private void createpropertymapcontent(GridPane propertiestable, ModelProperties properties) {
+    private void createpropertymapcontent(GridPane propertiestable, ModelMap properties) {
         properties.stream().forEach( entry -> {
             Model value = entry.getValue();
-            if (value instanceof ModelProperties propertymap) {
+            if (value instanceof ModelMap propertymap) {
                 createpropertymapcontent(propertiestable, propertymap);
-            } else if (value instanceof ModelArray propertylist) {
+            } else if (value instanceof ModelList propertylist) {
                 createpropertylistcontent(propertiestable, propertylist);
             } else if (value instanceof ModelProperty propertyelement) {
                 createpropertyelementcontent(propertiestable, entry.getKey(), propertyelement);
@@ -65,11 +65,11 @@ public class PropertyMapPane extends TitledPane {
         });
     }
 
-    private void createpropertylistcontent(GridPane propertiestable, ModelArray<? extends Model> properties) {
+    private void createpropertylistcontent(GridPane propertiestable, ModelList<? extends Model> properties) {
         properties.stream().forEach(value -> {
-            if (value instanceof ModelArray propertylist) {
+            if (value instanceof ModelList propertylist) {
                 createpropertylistcontent(propertiestable, propertylist);
-            } else if (value instanceof ModelProperties propertymap) {
+            } else if (value instanceof ModelMap propertymap) {
                 createpropertymapcontent(propertiestable, propertymap);
             } else if (value instanceof ModelProperty propertyelement) {
                 createpropertyelementcontent(propertiestable, propertyelement);

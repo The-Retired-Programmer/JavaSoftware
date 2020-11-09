@@ -19,14 +19,14 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-public class Boats extends ModelArray<Boat> {
+public class Boats extends ModelList<Boat> {
 
     private final SketchModel model;
 

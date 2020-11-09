@@ -18,9 +18,9 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import jakarta.json.JsonValue;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelArray;
+import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 
-public class PropertyLegEndings extends ModelArray<PropertyLegEnding> {
+public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
 
     private final ObservableList<String> marknames;
     private final ObservableList<String> roundings;

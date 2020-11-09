@@ -20,11 +20,11 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.entity.ModelProperties;
+import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
-public class Course extends ModelProperties {
+public class Course extends ModelMap {
 
     private static final ObservableList<String> roundings;
 

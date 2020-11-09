@@ -24,28 +24,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public abstract class ModelArray<P extends Model> implements Model {
-
-    private final ObservableList<P> list = FXCollections.observableArrayList();
+public abstract class ModelList<P extends Model> implements Model {
 
     protected abstract P createAndParse(JsonValue jobj);
-
+    
+    private final ObservableList<P> list = FXCollections.observableArrayList();
+    
     @Override
     public final void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
-            ((JsonArray) jvalue).forEach(jval -> {
-                list.add(createAndParse(jval));
-            });
+            ((JsonArray) jvalue).forEach(jval -> add(createAndParse(jval)));
         }
     }
 
     @Override
     public final void setOnChange(Runnable onchange) {
         list.forEach(member -> member.setOnChange(onchange));
-    }
-
-    public final void setOnChange(ListChangeListener<P> listener) {
-        list.addListener(listener);
     }
 
     @Override
@@ -55,17 +49,21 @@ public abstract class ModelArray<P extends Model> implements Model {
         return jab.build();
     }
 
-    public final Stream<P> stream() {
+    public abstract P get(String name);
+    
+    public Stream<P> stream() {
         return list.stream();
     }
     
-    public final void clear() {
-        list.clear();
+    public void add(P value){
+        list.add(value);
     }
-
-    public abstract P get(String name);
-
-    public final void add(P item) {
-        list.add(item);
+    
+    public void addListener(ListChangeListener<P> listener){
+        list.addListener(listener);
+    }
+    
+    public void clear() {
+        list.clear();
     }
 }
