@@ -25,7 +25,6 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class Mark extends ModelMap {
 
@@ -38,7 +37,7 @@ public class Mark extends ModelMap {
     private final PropertyColour colour = new PropertyColour(Color.RED);
 
     public Mark() {
-        location = new PropertyLocation(LOCATIONZERO);
+        location = new PropertyLocation();
         registerproperties();
     }
 

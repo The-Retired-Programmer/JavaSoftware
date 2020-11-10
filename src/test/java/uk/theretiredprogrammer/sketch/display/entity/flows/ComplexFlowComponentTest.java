@@ -18,8 +18,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class ComplexFlowComponentTest extends FlowComponentTest {
@@ -28,7 +26,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
     public void testGetComplexFlow() throws IOException {
         System.out.println("getComplexFlow");
         initialiseFlow("/complexwindflow.json");
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 0), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(0, 100), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 100), new PropertySpeedVector(4, 0));
@@ -41,7 +39,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
     public void testGetComplexFlow2() throws IOException {
         System.out.println("getComplexFlow2");
         initialiseFlow("/complexwindflow2.json");
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 0), new PropertySpeedVector(2, 0));
         assertFlowAt(new PropertyLocation(0, 100), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 100), new PropertySpeedVector(2, 0));
@@ -55,7 +53,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow3");
         initialiseFlow("/complexwindflow3.json");
         //
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 0), new PropertySpeedVector(4, 45));
         assertFlowAt(new PropertyLocation(0, 100), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 100), new PropertySpeedVector(4, 45));
@@ -69,7 +67,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow4");
         initialiseFlow("/complexwindflow4.json");
         //
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 0), new PropertySpeedVector(2, 45));
         assertFlowAt(new PropertyLocation(0, 100), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 100), new PropertySpeedVector(2, 45));
@@ -83,7 +81,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow5");
         initialiseFlow("/complexwindflow5.json");
         //
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 0), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(0, 100), new PropertySpeedVector(4, 0));
         assertFlowAt(new PropertyLocation(100, 100), new PropertySpeedVector(4, 45));

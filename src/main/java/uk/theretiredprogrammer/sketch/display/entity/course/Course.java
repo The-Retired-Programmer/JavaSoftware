@@ -22,7 +22,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class Course extends ModelMap {
 
@@ -33,7 +32,7 @@ public class Course extends ModelMap {
         roundings.addAll("port", "starboard");
     }
 
-    private final PropertyLocation start = new PropertyLocation(LOCATIONZERO);
+    private final PropertyLocation start = new PropertyLocation();
     private final PropertyLegEndings legs;
 
     private Leg firstcourseleg;

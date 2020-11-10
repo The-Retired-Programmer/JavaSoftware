@@ -23,8 +23,6 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyLocation implements ModelProperty<PropertyLocation> {
 
-    public final static PropertyLocation LOCATIONZERO = new PropertyLocation(0.0, 0.0);
-
     private final SimpleDoubleProperty x = new SimpleDoubleProperty();
     private final SimpleDoubleProperty y = new SimpleDoubleProperty();
 

@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class PropertyDistanceVectorTest {
 
@@ -34,10 +33,10 @@ public class PropertyDistanceVectorTest {
     @Test
     public void testCreation2() {
         System.out.println("creation<location.location>");
-        PropertyDistanceVector instance = new PropertyDistanceVector(LOCATIONZERO, new PropertyLocation(10, 0));
+        PropertyDistanceVector instance = new PropertyDistanceVector(new PropertyLocation(), new PropertyLocation(10, 0));
         assertEquals(10, instance.getDistance());
         assertEquals(90, instance.getDegrees());
-        instance = new PropertyDistanceVector(LOCATIONZERO, new PropertyLocation(0, 10));
+        instance = new PropertyDistanceVector(new PropertyLocation(), new PropertyLocation(0, 10));
         assertEquals(10, instance.getDistance());
         assertEquals(0, instance.getDegrees());
     }
@@ -58,7 +57,7 @@ public class PropertyDistanceVectorTest {
         assertEquals(-90, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
         instance = new PropertyDistanceVector(1, new PropertyDegrees(45));
-        res = instance.toLocation(LOCATIONZERO);
+        res = instance.toLocation(new PropertyLocation());
         assertEquals(1 / Math.sqrt(2), res.getX(), DELTA);
         assertEquals(1 / Math.sqrt(2), res.getY(), DELTA);
         assertEquals(1, instance.getDistance());

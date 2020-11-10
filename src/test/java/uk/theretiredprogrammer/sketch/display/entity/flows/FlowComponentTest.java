@@ -30,6 +30,10 @@ public abstract class FlowComponentTest {
         controller = new DisplayController(filename);
     }
 
+    void assertFlowAtOrigin(PropertySpeedVector expected) throws IOException {
+        assertFlowAt(new PropertyLocation(), expected);
+    }
+
     void assertFlowAt(PropertyLocation at, PropertySpeedVector expected) throws IOException {
         PropertySpeedVector flow = controller.windflow.getFlow(at);
         assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);

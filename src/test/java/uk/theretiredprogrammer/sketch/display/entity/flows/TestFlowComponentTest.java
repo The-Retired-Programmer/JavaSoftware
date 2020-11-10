@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class TestFlowComponentTest extends FlowComponentTest {
@@ -26,7 +25,7 @@ public class TestFlowComponentTest extends FlowComponentTest {
     public void testGetTestFlow() throws IOException {
         System.out.println("getTestFlow");
         initialiseFlow("/testwindflow.json");
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
         assertMeanFlowAngle(-30);
     }
 }

@@ -30,7 +30,6 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Channel;
 import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
@@ -86,11 +85,11 @@ public abstract class Boat extends ModelMap {
     private Strategy strategy; // current leg strategy
 
     public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", "laser2", LOCATIONZERO, firstleg, windflow, waterflow, metrics);
+        this("<newname>", "laser2", new PropertyLocation(), firstleg, windflow, waterflow, metrics);
     }
 
     public Boat(String classtype, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", classtype, LOCATIONZERO, firstleg, windflow, waterflow, metrics);
+        this("<newname>", classtype, new PropertyLocation(), firstleg, windflow, waterflow, metrics);
     }
 
     public Boat(PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
