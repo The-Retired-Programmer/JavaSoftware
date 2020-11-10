@@ -26,16 +26,15 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 
 public class FlowShiftModel extends ModelMap {
 
     private final PropertyBoolean showflow = new PropertyBoolean(false);
     private final PropertyDouble showflowinterval = new PropertyDouble(100.0);
     private final PropertyColour showflowcolour = new PropertyColour(Color.BLACK);
-    private final PropertyDegrees swingangle = new PropertyDegrees(DEGREES0);
+    private final PropertyDegrees swingangle = new PropertyDegrees(0);
     private final PropertyInteger swingperiod = new PropertyInteger(0);
-    private final PropertyDegrees shiftangle = new PropertyDegrees(DEGREES0);
+    private final PropertyDegrees shiftangle = new PropertyDegrees(0);
     private final PropertyInteger shiftperiod = new PropertyInteger(0);
     private final PropertyBoolean randomshifts = new PropertyBoolean(false);
 

@@ -28,7 +28,6 @@ import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -72,9 +71,13 @@ public abstract class Strategy {
     }
 
     static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
+        return getRefDistance(location, marklocation, refangle.get());
+    }
+    
+    static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, double refangle) {
         PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
         PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
-        if (refangle2mark.gt(DEGREES90)) {
+        if (refangle2mark.gt(90)) {
             return Optional.empty();
         }
         return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));

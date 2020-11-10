@@ -19,8 +19,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -33,7 +31,7 @@ public class OffwindStrategy extends Strategy {
     private boolean useroundingdecisions = false;
 
     public OffwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
-        super(boat, leg, leg.getAngleofLeg().plus(DEGREES90), leg.getAngleofLeg().sub(DEGREES90));
+        super(boat, leg, leg.getAngleofLeg().plus(90), leg.getAngleofLeg().sub(90));
         decisions = new OffwindSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
         switch (followinglegtype) {
@@ -51,8 +49,8 @@ public class OffwindStrategy extends Strategy {
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle));
             case NONE ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.plus(DEGREES90))
-                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(DEGREES90));
+                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.plus(90))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(90));
             default ->
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());
@@ -73,7 +71,7 @@ public class OffwindStrategy extends Strategy {
     }
 
     boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(DEGREES180));
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(180));
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
     }
 }

@@ -17,9 +17,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 
 public class PropertyDegreesTest {
 
@@ -60,7 +57,7 @@ public class PropertyDegreesTest {
     public void testPlus() {
         System.out.println("plus");
         PropertyDegrees instance = new PropertyDegrees(20);
-        assertEquals(110, instance.plus(DEGREES90).get(), DELTA);
+        assertEquals(110, instance.plus(90).get(), DELTA);
         instance = new PropertyDegrees(40);
         PropertyDegrees addvalue = new PropertyDegrees(150);
         assertEquals(-170, instance.plus(addvalue).get(), DELTA);
@@ -79,12 +76,11 @@ public class PropertyDegreesTest {
         PropertyDegrees subvalue = new PropertyDegrees(20);
         assertEquals(70, instance.sub(subvalue).get(), DELTA);
         instance = new PropertyDegrees(20);
-        assertEquals(-70, instance.sub(DEGREES90).get(), DELTA);
+        assertEquals(-70, instance.sub(90).get(), DELTA);
         instance = new PropertyDegrees(90);
         subvalue.set(-100);
         assertEquals(-170, instance.sub(subvalue).get(), DELTA);
     }
-
 
     @Test
     public void testMult_double() {
@@ -144,7 +140,7 @@ public class PropertyDegreesTest {
         instance = new PropertyDegrees(180);
         assertEquals(180, instance.negateif(false).get(), DELTA);
     }
-    
+
     @Test
     public void testGt() {
         System.out.println("gt");
@@ -228,47 +224,45 @@ public class PropertyDegreesTest {
     public void testDegreesDiff() {
         System.out.println("degreesDiff");
         PropertyDegrees instance = new PropertyDegrees(88);
-        assertEquals(92, instance.degreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(92, instance.degreesDiff(180).get(), DELTA);
         instance = new PropertyDegrees(175);
         PropertyDegrees diff = new PropertyDegrees(-175);
         assertEquals(10, instance.degreesDiff(diff).get(), DELTA);
         instance = new PropertyDegrees(-175);
-        assertEquals(175, instance.degreesDiff(DEGREES0).get(), DELTA);
+        assertEquals(175, instance.degreesDiff(0).get(), DELTA);
         instance = new PropertyDegrees(0);
-        assertEquals(180, instance.degreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(180, instance.degreesDiff(180).get(), DELTA);
         instance = new PropertyDegrees(-10);
-        assertEquals(-170, instance.degreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(-170, instance.degreesDiff(180).get(), DELTA);
     }
-    
+
     @Test
     public void testAbsDegreesDiff() {
         System.out.println("absDegreesDiff");
         PropertyDegrees instance = new PropertyDegrees(88);
-        assertEquals(92, instance.absDegreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(92, instance.absDegreesDiff(180).get(), DELTA);
         instance = new PropertyDegrees(175);
         PropertyDegrees diff = new PropertyDegrees(-175);
         assertEquals(10, instance.absDegreesDiff(diff).get(), DELTA);
         instance = new PropertyDegrees(-175);
-        assertEquals(175, instance.absDegreesDiff(DEGREES0).get(), DELTA);
+        assertEquals(175, instance.absDegreesDiff(0).get(), DELTA);
         instance = new PropertyDegrees(0);
-        assertEquals(180, instance.absDegreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(180, instance.absDegreesDiff(180).get(), DELTA);
         instance = new PropertyDegrees(-10);
-        assertEquals(170, instance.absDegreesDiff(DEGREES180).get(), DELTA);
+        assertEquals(170, instance.absDegreesDiff(180).get(), DELTA);
     }
-
 
     @Test
     public void testBetween() {
         System.out.println("between");
         PropertyDegrees instance = new PropertyDegrees(-90);
-        assert (!instance.between(DEGREES90, DEGREES180));
+        assert (!instance.between(90, 180));
         instance = new PropertyDegrees(140);
-        assert (instance.between(DEGREES90, DEGREES180));
-        PropertyDegrees max = new PropertyDegrees(-179);
-        assert (instance.between(DEGREES90, max));
+        assert (instance.between(90, 180));
+        assert (instance.between(90, -179));
         instance = new PropertyDegrees(160);
         PropertyDegrees min = new PropertyDegrees(-117);
-        max.set(-27);
+        PropertyDegrees max = new PropertyDegrees(-27);
         assert (!instance.between(min, max));
         instance = new PropertyDegrees(151);
         min.set(-118);

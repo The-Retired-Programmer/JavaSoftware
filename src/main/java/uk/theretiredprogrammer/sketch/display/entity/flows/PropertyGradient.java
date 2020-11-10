@@ -31,11 +31,6 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREESMINUS90;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
@@ -170,19 +165,19 @@ public class PropertyGradient implements ModelProperty<PropertyGradient> {
         return null;  //TODO - getFlow not yet implemented - return null
     }
 
-    public PropertyDegrees getMeanFlowDirection() throws IOException {
+    public double getMeanFlowDirection() throws IOException {
         switch (type.get()) {
             case "north" -> {
-                return DEGREES0;
+                return 0;
             }
             case "south" -> {
-                return DEGREES180;
+                return 180;
             }
             case "east" -> {
-                return DEGREES90;
+                return 90;
             }
             case "west" -> {
-                return DEGREESMINUS90;
+                return -90;
             }
             default ->
                 throw new IOException("Illegal gradient direction");

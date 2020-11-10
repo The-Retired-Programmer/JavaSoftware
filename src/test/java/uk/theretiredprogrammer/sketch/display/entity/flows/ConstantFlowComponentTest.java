@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class ConstantFlowComponentTest extends FlowComponentTest {
@@ -27,7 +26,7 @@ public class ConstantFlowComponentTest extends FlowComponentTest {
     public void testGetConstantFlow() throws IOException {
         System.out.println("getConstantFlow");
         initialiseFlow("/constantwindflow.json");
-        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, DEGREES0));
-        assertMeanFlowAngle(DEGREES0);
+        assertFlowAt(LOCATIONZERO, new PropertySpeedVector(4, 0));
+        assertMeanFlowAngle(0);
     }
 }

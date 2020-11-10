@@ -26,9 +26,9 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
     private final PropertyDegrees degreesproperty = new PropertyDegrees();
 
     public PropertyDistanceVector() {
-        set(0,0);
+        set(0, 0);
     }
-    
+
     public PropertyDistanceVector(PropertyDistanceVector value) {
         set(value);
     }
@@ -150,8 +150,12 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
     public PropertyDegrees degreesDiff(PropertyDistanceVector p) {
         return degreesproperty.degreesDiff(p.getDegreesProperty());
     }
-    
+
     public PropertyDegrees degreesDiff(PropertyDegrees p) {
+        return degreesproperty.degreesDiff(p);
+    }
+
+    public PropertyDegrees degreesDiff(double p) {
         return degreesproperty.degreesDiff(p);
     }
 }

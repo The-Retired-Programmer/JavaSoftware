@@ -15,14 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-
 public class WindShiftLogEntry extends TimerLogEntry {
 
     private final double windshift;
 
-    public WindShiftLogEntry(PropertyDegrees shift) {
-        this.windshift = shift.get();
+    public WindShiftLogEntry(double shift) {
+        this.windshift = shift;
     }
 
     @Override

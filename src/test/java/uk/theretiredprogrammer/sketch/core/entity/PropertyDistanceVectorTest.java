@@ -17,9 +17,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import static uk.theretiredprogrammer.sketch.core.entity.PropertyLocation.LOCATIONZERO;
 
 public class PropertyDistanceVectorTest {
@@ -71,17 +68,17 @@ public class PropertyDistanceVectorTest {
     @Test
     public void testAdd() {
         System.out.println("add");
-        PropertyDistanceVector instance = new PropertyDistanceVector(100, DEGREES0);
+        PropertyDistanceVector instance = new PropertyDistanceVector(100, 0);
         PropertyDistanceVector res = (PropertyDistanceVector) instance.plus(instance);
-        assertEquals(DEGREES0, res.getDegreesProperty());
+        assertEquals(0, res.getDegrees());
         assertEquals(200, res.getDistance());
         assertEquals(100, instance.getDistance());
-        assertEquals(DEGREES0, instance.getDegreesProperty());
-        PropertyDistanceVector other = new PropertyDistanceVector(100, DEGREES90);
+        assertEquals(0, instance.getDegrees());
+        PropertyDistanceVector other = new PropertyDistanceVector(100, 90);
         res = (PropertyDistanceVector) instance.plus(other);
         assertEquals(45, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
-        other = new PropertyDistanceVector(100, DEGREES180);
+        other = new PropertyDistanceVector(100, 180);
         res = (PropertyDistanceVector) instance.plus(other);
         assertEquals(90, res.getDegrees());
         assertEquals(0, res.getDistance(), DELTA);
@@ -90,18 +87,18 @@ public class PropertyDistanceVectorTest {
     @Test
     public void testSubtract() {
         System.out.println("subtract");
-        PropertyDistanceVector instance = new PropertyDistanceVector(100, DEGREES0);
-        PropertyDistanceVector other = new PropertyDistanceVector(50, DEGREES0);
+        PropertyDistanceVector instance = new PropertyDistanceVector(100, 0);
+        PropertyDistanceVector other = new PropertyDistanceVector(50, 0);
         PropertyDistanceVector res = (PropertyDistanceVector) instance.sub(other);
-        assertEquals(DEGREES0, res.getDegreesProperty());
+        assertEquals(0, res.getDegrees());
         assertEquals(50, res.getDistance());
         assertEquals(100, instance.getDistance());
-        assertEquals(DEGREES0, instance.getDegreesProperty());
-        other = new PropertyDistanceVector(100, DEGREES90);
+        assertEquals(0, instance.getDegrees());
+        other = new PropertyDistanceVector(100, 90);
         res = (PropertyDistanceVector) instance.sub(other);
         assertEquals(-45, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
-        other = new PropertyDistanceVector(100, DEGREES180);
+        other = new PropertyDistanceVector(100, 180);
         res = (PropertyDistanceVector) instance.sub(other);
         assertEquals(0, res.getDegrees(), DELTA);
         assertEquals(200, res.getDistance(), DELTA);
@@ -110,12 +107,12 @@ public class PropertyDistanceVectorTest {
     @Test
     public void testMult() {
         System.out.println("mult");
-        PropertyDistanceVector instance = new PropertyDistanceVector(100, DEGREES0);
+        PropertyDistanceVector instance = new PropertyDistanceVector(100, 0);
         PropertyDistanceVector res = (PropertyDistanceVector) instance.mult(2);
-        assertEquals(DEGREES0, res.getDegreesProperty());
+        assertEquals(0, res.getDegrees());
         assertEquals(200, res.getDistance());
         res = (PropertyDistanceVector) instance.mult(0.655);
-        assertEquals(DEGREES0, res.getDegreesProperty());
+        assertEquals(0, res.getDegrees());
         assertEquals(65.5, res.getDistance(), DELTA);
         res = (PropertyDistanceVector) instance.mult(-0.655);
         assertEquals(180, res.getDegrees());
@@ -126,21 +123,21 @@ public class PropertyDistanceVectorTest {
     public void testDegreesDiff_Angle() {
         System.out.println("degreesDiff<PropertyDegrees>");
         PropertyDistanceVector instance = new PropertyDistanceVector(1.0, new PropertyDegrees(88));
-        assertEquals(92, instance.degreesDiff(DEGREES180).get());
+        assertEquals(92, instance.degreesDiff(180).get());
     }
 
     @Test
     public void testDegreesDiff_Polar() {
         System.out.println("degreesDiff<Polar>");
-        PropertyDistanceVector instance = new PropertyDistanceVector(1, new PropertyDegrees(88));
-        PropertyDistanceVector other = new PropertyDistanceVector(1, DEGREES180);
+        PropertyDistanceVector instance = new PropertyDistanceVector(1, 88);
+        PropertyDistanceVector other = new PropertyDistanceVector(1, 180);
         assertEquals(92, instance.degreesDiff(other).get());
     }
 
     @Test
     public void testGetAngle() {
         System.out.println("getAngle");
-        PropertyDistanceVector instance = new PropertyDistanceVector(1, new PropertyDegrees(88));
+        PropertyDistanceVector instance = new PropertyDistanceVector(1, 88);
         assertEquals(88, instance.getDegrees());
     }
 }

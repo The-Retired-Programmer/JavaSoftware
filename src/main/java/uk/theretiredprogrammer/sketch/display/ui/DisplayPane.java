@@ -25,7 +25,6 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
@@ -250,7 +249,7 @@ public class DisplayPane extends Group {
         PropertyLocation position = boat.getLocation();
         PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
-        if (delta.gt(DEGREES0)) {
+        if (delta.gt(0)) {
             // anti clockwise to starboard tack
             PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;
@@ -267,7 +266,7 @@ public class DisplayPane extends Group {
         PropertyLocation position = boat.getLocation();
         PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
-        if (delta.gt(DEGREES0)) {
+        if (delta.gt(0)) {
             // clockwise to starboard gybe
             PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
             Decision decision = boat.getStrategy().decision;

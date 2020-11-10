@@ -73,7 +73,7 @@ public class TurnTest {
         controller.getProperty().getWind().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, new PropertyDegrees(degrees)));
+                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
                     controller.windflow.setFlows();
                 });
     }

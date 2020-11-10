@@ -134,7 +134,7 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
         double x = speed * Math.sin(radians) + otherspeed * Math.sin(otherradians);
         double y = speed * Math.cos(radians) + otherspeed * Math.cos(otherradians);
         //
-        return new PropertySpeedVector(Math.sqrt(x * x + y * y), new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
+        return new PropertySpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(x, y)));
     }
 
     public PropertySpeedVector sub(PropertySpeedVector other) {
@@ -145,7 +145,7 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
         double x = speed * Math.sin(radians) - otherspeed * Math.sin(otherradians);
         double y = speed * Math.cos(radians) - otherspeed * Math.cos(otherradians);
         //
-        return new PropertySpeedVector(Math.sqrt(x * x + y * y), new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
+        return new PropertySpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(x, y)));
     }
 
     public PropertySpeedVector mult(double multiplier) {

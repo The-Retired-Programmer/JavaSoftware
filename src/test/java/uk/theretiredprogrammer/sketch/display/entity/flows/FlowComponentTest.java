@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
@@ -37,7 +36,7 @@ public abstract class FlowComponentTest {
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
 
-    void assertMeanFlowAngle(PropertyDegrees expected) throws IOException {
-        assertEquals(expected.get(), controller.windflow.getMeanFlowAngle().get(), DELTA);
+    void assertMeanFlowAngle(double expected) throws IOException {
+        assertEquals(expected, controller.windflow.getMeanFlowAngle().get(), DELTA);
     }
 }

@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
@@ -33,8 +32,8 @@ public abstract class Flow {
     private final PropertyArea area;
     private final double wstepsize;
     private final double hstepsize;
-    private PropertyDegrees shiftNow = new PropertyDegrees();
-    private PropertyDegrees swingNow = new PropertyDegrees();
+    private double shiftNow = 0;
+    private double swingNow = 0;
     private PropertyDegrees meanflowangle;
 
     private final FlowShiftModel flowshiftsproperty;
@@ -100,13 +99,13 @@ public abstract class Flow {
         if (flowshiftsproperty.getSwingperiod() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
             double radians = Math.toRadians(((double) simulationtime % flowshiftsproperty.getSwingperiod()) / flowshiftsproperty.getSwingperiod() * 360);
-            swingNow = flowshiftsproperty.getSwingangle().mult(Math.sin(radians));
+            swingNow = flowshiftsproperty.getSwingangle().mult(Math.sin(radians)).get();
             timerlog.add(new WindSwingLogEntry(swingNow));
         } else {
-            swingNow = DEGREES0;
+            swingNow = 0;
         }
         // now deal with shifts
-        PropertyDegrees shiftval = DEGREES0;
+        double shiftval = 0;
         boolean shifting = false;
         if (flowshiftsproperty.getShiftperiod() != 0) {
             double delta = flowshiftsproperty.isRandomshifts()
@@ -114,13 +113,13 @@ public abstract class Flow {
                     : simulationtime % flowshiftsproperty.getShiftperiod();
             double quarterPeriod = flowshiftsproperty.getShiftperiod() / 4;
             if (delta < quarterPeriod) {
-                shiftval = DEGREES0;
+                shiftval = 0;
             } else if (delta < quarterPeriod * 2) {
-                shiftval = flowshiftsproperty.getShiftangle().negative();
+                shiftval = flowshiftsproperty.getShiftangle().negative().get();
             } else if (delta < quarterPeriod * 3) {
-                shiftval = DEGREES0;
+                shiftval = 0;
             } else {
-                shiftval = flowshiftsproperty.getShiftangle();
+                shiftval = flowshiftsproperty.getShiftangle().get();
             }
             shifting = true;
         }

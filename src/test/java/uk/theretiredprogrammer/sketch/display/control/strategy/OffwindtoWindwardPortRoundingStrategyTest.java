@@ -18,18 +18,17 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES180;
 
 public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTest {
 
-    private static final PropertyDegrees DELTAANGLE = new PropertyDegrees(5);
+    private static final double DELTAANGLE = 5;
 
     @Test
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setboatlocation(47, 12));
-        this.assertSailing(decision, DEGREES180.plus(DELTAANGLE), DEGREES180);
+        this.assertSailing(decision, -180 + DELTAANGLE, 180);
     }
 
     @Test
@@ -37,7 +36,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setboatlocation(47, 11));
-        this.assertSailing(decision, DEGREES180.plus(DELTAANGLE), DEGREES180);
+        this.assertSailing(decision, -180 + DELTAANGLE, 180);
     }
 
     @Test
@@ -63,7 +62,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
                 () -> setwindflow(4, 45),
                 () -> setboatlocation(50, 13));
         PropertyDegrees target = new PropertyDegrees(-135);
-        this.assertSailing(decision, target, target.plus(DELTAANGLE));
+        this.assertSailing(decision, -135, -135 + DELTAANGLE);
     }
 
     @Test

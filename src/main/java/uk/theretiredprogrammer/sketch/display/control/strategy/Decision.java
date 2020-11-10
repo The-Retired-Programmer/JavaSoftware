@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
 /**
  *
@@ -72,8 +71,12 @@ public class Decision {
         return action.equals(DecisionAction.TURN) || action.equals(DecisionAction.MARKROUNDING);
     }
 
-    public PropertyDegrees getDegrees() {
+    public PropertyDegrees getDegreesProperty() {
         return isRotating() ? degrees : boat.getDirection();
+    }
+
+    public double getDegrees() {
+        return getDegreesProperty().get();
     }
 
     public boolean isPort() {

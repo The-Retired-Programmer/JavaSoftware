@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 
 public class PropertySpeedVectorTest {
 
@@ -26,7 +25,7 @@ public class PropertySpeedVectorTest {
     @Test
     public void testCreation() {
         System.out.println("creation<speed,degrees>");
-        PropertySpeedVector instance = new PropertySpeedVector(100, new PropertyDegrees(90));
+        PropertySpeedVector instance = new PropertySpeedVector(100, 90);
         assertEquals(100, instance.getSpeed());
         assertEquals(90, instance.getDegrees());
     }
@@ -35,8 +34,8 @@ public class PropertySpeedVectorTest {
     public void testMeanAngle1() {
         System.out.println("meanAngle1");
         PropertySpeedVector[][] array = new PropertySpeedVector[2][1];
-        array[0][0] = new PropertySpeedVector(1, DEGREES0);
-        array[1][0] = new PropertySpeedVector(10, new PropertyDegrees(50));
+        array[0][0] = new PropertySpeedVector(1, 0);
+        array[1][0] = new PropertySpeedVector(10, 50);
         assertEquals(new PropertyDegrees(25), PropertySpeedVector.meanAngle(array));
     }
 
@@ -44,10 +43,10 @@ public class PropertySpeedVectorTest {
     public void testMeanAngle2() {
         System.out.println("meanAngle2");
         PropertySpeedVector[][] array = new PropertySpeedVector[2][2];
-        array[0][0] = new PropertySpeedVector(1, DEGREES0);
-        array[1][0] = new PropertySpeedVector(5, DEGREES0);
-        array[0][1] = new PropertySpeedVector(10, DEGREES0);
-        array[1][1] = new PropertySpeedVector(15, new PropertyDegrees(45));
+        array[0][0] = new PropertySpeedVector(1, 0);
+        array[1][0] = new PropertySpeedVector(5, 0);
+        array[0][1] = new PropertySpeedVector(10, 0);
+        array[1][1] = new PropertySpeedVector(15, 45);
         assertEquals(10.7990805, PropertySpeedVector.meanAngle(array).get(), DELTA);
     }
 }

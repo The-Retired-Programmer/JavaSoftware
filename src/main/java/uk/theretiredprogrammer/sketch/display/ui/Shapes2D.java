@@ -30,7 +30,6 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES0;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class Shapes2D {
@@ -76,9 +75,9 @@ public class Shapes2D {
             width = 7 / zoom;
         }
         PropertyDegrees relative = direction.degreesDiff(winddirection);
-        boolean onStarboard = relative.lt(DEGREES0);
+        boolean onStarboard = relative.lt(0);
         PropertyDegrees absrelative = relative.abs();
-        PropertyDegrees sailRotation = absrelative.lteq(new PropertyDegrees(45)) ? DEGREES0 : absrelative.sub(new PropertyDegrees(45)).mult(2.0 / 3);
+        PropertyDegrees sailRotation = absrelative.lteq(45) ? new PropertyDegrees(0) : absrelative.sub(45).mult(2.0 / 3);
         sailRotation = sailRotation.negateif(!onStarboard);
         Translate positiontranslate = new Translate(location.getX(), location.getY());
         Rotate directionrotation = new Rotate(-direction.get());

@@ -22,11 +22,6 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyDegrees extends SimpleDoubleProperty implements ModelProperty<PropertyDegrees> {
 
-    public static final PropertyDegrees DEGREES0 = new PropertyDegrees(0);
-    public static final PropertyDegrees DEGREES90 = new PropertyDegrees(90);
-    public static final PropertyDegrees DEGREES180 = new PropertyDegrees(180);
-    public static final PropertyDegrees DEGREESMINUS90 = new PropertyDegrees(-90);
-
     public PropertyDegrees() {
         set(0);
     }
@@ -101,8 +96,16 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return new PropertyDegrees(get() + degrees.get());
     }
 
+    public final PropertyDegrees plus(double degrees) {
+        return new PropertyDegrees(get() + degrees);
+    }
+
     public final PropertyDegrees sub(PropertyDegrees degrees) {
         return new PropertyDegrees(get() - degrees.get());
+    }
+
+    public final PropertyDegrees sub(double degrees) {
+        return new PropertyDegrees(get() - degrees);
     }
 
     public final PropertyDegrees mult(double mult) {
@@ -133,11 +136,23 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return get() == degrees.get();
     }
 
+    public final boolean eq(double degrees) {
+        return get() == degrees;
+    }
+
     public final boolean neq(PropertyDegrees degrees) {
         return get() != degrees.get();
     }
 
+    public final boolean neq(double degrees) {
+        return get() != degrees;
+    }
+
     public final boolean gt(PropertyDegrees degrees) {
+        return sub(degrees).get() > 0;
+    }
+
+    public final boolean gt(double degrees) {
         return sub(degrees).get() > 0;
     }
 
@@ -145,7 +160,15 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() >= 0;
     }
 
+    public final boolean gteq(double degrees) {
+        return sub(degrees).get() >= 0;
+    }
+
     public final boolean lt(PropertyDegrees degrees) {
+        return sub(degrees).get() < 0;
+    }
+
+    public final boolean lt(double degrees) {
         return sub(degrees).get() < 0;
     }
 
@@ -153,7 +176,15 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() <= 0;
     }
 
+    public final boolean lteq(double degrees) {
+        return sub(degrees).get() <= 0;
+    }
+
     public final boolean between(PropertyDegrees min, PropertyDegrees max) {
+        return gteq(min) && lteq(max);
+    }
+
+    public final boolean between(double min, double max) {
         return gteq(min) && lteq(max);
     }
 
@@ -161,8 +192,16 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return new PropertyDegrees(degrees.get() - get());
     }
 
+    public final PropertyDegrees degreesDiff(double degrees) {
+        return new PropertyDegrees(degrees - get());
+    }
+
     public final PropertyDegrees absDegreesDiff(PropertyDegrees degrees) {
         return new PropertyDegrees(Math.abs(normalise(degrees.get() - get())));
+    }
+
+    public final PropertyDegrees absDegreesDiff(double degrees) {
+        return new PropertyDegrees(Math.abs(normalise(degrees - get())));
     }
 
     public final PropertyDegrees inverse() {

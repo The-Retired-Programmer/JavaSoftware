@@ -27,7 +27,7 @@ public class DecisionLogEntry extends TimerLogEntry {
     public DecisionLogEntry(String boatname, Decision decision) {
         this.boatname = boatname;
         this.decisionaction = decision.getAction();
-        this.decisionangle = decision.getDegrees().get();
+        this.decisionangle = decision.getDegrees();
         this.decisionPORT = decision.isPort();
     }
 

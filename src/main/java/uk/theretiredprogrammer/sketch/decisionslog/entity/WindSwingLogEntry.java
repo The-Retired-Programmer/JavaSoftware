@@ -15,14 +15,12 @@
  */
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-
 public class WindSwingLogEntry extends TimerLogEntry {
 
     private final double windswing;
 
-    public WindSwingLogEntry(PropertyDegrees swing) {
-        this.windswing = swing.get();
+    public WindSwingLogEntry(double swing) {
+        this.windswing = swing;
     }
 
     @Override

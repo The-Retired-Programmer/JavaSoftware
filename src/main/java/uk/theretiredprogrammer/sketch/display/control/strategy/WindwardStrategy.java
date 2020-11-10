@@ -19,7 +19,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -50,8 +49,8 @@ public class WindwardStrategy extends Strategy {
                         : new WindwardStarboardRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle));
             case NONE ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new WindwardPortRoundingDecisions((windangle) -> windangle.sub(DEGREES90))
-                        : new WindwardStarboardRoundingDecisions((windangle) -> windangle.plus(DEGREES90));
+                        ? new WindwardPortRoundingDecisions((windangle) -> windangle.sub(90))
+                        : new WindwardStarboardRoundingDecisions((windangle) -> windangle.plus(90));
             default ->
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported WindwardRounding: " + followinglegtype.toString());
         }

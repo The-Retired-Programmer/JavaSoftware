@@ -35,7 +35,6 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
@@ -313,11 +312,11 @@ public abstract class Boat extends ModelMap {
     }
 
     public boolean isPortRear90Quadrant(PropertyLocation location) {
-        return isQuadrant(location, heading.inverse(), heading.sub(DEGREES90));
+        return isQuadrant(location, heading.inverse(), heading.sub(90));
     }
 
     public boolean isStarboardRear90Quadrant(PropertyLocation location) {
-        return isQuadrant(location, heading.plus(DEGREES90), heading.inverse());
+        return isQuadrant(location, heading.plus(90), heading.inverse());
     }
 
     public boolean isPortTackingQuadrant(PropertyLocation location, PropertyDegrees winddirection) {
@@ -364,7 +363,7 @@ public abstract class Boat extends ModelMap {
     }
 
     private boolean turn(Decision decision, PropertySpeedVector windflow, PropertySpeedVector waterflow) {
-        PropertyDegrees newdirection = decision.getDegrees();
+        PropertyDegrees newdirection = decision.getDegreesProperty();
         if (heading.absDegreesDiff(newdirection).lteq(rotationAnglePerSecond)) {
             moveBoat(newdirection, windflow, waterflow);
             decision.setSAILON();

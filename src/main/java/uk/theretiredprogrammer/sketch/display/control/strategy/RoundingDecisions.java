@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees.DEGREES90;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 
@@ -38,8 +37,8 @@ abstract class RoundingDecisions extends SailingDecisions {
     final String executePortRounding(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn, PropertyDegrees winddirection, Strategy strategy) {
         PropertyDegrees finaldirection = getDirectionAfterTurn.apply(winddirection);
         PropertyDegrees turnangle = finaldirection.absDegreesDiff(strategy.boat.getDirection());
-        if (turnangle.gt(DEGREES90)) {
-            strategy.decision.setTURN(strategy.boat.getDirection().sub(DEGREES90), PORT);
+        if (turnangle.gt(90)) {
+            strategy.decision.setTURN(strategy.boat.getDirection().sub(90), PORT);
             return "markrounding action - first phase - starboard tack - port rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
@@ -50,8 +49,8 @@ abstract class RoundingDecisions extends SailingDecisions {
     final String executeStarboardRounding(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn, PropertyDegrees winddirection, Strategy strategy) {
         PropertyDegrees finaldirection = getDirectionAfterTurn.apply(winddirection);
         PropertyDegrees turnangle = finaldirection.absDegreesDiff(strategy.boat.getDirection());
-        if (turnangle.gt(DEGREES90)) {
-            strategy.decision.setTURN(strategy.boat.getDirection().plus(DEGREES90), STARBOARD);
+        if (turnangle.gt(90)) {
+            strategy.decision.setTURN(strategy.boat.getDirection().plus(90), STARBOARD);
             return "markrounding action - first phase - port tack - starboard rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion

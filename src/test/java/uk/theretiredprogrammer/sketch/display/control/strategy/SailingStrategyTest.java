@@ -73,11 +73,10 @@ public class SailingStrategyTest {
     }
 
     void setwindflow(double speed, double degrees, int zlevel) {
-        PropertyDegrees propertydegrees = new PropertyDegrees(degrees);
         controller.getProperty().getWind().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, propertydegrees));
+                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
                     controller.windflow.setFlows();
                 });
     }
@@ -98,15 +97,15 @@ public class SailingStrategyTest {
         return boat.getPortReachingCourse(winddirection);
     }
 
-    void assertTURN(Decision decision, int angle, boolean isSTARBOARD) {
+    void assertTURN(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
-                () -> assertEquals(new PropertyDegrees(angle), decision.getDegrees()),
+                () -> assertEquals(angle, decision.getDegreesProperty()),
                 () -> assertEquals(isSTARBOARD, !decision.isPort())
         );
     }
 
-    void assertTURN(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
+    void assertTURN(Decision decision, double angle, boolean isSTARBOARD) {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(angle, decision.getDegrees()),
@@ -115,11 +114,15 @@ public class SailingStrategyTest {
     }
 
     void assertSailing(Decision decision, PropertyDegrees minangle, PropertyDegrees maxangle) {
+        assertSailing(decision, minangle.get(), maxangle.get());
+    }
+
+    void assertSailing(Decision decision, double minangle, double maxangle) {
         switch (decision.getAction()) {
             case TURN -> {
                 assertAll("Check angle Range of a Turn",
-                        () -> assertTrue(minangle.lteq(decision.getDegrees()), "angle " + decision.getDegrees().toString() + " is less than minimum " + minangle.toString()),
-                        () -> assertTrue(maxangle.gteq(decision.getDegrees()), "angle " + decision.getDegrees().toString() + " is greater than maximum " + maxangle.toString())
+                        () -> assertTrue(decision.getDegrees() >= minangle, "angle " + Double.toString(decision.getDegrees()) + " is less than minimum " + Double.toString(minangle)),
+                        () -> assertTrue(decision.getDegrees() <= maxangle, "angle " + Double.toString(decision.getDegrees()) + " is greater than maximum " + Double.toString(maxangle))
                 );
                 return;
             }
@@ -138,10 +141,18 @@ public class SailingStrategyTest {
         );
     }
 
-    void assertMARKROUNDING(Decision decision, int angle, boolean isSTARBOARD) {
+    void assertMARKROUNDING(Decision decision, double angle, boolean isSTARBOARD) {
         assertAll("Decision is MARKROUNDING?",
                 () -> assertEquals(MARKROUNDING, decision.getAction()),
-                () -> assertEquals(new PropertyDegrees(angle), decision.getDegrees()),
+                () -> assertEquals(angle, decision.getDegrees()),
+                () -> assertEquals(isSTARBOARD, !decision.isPort())
+        );
+    }
+
+    void assertMARKROUNDING(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
+        assertAll("Decision is MARKROUNDING?",
+                () -> assertEquals(MARKROUNDING, decision.getAction()),
+                () -> assertEquals(angle, decision.getDegreesProperty()),
                 () -> assertEquals(isSTARBOARD, !decision.isPort())
         );
     }
