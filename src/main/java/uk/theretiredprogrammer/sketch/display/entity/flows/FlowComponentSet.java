@@ -19,7 +19,6 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.util.Comparator;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
@@ -49,11 +48,6 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         return flowc;
     }
 
-    @Override
-    public FlowComponent get(String name) {
-        throw new IllegalStateFailure("get(name) in not to be used");
-    }
-
     public PropertySpeedVector getFlow(PropertyLocation pos) {
         return this.stream()
                 .filter(flow -> flow.getArea().isWithinArea(pos))
@@ -61,7 +55,7 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
                 .findFirst()
                 .map(flow -> flow.getFlow(pos))
                 .orElse(new PropertySpeedVector());
-                
+
     }
 
     public PropertyDegrees meanWindAngle() {

@@ -48,8 +48,6 @@ public abstract class ModelList<P extends Model> implements Model {
         list.stream().forEach(p -> jab.add(p.toJson()));
         return jab.build();
     }
-
-    public abstract P get(String name);
     
     public Stream<P> stream() {
         return list.stream();

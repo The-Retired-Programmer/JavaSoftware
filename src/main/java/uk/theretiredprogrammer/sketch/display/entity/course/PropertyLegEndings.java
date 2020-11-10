@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonValue;
 import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 
 public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
@@ -33,10 +32,5 @@ public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
         PropertyLegEnding p = new PropertyLegEnding(marknames);
         p.parse(jval);
         return p;
-    }
-
-    @Override
-    public PropertyLegEnding get(String name) {
-        throw new IllegalStateFailure("PropertyLegEnding cannot be selected by name");
     }
 }

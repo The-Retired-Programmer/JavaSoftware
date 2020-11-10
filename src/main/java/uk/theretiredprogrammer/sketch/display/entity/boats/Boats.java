@@ -17,20 +17,20 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.ModelList;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-public class Boats extends ModelList<Boat> {
+public class Boats extends ModelNamedList<Boat> {
 
     private final SketchModel model;
 
     public Boats(SketchModel model) {
+        super("Boat", (boat)-> boat.getName());
         this.model = model;
     }
 
@@ -48,12 +48,6 @@ public class Boats extends ModelList<Boat> {
         );
         boat.parse(jobj);
         return boat;
-    }
-
-    @Override
-    public Boat get(String name) {
-        return stream().filter(boat -> name.equals(boat.getName())).findFirst()
-                .orElseThrow(() -> new IllegalStateFailure("can't find Boat with name " + name));
     }
 
     public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
