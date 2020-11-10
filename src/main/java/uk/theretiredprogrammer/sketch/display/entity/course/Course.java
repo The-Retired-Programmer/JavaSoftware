@@ -18,19 +18,11 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 
 public class Course extends ModelMap {
-
-    private static final ObservableList<String> roundings;
-
-    static {
-        roundings = FXCollections.observableArrayList();
-        roundings.addAll("port", "starboard");
-    }
 
     private final PropertyLocation start = new PropertyLocation();
     private final PropertyLegEndings legs;
@@ -39,7 +31,7 @@ public class Course extends ModelMap {
     private final Marks marks;
 
     public Course(Marks marks, ObservableList<String> marknames) {
-        legs = new PropertyLegEndings(marknames, roundings);
+        legs = new PropertyLegEndings(marknames);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
@@ -47,15 +39,16 @@ public class Course extends ModelMap {
     }
 
     private void updatelegs() {
+        firstcourseleg = null;
         legs.clear(); // not best way!!
-        legs.stream().forEach(lv -> insertLeg(lv.get()));
+        legs.stream().forEach(lv -> insertLeg(lv));
     }
 
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("start", start, jobj);
         parseOptionalProperty("legs", legs, jobj);
-        legs.stream().forEach(lv -> insertLeg(lv.get()));
+        legs.stream().forEach(lv -> insertLeg(lv));
     }
 
     @Override
@@ -72,7 +65,7 @@ public class Course extends ModelMap {
         return job.build();
     }
 
-    private void insertLeg(LegEnding legending) {
+    private void insertLeg(PropertyLegEnding legending) {
         if (firstcourseleg == null) {
             firstcourseleg = new Leg(start, marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
         } else {

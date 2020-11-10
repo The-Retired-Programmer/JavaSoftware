@@ -49,7 +49,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
 public class UI {
@@ -188,10 +188,10 @@ public class UI {
         );
     }
 
-    public static HBox control(SimpleObjectProperty<LegEnding> property,
+    public static HBox control(PropertyLegEnding property,
             ObservableList<String> marknames, ObservableList<String> roundings) {
-        return new HBox(control(property.get().getMarknameProperty(), marknames),
-                control(property.get().getRoundingdirectionProperty(), roundings)
+        return new HBox(control(property.getMarknameProperty(), marknames),
+                control(property.getRoundingdirectionProperty(), roundings)
         );
     }
 

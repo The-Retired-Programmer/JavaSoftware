@@ -21,75 +21,79 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonValue;
 import java.lang.reflect.Field;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.display.entity.course.LegEnding;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
 public class ToJson {
 
-    public static JsonValue serialise(Integer value) {
-        return Json.createValue(value);
+    public static JsonValue serialise(PropertyInteger property) {
+        return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(Double value) {
-        return Json.createValue(value);
+    public static JsonValue serialise(PropertyDouble property) {
+        return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(Boolean value) {
-        return value ? JsonValue.TRUE : JsonValue.FALSE;
+    public static JsonValue serialise(PropertyBoolean property) {
+        return property.get() ? JsonValue.TRUE : JsonValue.FALSE;
     }
 
-    public static JsonValue serialise(String string) {
-        return Json.createValue(string);
+    public static JsonValue serialise(PropertyString property) {
+        return Json.createValue(property.get());
+    }
+    
+    public static JsonValue serialise(PropertyConstrainedString property) {
+        return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(Color colour) {
-        return Json.createValue(color2String(colour));
+    public static JsonValue serialise(PropertyColour property) {
+        return Json.createValue(color2String(property.get()));
     }
 
-    public static JsonValue serialise(PropertyDegrees value) {
-        return Json.createValue(value.get());
+    public static JsonValue serialise(PropertyDegrees property) {
+        return Json.createValue(property.get());
     }
 
-    public static JsonArray serialise(PropertyLocation location) {
+    public static JsonArray serialise(PropertyLocation property) {
         return Json.createArrayBuilder()
-                .add(location.getX())
-                .add(location.getY())
+                .add(property.getX())
+                .add(property.getY())
                 .build();
     }
 
-    public static JsonArray serialise(PropertyArea area) {
+    public static JsonArray serialise(PropertyArea property) {
         return Json.createArrayBuilder()
-                .add(area.getLocationProperty().getX())
-                .add(area.getLocationProperty().getY())
-                .add(area.getWidth())
-                .add(area.getHeight())
+                .add(property.getLocationProperty().getX())
+                .add(property.getLocationProperty().getY())
+                .add(property.getWidth())
+                .add(property.getHeight())
                 .build();
     }
     
-    public static JsonArray serialise(PropertyDistanceVector distancevector) {
+    public static JsonArray serialise(PropertyDistanceVector property) {
         return Json.createArrayBuilder()
-                .add(distancevector.getDistance())
-                .add(distancevector.getDegrees())
+                .add(property.getDistance())
+                .add(property.getDegrees())
                 .build();
     }
     
-    public static JsonArray serialise(PropertySpeedVector speedvector) {
+    public static JsonArray serialise(PropertySpeedVector property) {
         return Json.createArrayBuilder()
-                .add(speedvector.getSpeed())
-                .add(speedvector.getDegrees())
+                .add(property.getSpeed())
+                .add(property.getDegrees())
                 .build();
     }
 
-    public static JsonArray serialise(LegEnding legending) {
+    public static JsonArray serialise(PropertyLegEnding property) {
         return Json.createArrayBuilder()
-                .add(legending.getMarkname())
-                .add(legending.getRoundingdirection())
+                .add(property.getMarkname())
+                .add(property.getRoundingdirection())
                 .build();
     }
 
-    public static JsonArray serialise(PropertyGradient gradient) {
-        JsonArrayBuilder jab = Json.createArrayBuilder().add(gradient.getType());
-        gradient.getSpeeds().forEach(speed -> jab.add(speed.get()));
+    public static JsonArray serialise(PropertyGradient property) {
+        JsonArrayBuilder jab = Json.createArrayBuilder().add(property.getType());
+        property.getSpeeds().forEach(speed -> jab.add(speed.get()));
         return jab.build();
     }
 

@@ -39,7 +39,7 @@ public class PropertyColour extends SimpleObjectProperty<Color> implements Model
 
     @Override
     public JsonValue toJson() {
-        return ToJson.serialise(get());
+        return ToJson.serialise(this);
     }
 
     @Override

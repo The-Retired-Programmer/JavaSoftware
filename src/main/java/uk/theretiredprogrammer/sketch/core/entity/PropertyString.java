@@ -38,7 +38,7 @@ public class PropertyString extends SimpleStringProperty implements ModelPropert
 
     @Override
     public JsonValue toJson() {
-        return ToJson.serialise(get());
+        return ToJson.serialise(this);
     }
 
     @Override

@@ -17,47 +17,70 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyLegEnding extends SimpleObjectProperty<LegEnding> implements ModelProperty<LegEnding> {
+public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
 
-    private final ObservableList<String> marknames;
-    private final ObservableList<String> roundings;
+    private static final ObservableList<String> roundingdirections;
 
-    public PropertyLegEnding(ObservableList<String> marknames, ObservableList<String> roundings) {
-        this.marknames = marknames;
-        this.roundings = roundings;
+    static {
+        roundingdirections = FXCollections.observableArrayList();
+        roundingdirections.addAll("port", "starboard");
     }
 
-    public PropertyLegEnding(LegEnding defaultvalue, ObservableList<String> marknames, ObservableList<String> roundings) {
+    private final PropertyConstrainedString mark;
+    private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
+    
+    private final ObservableList<String> marknames;
+    
+    public PropertyLegEnding(ObservableList<String> marknames) {
         this.marknames = marknames;
-        this.roundings = roundings;
+        this.mark = new PropertyConstrainedString(marknames);
+    }
+
+    public PropertyLegEnding(PropertyLegEnding defaultvalue, ObservableList<String> marknames) {
+        this(marknames);
         set(defaultvalue);
+    }
+    
+    public PropertyLegEnding(String mark, String passing, ObservableList<String> marknames) {
+        this(marknames);
+        set(mark, passing);
     }
 
     @Override
     public void setOnChange(Runnable onchange) {
     }
+    
+    public final void set(PropertyLegEnding value){
+        set(value.mark.get(), value.passing.get());
+    }
+    
+    public final void set(String mark, String passing){
+        this.mark.set(mark);
+        this.passing.set(passing.toLowerCase());
+    }
 
     @Override
-    public final LegEnding parsevalue(JsonValue jvalue) {
-        return FromJson.legEndingProperty(jvalue, marknames, roundings);
+    public final PropertyLegEnding parsevalue(JsonValue jvalue) {
+        return FromJson.legEndingProperty(jvalue, marknames, roundingdirections);
     }
 
     @Override
     public JsonArray toJson() {
-        return ToJson.serialise(get());
+        return ToJson.serialise(this);
     }
 
     @Override
     public Node getControl() {
-        return UI.control(this, marknames, roundings);
+        return UI.control(this, marknames, roundingdirections);
     }
 
     @Override
@@ -68,5 +91,30 @@ public class PropertyLegEnding extends SimpleObjectProperty<LegEnding> implement
     @Override
     public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
+    }
+    
+    public String getRoundingdirection() {
+        return passing.get();
+    }
+
+    public PropertyConstrainedString getRoundingdirectionProperty() {
+        return passing;
+    }
+
+    public boolean isPortRounding() {
+        return passing.get().equals("port");
+    }
+
+    public String getMarkname() {
+        return mark.get();
+    }
+
+    public PropertyConstrainedString getMarknameProperty() {
+        return mark;
+    }
+
+    @Override
+    public String toString() {
+        return mark.get() + " to " + passing.get();
     }
 }

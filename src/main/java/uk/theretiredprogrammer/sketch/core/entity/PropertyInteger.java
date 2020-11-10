@@ -38,7 +38,7 @@ public class PropertyInteger extends SimpleIntegerProperty implements ModelPrope
 
     @Override
     public JsonValue toJson() {
-        return ToJson.serialise(get());
+        return ToJson.serialise(this);
     }
 
     @Override

@@ -23,20 +23,18 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
 
     private final ObservableList<String> marknames;
-    private final ObservableList<String> roundings;
 
-    public PropertyLegEndings(ObservableList<String> marknames, ObservableList<String> roundings) {
+    public PropertyLegEndings(ObservableList<String> marknames) {
         this.marknames = marknames;
-        this.roundings = roundings;
     }
 
-     @Override
+    @Override
     protected PropertyLegEnding createAndParse(JsonValue jval) {
-        PropertyLegEnding p = new PropertyLegEnding(marknames, roundings);
+        PropertyLegEnding p = new PropertyLegEnding(marknames);
         p.parse(jval);
         return p;
     }
-    
+
     @Override
     public PropertyLegEnding get(String name) {
         throw new IllegalStateFailure("PropertyLegEnding cannot be selected by name");
