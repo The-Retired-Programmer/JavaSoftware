@@ -19,6 +19,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonValue;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -26,20 +27,34 @@ import javafx.collections.ObservableList;
 
 public abstract class ModelList<P extends Model> implements Model {
 
+    private Runnable onchange;
+    private Consumer<P> setChildListener;
+
     protected abstract P createAndParse(JsonValue jobj);
-    
+
     private final ObservableList<P> list = FXCollections.observableArrayList();
-    
+
     @Override
     public final void parse(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             ((JsonArray) jvalue).forEach(jval -> add(createAndParse(jval)));
         }
     }
-
+    
     @Override
     public final void setOnChange(Runnable onchange) {
+        this.onchange = onchange;
         list.forEach(member -> member.setOnChange(onchange));
+    }
+
+    public void addListChangeListener(ListChangeListener<P> listener) {
+        list.addListener(listener);
+    }
+
+    // mark-> mark.addNameChangeListern(childlistener)
+    public void addChildChangeListener(Consumer<P> setChildListener) {
+        this.setChildListener = setChildListener;
+        list.forEach(p -> setChildListener.accept(p));
     }
 
     @Override
@@ -48,19 +63,21 @@ public abstract class ModelList<P extends Model> implements Model {
         list.stream().forEach(p -> jab.add(p.toJson()));
         return jab.build();
     }
-    
+
     public Stream<P> stream() {
         return list.stream();
     }
-    
-    public void add(P value){
+
+    public void add(P value) {
         list.add(value);
+        if (onchange != null) {
+            value.setOnChange(onchange);
+        }
+        if (setChildListener != null) {
+            setChildListener.accept(value);
+        }
     }
-    
-    public void addListener(ListChangeListener<P> listener){
-        list.addListener(listener);
-    }
-    
+
     public void clear() {
         list.clear();
     }

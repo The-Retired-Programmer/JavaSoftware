@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import javafx.beans.value.ChangeListener;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
@@ -40,7 +41,7 @@ public class Mark extends ModelMap {
         location = new PropertyLocation();
         registerproperties();
     }
-
+    
     private void registerproperties() {
         addProperty("name", name);
         addProperty("location", location);
@@ -76,6 +77,10 @@ public class Mark extends ModelMap {
         laylinelength.setOnChange(onchange);
         laylinecolour.setOnChange(onchange);
         colour.setOnChange(onchange);
+    }
+    
+    public void addNameChangeListener(ChangeListener<String> listener) {
+        name.addListener(listener);
     }
 
     @Override

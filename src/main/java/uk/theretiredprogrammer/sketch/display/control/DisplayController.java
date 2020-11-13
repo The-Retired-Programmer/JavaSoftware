@@ -72,8 +72,8 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     private void createDisplayEntities() {
         SketchModel sketchproperty = propertiescontroller.getProperty();
-        windflow = new WindFlow(sketchproperty);
-        waterflow = new WaterFlow(sketchproperty);
+        windflow = sketchproperty.getWindFlow();
+        waterflow = sketchproperty.getWaterFlow();
         course = sketchproperty.getCourse();
         boats = sketchproperty.getBoats();
         //boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
@@ -156,7 +156,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     public void refreshrepaint() {
-        createDisplayEntities();
+        //createDisplayEntities();
         displaygroup.refreshParameters();
     }
 

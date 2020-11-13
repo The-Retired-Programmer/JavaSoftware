@@ -33,4 +33,10 @@ public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
         p.parse(jval);
         return p;
     }
+    
+    @Override
+    public void add(PropertyLegEnding property){
+        property.setMarknames(marknames);
+        super.add(property);
+    }
 }

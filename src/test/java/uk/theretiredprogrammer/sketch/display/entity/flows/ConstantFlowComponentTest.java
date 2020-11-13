@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class ConstantFlowComponentTest extends FlowComponentTest {

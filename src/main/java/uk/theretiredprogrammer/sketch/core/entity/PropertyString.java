@@ -28,9 +28,9 @@ public class PropertyString extends SimpleStringProperty implements ModelPropert
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        addListener((o, oldval, newval) -> onchange.run());
     }
-
+    
     @Override
     public final String parsevalue(JsonValue value) {
         return FromJson.stringProperty(value);

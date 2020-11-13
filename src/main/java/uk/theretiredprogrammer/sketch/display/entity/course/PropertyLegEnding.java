@@ -35,37 +35,50 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
         roundingdirections.addAll("port", "starboard");
     }
 
-    private final PropertyConstrainedString mark;
+    private final PropertyConstrainedString mark = new PropertyConstrainedString();
     private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
-    
-    private final ObservableList<String> marknames;
-    
-    public PropertyLegEnding(ObservableList<String> marknames) {
-        this.marknames = marknames;
-        this.mark = new PropertyConstrainedString(marknames);
+
+    ObservableList<String> marknames;
+
+    public PropertyLegEnding() {
+        set(null, null);
     }
 
-    public PropertyLegEnding(PropertyLegEnding defaultvalue, ObservableList<String> marknames) {
-        this(marknames);
+    public PropertyLegEnding(ObservableList<String> marknames) {
+        this.marknames = marknames;
+        set(null, null);
+    }
+
+    public PropertyLegEnding(PropertyLegEnding defaultvalue) {
         set(defaultvalue);
     }
     
     public PropertyLegEnding(String mark, String passing, ObservableList<String> marknames) {
-        this(marknames);
+        setMarknames(marknames);
+        set(mark, passing);
+    }
+
+    public PropertyLegEnding(String mark, String passing) {
         set(mark, passing);
     }
 
     @Override
     public void setOnChange(Runnable onchange) {
     }
-    
-    public final void set(PropertyLegEnding value){
+
+    void setMarknames(ObservableList<String> marknames) {
+        this.marknames = marknames;
+        mark.setConstraints(marknames);
+    }
+
+    public final void set(PropertyLegEnding value) {
+        setMarknames(value.marknames);
         set(value.mark.get(), value.passing.get());
     }
-    
-    public final void set(String mark, String passing){
+
+    public final void set(String mark, String passing) {
         this.mark.set(mark);
-        this.passing.set(passing.toLowerCase());
+        this.passing.set(passing == null ? null : passing.toLowerCase());
     }
 
     @Override
@@ -92,7 +105,7 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
     public final void parse(JsonValue jvalue) {
         set(parsevalue(jvalue));
     }
-    
+
     public String getRoundingdirection() {
         return passing.get();
     }

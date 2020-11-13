@@ -19,7 +19,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 public class WindFlow extends Flow {
 
-    public WindFlow(SketchModel sketchproperty) {
-        super(sketchproperty, sketchproperty.getWindshifts(), sketchproperty.getWind());
+    public WindFlow(SketchModel sketchproperty, FlowShiftModel shifts, FlowComponentSet wind) {
+        super(sketchproperty, shifts, wind);
     }
 }

@@ -28,7 +28,7 @@ public class PropertyInteger extends SimpleIntegerProperty implements ModelPrope
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override

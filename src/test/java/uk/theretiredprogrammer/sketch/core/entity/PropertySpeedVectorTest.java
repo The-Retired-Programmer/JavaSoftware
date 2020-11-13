@@ -29,24 +29,4 @@ public class PropertySpeedVectorTest {
         assertEquals(100, instance.getSpeed());
         assertEquals(90, instance.getDegrees());
     }
-
-    @Test
-    public void testMeanAngle1() {
-        System.out.println("meanAngle1");
-        PropertySpeedVector[][] array = new PropertySpeedVector[2][1];
-        array[0][0] = new PropertySpeedVector(1, 0);
-        array[1][0] = new PropertySpeedVector(10, 50);
-        assertEquals(new PropertyDegrees(25), PropertySpeedVector.meanAngle(array));
-    }
-
-    @Test
-    public void testMeanAngle2() {
-        System.out.println("meanAngle2");
-        PropertySpeedVector[][] array = new PropertySpeedVector[2][2];
-        array[0][0] = new PropertySpeedVector(1, 0);
-        array[1][0] = new PropertySpeedVector(5, 0);
-        array[0][1] = new PropertySpeedVector(10, 0);
-        array[1][1] = new PropertySpeedVector(15, 45);
-        assertEquals(10.7990805, PropertySpeedVector.meanAngle(array).get(), DELTA);
-    }
 }

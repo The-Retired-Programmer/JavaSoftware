@@ -54,7 +54,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override

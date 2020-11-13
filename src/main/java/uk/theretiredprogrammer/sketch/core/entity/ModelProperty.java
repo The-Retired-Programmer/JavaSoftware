@@ -20,10 +20,9 @@ import javafx.scene.Node;
 
 public interface ModelProperty<C extends Object> extends Model {
 
-public C parsevalue(JsonValue jvalue);
+    public C parsevalue(JsonValue jvalue);
 
-public Node getControl(int size);
+    public Node getControl(int size);
 
-public Node getControl();
-
+    public Node getControl();
 }

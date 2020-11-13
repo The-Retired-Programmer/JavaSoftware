@@ -80,7 +80,9 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        bottomleft.setOnChange(onchange);
+        width.addListener((o, oldval, newval) -> onchange.run());
+        height.addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override

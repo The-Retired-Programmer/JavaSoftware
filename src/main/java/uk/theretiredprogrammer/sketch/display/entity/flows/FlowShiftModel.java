@@ -26,6 +26,10 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
+import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
 
 public class FlowShiftModel extends ModelMap {
 
@@ -37,6 +41,9 @@ public class FlowShiftModel extends ModelMap {
     private final PropertyDegrees shiftangle = new PropertyDegrees(0);
     private final PropertyInteger shiftperiod = new PropertyInteger(0);
     private final PropertyBoolean randomshifts = new PropertyBoolean(false);
+
+    private double shiftNow = 0;
+    private double swingNow = 0;
 
     public FlowShiftModel() {
         addProperty("showflow", showflow);
@@ -99,23 +106,55 @@ public class FlowShiftModel extends ModelMap {
         return showflowcolour.get();
     }
 
-    public PropertyDegrees getSwingangle() {
-        return swingangle;
+    void timerAdvance(int simulationtime, DecisionController timerlog) {
+        if (swingperiod.get() != 0) {
+            // as we are using a sine rule for swing - convert to an angle (in radians)
+            double radians = Math.toRadians(((double) simulationtime % swingperiod.get()) / swingperiod.get() * 360);
+            swingNow = swingangle.mult(Math.sin(radians)).get();
+            timerlog.add(new WindSwingLogEntry(swingNow));
+        } else {
+            swingNow = 0;
+        }
+        // now deal with shifts
+        double shiftval = 0;
+        boolean shifting = false;
+        if (shiftperiod.get() != 0) {
+            double delta = randomshifts.get()
+                    ? Math.random() * shiftperiod.get()
+                    : simulationtime % shiftperiod.get();
+            double quarterPeriod = shiftperiod.get() / 4;
+            if (delta < quarterPeriod) {
+                shiftval = 0;
+            } else if (delta < quarterPeriod * 2) {
+                shiftval = shiftangle.negative().get();
+            } else if (delta < quarterPeriod * 3) {
+                shiftval = 0;
+            } else {
+                shiftval = shiftangle.get();
+            }
+            shifting = true;
+        }
+        if (randomshifts.get()) {
+            // only apply the random shift in 2% of cases - otherwise leave alone
+            if (Math.random() <= 0.02) {
+                shiftNow = shiftval;
+            }
+            shifting = true;
+        } else {
+            shiftNow = shiftval; // apply the shift
+        }
+        if (shifting) {
+            timerlog.add(new WindShiftLogEntry(shiftNow));
+        }
     }
 
-    public int getSwingperiod() {
-        return swingperiod.get();
-    }
-
-    public PropertyDegrees getShiftangle() {
-        return shiftangle;
-    }
-
-    public int getShiftperiod() {
-        return shiftperiod.get();
-    }
-
-    public boolean isRandomshifts() {
-        return randomshifts.get();
+    PropertySpeedVector addShiftandSwing(PropertySpeedVector flow) {
+        if (swingperiod.get() > 0) {
+            flow = new PropertySpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(swingNow));
+        }
+        if (shiftperiod.get() > 0 || randomshifts.get()) {
+            flow = new PropertySpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(shiftNow));
+        }
+        return flow;
     }
 }

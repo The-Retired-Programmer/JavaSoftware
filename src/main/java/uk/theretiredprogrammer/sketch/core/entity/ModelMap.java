@@ -56,6 +56,11 @@ public abstract class ModelMap implements Model {
         return properties.entrySet().stream();
     }
 
+    protected void addProperty(String key, Model property, Runnable onchange) {
+        properties.put(key, property);
+        property.setOnChange(onchange);
+    }
+    
     protected void addProperty(String key, Model property) {
         properties.put(key, property);
     }

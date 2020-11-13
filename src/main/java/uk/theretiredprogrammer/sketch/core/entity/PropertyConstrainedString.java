@@ -25,7 +25,11 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
 
-    private final ObservableList<String> constraints;
+    private ObservableList<String> constraints;
+    
+    public PropertyConstrainedString() {
+        super.set(null);
+    }
 
     public PropertyConstrainedString(ObservableList<String> constraints) {
         this(null, constraints);
@@ -38,19 +42,32 @@ public class PropertyConstrainedString extends SimpleStringProperty implements M
         }
         super.set(defaultvalue);
     }
+    
+    public void setConstraints(ObservableList<String> constraints) {
+        this.constraints = constraints;
+    }
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override
     public final void set(String newvalue) {
+        if (newvalue == null) {
+            super.set(null);
+        } else {
         if (constraints.contains(newvalue)) {
             super.set(newvalue);
         } else {
             throw new ParseFailure("Constrained String - value not in allowed set");
         }
+        }
+    }
+    
+    public final void set(String newvalue, ObservableList<String> constraints) {
+        this.constraints = constraints;
+        set(newvalue);
     }
 
     @Override

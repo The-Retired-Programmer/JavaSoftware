@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 
 public interface Model  {
     

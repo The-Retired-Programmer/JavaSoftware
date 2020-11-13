@@ -21,20 +21,7 @@ import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
-    
-    public static PropertyDegrees meanAngle(PropertySpeedVector[][] array) {
-        double x = 0;
-        double y = 0;
-        for (PropertySpeedVector[] column : array) {
-            for (PropertySpeedVector cell : column) {
-                double r = cell.degreesproperty.getRadians();
-                x += Math.sin(r);
-                y += Math.cos(r);
-            }
-        }
-        return new PropertyDegrees(Math.toDegrees(Math.atan2(x, y)));
-    }
-    
+
     private static final double KNOTSTOMETRESPERSECOND = (double) 1853 / 3600; // multiply knots to get m/s
     // source NASA - 1 knot = 1.853 km/hour
 
@@ -46,9 +33,9 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
     private final PropertyDegrees degreesproperty = new PropertyDegrees();
 
     public PropertySpeedVector() {
-        set(0,0);
+        set(0, 0);
     }
-    
+
     public PropertySpeedVector(PropertySpeedVector value) {
         set(value);
     }
@@ -63,7 +50,8 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //
+        degreesproperty.addListener((o, oldval, newval) -> onchange.run());
+        speedproperty.addListener((o, oldval, newval) -> onchange.run());
     }
 
     public final void set(PropertySpeedVector value) {
@@ -124,8 +112,6 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
         set(parsevalue(jvalue));
     }
 
-    //
-
     public PropertySpeedVector plus(PropertySpeedVector other) {
         double speed = speedproperty.get();
         double radians = degreesproperty.getRadians();
@@ -156,11 +142,11 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
     public PropertyDegrees degreesDiff(PropertySpeedVector p) {
         return degreesproperty.degreesDiff(p.getDegreesProperty());
     }
-    
+
     public PropertyDegrees degreesDiff(PropertyDegrees p) {
         return degreesproperty.degreesDiff(p);
     }
-    
+
     public double getSpeedMetresPerSecond() {
         return speedproperty.get() * KNOTSTOMETRESPERSECOND;
     }
@@ -185,5 +171,10 @@ public class PropertySpeedVector implements ModelProperty<PropertySpeedVector> {
         PropertySpeedVector w = this.extrapolate(nw, fractions.getY());
         PropertySpeedVector e = se.extrapolate(ne, fractions.getY());
         return w.extrapolate(e, fractions.getX());
+    }
+    
+    @Override
+    public String toString() {
+        return speedproperty.get() + "kts @" + degreesproperty.get()+ "˚";
     }
 }

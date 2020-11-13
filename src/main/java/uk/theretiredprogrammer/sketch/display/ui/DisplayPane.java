@@ -35,8 +35,6 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.S
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
 
@@ -48,7 +46,7 @@ public class DisplayPane extends Group {
     private Scale mainscale;
     private Translate maintranslate;
 
-    public DisplayPane(DisplayController controller) { 
+    public DisplayPane(DisplayController controller) {
         this.controller = controller;
         refreshParameters();
     }
@@ -110,8 +108,8 @@ public class DisplayPane extends Group {
             SketchModel model = controller.getProperty();
             Boat newboat = BoatFactory.createBoat("laser2", new PropertyLocation(x, y),
                     model.getCourse().getFirstLeg(),
-                    new WindFlow(model),
-                    new WaterFlow(model));
+                    model.getWindFlow(),
+                    model.getWaterFlow());
             if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {
                 controller.getProperty().getBoats().add(newboat);
             }
@@ -125,8 +123,8 @@ public class DisplayPane extends Group {
         double eastedge = westedge + area.getWidth();
         double southedge = sw.getY();
         double northedge = southedge + area.getHeight();
-        if (controller.getProperty().getWindshifts().isShowflow()) {
-            double showwindflowinterval = controller.getProperty().getWindshifts().getShowflowinterval();
+        if (controller.getProperty().getWindFlow().getShiftsproperty().isShowflow()) {
+            double showwindflowinterval = controller.getProperty().getWindFlow().getShiftsproperty().getShowflowinterval();
             double x = westedge + showwindflowinterval;
             while (x < eastedge) {
                 double y = southedge + showwindflowinterval;
@@ -134,7 +132,7 @@ public class DisplayPane extends Group {
                     PropertyLocation here = new PropertyLocation(x, y);
                     getChildren().addAll(
                             Wrap.globalTransform(
-                                    shapebuilder.displayWindGraphic(here, controller.windflow.getFlow(here), 10, controller.getProperty().getWindshifts().getShowflowcolour()),
+                                    shapebuilder.displayWindGraphic(here, controller.windflow.getFlow(here), 10, controller.getProperty().getWindFlow().getShiftsproperty().getShowflowcolour()),
                                     maintranslate,
                                     mainscale
                             )

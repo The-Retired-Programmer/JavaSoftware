@@ -73,11 +73,11 @@ public class SailingStrategyTest {
     }
 
     void setwindflow(double speed, double degrees, int zlevel) {
-        controller.getProperty().getWind().stream()
+        controller.getProperty().getWindFlow().getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
                     ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
-                    controller.windflow.setFlows();
+                    controller.windflow.getFlowcomponents().calculateFlow();
                 });
     }
 

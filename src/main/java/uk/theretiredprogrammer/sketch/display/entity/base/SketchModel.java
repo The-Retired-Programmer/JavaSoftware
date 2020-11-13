@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.base;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -31,6 +32,8 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class SketchModel extends ModelMap {
 
@@ -40,14 +43,23 @@ public class SketchModel extends ModelMap {
     private final DisplayModel display = new DisplayModel();
     private final FlowShiftModel windshifts = new FlowShiftModel();
     private final FlowComponentSet wind = new FlowComponentSet(() -> getDisplayArea());
+    private final WindFlow windflow = new WindFlow(this, windshifts, wind);
     private final FlowShiftModel watershifts = new FlowShiftModel();
     private final FlowComponentSet water = new FlowComponentSet(() -> getDisplayArea());
+    private final WaterFlow waterflow = new WaterFlow(this, watershifts, water);
     private final Marks marks = new Marks();
     private final Course course = new Course(marks, getMarkNames());
     private final Boats boats = new Boats(this);
 
     public SketchModel() {
-        marks.addListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
+        marks.addListChangeListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
+        marks.addNameChangeListener((o, oldval, newval) -> markchanged(o, oldval, newval));
+    }
+    
+    private void markchanged(ObservableValue<? extends String> o, String oldval, String newval) {
+        if (o instanceof PropertyString) {
+            int i = 0;
+        }
     }
 
     private void marklistchanged(ListChangeListener.Change<Mark> c) {
@@ -97,16 +109,17 @@ public class SketchModel extends ModelMap {
 
     @Override
     public void setOnChange(Runnable onchange) {
-        type.setOnChange(onchange);
-        meta.setOnChange(onchange);
-        display.setOnChange(onchange);
-        windshifts.setOnChange(onchange);
-        wind.setOnChange(onchange);
-        watershifts.setOnChange(onchange);
-        water.setOnChange(onchange);
-        marks.setOnChange(onchange);
-        course.setOnChange(onchange);
-        boats.setOnChange(onchange);
+        // TEMPORARY DISABLE
+//        type.setOnChange(onchange);
+//        meta.setOnChange(onchange);
+//        display.setOnChange(onchange);
+//        windshifts.setOnChange(onchange);
+//        wind.setOnChange(onchange);
+//        watershifts.setOnChange(onchange);
+//        water.setOnChange(onchange);
+//        marks.setOnChange(onchange);
+//        course.setOnChange(onchange);
+//        boats.setOnChange(onchange);
     }
 
     public PropertyArea getDisplayArea() {
@@ -125,22 +138,30 @@ public class SketchModel extends ModelMap {
         return display;
     }
 
-    public FlowShiftModel getWindshifts() {
-        return windshifts;
-    }
+//    public FlowShiftModel getWindshifts() {
+//        return windshifts;
+//    }
+//
+//    public FlowComponentSet getWind() {
+//        return wind;
+//    }
+//
+//    public FlowShiftModel getWatershifts() {
+//        return watershifts;
+//    }
+//
+//    public FlowComponentSet getWater() {
+//        return water;
+//    }
 
-    public FlowComponentSet getWind() {
-        return wind;
+    public final WaterFlow getWaterFlow(){
+        return waterflow;
     }
-
-    public FlowShiftModel getWatershifts() {
-        return watershifts;
+    
+    public final WindFlow getWindFlow() {
+        return windflow;
     }
-
-    public FlowComponentSet getWater() {
-        return water;
-    }
-
+    
     public final Marks getMarks() {
         return marks;
     }

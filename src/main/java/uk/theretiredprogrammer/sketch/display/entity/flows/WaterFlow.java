@@ -19,7 +19,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 public class WaterFlow extends Flow {
 
-    public WaterFlow(SketchModel sketchproperty) {
-        super(sketchproperty, sketchproperty.getWatershifts(), sketchproperty.getWater());
-    }
+    public WaterFlow(SketchModel sketchproperty, FlowShiftModel shifts, FlowComponentSet water) {
+        super(sketchproperty, shifts, water);
+    } 
 }

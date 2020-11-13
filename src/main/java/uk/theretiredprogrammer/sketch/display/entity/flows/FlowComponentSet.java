@@ -28,10 +28,24 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 
 public class FlowComponentSet extends ModelList<FlowComponent> {
 
+    final static int WIDTHSTEPS = 100;
+    final static int HEIGHTSTEPS = 100;
+
     private final Supplier<PropertyArea> getdisplayarea;
+    private final PropertySpeedVector[][] flowarray = new PropertySpeedVector[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
+    private double wstepsize;
+    private double hstepsize;
+
+    private PropertyDegrees meanflowangle;
 
     public FlowComponentSet(Supplier<PropertyArea> getdisplayarea) {
         this.getdisplayarea = getdisplayarea;
+    }
+
+    @Override
+    public void add(FlowComponent flowcomponent) {
+        super.add(flowcomponent);
+        calculateFlow();
     }
 
     @Override
@@ -48,19 +62,75 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         return flowc;
     }
 
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
-        return this.stream()
-                .filter(flow -> flow.getArea().isWithinArea(pos))
-                .sorted(Comparator.comparingInt(FlowComponent::getZlevel).reversed())
-                .findFirst()
-                .map(flow -> flow.getFlow(pos))
-                .orElse(new PropertySpeedVector());
-
+    public final void calculateFlow() {
+        double hpos = getdisplayarea.get().getLocationProperty().getY();
+        double wpos = getdisplayarea.get().getLocationProperty().getX();
+        hstepsize = getdisplayarea.get().getHeight() / HEIGHTSTEPS;
+        wstepsize = getdisplayarea.get().getWidth() / WIDTHSTEPS;
+        for (int h = 0; h < HEIGHTSTEPS + 1; h++) {
+            double y = hpos + hstepsize * h;
+            for (int w = 0; w < WIDTHSTEPS + 1; w++) {
+                double x = wpos + wstepsize * w;
+                flowarray[w][h] = getFlow(new PropertyLocation(x, y));
+            }
+        }
+        meanflowangle = meanWindAngle(); // check if we are using a forced mean
+        if (meanflowangle == null) {
+            meanflowangle = meanAngle(flowarray); // if not then calculate it
+        }
     }
 
-    public PropertyDegrees meanWindAngle() {
-        return stream().map(flow -> flow.meanWindAngle())
+    private PropertySpeedVector getFlow(PropertyLocation pos) {
+        return this.stream()
+                .filter(flowcomponent -> flowcomponent.getArea().isWithinArea(pos))
+                .sorted(Comparator.comparingInt(FlowComponent::getZlevel).reversed())
+                .findFirst()
+                .map(flowcomponent -> flowcomponent.getFlow(pos))
+                .orElse(new PropertySpeedVector());
+    }
+
+    private PropertyDegrees meanWindAngle() {
+        return stream().map(flowcomponent -> flowcomponent.meanWindAngle())
                 .filter(angle -> angle != null)
                 .findFirst().orElse(null);
+    }
+
+    private PropertyDegrees meanAngle(PropertySpeedVector[][] array) {
+        double x = 0;
+        double y = 0;
+        for (PropertySpeedVector[] column : array) {
+            for (PropertySpeedVector cell : column) {
+                double r = cell.getDegreesProperty().getRadians();
+                x += Math.sin(r);
+                y += Math.cos(r);
+            }
+        }
+        return new PropertyDegrees(Math.toDegrees(Math.atan2(x, y)));
+    }
+
+    PropertySpeedVector getFlowwithoutswing(PropertyLocation pos) {
+        int w = (int) Math.floor((pos.getX() - getdisplayarea.get().getLocationProperty().getX()) / wstepsize);
+        if (w < 0) {
+            w = 0;
+        }
+        if (w > WIDTHSTEPS) {
+            w = WIDTHSTEPS;
+        }
+        int h = (int) Math.floor((pos.getY() - getdisplayarea.get().getLocationProperty().getY()) / hstepsize);
+        if (h < 0) {
+            h = 0;
+        }
+        if (h > HEIGHTSTEPS) {
+            h = HEIGHTSTEPS;
+        }
+        return flowarray[w][h];
+    }
+
+    PropertyDegrees getMeanFlowAngle(PropertyLocation pos) {
+        return getFlowwithoutswing(pos).getDegreesProperty();
+    }
+
+    PropertyDegrees getMeanFlowAngle() {
+        return meanflowangle;
     }
 }

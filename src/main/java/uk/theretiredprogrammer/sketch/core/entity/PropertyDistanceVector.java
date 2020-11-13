@@ -52,7 +52,8 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //
+        distanceproperty.addListener((o, oldval, newval) -> onchange.run());
+        degreesproperty.addListener((o, oldval, newval) -> onchange.run());
     }
 
     public final void set(PropertyDistanceVector value) {

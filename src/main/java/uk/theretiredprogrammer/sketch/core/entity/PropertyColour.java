@@ -29,7 +29,7 @@ public class PropertyColour extends SimpleObjectProperty<Color> implements Model
 
     @Override
     public void setOnChange(Runnable onchange) {
-        //setOnChange((c) -> onchange.run());
+        addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override

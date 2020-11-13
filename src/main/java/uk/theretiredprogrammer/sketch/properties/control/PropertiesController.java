@@ -24,9 +24,8 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
 
@@ -83,23 +82,23 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     public void addNewBoat(String type) {
         Boat newboat = BoatFactory.createBoat(type,
-                    sketchmodel.getCourse().getFirstLeg(),
-                    new WindFlow(sketchmodel),
-                    new WaterFlow(sketchmodel));
+                sketchmodel.getCourse().getFirstLeg(),
+                sketchmodel.getWindFlow(),
+                sketchmodel.getWaterFlow());
         sketchmodel.getBoats().add(newboat);
     }
 
     public void addNewWindFlowComponent(String flowtype) {
         FlowComponent newflow = FlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
-        sketchmodel.getWind().add(newflow);
+        sketchmodel.getWindFlow().getFlowcomponents().add(newflow);
     }
 
     public void addNewWaterFlowComponent(String flowtype) {
         FlowComponent newflow = FlowComponent.factory(flowtype, () -> sketchmodel.getDisplayArea());
-        sketchmodel.getWater().add(newflow);
+        sketchmodel.getWaterFlow().getFlowcomponents().add(newflow);
     }
 
     public void addNewLeg() {
-        //sketchmodel.getCourse().getLegEndings().add(new LegEnding());
+        sketchmodel.getCourse().getLegEndings().add(new PropertyLegEnding());
     }
 }

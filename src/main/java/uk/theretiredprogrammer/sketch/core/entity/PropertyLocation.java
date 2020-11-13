@@ -65,6 +65,8 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
 
     @Override
     public void setOnChange(Runnable onchange) {
+        x.addListener((o, oldval, newval) -> onchange.run());
+        y.addListener((o, oldval, newval) -> onchange.run());
     }
 
     @Override

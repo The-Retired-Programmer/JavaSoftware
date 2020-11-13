@@ -43,9 +43,8 @@ public class Boats extends ModelNamedList<Boat> {
         Boat boat = BoatFactory.createBoat(
                 jobj.getString("type", "<undefined>"),
                 model.getCourse().getFirstLeg(),
-                new WindFlow(model),
-                new WaterFlow(model)
-        );
+                model.getWindFlow(),
+                model.getWaterFlow());
         boat.parse(jobj);
         return boat;
     }

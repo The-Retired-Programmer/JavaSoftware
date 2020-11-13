@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonValue;
+import javafx.beans.value.ChangeListener;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 
 public class Marks extends ModelNamedList<Mark> {
@@ -29,5 +30,9 @@ public class Marks extends ModelNamedList<Mark> {
         Mark mark = new Mark();
         mark.parse(jobj);
         return mark;
+    }
+    
+    public void addNameChangeListener(ChangeListener<String> childlistener) {
+        addChildChangeListener(mark-> mark.addNameChangeListener(childlistener));
     }
 }
