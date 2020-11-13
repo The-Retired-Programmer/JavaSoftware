@@ -19,6 +19,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import java.util.Comparator;
 import java.util.function.Supplier;
+import javafx.collections.ListChangeListener;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
@@ -36,16 +37,12 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
     private double wstepsize;
     private double hstepsize;
 
-    private PropertyDegrees meanflowangle;
+    private PropertyDegrees meanflowangle = new PropertyDegrees();
 
     public FlowComponentSet(Supplier<PropertyArea> getdisplayarea) {
         this.getdisplayarea = getdisplayarea;
-    }
-
-    @Override
-    public void add(FlowComponent flowcomponent) {
-        super.add(flowcomponent);
-        calculateFlow();
+        setOnChange(() -> flowchange());
+        addListChangeListener((ListChangeListener<FlowComponent>) (c) -> flowchange());
     }
 
     @Override
@@ -62,7 +59,7 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         return flowc;
     }
 
-    public final void calculateFlow() {
+    private void flowchange() {
         double hpos = getdisplayarea.get().getLocationProperty().getY();
         double wpos = getdisplayarea.get().getLocationProperty().getX();
         hstepsize = getdisplayarea.get().getHeight() / HEIGHTSTEPS;
@@ -109,6 +106,10 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
     }
 
     PropertySpeedVector getFlowwithoutswing(PropertyLocation pos) {
+        return stream().count() == 0? new PropertySpeedVector() : calculateFlowwithoutswing(pos);
+    }
+    
+    private PropertySpeedVector calculateFlowwithoutswing(PropertyLocation pos) {
         int w = (int) Math.floor((pos.getX() - getdisplayarea.get().getLocationProperty().getX()) / wstepsize);
         if (w < 0) {
             w = 0;

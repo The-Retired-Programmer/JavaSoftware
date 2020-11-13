@@ -377,15 +377,15 @@ public abstract class Boat extends ModelMap {
      *
      * @param nextdirection the required directionproperty
      */
-    void moveBoat(PropertyDegrees nextdirection, PropertySpeedVector windflow, PropertySpeedVector waterflow) {
+    void moveBoat(PropertyDegrees nextdirection, PropertySpeedVector windspeedvector, PropertySpeedVector waterspeedvector) {
         // calculate the potential boat speed - based on wind speed and relative angle 
         double potentialBoatspeed = PropertySpeedVector.convertKnots2MetresPerSecond(
-                metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windflow.getDegreesProperty()),
-                        windflow.getSpeed()));
+                metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windspeedvector.getDegreesProperty()),
+                        windspeedvector.getSpeed()));
         boatspeed += metrics.getInertia() * (potentialBoatspeed - boatspeed);
         // start by calculating the vector components of the boats movement
         PropertyDistanceVector move = new PropertyDistanceVector(boatspeed, nextdirection)
-                .sub(new PropertyDistanceVector(waterflow.getSpeedMetresPerSecond(), waterflow.getDegreesProperty()));
+                .sub(new PropertyDistanceVector(waterspeedvector.getSpeedMetresPerSecond(), waterspeedvector.getDegreesProperty()));
         setLocation(move.toLocation(getLocation())); // updated position calculated
         track.add(getLocation()); // record it in track
         setDirection(nextdirection); // and update the directionproperty

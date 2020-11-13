@@ -51,7 +51,6 @@ public abstract class ModelList<P extends Model> implements Model {
         list.addListener(listener);
     }
 
-    // mark-> mark.addNameChangeListern(childlistener)
     public void addChildChangeListener(Consumer<P> setChildListener) {
         this.setChildListener = setChildListener;
         list.forEach(p -> setChildListener.accept(p));

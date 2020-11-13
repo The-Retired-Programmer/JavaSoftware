@@ -29,9 +29,8 @@ public abstract class Flow {
     public Flow(SketchModel sketchproperty, FlowShiftModel flowshiftsproperty, FlowComponentSet flowcomponents) {
         this.flowshiftsproperty = flowshiftsproperty;
         this.flowcomponents = flowcomponents;
-        flowcomponents.calculateFlow();
     }
-
+    
     public final FlowShiftModel getShiftsproperty() {
         return flowshiftsproperty;
     }
