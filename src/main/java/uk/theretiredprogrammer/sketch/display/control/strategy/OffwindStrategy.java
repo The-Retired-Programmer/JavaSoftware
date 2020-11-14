@@ -57,6 +57,13 @@ public class OffwindStrategy extends Strategy {
         }
     }
 
+    public OffwindStrategy(OffwindStrategy clonefrom, Boat newboat) {
+        super(clonefrom, newboat);
+        this.decisions = clonefrom.decisions;
+        this.roundingdecisions = clonefrom.roundingdecisions;
+        this.useroundingdecisions = clonefrom.useroundingdecisions;
+    }
+
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);

@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
 public class SailingLegTest {
 

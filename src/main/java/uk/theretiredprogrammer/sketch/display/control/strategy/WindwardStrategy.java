@@ -56,6 +56,14 @@ public class WindwardStrategy extends Strategy {
         }
     }
 
+    public WindwardStrategy(WindwardStrategy clonefrom, Boat newboat) {
+        super(clonefrom, newboat);
+        this.portdecisions = clonefrom.portdecisions;
+        this.starboarddecisions = clonefrom.starboarddecisions;
+        this.roundingdecisions = clonefrom.roundingdecisions;
+        this.useroundingdecisions = clonefrom.useroundingdecisions;
+    }
+
     @Override
     String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);

@@ -66,7 +66,7 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
     public void setOnChange(Runnable onchange) {
     }
 
-    void setMarknames(ObservableList<String> marknames) {
+    final void setMarknames(ObservableList<String> marknames) {
         this.marknames = marknames;
         mark.setConstraints(marknames);
     }

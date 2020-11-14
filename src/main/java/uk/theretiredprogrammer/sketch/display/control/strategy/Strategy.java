@@ -38,6 +38,18 @@ public abstract class Strategy {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
+    public static Strategy get(Strategy clonefrom, Boat newboat) {
+        if (clonefrom instanceof WindwardStrategy windwardstrategy) {
+            return new WindwardStrategy(windwardstrategy, newboat);
+        } else if (clonefrom instanceof OffwindStrategy offwindstrategy) {
+            return new OffwindStrategy(offwindstrategy, newboat);
+        } else if (clonefrom instanceof GybingDownwindStrategy gybingdownwindstrategy) {
+            return new GybingDownwindStrategy(gybingdownwindstrategy, newboat);
+        } else {
+            throw new IllegalStateFailure("Illegal/unknown Strategy");
+        }
+    }
+
     public static Strategy get(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         LegType legtype = getLegType(boat, leg, windflow);
         switch (legtype) {
@@ -73,7 +85,7 @@ public abstract class Strategy {
     static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
         return getRefDistance(location, marklocation, refangle.get());
     }
-    
+
     static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, double refangle) {
         PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
         PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
@@ -137,6 +149,15 @@ public abstract class Strategy {
         this.length = 0.0;
         this.portoffsetangle = null;
         this.starboardoffsetangle = null;
+    }
+
+    public Strategy(Strategy clonefrom, Boat newboat) {
+        this.boat = newboat;
+        this.leg = clonefrom.leg;
+        this.decision = new Decision(newboat);
+        this.length = clonefrom.length;
+        this.portoffsetangle = clonefrom.portoffsetangle;
+        this.starboardoffsetangle = clonefrom.starboardoffsetangle;
     }
 
     double getDistanceToMark(PropertyLocation here) {

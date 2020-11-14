@@ -84,17 +84,17 @@ public abstract class Boat extends ModelMap {
     private final List<PropertyLocation> track = Collections.synchronizedList(new ArrayList<PropertyLocation>());
     private Strategy strategy; // current leg strategy
 
-    public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", "laser2", new PropertyLocation(), firstleg, windflow, waterflow, metrics);
-    }
+//    public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+//        this("<newname>", "laser2", new PropertyLocation(), firstleg, windflow, waterflow, metrics);
+//    }
 
     public Boat(String classtype, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, new PropertyLocation(), firstleg, windflow, waterflow, metrics);
     }
 
-    public Boat(PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
-    }
+//    public Boat(PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+//        this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
+//    }
 
     public Boat(String classtype, PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, loc, firstleg, windflow, waterflow, metrics);
@@ -131,7 +131,6 @@ public abstract class Boat extends ModelMap {
         type = new PropertyConstrainedString(clonefrom.type.get(), classes);
         metrics = clonefrom.metrics;
         rotationAnglePerSecond = clonefrom.rotationAnglePerSecond;
-        strategy = clonefrom.strategy;
         this.boatspeed = clonefrom.boatspeed;
         this.heading.set(clonefrom.heading.get());
         this.colour.set(clonefrom.colour.get());
@@ -145,6 +144,7 @@ public abstract class Boat extends ModelMap {
         this.downwindbearawayifheaded.set(clonefrom.downwindbearawayifheaded.get());
         this.downwindgybeiflifted.set(clonefrom.downwindgybeiflifted.get());
         this.downwindluffupiflifted.set(clonefrom.downwindluffupiflifted.get());
+        strategy = Strategy.get(clonefrom.strategy, this);
     }
 
     @Override
