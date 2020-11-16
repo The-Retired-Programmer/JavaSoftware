@@ -19,25 +19,25 @@ import jakarta.json.JsonValue;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 
-public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
+public class PropertyLegs extends ModelList<PropertyLeg> {
 
     private final ObservableList<String> marknames;
     private final Marks marks;
 
-    public PropertyLegEndings(Marks marks, ObservableList<String> marknames) {
+    public PropertyLegs(Marks marks, ObservableList<String> marknames) {
         this.marks = marks;
         this.marknames = marknames;
     }
 
     @Override
-    protected PropertyLegEnding createAndParse(JsonValue jval) {
-        PropertyLegEnding p = new PropertyLegEnding(marks, marknames);
+    protected PropertyLeg createAndParse(JsonValue jval) {
+        PropertyLeg p = new PropertyLeg(marks, marknames);
         p.parse(jval);
         return p;
     }
 
     @Override
-    public void add(PropertyLegEnding property) {
+    public void add(PropertyLeg property) {
         property.setMarksAndNames(marks, marknames);
         super.add(property);
     }

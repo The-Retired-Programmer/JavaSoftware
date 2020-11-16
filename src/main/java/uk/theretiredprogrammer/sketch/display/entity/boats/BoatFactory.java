@@ -17,13 +17,13 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class BoatFactory {
 
-    public static Boat createBoat(String type, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+    public static Boat createBoat(String type, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow) {
         switch (type) {
             case "laser2" -> {
                 return new Laser2(firstleg, windflow, waterflow);
@@ -33,7 +33,7 @@ public class BoatFactory {
         }
     }
     
-    public static Boat createBoat(String type, PropertyLocation location, Leg firstleg, WindFlow windflow, WaterFlow waterflow) {
+    public static Boat createBoat(String type, PropertyLocation location, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow) {
         switch (type) {
             case "laser2" -> {
                 return new Laser2(location, firstleg, windflow, waterflow);

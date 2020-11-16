@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import java.io.IOException;
 import java.util.Arrays;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -46,7 +46,7 @@ public class SailingStrategyTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        Leg leg = new Leg(controller.course);
+        CurrentLeg leg = new CurrentLeg(controller.course);
         winddirection = controller.windflow.getFlow(boat.getLocation()).getDegreesProperty();
         Strategy strategy = Strategy.get(boat, leg, controller.windflow, controller.waterflow);
         strategy.nextBoatStrategyTimeInterval(controller.getProperty(), controller.windflow, controller.waterflow);

@@ -19,42 +19,42 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
-public class Leg {
+public class CurrentLeg {
 
     private int legno = 0;
 
-    private PropertyLegEnding currentleg;
+    private PropertyLeg currentleg;
     private final Course course;
 
-    public Leg(Course course) {
+    public CurrentLeg(Course course) {
         this.course = course;
         legno = 0;
-        currentleg = course.getLegEnding(legno);
+        currentleg = course.getLeg(legno);
         course.setOnChange(() -> refresh());
     }
 
     private void refresh() {
-        currentleg = course.getLegEnding(legno);
+        currentleg = course.getLeg(legno);
     }
 
     public boolean isFollowingLeg() {
-        return course.getLegEndings().size() > legno + 1;
+        return course.getLegsProperty().size() > legno + 1;
     }
 
-    public Leg toFollowingLeg() {
+    public CurrentLeg toFollowingLeg() {
         if (isFollowingLeg()) {
-            currentleg = course.getLegEnding(++legno);
+            currentleg = course.getLeg(++legno);
         }
         return this;
     }
 
     public PropertyDegrees getAngleofFollowingLeg() {
         return isFollowingLeg()
-                ? course.getLegEnding(legno + 1).getAngleofLeg()
+                ? course.getLeg(legno + 1).getAngleofLeg()
                 : null;
     }
 
-    // proxies to current PropertyLegEnding
+    // proxies to current PropertyLeg
     public boolean isPortRounding() {
         return currentleg.isPortRounding();
     }

@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
@@ -30,7 +30,7 @@ public class OffwindStrategy extends Strategy {
     private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
 
-    public OffwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public OffwindStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg, leg.getAngleofLeg().plus(90), leg.getAngleofLeg().sub(90));
         decisions = new OffwindSailingDecisions();
         LegType followinglegtype = getLegType(boat, leg.getAngleofFollowingLeg(), windflow);

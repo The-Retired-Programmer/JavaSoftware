@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -23,7 +23,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 class AfterFinishStrategy extends Strategy {
 
-    AfterFinishStrategy(Boat boat, Leg previousleg) {
+    AfterFinishStrategy(Boat boat, CurrentLeg previousleg) {
         super(boat, previousleg);
     }
 

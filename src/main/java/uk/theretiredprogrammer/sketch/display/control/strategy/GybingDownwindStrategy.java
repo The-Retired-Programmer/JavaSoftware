@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
@@ -35,7 +35,7 @@ public class GybingDownwindStrategy extends Strategy {
     private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
 
-    public GybingDownwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public GybingDownwindStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg,
                 leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-135)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-45)),
                 leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(45)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(135)));

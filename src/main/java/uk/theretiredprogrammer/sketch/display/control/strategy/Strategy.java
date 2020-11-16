@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
@@ -50,7 +50,7 @@ public abstract class Strategy {
         }
     }
 
-    public static Strategy get(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
+    public static Strategy get(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
         LegType legtype = getLegType(boat, leg.getAngleofLeg(), windflow);
         switch (legtype) {
             case WINDWARD -> {
@@ -104,14 +104,14 @@ public abstract class Strategy {
     }
 
     public final Boat boat;
-    public final Leg leg;
+    public final CurrentLeg leg;
     public final Decision decision;
 
     private final double length;
     private final PropertyDegrees portoffsetangle;
     private final PropertyDegrees starboardoffsetangle;
 
-    public Strategy(Boat boat, Leg leg,
+    public Strategy(Boat boat, CurrentLeg leg,
             PropertyDegrees portroundingportoffsetangle, PropertyDegrees portroundingstarboardoffsetangle,
             PropertyDegrees starboardroundingportoffsetangle, PropertyDegrees starboardroundingstarboardoffsetangle) {
         this.boat = boat;
@@ -127,7 +127,7 @@ public abstract class Strategy {
         }
     }
 
-    public Strategy(Boat boat, Leg leg,
+    public Strategy(Boat boat, CurrentLeg leg,
             PropertyDegrees portroundingoffsetangle, PropertyDegrees starboardroundingoffsetangle) {
         this.boat = boat;
         this.decision = new Decision(boat);
@@ -142,7 +142,7 @@ public abstract class Strategy {
         }
     }
 
-    public Strategy(Boat boat, Leg previousleg) {
+    public Strategy(Boat boat, CurrentLeg previousleg) {
         this.boat = boat;
         this.decision = new Decision(boat);
         this.leg = previousleg;

@@ -34,7 +34,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.P
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
@@ -108,7 +108,7 @@ public class DisplayPane extends Group {
             double y = displaycontextmenu.getDisplayY();
             SketchModel model = controller.getProperty();
             Boat newboat = BoatFactory.createBoat("laser2", new PropertyLocation(x, y),
-                    new Leg(model.getCourse()),
+                    new CurrentLeg(model.getCourse()),
                     model.getWindFlow(),
                     model.getWaterFlow());
             if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {

@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
-public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
+public class PropertyLeg implements ModelProperty<PropertyLeg> {
 
     private static final ObservableList<String> roundingdirections;
 
@@ -48,16 +48,16 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
     private PropertyLocation endat;
     private Marks marks;
 
-    public PropertyLegEnding() {
+    public PropertyLeg() {
         set(null, null);
     }
 
-    public PropertyLegEnding(Marks marks, ObservableList<String> marknames) {
+    public PropertyLeg(Marks marks, ObservableList<String> marknames) {
         setMarksAndNames(marks, marknames);
         set(null, null);
     }
 
-    public PropertyLegEnding(String mark, String passing, Marks marks, ObservableList<String> marknames) {
+    public PropertyLeg(String mark, String passing, Marks marks, ObservableList<String> marknames) {
         setMarksAndNames(marks, marknames);
         set(mark, passing);
     }
@@ -85,7 +85,7 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
         markname.setConstraints(marknames);
     }
 
-    public final void set(PropertyLegEnding value) {
+    public final void set(PropertyLeg value) {
         setMarksAndNames(value.marks, value.marknames);
         set(value.markname.get(), value.passing.get());
     }
@@ -99,8 +99,8 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
     }
 
     @Override
-    public final PropertyLegEnding parsevalue(JsonValue jvalue) {
-        return FromJson.legEndingProperty(jvalue, marks, marknames, roundingdirections);
+    public final PropertyLeg parsevalue(JsonValue jvalue) {
+        return FromJson.legProperty(jvalue, marks, marknames, roundingdirections);
     }
 
     @Override

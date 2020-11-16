@@ -43,7 +43,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 public abstract class Boat extends ModelMap {
 
@@ -84,24 +84,24 @@ public abstract class Boat extends ModelMap {
     private final List<PropertyLocation> track = Collections.synchronizedList(new ArrayList<PropertyLocation>());
     private Strategy strategy; // current leg strategy
 
-//    public Boat(Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+//    public Boat(CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
 //        this("<newname>", "laser2", new PropertyLocation(), firstleg, windflow, waterflow, metrics);
 //    }
 
-    public Boat(String classtype, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String classtype, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, new PropertyLocation(), firstleg, windflow, waterflow, metrics);
     }
 
-//    public Boat(PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+//    public Boat(PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
 //        this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
 //    }
 
-    public Boat(String classtype, PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String classtype, PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, loc, firstleg, windflow, waterflow, metrics);
     }
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Boat(String newname, String classtype, PropertyLocation loc, Leg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String newname, String classtype, PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         name = new PropertyString(newname);
         location = new PropertyLocation(loc);
         type = new PropertyConstrainedString(classtype, classes);

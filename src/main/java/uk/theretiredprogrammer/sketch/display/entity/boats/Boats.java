@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 public class Boats extends ModelNamedList<Boat> {
 
@@ -41,9 +41,8 @@ public class Boats extends ModelNamedList<Boat> {
             throw new ParseFailure("Malformed Definition File - array contains items other than Objects");
         }
         JsonObject jobj = (JsonObject) jval;
-        Boat boat = BoatFactory.createBoat(
-                jobj.getString("type", "<undefined>"),
-                new Leg(model.getCourse()),
+        Boat boat = BoatFactory.createBoat(jobj.getString("type", "<undefined>"),
+                new CurrentLeg(model.getCourse()),
                 model.getWindFlow(),
                 model.getWaterFlow());
         boat.parse(jobj);
