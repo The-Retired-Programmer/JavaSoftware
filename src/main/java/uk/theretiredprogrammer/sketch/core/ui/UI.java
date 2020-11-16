@@ -46,6 +46,7 @@ import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
@@ -133,8 +134,8 @@ public class UI {
         return stringfield;
     }
 
-    public static ComboBox control(SimpleStringProperty property, ObservableList<String> constraints) {
-        ComboBox combofield = new ComboBox(constraints);
+    public static ComboBox<String> control(PropertyConstrainedString property, ObservableList<String> constraints) {
+        ComboBox<String> combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(property);
         return combofield;
     }

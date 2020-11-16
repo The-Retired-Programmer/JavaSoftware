@@ -37,12 +37,12 @@ public class WindwardStrategy extends Strategy {
                 leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-45)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(-135)));
         starboarddecisions = new WindwardStarboardSailingDecisions();
         portdecisions = new WindwardPortSailingDecisions();
-        LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
+        LegType followinglegtype = getLegType(boat, leg.getAngleofFollowingLeg(), windflow);
         switch (followinglegtype) {
             case OFFWIND ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new WindwardPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
-                        : new WindwardStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                        ? new WindwardPortRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg())
+                        : new WindwardStarboardRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg());
             case GYBINGDOWNWIND ->
                 roundingdecisions = leg.isPortRounding()
                         ? new WindwardPortRoundingDecisions((windangle) -> boat.getStarboardReachingCourse(windangle))

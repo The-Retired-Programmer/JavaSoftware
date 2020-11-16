@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
+import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
 
@@ -149,13 +150,14 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
 
-    public static PropertyLegEnding legEndingProperty(JsonValue jvalue, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
+    public static PropertyLegEnding legEndingProperty(JsonValue jvalue, Marks marks, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
                 return new PropertyLegEnding(
                         constrainedStringProperty(values.get(0), markconstraints),
                         constrainedStringProperty(values.get(1), roundingconstraints),
+                        marks,
                         markconstraints
                 );
             }

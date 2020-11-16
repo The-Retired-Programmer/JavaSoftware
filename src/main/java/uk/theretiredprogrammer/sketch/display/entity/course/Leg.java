@@ -21,43 +21,57 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class Leg {
 
-    private final PropertyLocation startfrom;
-    private final PropertyLocation endat;
-    private final boolean portrounding;
-    private Leg followingleg;
+    private int legno = 0;
 
-    public Leg(PropertyLocation startfrom, PropertyLocation endat, boolean portrounding, Leg followingleg) {
-        this.startfrom = startfrom;
-        this.endat = endat;
-        this.portrounding = portrounding;
-        this.followingleg = followingleg;
+    private PropertyLegEnding currentleg;
+    private final Course course;
+
+    public Leg(Course course) {
+        this.course = course;
+        legno = 0;
+        currentleg = course.getLegEnding(legno);
+        course.setOnChange(() -> refresh());
     }
 
-    public Leg getFollowingLeg() {
-        return followingleg;
+    private void refresh() {
+        currentleg = course.getLegEnding(legno);
     }
 
-    public void setFollowingLeg(Leg leg) {
-        followingleg = leg;
+    public boolean isFollowingLeg() {
+        return course.getLegEndings().size() > legno + 1;
     }
 
+    public Leg toFollowingLeg() {
+        if (isFollowingLeg()) {
+            currentleg = course.getLegEnding(++legno);
+        }
+        return this;
+    }
+
+    public PropertyDegrees getAngleofFollowingLeg() {
+        return isFollowingLeg()
+                ? course.getLegEnding(legno + 1).getAngleofLeg()
+                : null;
+    }
+
+    // proxies to current PropertyLegEnding
     public boolean isPortRounding() {
-        return portrounding;
+        return currentleg.isPortRounding();
     }
 
     public double getDistanceToEnd(PropertyLocation here) {
-        return here.to(endat);
+        return currentleg.getDistanceToEnd(here);
     }
 
     public PropertyLocation getEndLocation() {
-        return endat;
+        return currentleg.getEndLocation();
     }
 
     public PropertyDegrees endLegMeanwinddirection(WindFlow windflow) {
-        return windflow.getMeanFlowAngle(endat);
+        return currentleg.endLegMeanwinddirection(windflow);
     }
 
     public PropertyDegrees getAngleofLeg() {
-        return startfrom.angleto(endat);
+        return currentleg.getAngleofLeg();
     }
 }

@@ -46,7 +46,7 @@ public class SailingStrategyTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        Leg leg = controller.course.getFirstLeg();
+        Leg leg = new Leg(controller.course);
         winddirection = controller.windflow.getFlow(boat.getLocation()).getDegreesProperty();
         Strategy strategy = Strategy.get(boat, leg, controller.windflow, controller.waterflow);
         strategy.nextBoatStrategyTimeInterval(controller.getProperty(), controller.windflow, controller.waterflow);

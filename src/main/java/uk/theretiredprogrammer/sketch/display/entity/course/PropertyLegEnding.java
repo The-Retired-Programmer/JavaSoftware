@@ -23,8 +23,11 @@ import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
 
@@ -35,55 +38,69 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
         roundingdirections.addAll("port", "starboard");
     }
 
-    private final PropertyConstrainedString mark = new PropertyConstrainedString();
+    private final PropertyConstrainedString markname = new PropertyConstrainedString();
     private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
 
     ObservableList<String> marknames;
+
+    //
+    private PropertyLocation startfrom;
+    private PropertyLocation endat;
+    private Marks marks;
 
     public PropertyLegEnding() {
         set(null, null);
     }
 
-    public PropertyLegEnding(ObservableList<String> marknames) {
-        this.marknames = marknames;
+    public PropertyLegEnding(Marks marks, ObservableList<String> marknames) {
+        setMarksAndNames(marks, marknames);
         set(null, null);
     }
 
-    public PropertyLegEnding(PropertyLegEnding defaultvalue) {
-        set(defaultvalue);
-    }
-    
-    public PropertyLegEnding(String mark, String passing, ObservableList<String> marknames) {
-        setMarknames(marknames);
+    public PropertyLegEnding(String mark, String passing, Marks marks, ObservableList<String> marknames) {
+        setMarksAndNames(marks, marknames);
         set(mark, passing);
     }
 
-    public PropertyLegEnding(String mark, String passing) {
-        set(mark, passing);
+    public void setStartLegLocation(PropertyLocation startfrom) {
+        this.startfrom = startfrom;
+    }
+
+    void update(PropertyLocation startfrom) {
+        this.startfrom = startfrom;
+        if (markname.get() != null) {
+            this.endat = marks.get(markname.get()).getLocation();
+        }
     }
 
     @Override
     public void setOnChange(Runnable onchange) {
+        markname.setOnChange(onchange);
+        passing.setOnChange(onchange);
     }
 
-    final void setMarknames(ObservableList<String> marknames) {
+    final void setMarksAndNames(Marks marks, ObservableList<String> marknames) {
+        this.marks = marks;
         this.marknames = marknames;
-        mark.setConstraints(marknames);
+        markname.setConstraints(marknames);
     }
 
     public final void set(PropertyLegEnding value) {
-        setMarknames(value.marknames);
-        set(value.mark.get(), value.passing.get());
+        setMarksAndNames(value.marks, value.marknames);
+        set(value.markname.get(), value.passing.get());
     }
 
     public final void set(String mark, String passing) {
-        this.mark.set(mark);
+        this.markname.set(mark);
         this.passing.set(passing == null ? null : passing.toLowerCase());
+        if (markname.get() != null) {
+            this.endat = marks.get(markname.get()).getLocation();
+        }
     }
 
     @Override
     public final PropertyLegEnding parsevalue(JsonValue jvalue) {
-        return FromJson.legEndingProperty(jvalue, marknames, roundingdirections);
+        return FromJson.legEndingProperty(jvalue, marks, marknames, roundingdirections);
     }
 
     @Override
@@ -119,15 +136,31 @@ public class PropertyLegEnding implements ModelProperty<PropertyLegEnding> {
     }
 
     public String getMarkname() {
-        return mark.get();
+        return markname.get();
     }
 
     public PropertyConstrainedString getMarknameProperty() {
-        return mark;
+        return markname;
     }
 
     @Override
     public String toString() {
-        return mark.get() + " to " + passing.get();
+        return markname.get() + " to " + passing.get();
+    }
+
+    public double getDistanceToEnd(PropertyLocation here) {
+        return here.to(endat);
+    }
+
+    public PropertyLocation getEndLocation() {
+        return endat;
+    }
+
+    public PropertyDegrees endLegMeanwinddirection(WindFlow windflow) {
+        return windflow.getMeanFlowAngle(endat);
+    }
+
+    public PropertyDegrees getAngleofLeg() {
+        return startfrom.angleto(endat);
     }
 }

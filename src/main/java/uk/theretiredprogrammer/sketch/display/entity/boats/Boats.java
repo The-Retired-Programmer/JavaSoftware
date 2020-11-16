@@ -24,13 +24,14 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 
 public class Boats extends ModelNamedList<Boat> {
 
     private final SketchModel model;
 
     public Boats(SketchModel model) {
-        super("Boat", (boat)-> boat.getName());
+        super("Boat", (boat) -> boat.getName());
         this.model = model;
     }
 
@@ -42,7 +43,7 @@ public class Boats extends ModelNamedList<Boat> {
         JsonObject jobj = (JsonObject) jval;
         Boat boat = BoatFactory.createBoat(
                 jobj.getString("type", "<undefined>"),
-                model.getCourse().getFirstLeg(),
+                new Leg(model.getCourse()),
                 model.getWindFlow(),
                 model.getWaterFlow());
         boat.parse(jobj);

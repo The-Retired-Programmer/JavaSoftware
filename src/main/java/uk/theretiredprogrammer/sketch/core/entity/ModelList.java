@@ -40,7 +40,7 @@ public abstract class ModelList<P extends Model> implements Model {
             ((JsonArray) jvalue).forEach(jval -> add(createAndParse(jval)));
         }
     }
-    
+
     @Override
     public final void setOnChange(Runnable onchange) {
         this.onchange = onchange;
@@ -67,6 +67,10 @@ public abstract class ModelList<P extends Model> implements Model {
         return list.stream();
     }
 
+    public ObservableList<P> get() {
+        return list;
+    }
+
     public void add(P value) {
         list.add(value);
         if (onchange != null) {
@@ -79,5 +83,9 @@ public abstract class ModelList<P extends Model> implements Model {
 
     public void clear() {
         list.clear();
+    }
+
+    public int size() {
+        return list.size();
     }
 }

@@ -23,6 +23,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLegEnding;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
@@ -82,7 +83,7 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
 
     public void addNewBoat(String type) {
         Boat newboat = BoatFactory.createBoat(type,
-                sketchmodel.getCourse().getFirstLeg(),
+                new Leg(sketchmodel.getCourse()),
                 sketchmodel.getWindFlow(),
                 sketchmodel.getWaterFlow());
         sketchmodel.getBoats().add(newboat);

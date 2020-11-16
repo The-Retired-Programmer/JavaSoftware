@@ -22,21 +22,23 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 public class PropertyLegEndings extends ModelList<PropertyLegEnding> {
 
     private final ObservableList<String> marknames;
+    private final Marks marks;
 
-    public PropertyLegEndings(ObservableList<String> marknames) {
+    public PropertyLegEndings(Marks marks, ObservableList<String> marknames) {
+        this.marks = marks;
         this.marknames = marknames;
     }
 
     @Override
     protected PropertyLegEnding createAndParse(JsonValue jval) {
-        PropertyLegEnding p = new PropertyLegEnding(marknames);
+        PropertyLegEnding p = new PropertyLegEnding(marks, marknames);
         p.parse(jval);
         return p;
     }
-    
+
     @Override
-    public void add(PropertyLegEnding property){
-        property.setMarknames(marknames);
+    public void add(PropertyLegEnding property) {
+        property.setMarksAndNames(marks, marknames);
         super.add(property);
     }
 }

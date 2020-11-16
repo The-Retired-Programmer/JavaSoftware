@@ -51,7 +51,7 @@ public abstract class Strategy {
     }
 
     public static Strategy get(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
-        LegType legtype = getLegType(boat, leg, windflow);
+        LegType legtype = getLegType(boat, leg.getAngleofLeg(), windflow);
         switch (legtype) {
             case WINDWARD -> {
                 return new WindwardStrategy(boat, leg, windflow, waterflow);
@@ -67,12 +67,12 @@ public abstract class Strategy {
         }
     }
 
-    static LegType getLegType(Boat boat, Leg leg, WindFlow windflow) {
-        if (leg == null) {
+    static LegType getLegType(Boat boat, PropertyDegrees legangle, WindFlow windflow) {
+        if (legangle == null) {
             return LegType.NONE;
         }
         BoatMetrics metrics = boat.metrics;
-        PropertyDegrees legtowind = leg.getAngleofLeg().absDegreesDiff(windflow.getMeanFlowAngle());
+        PropertyDegrees legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
         if (legtowind.lteq(metrics.getUpwindrelative())) {
             return LegType.WINDWARD;
         }
@@ -188,10 +188,9 @@ public abstract class Strategy {
             timerlog.add(new ReasonLogEntry(boatname, reason));
         }
         if (boat.moveUsingDecision(windflow, waterflow, decision)) {
-            Leg nextleg = leg.getFollowingLeg();
-            return nextleg == null
-                    ? new AfterFinishStrategy(boat, leg)
-                    : Strategy.get(boat, nextleg, windflow, waterflow);
+            return leg.isFollowingLeg()
+                    ? Strategy.get(boat, leg.toFollowingLeg(), windflow, waterflow)
+                    : new AfterFinishStrategy(boat, leg);
         }
         return null;
     }

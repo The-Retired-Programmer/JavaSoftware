@@ -27,34 +27,39 @@ public class Course extends ModelMap {
     private final PropertyLocation start = new PropertyLocation();
     private final PropertyLegEndings legs;
 
-    private Leg firstcourseleg;
     private final Marks marks;
+    private Runnable onchange;
 
     public Course(Marks marks, ObservableList<String> marknames) {
-        legs = new PropertyLegEndings(marknames);
+        legs = new PropertyLegEndings(marks, marknames);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
         marks.setOnChange(() -> updatelegs());
+        legs.setOnChange(() -> updatelegs());
+        legs.addListChangeListener((c) -> updatelegs());
     }
 
     private void updatelegs() {
-        firstcourseleg = null;
-        legs.clear(); // not best way!!
-        legs.stream().forEach(lv -> insertLeg(lv));
+        PropertyLocation startpos = start;
+        for (var leg : legs.get() ){
+            leg.update(startpos);
+            startpos = leg.getEndLocation();
+        }
+        if (onchange != null){
+            onchange.run();
+        }
     }
 
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("start", start, jobj);
         parseOptionalProperty("legs", legs, jobj);
-        legs.stream().forEach(lv -> insertLeg(lv));
     }
 
     @Override
     public void setOnChange(Runnable onchange) {
-        start.setOnChange(onchange);
-        legs.setOnChange(onchange);
+        this.onchange = onchange;
     }
 
     @Override
@@ -65,28 +70,15 @@ public class Course extends ModelMap {
         return job.build();
     }
 
-    private void insertLeg(PropertyLegEnding legending) {
-        if (firstcourseleg == null) {
-            firstcourseleg = new Leg(start, marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
-        } else {
-            Leg leg = firstcourseleg;
-            while (leg.getFollowingLeg() != null) {
-                leg = leg.getFollowingLeg();
-            }
-            Leg newleg = new Leg(leg.getEndLocation(), marks.get(legending.getMarkname()).getLocation(), legending.isPortRounding(), null);
-            leg.setFollowingLeg(newleg);
-        }
-    }
-
     public PropertyLocation getStart() {
         return start;
     }
 
-    public Leg getFirstLeg() {
-        return firstcourseleg;
-    }
-
     public PropertyLegEndings getLegEndings() {
         return legs;
+    }
+    
+    public PropertyLegEnding getLegEnding(int legno){
+       return legs.get().get(legno);
     }
 }

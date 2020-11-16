@@ -41,7 +41,7 @@ public class GybingDownwindStrategy extends Strategy {
                 leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(45)), leg.endLegMeanwinddirection(windflow).plus(new PropertyDegrees(135)));
         portdecisions = new GybingDownwindPortSailingDecisions();
         starboarddecisions = new GybingDownwindStarboardSailingDecisions();
-        LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
+        LegType followinglegtype = getLegType(boat, leg.getAngleofFollowingLeg(), windflow);
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = leg.isPortRounding()
@@ -49,8 +49,8 @@ public class GybingDownwindStrategy extends Strategy {
                         : new GybingDownwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
             case OFFWIND ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
-                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg())
+                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg());
             case NONE ->
                 roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))

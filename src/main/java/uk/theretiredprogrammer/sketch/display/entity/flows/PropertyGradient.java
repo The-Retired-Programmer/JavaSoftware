@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -124,7 +123,7 @@ public class PropertyGradient implements ModelProperty<PropertyGradient> {
         return speeds;
     }
 
-    public SimpleStringProperty getTypeProperty() {
+    public PropertyConstrainedString getTypeProperty() {
         return type;
     }
 

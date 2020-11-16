@@ -33,7 +33,7 @@ public class OffwindStrategy extends Strategy {
     public OffwindStrategy(Boat boat, Leg leg, WindFlow windflow, WaterFlow waterflow) {
         super(boat, leg, leg.getAngleofLeg().plus(90), leg.getAngleofLeg().sub(90));
         decisions = new OffwindSailingDecisions();
-        LegType followinglegtype = getLegType(boat, leg.getFollowingLeg(), windflow);
+        LegType followinglegtype = getLegType(boat, leg.getAngleofFollowingLeg(), windflow);
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = leg.isPortRounding()
@@ -41,8 +41,8 @@ public class OffwindStrategy extends Strategy {
                         : new OffwindStarboardRoundingDecisions((windangle) -> boat.getStarboardCloseHauledCourse(windangle));
             case OFFWIND ->
                 roundingdecisions = leg.isPortRounding()
-                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg())
-                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getFollowingLeg().getAngleofLeg());
+                        ? new OffwindPortRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg())
+                        : new OffwindStarboardRoundingDecisions((windangle) -> leg.getAngleofFollowingLeg());
             case GYBINGDOWNWIND ->
                 roundingdecisions = leg.isPortRounding()
                         ? new OffwindPortRoundingDecisions((windangle) -> boat.getPortReachingCourse(windangle))
