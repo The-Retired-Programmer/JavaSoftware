@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard@theretiredprogrammer.uk).
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,26 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
+import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStrategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStrategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStrategy;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class PropertyLeg implements ModelProperty<PropertyLeg> {
@@ -162,5 +172,75 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
 
     public PropertyDegrees getAngleofLeg() {
         return startfrom.angleto(endat);
+    }
+    
+    //
+    
+    public static enum LegType {
+        WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
+    }
+
+    public static Strategy get(Strategy clonefrom, Boat boat) {
+        if (clonefrom instanceof WindwardStrategy windwardstrategy) {
+            return new WindwardStrategy(windwardstrategy, boat);
+        } else if (clonefrom instanceof OffwindStrategy offwindstrategy) {
+            return new OffwindStrategy(offwindstrategy, boat);
+        } else if (clonefrom instanceof GybingDownwindStrategy gybingdownwindstrategy) {
+            return new GybingDownwindStrategy(gybingdownwindstrategy, boat);
+        } else {
+            throw new IllegalStateFailure("Illegal/unknown Strategy");
+        }
+    }
+
+    public static Strategy get(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
+        LegType legtype = getLegType(boat.metrics, leg.getAngleofLeg(), windflow, boat.isReachdownwind());
+        switch (legtype) {
+            case WINDWARD -> {
+                return new WindwardStrategy(boat, leg, windflow, waterflow);
+            }
+            case OFFWIND -> {
+                return new OffwindStrategy(boat, leg, windflow, waterflow);
+            }
+            case GYBINGDOWNWIND -> {
+                return new GybingDownwindStrategy(boat, leg, windflow, waterflow);
+            }
+            default ->
+                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
+        }
+    }
+
+    public static LegType getLegType(BoatMetrics metrics, PropertyDegrees legangle, WindFlow windflow, boolean reachesdownwind) {
+        if (legangle == null) {
+            return LegType.NONE;
+        }
+        PropertyDegrees legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
+        if (legtowind.lteq(metrics.upwindrelative)) {
+            return LegType.WINDWARD;
+        }
+        if (reachesdownwind && legtowind.gteq(metrics.downwindrelative)) {
+            return LegType.GYBINGDOWNWIND;
+        }
+        return LegType.OFFWIND;
+    }
+    
+    static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
+        return getRefDistance(location, marklocation, refangle.get());
+    }
+
+    public static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, double refangle) {
+        PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
+        PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
+        if (refangle2mark.gt(90)) {
+            return Optional.empty();
+        }
+        return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
+    }
+
+    private static double refdistancetomark(double distancetomark, PropertyDegrees refangle2mark) {
+        return distancetomark * Math.cos(refangle2mark.getRadians());
+    }
+
+    private static PropertyDegrees refangletomark(PropertyDegrees tomarkangle, PropertyDegrees refangle) {
+        return tomarkangle.absDegreesDiff(refangle);
     }
 }

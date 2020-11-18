@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,8 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 class OffwindPortRoundingDecisions extends RoundingDecisions {
 
     private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
@@ -35,12 +32,12 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getFlow(strategy.boat.getLocation()).getDegreesProperty();
-        if (atPortRoundingTurnPoint(strategy)) {
-            return executePortRounding(getDirectionAfterTurn, winddirection, strategy);
+    final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
+        if (atPortRoundingTurnPoint(boat, strategy)) {
+            return executePortRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
         }
-        adjustDirectCourseToDownwindMarkOffset(strategy, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(boat, decision, strategy, winddirection);
         return "course adjustment - approaching mark - port rounding";
     }
 }

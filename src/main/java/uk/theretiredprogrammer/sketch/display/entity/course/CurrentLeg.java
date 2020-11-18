@@ -27,8 +27,16 @@ public class CurrentLeg {
     private final Course course;
 
     public CurrentLeg(Course course) {
+        this(course, 0);
+    }
+    
+    public CurrentLeg(CurrentLeg clonefrom) {
+        this(clonefrom.course, clonefrom.legno);
+    }
+        
+    private CurrentLeg(Course course, int legno) {
         this.course = course;
-        legno = 0;
+        this.legno = legno;
         currentleg = course.getLeg(legno);
         course.setOnChange(() -> refresh());
     }

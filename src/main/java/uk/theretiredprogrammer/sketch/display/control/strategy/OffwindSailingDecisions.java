@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,17 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getFlow(strategy.boat.getLocation()).getDegreesProperty();
-        boolean onPort = strategy.boat.isPort(winddirection);
-        PropertyDegrees nextDirection = strategy.getPropertyDegreestoSail(strategy.boat.getLocation(), onPort);
-        if (nextDirection.neq(strategy.boat.getDirection())) {
-            strategy.decision.setTURN(nextDirection, strategy.boat.getDirection().gt(nextDirection));
+    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
+        boolean onPort = boat.isPort(winddirection);
+        PropertyDegrees nextDirection = strategy.getPropertyDegreestoSail(boat.getLocation(), onPort);
+        if (nextDirection.neq(boat.getDirection())) {
+            decision.setTURN(nextDirection, boat.getDirection().gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
         return "Sail ON";

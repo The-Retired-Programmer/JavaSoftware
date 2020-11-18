@@ -44,6 +44,7 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
 
 public abstract class Boat extends ModelMap {
 
@@ -82,32 +83,27 @@ public abstract class Boat extends ModelMap {
     private double boatspeed = 0;
     private PropertyDegrees rotationAnglePerSecond;
     private final List<PropertyLocation> track = Collections.synchronizedList(new ArrayList<PropertyLocation>());
-    private Strategy strategy; // current leg strategy
+    private Strategy strategy;
+    private final CurrentLeg currentleg;
+    public final Decision decision;
 
-//    public Boat(CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-//        this("<newname>", "laser2", new PropertyLocation(), firstleg, windflow, waterflow, metrics);
-//    }
-
-    public Boat(String classtype, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", classtype, new PropertyLocation(), firstleg, windflow, waterflow, metrics);
+    public Boat(String classtype, CurrentLeg currentleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", classtype, new PropertyLocation(), currentleg, windflow, waterflow, metrics);
     }
 
-//    public Boat(PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-//        this("<newname>", "laser2", loc, firstleg, windflow, waterflow, metrics);
-//    }
-
-    public Boat(String classtype, PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
-        this("<newname>", classtype, loc, firstleg, windflow, waterflow, metrics);
+    public Boat(String classtype, PropertyLocation loc, CurrentLeg currentleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+        this("<newname>", classtype, loc, currentleg, windflow, waterflow, metrics);
     }
 
     @SuppressWarnings("LeakingThisInConstructor")
-    public Boat(String newname, String classtype, PropertyLocation loc, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
+    public Boat(String newname, String classtype, PropertyLocation loc, CurrentLeg currentleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         name = new PropertyString(newname);
         location = new PropertyLocation(loc);
         type = new PropertyConstrainedString(classtype, classes);
         this.metrics = metrics;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
-        this.strategy = Strategy.get(this, firstleg, windflow, waterflow);
+        this.currentleg = currentleg;
+        this.decision = new Decision(this);
         addProperty("name", name);
         addProperty("type", type);
         addProperty("heading", heading);
@@ -125,6 +121,7 @@ public abstract class Boat extends ModelMap {
         addProperty("downwindluffupiflifted", downwindluffupiflifted);
     }
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public Boat(String newname, Boat clonefrom) {
         name = new PropertyString(newname);
         location = new PropertyLocation(clonefrom.location);
@@ -144,7 +141,9 @@ public abstract class Boat extends ModelMap {
         this.downwindbearawayifheaded.set(clonefrom.downwindbearawayifheaded.get());
         this.downwindgybeiflifted.set(clonefrom.downwindgybeiflifted.get());
         this.downwindluffupiflifted.set(clonefrom.downwindluffupiflifted.get());
-        strategy = Strategy.get(clonefrom.strategy, this);
+        strategy = PropertyLeg.get(clonefrom.strategy, this);
+        this.currentleg = new CurrentLeg(clonefrom.currentleg);
+        this.decision = new Decision(this, clonefrom.decision);
     }
 
     @Override
@@ -208,6 +207,10 @@ public abstract class Boat extends ModelMap {
 
     public Boat get() {
         return this;
+    }
+
+    public Decision getDecision() {
+        return decision;
     }
 
     public final String getName() {
@@ -282,7 +285,10 @@ public abstract class Boat extends ModelMap {
         return downwindluffupiflifted.get();
     }
 
-    public Strategy getStrategy() {
+    public Strategy getStrategy(WindFlow windflow, WaterFlow waterflow) {
+        if (strategy == null){
+            strategy = PropertyLeg.get(this, currentleg, windflow, waterflow);
+        }
         return strategy;
     }
 

@@ -251,12 +251,12 @@ public class DisplayPane extends Group {
         if (delta.gt(0)) {
             // anti clockwise to starboard tack
             PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
-            Decision decision = boat.getStrategy().decision;
+            Decision decision = boat.getDecision();
             decision.setTURN(target, PORT);
         } else {
             // clockwise to port tack
             PropertyDegrees target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
-            Decision decision = boat.getStrategy().decision;
+            Decision decision = boat.getDecision();
             decision.setTURN(target, STARBOARD);
         }
     }
@@ -268,12 +268,12 @@ public class DisplayPane extends Group {
         if (delta.gt(0)) {
             // clockwise to starboard gybe
             PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
-            Decision decision = boat.getStrategy().decision;
+            Decision decision = boat.getDecision();
             decision.setTURN(target, STARBOARD);
         } else {
             // anticlockwise to port gybe
             PropertyDegrees target = boat.getPortReachingCourse(wind.getDegreesProperty());
-            Decision decision = boat.getStrategy().decision;
+            Decision decision = boat.getDecision();
             decision.setTURN(target, PORT);
         }
     }

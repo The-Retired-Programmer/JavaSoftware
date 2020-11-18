@@ -36,7 +36,7 @@ public class TurnTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        decision = boat.getStrategy().decision;
+        decision = boat.getDecision();
         return boat;
     }
 

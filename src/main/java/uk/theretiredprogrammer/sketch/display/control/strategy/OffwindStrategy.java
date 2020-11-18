@@ -20,20 +20,35 @@ import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg.LegType;
 
 public class OffwindStrategy extends Strategy {
 
     private final OffwindSailingDecisions decisions;
     private final RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
+    private PropertyDegrees portoffsetangle;
+    private PropertyDegrees starboardoffsetangle;
+    private double offset;
 
     public OffwindStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
-        super(boat, leg, leg.getAngleofLeg().plus(90), leg.getAngleofLeg().sub(90));
+        super(leg);
+        offset = boat.metrics.getWidth() * 2;
+        if (leg.isPortRounding()) {
+            portoffsetangle = leg.getAngleofLeg().plus(90);
+            starboardoffsetangle = leg.getAngleofLeg().plus(90);
+        } else {
+            portoffsetangle = leg.getAngleofLeg().sub(90);
+            starboardoffsetangle = leg.getAngleofLeg().sub(90);
+        }
+
         decisions = new OffwindSailingDecisions();
-        LegType followinglegtype = getLegType(boat, leg.getAngleofFollowingLeg(), windflow);
+        LegType followinglegtype = PropertyLeg.getLegType(boat.metrics, leg.getAngleofFollowingLeg(), windflow, boat.isReachdownwind());
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = leg.isPortRounding()
@@ -58,27 +73,35 @@ public class OffwindStrategy extends Strategy {
     }
 
     public OffwindStrategy(OffwindStrategy clonefrom, Boat newboat) {
-        super(clonefrom, newboat);
+        super(clonefrom);
         this.decisions = clonefrom.decisions;
         this.roundingdecisions = clonefrom.roundingdecisions;
         this.useroundingdecisions = clonefrom.useroundingdecisions;
+        this.offset = clonefrom.offset;
+        this.portoffsetangle = clonefrom.portoffsetangle;
+        this.starboardoffsetangle = clonefrom.starboardoffsetangle;
     }
 
     @Override
-    String nextBoatStrategyTimeInterval(SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    String strategyTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
         }
-        return decisions.nextTimeInterval(sketchproperty, this, windflow, waterflow);
+        return decisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
     }
 
     boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(180));
+        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(180).get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
+    }
+
+    @Override
+    PropertyDistanceVector getOffsetVector(boolean onPort) {
+        return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
     }
 }

@@ -40,6 +40,13 @@ public class Decision {
     public Decision(Boat boat) {
         this.boat = boat;
     }
+    
+    public Decision(Boat boat, Decision clonefrom) {
+        this.boat = boat;
+        this.action = clonefrom.action;
+        this.degrees = clonefrom.degrees;
+        this.turndirection = clonefrom.turndirection;
+    }
 
     public void setSAILON() {
         set(DecisionAction.SAILON, null, STARBOARD);

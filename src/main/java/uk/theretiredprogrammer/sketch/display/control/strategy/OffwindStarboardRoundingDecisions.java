@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
 /**
  *
@@ -35,12 +36,12 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getFlow(strategy.boat.getLocation()).getDegreesProperty();
-        if (atStarboardRoundingTurnPoint(strategy)) {
-            return executeStarboardRounding(getDirectionAfterTurn, winddirection, strategy);
+    final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
+        if (atStarboardRoundingTurnPoint(boat, strategy)) {
+            return executeStarboardRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
         }
-        adjustDirectCourseToDownwindMarkOffset(strategy, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(boat, decision, strategy, winddirection);
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

@@ -21,51 +21,52 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.S
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
 class WindwardPortSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getFlow(strategy.boat.getLocation()).getDegreesProperty();
+    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+        PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         PropertyDegrees meanwinddirection = windflow.getMeanFlowAngle();
-        PropertyDegrees boatangletowind = strategy.boat.getDirection().absDegreesDiff(winddirection);
-        if (tackifonstarboardlayline(strategy, winddirection)) {
+        PropertyDegrees boatangletowind = boat.getDirection().absDegreesDiff(winddirection);
+        if (tackifonstarboardlayline(boat, decision, strategy, winddirection)) {
             return "tacking on starboard layline - port->starboard";
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(strategy, winddirection)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(boat, decision, strategy, winddirection)) {
             return "Beating on Port Layline to windward mark - course adjustment";
         }
         // stay in channel
-        if (strategy.boat.upwindchannel != null) {
-            if (strategy.getDistanceToMark(strategy.boat.getLocation()) > strategy.boat.upwindchannel.getInneroffset(strategy.getMarkLocation()) * 1.5) {
-                if (!strategy.boat.upwindchannel.isInchannel(strategy.boat.getLocation())) {
-                    strategy.decision.setTURN(strategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
+        if (boat.upwindchannel != null) {
+            if (strategy.getDistanceToMark(boat.getLocation()) > boat.upwindchannel.getInneroffset(strategy.getMarkLocation()) * 1.5) {
+                if (!boat.upwindchannel.isInchannel(boat.getLocation())) {
+                    decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                     return "Tacking onto starboard to stay within channel";
                 }
             }
         }
         // check if need to tack onto best tack
-        if (strategy.boat.isUpwindsailonbesttack()) {
+        if (boat.isUpwindsailonbesttack()) {
             if (winddirection.gt(meanwinddirection)) {
-                strategy.decision.setTURN(strategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
+                decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                 return "Tack onto best tack - starboard";
             }
         }
         // check if pointing high
-        if (boatangletowind.lt(strategy.boat.metrics.upwindrelative)) {
-            if (strategy.boat.isUpwindtackifheaded()) {
-                strategy.decision.setTURN(strategy.boat.getStarboardCloseHauledCourse(winddirection), PORT);
+        if (boatangletowind.lt(boat.metrics.upwindrelative)) {
+            if (boat.isUpwindtackifheaded()) {
+                decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                 return "Tack onto starboard when headed";
             }
-            if (strategy.boat.isUpwindbearawayifheaded()) {
-                strategy.decision.setTURN(strategy.boat.getPortCloseHauledCourse(winddirection), STARBOARD);
+            if (boat.isUpwindbearawayifheaded()) {
+                decision.setTURN(boat.getPortCloseHauledCourse(winddirection), STARBOARD);
                 return "Bearaway when headed";
             }
         }
         // check if pointing low
-        if (boatangletowind.gt(strategy.boat.metrics.upwindrelative)) {
-            if (strategy.boat.isUpwindluffupiflifted()) {
-                strategy.decision.setTURN(strategy.boat.getPortCloseHauledCourse(winddirection), PORT);
+        if (boatangletowind.gt(boat.metrics.upwindrelative)) {
+            if (boat.isUpwindluffupiflifted()) {
+                decision.setTURN(boat.getPortCloseHauledCourse(winddirection), PORT);
                 return "Luff when lifted";
             }
         }

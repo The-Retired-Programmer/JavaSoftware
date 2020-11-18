@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import java.io.IOException;
 import java.util.Arrays;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -32,7 +31,10 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class SailingStrategyTest {
 
@@ -46,11 +48,13 @@ public class SailingStrategyTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        CurrentLeg leg = new CurrentLeg(controller.course);
-        winddirection = controller.windflow.getFlow(boat.getLocation()).getDegreesProperty();
-        Strategy strategy = Strategy.get(boat, leg, controller.windflow, controller.waterflow);
-        strategy.nextBoatStrategyTimeInterval(controller.getProperty(), controller.windflow, controller.waterflow);
-        return strategy.decision;
+        SketchModel sketch = controller.getProperty();
+        WindFlow windflow = sketch.getWindFlow();
+        WaterFlow waterflow = sketch.getWaterFlow();
+        winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
+        Decision decision = boat.getDecision();
+        boat.getStrategy(windflow, waterflow).strategyTimeInterval(boat, decision, sketch, windflow, waterflow);
+        return decision;
     }
 
     void setboatdirection(double degrees) {
