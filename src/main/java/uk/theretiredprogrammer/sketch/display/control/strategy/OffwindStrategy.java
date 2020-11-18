@@ -24,8 +24,10 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg.LegType;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.OFFWIND;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.WINDWARD;
 import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 public class OffwindStrategy extends Strategy {
@@ -48,7 +50,7 @@ public class OffwindStrategy extends Strategy {
         }
 
         decisions = new OffwindSailingDecisions();
-        LegType followinglegtype = PropertyLeg.getLegType(boat.metrics, leg.getAngleofFollowingLeg(), windflow, boat.isReachdownwind());
+        LegType followinglegtype = CurrentLeg.getLegType(boat.metrics, leg.getAngleofFollowingLeg(), windflow, boat.isReachdownwind());
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = leg.isPortRounding()

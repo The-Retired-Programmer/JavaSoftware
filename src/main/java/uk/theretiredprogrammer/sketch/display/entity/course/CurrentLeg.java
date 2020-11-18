@@ -16,20 +16,98 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import java.util.Optional;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
 import uk.theretiredprogrammer.sketch.display.control.strategy.AfterFinishStrategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStrategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStrategy;
+import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStrategy;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.NONE;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.OFFWIND;
+import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.WINDWARD;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class CurrentLeg {
+
+    public static enum LegType {
+        WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
+    }
+
+    static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
+        return getRefDistance(location, marklocation, refangle.get());
+    }
+
+    public static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, double refangle) {
+        PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
+        PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
+        if (refangle2mark.gt(90)) {
+            return Optional.empty();
+        }
+        return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
+    }
+
+    public static LegType getLegType(BoatMetrics metrics, PropertyDegrees legangle, WindFlow windflow, boolean reachesdownwind) {
+        if (legangle == null) {
+            return NONE;
+        }
+        PropertyDegrees legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
+        if (legtowind.lteq(metrics.upwindrelative)) {
+            return WINDWARD;
+        }
+        if (reachesdownwind && legtowind.gteq(metrics.downwindrelative)) {
+            return GYBINGDOWNWIND;
+        }
+        return OFFWIND;
+    }
+
+    private static PropertyDegrees refangletomark(PropertyDegrees tomarkangle, PropertyDegrees refangle) {
+        return tomarkangle.absDegreesDiff(refangle);
+    }
+
+    private static double refdistancetomark(double distancetomark, PropertyDegrees refangle2mark) {
+        return distancetomark * Math.cos(refangle2mark.getRadians());
+    }
+
+    public static Strategy get(Strategy clonefrom, Boat boat) {
+        if (clonefrom instanceof WindwardStrategy windwardstrategy) {
+            return new WindwardStrategy(windwardstrategy, boat);
+        } else if (clonefrom instanceof OffwindStrategy offwindstrategy) {
+            return new OffwindStrategy(offwindstrategy, boat);
+        } else if (clonefrom instanceof GybingDownwindStrategy gybingdownwindstrategy) {
+            return new GybingDownwindStrategy(gybingdownwindstrategy, boat);
+        } else {
+            throw new IllegalStateFailure("Illegal/unknown Strategy");
+        }
+    }
+
+    public static Strategy get(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
+        LegType legtype = getLegType(boat.metrics, leg.getAngleofLeg(), windflow, boat.isReachdownwind());
+        switch (legtype) {
+            case WINDWARD -> {
+                return new WindwardStrategy(boat, leg, windflow, waterflow);
+            }
+            case OFFWIND -> {
+                return new OffwindStrategy(boat, leg, windflow, waterflow);
+            }
+            case GYBINGDOWNWIND -> {
+                return new GybingDownwindStrategy(boat, leg, windflow, waterflow);
+            }
+            default ->
+                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
+        }
+    }
 
     private int legno = 0;
 
@@ -64,7 +142,7 @@ public class CurrentLeg {
 
     public Strategy getStrategy(Boat boat, WindFlow windflow, WaterFlow waterflow) {
         if (strategy == null) {
-            strategy = PropertyLeg.get(boat, this, windflow, waterflow);
+            strategy = get(boat, this, windflow, waterflow);
         }
         return strategy;
     }
@@ -129,21 +207,20 @@ public class CurrentLeg {
         }
         if (boat.moveUsingDecision(windflow, waterflow, decision)) {
             return isFollowingLeg()
-                    ? PropertyLeg.get(boat, toFollowingLeg(), windflow, waterflow)
+                    ? get(boat, toFollowingLeg(), windflow, waterflow)
                     : new AfterFinishStrategy();
         }
         return null;
     }
 
     public boolean isNear2WindwardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
-        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.get());
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
-    
-    
+
     public boolean isNear2LeewardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
-        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.sub(180).get());
+        Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.sub(180).get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
-    
+
 }
