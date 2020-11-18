@@ -245,35 +245,37 @@ public class DisplayPane extends Group {
     }
 
     private void tack(Boat boat) {
+        CurrentLeg leg = boat.getCurrentLeg();
         PropertyLocation position = boat.getLocation();
         PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // anti clockwise to starboard tack
             PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
-            Decision decision = boat.getDecision();
+            Decision decision = leg.getDecision();
             decision.setTURN(target, PORT);
         } else {
             // clockwise to port tack
             PropertyDegrees target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
-            Decision decision = boat.getDecision();
+            Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD);
         }
     }
 
     private void gybe(Boat boat) {
+        CurrentLeg leg = boat.getCurrentLeg();
         PropertyLocation position = boat.getLocation();
         PropertySpeedVector wind = controller.windflow.getFlow(position);
         PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // clockwise to starboard gybe
             PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
-            Decision decision = boat.getDecision();
+            Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD);
         } else {
             // anticlockwise to port gybe
             PropertyDegrees target = boat.getPortReachingCourse(wind.getDegreesProperty());
-            Decision decision = boat.getDecision();
+            Decision decision = leg.getDecision();
             decision.setTURN(target, PORT);
         }
     }

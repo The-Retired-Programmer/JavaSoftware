@@ -30,20 +30,20 @@ class AfterFinishStrategy extends Strategy {
     }
 
     @Override
-    String strategyTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         double fromfinishmark = boat.getLocation().to(leg.getEndLocation());
         if (fromfinishmark > boat.metrics.getLength() * 5) {
-            decision.setSTOP();
+            decision.setSTOP(boat.getDirection());
             return "Stopping at end of course";
         } else {
-            decision.setSAILON();
+            decision.setSAILON(boat.getDirection());
             return "Sail ON";
         }
     }
-    
+
     @Override
     PropertyDistanceVector getOffsetVector(boolean onPort) {
         throw new IllegalStateFailure("attempting to getOffsetVector on the afterFinish leg");
-    } 
+    }
 
 }

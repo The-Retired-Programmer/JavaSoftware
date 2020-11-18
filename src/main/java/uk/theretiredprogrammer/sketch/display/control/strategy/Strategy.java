@@ -31,6 +31,7 @@ import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
 
 public abstract class Strategy {
+
     public final CurrentLeg leg;
 
     public Strategy(CurrentLeg leg) {
@@ -48,7 +49,7 @@ public abstract class Strategy {
     PropertyLocation getMarkLocation() {
         return leg.getEndLocation();
     }
-    
+
     abstract PropertyDistanceVector getOffsetVector(boolean onPort);
 
     PropertyLocation getSailToLocation(boolean onPort) {
@@ -60,19 +61,19 @@ public abstract class Strategy {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    abstract String strategyTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow);
+    abstract String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow);
 
     public Strategy nextTimeInterval(Boat boat, SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
-        Decision decision = boat.getDecision();
+        Decision decision = leg.getDecision();
         if (decision.getAction() == SAILON) {
-            String reason = strategyTimeInterval(boat, decision, sketchproperty, windflow, waterflow);
+            String reason = strategyTimeInterval(boat, decision, leg, sketchproperty, windflow, waterflow);
             timerlog.add(new BoatLogEntry(boat));
             timerlog.add(new DecisionLogEntry(boat.getName(), decision));
             timerlog.add(new ReasonLogEntry(boat.getName(), reason));
         }
         if (boat.moveUsingDecision(windflow, waterflow, decision)) {
             return leg.isFollowingLeg()
-                    ? PropertyLeg.get(boat,leg.toFollowingLeg(), windflow, waterflow)
+                    ? PropertyLeg.get(boat, leg.toFollowingLeg(), windflow, waterflow)
                     : new AfterFinishStrategy(boat, leg);
         }
         return null;

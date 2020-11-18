@@ -17,6 +17,10 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
+import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class CurrentLeg {
@@ -25,6 +29,8 @@ public class CurrentLeg {
 
     private PropertyLeg currentleg;
     private final Course course;
+    private Strategy strategy;
+    public final Decision decision;
 
     public CurrentLeg(Course course) {
         this(course, 0);
@@ -35,14 +41,30 @@ public class CurrentLeg {
     }
         
     private CurrentLeg(Course course, int legno) {
+        this.decision = new Decision();
         this.course = course;
         this.legno = legno;
         currentleg = course.getLeg(legno);
         course.setOnChange(() -> refresh());
     }
-
+    
     private void refresh() {
         currentleg = course.getLeg(legno);
+    }
+
+    public Decision getDecision() {
+        return decision;
+    }
+    
+    public Strategy getStrategy(Boat boat, WindFlow windflow, WaterFlow waterflow) {
+        if (strategy == null){
+            strategy = PropertyLeg.get(boat, this, windflow, waterflow);
+        }
+        return strategy;
+    }
+
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 
     public boolean isFollowingLeg() {

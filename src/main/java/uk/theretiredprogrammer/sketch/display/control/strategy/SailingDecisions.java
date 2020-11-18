@@ -22,6 +22,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 /**
  *
@@ -29,7 +30,7 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
  */
 abstract class SailingDecisions {
 
-    abstract String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow);
+    abstract String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow);
 
     boolean tackifonstarboardlayline(Boat boat, Decision decision, Strategy strategy, PropertyDegrees winddirection) {
         if (boat.isPortTackingQuadrant(strategy.getSailToLocation(false), winddirection)) {

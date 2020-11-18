@@ -32,6 +32,7 @@ import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.D
 import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -52,8 +53,9 @@ public class SailingStrategyTest {
         WindFlow windflow = sketch.getWindFlow();
         WaterFlow waterflow = sketch.getWaterFlow();
         winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
-        Decision decision = boat.getDecision();
-        boat.getStrategy(windflow, waterflow).strategyTimeInterval(boat, decision, sketch, windflow, waterflow);
+        CurrentLeg leg = new CurrentLeg(sketch.getCourse());
+        Decision decision = leg.getDecision();
+        leg.getStrategy(boat, windflow, waterflow).strategyTimeInterval(boat, decision, leg, sketch, windflow, waterflow);
         return decision;
     }
 

@@ -36,14 +36,14 @@ public class WindwardStrategy extends Strategy {
     private PropertyDegrees portoffsetangle;
     private PropertyDegrees starboardoffsetangle;
     private double offset;
-    
+
     public WindwardStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
         super(leg);
         //
         offset = boat.metrics.getWidth() * 2;
         PropertyDegrees winddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees relative = boat.metrics.upwindrelative;
-        if (leg.isPortRounding()){
+        if (leg.isPortRounding()) {
             portoffsetangle = winddirection.plus(90).plus(relative);
             starboardoffsetangle = winddirection.plus(90).sub(relative);
         } else {
@@ -84,24 +84,24 @@ public class WindwardStrategy extends Strategy {
     }
 
     @Override
-    String strategyTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
-        return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+        return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
     }
 
-    boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
+    private boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
         Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
-    
+
     @Override
     PropertyDistanceVector getOffsetVector(boolean onPort) {
         return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);

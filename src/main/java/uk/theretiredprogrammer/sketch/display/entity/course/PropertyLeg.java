@@ -52,8 +52,6 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
     private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
 
     ObservableList<String> marknames;
-
-    //
     private PropertyLocation startfrom;
     private PropertyLocation endat;
     private Marks marks;

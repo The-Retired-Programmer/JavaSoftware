@@ -36,13 +36,13 @@ public class TurnTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        decision = boat.getDecision();
+        decision = boat.getCurrentLeg().getDecision();
         return boat;
     }
 
     Boat getUptospeed(int seconds) throws IOException {
         while (seconds > 0) {
-            decision.setSAILON();
+            decision.setSAILON(boat.getDirection());
             boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
             seconds--;
         }

@@ -22,11 +22,12 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         PropertyDegrees boatangletowind = boat.getDirection().absDegreesDiff(winddirection);
         PropertyDegrees meanwinddirection = windflow.getMeanFlowAngle();

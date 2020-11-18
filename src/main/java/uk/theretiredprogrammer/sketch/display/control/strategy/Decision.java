@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class Decision {
 
     public static final boolean PORT = true;
@@ -31,25 +26,12 @@ public class Decision {
         SAILON, STOP, MARKROUNDING, TURN
     }
 
-    private final Boat boat;
-
     private DecisionAction action = DecisionAction.SAILON;
-    private PropertyDegrees degrees = null;
+    private PropertyDegrees degrees = new PropertyDegrees(0);
     private boolean turndirection = STARBOARD;
 
-    public Decision(Boat boat) {
-        this.boat = boat;
-    }
-    
-    public Decision(Boat boat, Decision clonefrom) {
-        this.boat = boat;
-        this.action = clonefrom.action;
-        this.degrees = clonefrom.degrees;
-        this.turndirection = clonefrom.turndirection;
-    }
-
-    public void setSAILON() {
-        set(DecisionAction.SAILON, null, STARBOARD);
+    public void setSAILON(PropertyDegrees currentdirection) {
+        set(DecisionAction.SAILON, currentdirection, STARBOARD);
     }
 
     public void setTURN(PropertyDegrees degrees, boolean turndirection) {
@@ -60,13 +42,13 @@ public class Decision {
         set(DecisionAction.MARKROUNDING, degrees, turndirection);
     }
 
-    public void setSTOP() {
-        set(DecisionAction.STOP, null, STARBOARD);
+    public void setSTOP(PropertyDegrees currentdirection) {
+        set(DecisionAction.STOP, currentdirection, STARBOARD);
     }
 
     private void set(DecisionAction action, PropertyDegrees degrees, boolean turndirection) {
         this.action = action;
-        this.degrees = degrees;
+        this.degrees.set(degrees);
         this.turndirection = turndirection;
     }
 
@@ -74,16 +56,12 @@ public class Decision {
         return action;
     }
 
-    private boolean isRotating() {
-        return action.equals(DecisionAction.TURN) || action.equals(DecisionAction.MARKROUNDING);
-    }
-
     public PropertyDegrees getDegreesProperty() {
-        return isRotating() ? degrees : boat.getDirection();
+        return degrees;
     }
 
     public double getDegrees() {
-        return getDegreesProperty().get();
+        return degrees.get();
     }
 
     public boolean isPort() {

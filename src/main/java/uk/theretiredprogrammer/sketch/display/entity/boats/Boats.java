@@ -51,9 +51,10 @@ public class Boats extends ModelNamedList<Boat> {
 
     public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         stream().forEach(boat -> {
-            Strategy newstrategy = boat.getStrategy(windflow, waterflow).nextTimeInterval(boat, sketchproperty, simulationtime, timerlog, windflow, waterflow);
+            CurrentLeg leg = boat.getCurrentLeg();
+            Strategy newstrategy = leg.getStrategy(boat, windflow, waterflow).nextTimeInterval(boat, sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {
-                boat.setStrategy(newstrategy);
+                leg.setStrategy(newstrategy);
             }
         });
     }

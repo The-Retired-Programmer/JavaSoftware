@@ -21,6 +21,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 class OffwindPortRoundingDecisions extends RoundingDecisions {
 
@@ -32,7 +33,7 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (atPortRoundingTurnPoint(boat, strategy)) {
             return executePortRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);

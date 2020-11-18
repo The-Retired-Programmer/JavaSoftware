@@ -85,22 +85,22 @@ public class GybingDownwindStrategy extends Strategy {
     }
 
     @Override
-    String strategyTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
         if (isNear2Mark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
-        return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(boat, decision, sketchproperty, this, windflow, waterflow);
+        return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
     }
 
-    boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
+    private boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
         Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(180).get());
-        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getWidth() * 20 : true;
+        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
 
     @Override
