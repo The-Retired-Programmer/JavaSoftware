@@ -20,7 +20,7 @@ import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -52,7 +52,7 @@ public class Boats extends ModelNamedList<Boat> {
     public void timerAdvance(SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
         stream().forEach(boat -> {
             CurrentLeg leg = boat.getCurrentLeg();
-            Strategy newstrategy = leg.getStrategy(boat, windflow, waterflow).nextTimeInterval(boat, sketchproperty, simulationtime, timerlog, windflow, waterflow);
+            Strategy newstrategy = leg.nextTimeInterval(boat, sketchproperty, simulationtime, timerlog, windflow, waterflow);
             if (newstrategy != null) {
                 leg.setStrategy(newstrategy);
             }

@@ -15,8 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import java.util.Optional;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
@@ -26,6 +26,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg.LegType;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 public class GybingDownwindStrategy extends Strategy {
 
@@ -38,8 +39,6 @@ public class GybingDownwindStrategy extends Strategy {
     private double offset;
 
     public GybingDownwindStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
-        super(leg);
-        //
         offset = boat.metrics.getWidth() * 2;
         PropertyDegrees winddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees relative = boat.metrics.downwindrelative;
@@ -50,7 +49,6 @@ public class GybingDownwindStrategy extends Strategy {
             portoffsetangle = winddirection.sub(90).plus(relative);
             starboardoffsetangle = winddirection.sub(90).sub(relative);
         }
-        //
         portdecisions = new GybingDownwindPortSailingDecisions();
         starboarddecisions = new GybingDownwindStarboardSailingDecisions();
         LegType followinglegtype = PropertyLeg.getLegType(boat.metrics, leg.getAngleofFollowingLeg(), windflow, boat.isReachdownwind());
@@ -74,7 +72,6 @@ public class GybingDownwindStrategy extends Strategy {
     }
 
     public GybingDownwindStrategy(GybingDownwindStrategy clonefrom, Boat newboat) {
-        super(clonefrom);
         this.portdecisions = clonefrom.portdecisions;
         this.starboarddecisions = clonefrom.starboarddecisions;
         this.roundingdecisions = clonefrom.roundingdecisions;
@@ -85,26 +82,21 @@ public class GybingDownwindStrategy extends Strategy {
     }
 
     @Override
-    String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+    public String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
-        if (isNear2Mark(boat, markMeanwinddirection)) {
+        if (leg.isNear2LeewardMark(boat, markMeanwinddirection)) {
             useroundingdecisions = true;
             return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
         }
         return (boat.isPort(winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
     }
 
-    private boolean isNear2Mark(Boat boat, PropertyDegrees markMeanwinddirection) {
-        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), leg.getEndLocation(), markMeanwinddirection.sub(180).get());
-        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
-    }
-
     @Override
-    PropertyDistanceVector getOffsetVector(boolean onPort) {
+    public PropertyDistanceVector getOffsetVector(boolean onPort) {
         return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
     }
 }

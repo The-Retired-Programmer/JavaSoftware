@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.io.IOException;
 import java.util.Arrays;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -26,10 +27,10 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.STOP;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.TURN;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.MARKROUNDING;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.STOP;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;

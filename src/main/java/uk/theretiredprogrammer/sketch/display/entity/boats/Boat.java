@@ -39,9 +39,9 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.MARKROUNDING;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.MARKROUNDING;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 
 public abstract class Boat extends ModelMap {

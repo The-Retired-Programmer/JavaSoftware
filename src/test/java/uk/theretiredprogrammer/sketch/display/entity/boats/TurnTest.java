@@ -19,8 +19,8 @@ import java.io.IOException;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.DecisionAction.SAILON;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 

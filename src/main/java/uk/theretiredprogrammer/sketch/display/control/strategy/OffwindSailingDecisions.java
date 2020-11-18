@@ -15,12 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 class OffwindSailingDecisions extends SailingDecisions {
 
@@ -28,7 +30,7 @@ class OffwindSailingDecisions extends SailingDecisions {
     String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         boolean onPort = boat.isPort(winddirection);
-        PropertyDegrees nextDirection = strategy.getPropertyDegreestoSail(boat.getLocation(), onPort);
+        PropertyDegrees nextDirection = leg.getAngletoSail(boat.getLocation(), onPort);
         if (nextDirection.neq(boat.getDirection())) {
             decision.setTURN(nextDirection, boat.getDirection().gt(nextDirection));
             return "Adjust direction to sailin directly to mark (offwind sailing)";

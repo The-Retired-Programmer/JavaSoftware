@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -22,11 +23,8 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 class OffwindStarboardRoundingDecisions extends RoundingDecisions {
 
     private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
@@ -39,10 +37,10 @@ class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     @Override
     final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
-        if (atStarboardRoundingTurnPoint(boat, strategy)) {
+        if (atStarboardRoundingTurnPoint(boat, leg)) {
             return executeStarboardRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, decision, strategy, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(boat, decision, leg, strategy, winddirection);
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

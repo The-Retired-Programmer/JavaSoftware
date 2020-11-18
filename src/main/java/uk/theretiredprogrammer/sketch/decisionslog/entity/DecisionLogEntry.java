@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 
 public class DecisionLogEntry extends TimerLogEntry {
 

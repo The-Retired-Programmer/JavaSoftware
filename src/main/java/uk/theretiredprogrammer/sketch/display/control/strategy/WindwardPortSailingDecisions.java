@@ -15,14 +15,16 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 class WindwardPortSailingDecisions extends SailingDecisions {
 
@@ -31,15 +33,15 @@ class WindwardPortSailingDecisions extends SailingDecisions {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         PropertyDegrees meanwinddirection = windflow.getMeanFlowAngle();
         PropertyDegrees boatangletowind = boat.getDirection().absDegreesDiff(winddirection);
-        if (tackifonstarboardlayline(boat, decision, strategy, winddirection)) {
+        if (tackifonstarboardlayline(boat, decision, leg, strategy, winddirection)) {
             return "tacking on starboard layline - port->starboard";
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(boat, decision, strategy, winddirection)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(boat, decision, leg, strategy, winddirection)) {
             return "Beating on Port Layline to windward mark - course adjustment";
         }
         // stay in channel
         if (boat.upwindchannel != null) {
-            if (strategy.getDistanceToMark(boat.getLocation()) > boat.upwindchannel.getInneroffset(strategy.getMarkLocation()) * 1.5) {
+            if (leg.getDistanceToMark(boat.getLocation()) > boat.upwindchannel.getInneroffset(leg.getMarkLocation()) * 1.5) {
                 if (!boat.upwindchannel.isInchannel(boat.getLocation())) {
                     decision.setTURN(boat.getStarboardCloseHauledCourse(winddirection), PORT);
                     return "Tacking onto starboard to stay within channel";

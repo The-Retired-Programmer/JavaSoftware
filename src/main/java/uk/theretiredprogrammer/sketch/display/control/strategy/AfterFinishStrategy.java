@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
@@ -22,16 +23,13 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
-class AfterFinishStrategy extends Strategy {
-
-    AfterFinishStrategy(Boat boat, CurrentLeg previousleg) {
-        super(previousleg);
-    }
+public class AfterFinishStrategy extends Strategy {
 
     @Override
-    String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        double fromfinishmark = boat.getLocation().to(leg.getEndLocation());
+    public String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
+        double fromfinishmark = boat.getLocation().to(leg.getMarkLocation());
         if (fromfinishmark > boat.metrics.getLength() * 5) {
             decision.setSTOP(boat.getDirection());
             return "Stopping at end of course";
@@ -42,7 +40,7 @@ class AfterFinishStrategy extends Strategy {
     }
 
     @Override
-    PropertyDistanceVector getOffsetVector(boolean onPort) {
+    public PropertyDistanceVector getOffsetVector(boolean onPort) {
         throw new IllegalStateFailure("attempting to getOffsetVector on the afterFinish leg");
     }
 

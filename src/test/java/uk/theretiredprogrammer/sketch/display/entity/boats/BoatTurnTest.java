@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 
 public class BoatTurnTest extends TurnTest {
 

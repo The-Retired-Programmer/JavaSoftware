@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;

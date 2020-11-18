@@ -15,11 +15,17 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
+import java.util.Optional;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Decision;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
+import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
+import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
+import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
+import uk.theretiredprogrammer.sketch.display.control.strategy.AfterFinishStrategy;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
@@ -35,11 +41,11 @@ public class CurrentLeg {
     public CurrentLeg(Course course) {
         this(course, 0);
     }
-    
+
     public CurrentLeg(CurrentLeg clonefrom) {
         this(clonefrom.course, clonefrom.legno);
     }
-        
+
     private CurrentLeg(Course course, int legno) {
         this.decision = new Decision();
         this.course = course;
@@ -47,7 +53,7 @@ public class CurrentLeg {
         currentleg = course.getLeg(legno);
         course.setOnChange(() -> refresh());
     }
-    
+
     private void refresh() {
         currentleg = course.getLeg(legno);
     }
@@ -55,9 +61,9 @@ public class CurrentLeg {
     public Decision getDecision() {
         return decision;
     }
-    
+
     public Strategy getStrategy(Boat boat, WindFlow windflow, WaterFlow waterflow) {
-        if (strategy == null){
+        if (strategy == null) {
             strategy = PropertyLeg.get(boat, this, windflow, waterflow);
         }
         return strategy;
@@ -89,11 +95,11 @@ public class CurrentLeg {
         return currentleg.isPortRounding();
     }
 
-    public double getDistanceToEnd(PropertyLocation here) {
+    public double getDistanceToMark(PropertyLocation here) {
         return currentleg.getDistanceToEnd(here);
     }
 
-    public PropertyLocation getEndLocation() {
+    public PropertyLocation getMarkLocation() {
         return currentleg.getEndLocation();
     }
 
@@ -104,4 +110,40 @@ public class CurrentLeg {
     public PropertyDegrees getAngleofLeg() {
         return currentleg.getAngleofLeg();
     }
+
+    public PropertyLocation getSailToLocation(boolean onPort) {
+        return strategy.getOffsetVector(onPort)
+                .toLocation(getMarkLocation());
+    }
+
+    public PropertyDegrees getAngletoSail(PropertyLocation here, boolean onPort) {
+        return here.angleto(getSailToLocation(onPort));
+    }
+
+    public Strategy nextTimeInterval(Boat boat, SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+        if (decision.getAction() == SAILON) {
+            String reason = getStrategy(boat, windflow, waterflow).strategyTimeInterval(boat, decision, this, sketchproperty, windflow, waterflow);
+            timerlog.add(new BoatLogEntry(boat));
+            timerlog.add(new DecisionLogEntry(boat.getName(), decision));
+            timerlog.add(new ReasonLogEntry(boat.getName(), reason));
+        }
+        if (boat.moveUsingDecision(windflow, waterflow, decision)) {
+            return isFollowingLeg()
+                    ? PropertyLeg.get(boat, toFollowingLeg(), windflow, waterflow)
+                    : new AfterFinishStrategy();
+        }
+        return null;
+    }
+
+    public boolean isNear2WindwardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
+        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.get());
+        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
+    }
+    
+    
+    public boolean isNear2LeewardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
+        Optional<Double> refdistance = PropertyLeg.getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.sub(180).get());
+        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
+    }
+    
 }

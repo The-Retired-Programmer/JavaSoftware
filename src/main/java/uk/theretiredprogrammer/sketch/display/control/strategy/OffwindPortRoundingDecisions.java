@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
@@ -22,6 +23,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 class OffwindPortRoundingDecisions extends RoundingDecisions {
 
@@ -35,10 +37,10 @@ class OffwindPortRoundingDecisions extends RoundingDecisions {
     @Override
     final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
-        if (atPortRoundingTurnPoint(boat, strategy)) {
+        if (atPortRoundingTurnPoint(boat, leg)) {
             return executePortRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
         }
-        adjustDirectCourseToDownwindMarkOffset(boat, decision, strategy, winddirection);
+        adjustDirectCourseToDownwindMarkOffset(boat, decision, leg, strategy, winddirection);
         return "course adjustment - approaching mark - port rounding";
     }
 }

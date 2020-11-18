@@ -32,7 +32,6 @@ import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStrategy;
 import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.Strategy;
 import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStrategy;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;

@@ -15,11 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
+import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 /**
  *
@@ -27,12 +30,12 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
  */
 abstract class RoundingDecisions extends SailingDecisions {
 
-    final boolean atPortRoundingTurnPoint(Boat boat, Strategy strategy) {
-        return boat.isPortRear90Quadrant(strategy.getMarkLocation());
+    final boolean atPortRoundingTurnPoint(Boat boat, CurrentLeg leg) {
+        return boat.isPortRear90Quadrant(leg.getMarkLocation());
     }
 
-    final boolean atStarboardRoundingTurnPoint(Boat boat, Strategy strategy) {
-        return boat.isStarboardRear90Quadrant(strategy.getMarkLocation());
+    final boolean atStarboardRoundingTurnPoint(Boat boat, CurrentLeg leg) {
+        return boat.isStarboardRear90Quadrant(leg.getMarkLocation());
     }
 
     final String executePortRounding(Boat boat, Decision decision, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn, PropertyDegrees winddirection, Strategy strategy) {

@@ -15,31 +15,33 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.PORT;
-import static uk.theretiredprogrammer.sketch.display.control.strategy.Decision.STARBOARD;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    public String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         PropertyDegrees boatangletowind = boat.getDirection().absDegreesDiff(winddirection);
         PropertyDegrees meanwinddirection = windflow.getMeanFlowAngle();
         // check if need to gybe for mark
-        if (gybeifonportlayline(boat, decision, strategy, winddirection)) {
+        if (gybeifonportlayline(boat, decision, leg, strategy, winddirection)) {
             return "Gybing onto port layline";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, decision, strategy, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, decision, leg, strategy, winddirection)) {
             return "Reaching on starboard Layline to leeward mark - course adjustment";
         }
         if (boat.downwindchannel != null) {
-            if (strategy.getDistanceToMark(boat.getLocation()) > boat.downwindchannel.getInneroffset(strategy.getMarkLocation()) * 1.5) {
+            if (leg.getDistanceToMark(boat.getLocation()) > boat.downwindchannel.getInneroffset(leg.getMarkLocation()) * 1.5) {
                 if (!boat.downwindchannel.isInchannel(boat.getLocation())) {
                     decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
                     return "Gybing onto port to stay in channel";
