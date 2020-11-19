@@ -30,9 +30,9 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-abstract class SailingDecisions {
+public abstract class SailingDecisions {
 
-    abstract String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow);
+    public abstract String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow);
 
     boolean tackifonstarboardlayline(Boat boat, Decision decision, CurrentLeg leg, Strategy strategy, PropertyDegrees winddirection) {
         if (boat.isPortTackingQuadrant(leg.getSailToLocation(false), winddirection)) {

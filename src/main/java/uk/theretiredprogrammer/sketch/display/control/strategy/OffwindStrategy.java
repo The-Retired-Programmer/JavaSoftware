@@ -20,7 +20,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -32,24 +31,13 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 public class OffwindStrategy extends Strategy {
 
-    private final OffwindSailingDecisions decisions;
-    private final RoundingDecisions roundingdecisions;
-    private boolean useroundingdecisions = false;
-    private PropertyDegrees portoffsetangle;
-    private PropertyDegrees starboardoffsetangle;
-    private double offset;
-
     public OffwindStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
-        offset = boat.metrics.getWidth() * 2;
         if (leg.isPortRounding()) {
-            portoffsetangle = leg.getAngleofLeg().plus(90);
-            starboardoffsetangle = leg.getAngleofLeg().plus(90);
+            this.setMarkOffset(boat.metrics.getWidth() * 2, leg.getAngleofLeg().plus(90), leg.getAngleofLeg().plus(90));
         } else {
-            portoffsetangle = leg.getAngleofLeg().sub(90);
-            starboardoffsetangle = leg.getAngleofLeg().sub(90);
+            this.setMarkOffset(boat.metrics.getWidth() * 2, leg.getAngleofLeg().sub(90), leg.getAngleofLeg().sub(90));
         }
-
-        decisions = new OffwindSailingDecisions();
+        RoundingDecisions roundingdecisions;
         LegType followinglegtype = CurrentLeg.getLegType(boat.metrics, leg.getAngleofFollowingLeg(), windflow, boat.isReachdownwind());
         switch (followinglegtype) {
             case WINDWARD ->
@@ -72,32 +60,10 @@ public class OffwindStrategy extends Strategy {
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported LEGTYPE combination: Offwind to "
                         + followinglegtype.toString());
         }
+        this.setDecisions(new OffwindSailingDecisions(), new OffwindSailingDecisions(), roundingdecisions);
     }
 
-    public OffwindStrategy(OffwindStrategy clonefrom, Boat newboat) {
-        this.decisions = clonefrom.decisions;
-        this.roundingdecisions = clonefrom.roundingdecisions;
-        this.useroundingdecisions = clonefrom.useroundingdecisions;
-        this.offset = clonefrom.offset;
-        this.portoffsetangle = clonefrom.portoffsetangle;
-        this.starboardoffsetangle = clonefrom.starboardoffsetangle;
-    }
-
-    @Override
-    public String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees markMeanwinddirection = leg.endLegMeanwinddirection(windflow);
-        if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
-        }
-        if (leg.isNear2LeewardMark(boat, markMeanwinddirection)) {
-            useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
-        }
-        return decisions.nextTimeInterval(boat, decision, sketchproperty, leg, this, windflow, waterflow);
-    }
-
-    @Override
-    public PropertyDistanceVector getOffsetVector(boolean onPort) {
-        return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
+    public OffwindStrategy(OffwindStrategy clonefrom) {
+        super(clonefrom);
     }
 }

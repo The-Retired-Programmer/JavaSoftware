@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 class WindwardPortSailingDecisions extends SailingDecisions {
 
     @Override
-    String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
+    public String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
         PropertyDegrees winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
         PropertyDegrees meanwinddirection = windflow.getMeanFlowAngle();
         PropertyDegrees boatangletowind = boat.getDirection().absDegreesDiff(winddirection);

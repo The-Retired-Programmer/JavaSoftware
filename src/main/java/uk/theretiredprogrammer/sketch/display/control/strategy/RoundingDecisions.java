@@ -28,7 +28,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
  *
  * @author Richard Linsdale (richard at theretiredprogrammer.uk)
  */
-abstract class RoundingDecisions extends SailingDecisions {
+public abstract class RoundingDecisions extends SailingDecisions {
 
     final boolean atPortRoundingTurnPoint(Boat boat, CurrentLeg leg) {
         return boat.isPortRear90Quadrant(leg.getMarkLocation());

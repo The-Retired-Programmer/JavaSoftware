@@ -82,11 +82,11 @@ public class CurrentLeg {
 
     public static Strategy get(Strategy clonefrom, Boat boat) {
         if (clonefrom instanceof WindwardStrategy windwardstrategy) {
-            return new WindwardStrategy(windwardstrategy, boat);
+            return new WindwardStrategy(windwardstrategy);
         } else if (clonefrom instanceof OffwindStrategy offwindstrategy) {
-            return new OffwindStrategy(offwindstrategy, boat);
+            return new OffwindStrategy(offwindstrategy);
         } else if (clonefrom instanceof GybingDownwindStrategy gybingdownwindstrategy) {
-            return new GybingDownwindStrategy(gybingdownwindstrategy, boat);
+            return new GybingDownwindStrategy(gybingdownwindstrategy);
         } else {
             throw new IllegalStateFailure("Illegal/unknown Strategy");
         }
