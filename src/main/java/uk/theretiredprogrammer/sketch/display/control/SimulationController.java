@@ -33,11 +33,9 @@ public class SimulationController implements Runnable {
     private boolean isRunning = false;
     private final ScheduledExecutorService scheduler;
     private ScheduledFuture<?> ticker;
-    private final SketchModel sketchproperty;
     private final DisplayController controller;
 
-    public SimulationController(DisplayController controller, SketchModel sketchproperty) {
-        this.sketchproperty = sketchproperty;
+    public SimulationController(DisplayController controller) {
         this.controller = controller;
         scheduler = Executors.newScheduledThreadPool(1);
     }
@@ -48,10 +46,11 @@ public class SimulationController implements Runnable {
     }
 
     public void start() {
+        SketchModel model = controller.getModel();
         if (isRunning) {
             return;
         }
-        int rate = (int) (sketchproperty.getDisplay().getSecondsperdisplay() * 1000 / sketchproperty.getDisplay().getSpeedup());
+        int rate = (int) (model.getDisplay().getSecondsperdisplay() * 1000 / model.getDisplay().getSpeedup());
         ticker = scheduler.scheduleAtFixedRate(this, rate, rate, TimeUnit.MILLISECONDS);
         isRunning = true;
     }
@@ -68,14 +67,14 @@ public class SimulationController implements Runnable {
     public void run() {
         new ExecuteAndCatch().setExceptionHandler(() -> stop())
                 .run(() -> {
-                    int secondsperdisplay = sketchproperty.getDisplay().getSecondsperdisplay();
+                    SketchModel model = controller.getModel();
+                    int secondsperdisplay = model.getDisplay().getSecondsperdisplay();
                     while (secondsperdisplay > 0) {
                         DecisionController decisioncontroller = controller.getDecisionController();
                         decisioncontroller.setTime(simulationtime);
-                        controller.windflow.timerAdvance(simulationtime, decisioncontroller);
-                        controller.waterflow.timerAdvance(simulationtime, decisioncontroller);
-                        controller.boats.timerAdvance(sketchproperty, simulationtime, decisioncontroller,
-                                controller.windflow, controller.waterflow);
+                        model.getWindFlow().timerAdvance(simulationtime, decisioncontroller);
+                        model.getWaterFlow().timerAdvance(simulationtime, decisioncontroller);
+                        model.getBoats().timerAdvance(model, simulationtime, decisioncontroller);
                         secondsperdisplay--;
                         simulationtime++;
                     }

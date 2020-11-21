@@ -15,50 +15,43 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
-class GybingDownwindPortRoundingDecisions extends RoundingDecisions {
+public class GybingDownwindPortRoundingDecisions extends RoundingDecisions {
 
     private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
 
-    GybingDownwindPortRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+    public GybingDownwindPortRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
-    public final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getMeanFlowAngle(boat.getLocation());
-        if (boat.isPort(winddirection)) {
-            if (atPortRoundingTurnPoint(boat, leg)) {
-                return executePortRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
+    public final String nextTimeInterval(Params params) {
+        if (params.boat.isPort(params.winddirection)) {
+            if (atPortRoundingTurnPoint(params.boat, params.leg)) {
+                return executePortRounding(params, getDirectionAfterTurn);
             }
-            if (adjustPortDirectCourseToLeewardMarkOffset(boat, decision, leg, strategy, winddirection)) {
+            if (adjustPortDirectCourseToLeewardMarkOffset(params)) {
                 return "course adjustment - approaching mark - port tack - port rounding";
             }
-            if (gybeifonstarboardlayline(boat, decision, leg, strategy, winddirection)) {
+            if (gybeifonstarboardlayline(params)) {
                 return "gybing on starboard layline - port->starboard";
             }
-            decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+            params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), PORT);
             return "course adjustment - luff up to hold port reaching - port tack - port rounding";
         }
-        if (boat.isPortRear90Quadrant(leg.getMarkLocation())) {
-            decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+        if (params.boat.isPortRear90Quadrant(params.leg.getMarkLocation())) {
+            params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), PORT);
             return "pre markrounding action - gybe to port - starboard tack - port rounding";
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, decision, leg, strategy, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(params)) {
             return "course adjustment - approaching mark - starboard tack - port rounding";
         }
-        decision.setTURN(boat.getStarboardReachingCourse(winddirection), STARBOARD);
+        params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
         return "course adjustment - luff up to hold starboard reaching - starboard tack - port rounding";
     }
 }

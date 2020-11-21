@@ -30,7 +30,6 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 public class WindwardStrategy extends Strategy {
 
     public WindwardStrategy(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
-        this.setIsWindwardLeg();
         PropertyDegrees winddirection = leg.endLegMeanwinddirection(windflow);
         PropertyDegrees relative = boat.metrics.upwindrelative;
         if (leg.isPortRounding()) {

@@ -15,26 +15,21 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 
 public class AfterFinishStrategy extends Strategy {
 
     @Override
-    public String strategyTimeInterval(Boat boat, Decision decision, CurrentLeg leg, SketchModel sketchproperty, WindFlow windflow, WaterFlow waterflow) {
-        double fromfinishmark = boat.getLocation().to(leg.getMarkLocation());
-        if (fromfinishmark > boat.metrics.getLength() * 5) {
-            decision.setSTOP(boat.getDirection());
+    public String strategyTimeInterval(Params params) {
+        double fromfinishmark = params.boat.getLocation().to(params.leg.getMarkLocation());
+        if (fromfinishmark > params.boat.metrics.getLength() * 5) {
+            params.decision.setSTOP(params.boat.getDirection());
             return "Stopping at end of course";
         } else {
-            decision.setSAILON(boat.getDirection());
+            params.decision.setSAILON(params.boat.getDirection());
             return "Sail ON";
         }
     }

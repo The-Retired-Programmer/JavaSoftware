@@ -43,6 +43,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public abstract class Boat extends ModelMap {
 
@@ -321,10 +322,10 @@ public abstract class Boat extends ModelMap {
         return getLocation().angleto(location).between(min, max);
     }
 
-    public boolean moveUsingDecision(WindFlow windflow, WaterFlow waterflow, Decision decision) {
-        PropertySpeedVector windpolar = windflow.getFlow(getLocation());
-        PropertySpeedVector waterpolar = waterflow.getFlow(getLocation());
-        switch (decision.getAction()) {
+    public boolean moveUsingDecision(Params params) {
+        PropertySpeedVector windpolar = params.windflow.getFlow(getLocation());
+        PropertySpeedVector waterpolar = params.waterflow.getFlow(getLocation());
+        switch (params.decision.getAction()) {
             case SAILON -> {
                 moveBoat(heading, windpolar, waterpolar);
                 return false;
@@ -333,10 +334,10 @@ public abstract class Boat extends ModelMap {
                 return false;
             }
             case MARKROUNDING -> {
-                return turn(decision, windpolar, waterpolar);
+                return turn(params.decision, windpolar, waterpolar);
             }
             case TURN -> {
-                turn(decision, windpolar, waterpolar);
+                turn(params.decision, windpolar, waterpolar);
                 return false;
             }
             default ->

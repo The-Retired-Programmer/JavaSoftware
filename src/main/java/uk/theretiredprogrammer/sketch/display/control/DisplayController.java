@@ -27,10 +27,6 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
-import uk.theretiredprogrammer.sketch.display.entity.course.Course;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
@@ -42,25 +38,18 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     private DecisionController decisioncontroller;
     private FileSelectorController fileselectorcontroller;
     private SimulationController simulationcontroller;
-    //
-    public WindFlow windflow;
-    public WaterFlow waterflow;
-    public Course course;
-    public Boats boats;
     private DisplayPane displaygroup;
 
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
         propertiescontroller = new PropertiesController(pn);
-        createDisplayEntities();
         decisioncontroller = new DecisionController(pn.toString(), false);
-        simulationcontroller = new SimulationController(this, getProperty());
+        simulationcontroller = new SimulationController(this);
         showDisplayWindow(pn.toString());
     }
 
     public DisplayController(String resourcename) {
         propertiescontroller = new PropertiesController(resourcename);
-        createDisplayEntities();
     }
 
     public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
@@ -70,18 +59,9 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         showDisplayWindow(fn);
     }
 
-    private void createDisplayEntities() {
-        SketchModel sketchproperty = propertiescontroller.getProperty();
-        windflow = sketchproperty.getWindFlow();
-        waterflow = sketchproperty.getWaterFlow();
-        course = sketchproperty.getCourse();
-        boats = sketchproperty.getBoats();
-        //boatstrategies = new BoatStrategies(sketchproperty, course, boats, windflow, waterflow);
-    }
-
     private void showDisplayWindow(String fn) {
         displaygroup = new DisplayPane(this);
-        setWindow(new DisplayWindow(fn, this, this.getProperty(), displaygroup));
+        setWindow(new DisplayWindow(fn, this, this.getModel(), displaygroup));
         propertiescontroller.getProperty().setOnChange(() -> refreshrepaint());
     }
 
@@ -112,15 +92,14 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         resetObjectProperties();
     }
 
-    public final SketchModel getProperty() {
+    public final SketchModel getModel() {
         return propertiescontroller.getProperty();
     }
 
     public void save(DisplayController controller, String fn) {
         Path path = Path.of(fn);
-        JsonObject jobj = controller.getProperty().toJson();
+        JsonObject jobj = controller.getModel().toJson();
         if (path != null) {
-            //Files.move(path, path.resolveSibling(path.getFileName() + ".v" + fromversion));
             try ( JsonWriter jsonWriter = Json.createWriter(Files.newOutputStream(path))) {
                 jsonWriter.write(jobj);
             } catch (IOException ex) {
@@ -156,7 +135,6 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     }
 
     public void refreshrepaint() {
-        //createDisplayEntities();
         displaygroup.refreshParameters();
     }
 

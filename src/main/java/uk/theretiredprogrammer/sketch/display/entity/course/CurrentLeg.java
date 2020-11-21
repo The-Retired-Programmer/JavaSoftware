@@ -24,11 +24,6 @@ import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
-import uk.theretiredprogrammer.sketch.display.control.strategy.AfterFinishStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStrategy;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
@@ -36,7 +31,6 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.Le
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.OFFWIND;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.WINDWARD;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class CurrentLeg {
@@ -45,7 +39,7 @@ public class CurrentLeg {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
+    public static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
         return getRefDistance(location, marklocation, refangle.get());
     }
 
@@ -80,33 +74,20 @@ public class CurrentLeg {
         return distancetomark * Math.cos(refangle2mark.getRadians());
     }
 
-    public static Strategy get(Strategy clonefrom, Boat boat) {
-        if (clonefrom instanceof WindwardStrategy windwardstrategy) {
-            return new WindwardStrategy(windwardstrategy);
-        } else if (clonefrom instanceof OffwindStrategy offwindstrategy) {
-            return new OffwindStrategy(offwindstrategy);
-        } else if (clonefrom instanceof GybingDownwindStrategy gybingdownwindstrategy) {
-            return new GybingDownwindStrategy(gybingdownwindstrategy);
-        } else {
-            throw new IllegalStateFailure("Illegal/unknown Strategy");
-        }
+    public static Strategy get(Strategy clonefrom) {
+        return new Strategy(clonefrom);
     }
 
-    public static Strategy get(Boat boat, CurrentLeg leg, WindFlow windflow, WaterFlow waterflow) {
-        LegType legtype = getLegType(boat.metrics, leg.getAngleofLeg(), windflow, boat.isReachdownwind());
+    public static Strategy get(Params params, CurrentLeg leg) {
+        Strategy strategy = new Strategy();
+        LegType legtype = getLegType(params.boat.metrics, leg.getAngleofLeg(), params.windflow, params.boat.isReachdownwind());
         switch (legtype) {
-            case WINDWARD -> {
-                return new WindwardStrategy(boat, leg, windflow, waterflow);
-            }
-            case OFFWIND -> {
-                return new OffwindStrategy(boat, leg, windflow, waterflow);
-            }
-            case GYBINGDOWNWIND -> {
-                return new GybingDownwindStrategy(boat, leg, windflow, waterflow);
-            }
-            default ->
-                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
+            case WINDWARD -> strategy.setWindwardStrategy(params);
+            case OFFWIND -> strategy.setOffwindStrategy(params);
+            case GYBINGDOWNWIND -> strategy.setGybingDownwindStrategy(params);
+            default -> throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
         }
+        return strategy;
     }
 
     private int legno = 0;
@@ -140,9 +121,9 @@ public class CurrentLeg {
         return decision;
     }
 
-    public Strategy getStrategy(Boat boat, WindFlow windflow, WaterFlow waterflow) {
+    public Strategy getStrategy(Params params) {
         if (strategy == null) {
-            strategy = get(boat, this, windflow, waterflow);
+            strategy = get(params, this);
         }
         return strategy;
     }
@@ -198,19 +179,25 @@ public class CurrentLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    public Strategy nextTimeInterval(Boat boat, SketchModel sketchproperty, int simulationtime, DecisionController timerlog, WindFlow windflow, WaterFlow waterflow) {
+    public Strategy nextTimeInterval(Params params, int simulationtime, DecisionController timerlog) {
         if (decision.getAction() == SAILON) {
-            String reason = getStrategy(boat, windflow, waterflow).strategyTimeInterval(boat, decision, this, sketchproperty, windflow, waterflow);
-            timerlog.add(new BoatLogEntry(boat));
-            timerlog.add(new DecisionLogEntry(boat.getName(), decision));
-            timerlog.add(new ReasonLogEntry(boat.getName(), reason));
+            String reason = getStrategy(params).strategyTimeInterval(params);
+            timerlog.add(new BoatLogEntry(params.boat));
+            timerlog.add(new DecisionLogEntry(params.boat.getName(), decision));
+            timerlog.add(new ReasonLogEntry(params.boat.getName(), reason));
         }
-        if (boat.moveUsingDecision(windflow, waterflow, decision)) {
+        if (params.boat.moveUsingDecision(params)) {
             return isFollowingLeg()
-                    ? get(boat, toFollowingLeg(), windflow, waterflow)
-                    : new AfterFinishStrategy();
+                    ? get(params, toFollowingLeg())
+                    : getAfterFinishingStrategy(params);
         }
         return null;
+    }
+    
+    private Strategy getAfterFinishingStrategy(Params params) {
+        Strategy newstrategy = new Strategy();
+        newstrategy.setAfterFinishStrategy(params);
+        return newstrategy;
     }
 
     public boolean isNear2WindwardMark(Boat boat, PropertyDegrees markMeanwinddirection) {

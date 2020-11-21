@@ -34,42 +34,36 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Deci
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class SailingStrategyTest {
 
-    private Boat boat;
     private DisplayController controller;
-    private PropertyDegrees winddirection;
+    private Params params;
 
     public Decision makeDecision(String filename, Runnable... updateproperties) throws IOException {
         controller = new DisplayController(filename);
-        boat = controller.boats.get("Red");
+        SketchModel model = controller.getModel();
+        Boat boat = model.getBoats().get("Red");
+        params = new Params(model, boat);
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        SketchModel sketch = controller.getProperty();
-        WindFlow windflow = sketch.getWindFlow();
-        WaterFlow waterflow = sketch.getWaterFlow();
-        winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
-        CurrentLeg leg = new CurrentLeg(sketch.getCourse());
-        Decision decision = leg.getDecision();
-        leg.getStrategy(boat, windflow, waterflow).strategyTimeInterval(boat, decision, leg, sketch, windflow, waterflow);
-        return decision;
+        params.leg.getStrategy(params).strategyTimeInterval(params);
+        return params.decision;
     }
 
     void setboatdirection(double degrees) {
-        boat.setDirection(new PropertyDegrees(degrees));
+        params.boat.setDirection(new PropertyDegrees(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        boat.setLocation(new PropertyLocation(x, y));
+        params.boat.setLocation(new PropertyLocation(x, y));
     }
 
     void setboattrue(String... propertynames) {
-        boat.stream().filter(p
+        params.boat.stream().filter(p
                 -> Arrays.asList(propertynames).stream()
                         .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
                 .forEach(p -> ((PropertyBoolean) p.getValue()).set(true));
@@ -80,7 +74,7 @@ public class SailingStrategyTest {
     }
 
     void setwindflow(double speed, double degrees, int zlevel) {
-        controller.getProperty().getWindFlow().getFlowcomponents().stream()
+        params.windflow.getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
                     ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
@@ -88,19 +82,19 @@ public class SailingStrategyTest {
     }
 
     PropertyDegrees getStarboardCloseHauled() {
-        return boat.getStarboardCloseHauledCourse(winddirection);
+        return params.boat.getStarboardCloseHauledCourse(params.winddirection);
     }
 
     PropertyDegrees getPortCloseHauled() {
-        return boat.getPortCloseHauledCourse(winddirection);
+        return params.boat.getPortCloseHauledCourse(params.winddirection);
     }
 
     PropertyDegrees getStarboardReaching() {
-        return boat.getStarboardReachingCourse(winddirection);
+        return params.boat.getStarboardReachingCourse(params.winddirection);
     }
 
     PropertyDegrees getPortReaching() {
-        return boat.getPortReachingCourse(winddirection);
+        return params.boat.getPortReachingCourse(params.winddirection);
     }
 
     void assertTURN(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {

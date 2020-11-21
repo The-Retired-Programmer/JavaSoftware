@@ -19,50 +19,51 @@ import java.io.IOException;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
 public class TurnTest {
 
-    private Boat boat;
     private DisplayController controller;
-    private Decision decision;
+    private Params params;
 
     Boat setupForTurn(String filename, Runnable... updateproperties) throws IOException {
         controller = new DisplayController(filename);
-        boat = controller.boats.get("Red");
+        SketchModel model = controller.getModel();
+        Boat boat = model.getBoats().get("Red");
+        params = new Params(model, boat);
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
-        decision = boat.getCurrentLeg().getDecision();
         return boat;
     }
 
     Boat getUptospeed(int seconds) throws IOException {
         while (seconds > 0) {
-            decision.setSAILON(boat.getDirection());
-            boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
+            params.decision.setSAILON(params.boat.getDirection());
+            params.boat.moveUsingDecision(params);
             seconds--;
         }
-        return boat;
+        return params.boat;
     }
 
     Boat makeTurn(PropertyDegrees finalangle, boolean turndirection) throws IOException {
-        decision.setTURN(finalangle, turndirection);
-        while (decision.getAction() != SAILON) {
-            boat.moveUsingDecision(controller.windflow, controller.waterflow, decision);
+        params.decision.setTURN(finalangle, turndirection);
+        while (params.decision.getAction() != SAILON) {
+            params.boat.moveUsingDecision(params);
         }
-        return boat;
+        return params.boat;
     }
 
     void setboatdirection(double degrees) {
-        boat.setDirection(new PropertyDegrees(degrees));
+        params.boat.setDirection(new PropertyDegrees(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        boat.setLocation(new PropertyLocation(x, y));
+        params.boat.setLocation(new PropertyLocation(x, y));
     }
 
     void setwindflow(double speed, double degrees) {
@@ -70,7 +71,7 @@ public class TurnTest {
     }
 
     void setwindflow(double speed, double degrees, int zlevel) {
-        controller.getProperty().getWindFlow().getFlowcomponents().stream()
+        params.windflow.getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
                     ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));

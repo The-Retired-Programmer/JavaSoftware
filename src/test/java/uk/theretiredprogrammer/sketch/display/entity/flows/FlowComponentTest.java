@@ -35,12 +35,12 @@ public abstract class FlowComponentTest {
     }
 
     void assertFlowAt(PropertyLocation at, PropertySpeedVector expected) throws IOException {
-        PropertySpeedVector flow = controller.windflow.getFlow(at);
+        PropertySpeedVector flow = controller.getModel().getWindFlow().getFlow(at);
         assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }
 
     void assertMeanFlowAngle(double expected) throws IOException {
-        assertEquals(expected, controller.windflow.getMeanFlowAngle().get(), DELTA);
+        assertEquals(expected, controller.getModel().getWindFlow().getMeanFlowAngle().get(), DELTA);
     }
 }

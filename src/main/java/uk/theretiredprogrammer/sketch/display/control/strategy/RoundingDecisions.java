@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,14 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public abstract class RoundingDecisions extends SailingDecisions {
 
     final boolean atPortRoundingTurnPoint(Boat boat, CurrentLeg leg) {
@@ -38,27 +33,27 @@ public abstract class RoundingDecisions extends SailingDecisions {
         return boat.isStarboardRear90Quadrant(leg.getMarkLocation());
     }
 
-    final String executePortRounding(Boat boat, Decision decision, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn, PropertyDegrees winddirection, Strategy strategy) {
-        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(winddirection);
-        PropertyDegrees turnangle = finaldirection.absDegreesDiff(boat.getDirection());
+    final String executePortRounding(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+        PropertyDegrees turnangle = finaldirection.absDegreesDiff(params.boat.getDirection());
         if (turnangle.gt(90)) {
-            decision.setTURN(boat.getDirection().sub(90), PORT);
+            params.decision.setTURN(params.boat.getDirection().sub(90), PORT);
             return "markrounding action - first phase - starboard tack - port rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
-        decision.setMARKROUNDING(finaldirection, PORT);
+        params.decision.setMARKROUNDING(finaldirection, PORT);
         return "markrounding action - starboard tack - port rounding";
     }
 
-    final String executeStarboardRounding(Boat boat, Decision decision, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn, PropertyDegrees winddirection, Strategy strategy) {
-        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(winddirection);
-        PropertyDegrees turnangle = finaldirection.absDegreesDiff(boat.getDirection());
+    final String executeStarboardRounding(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+        PropertyDegrees turnangle = finaldirection.absDegreesDiff(params.boat.getDirection());
         if (turnangle.gt(90)) {
-            decision.setTURN(boat.getDirection().plus(90), STARBOARD);
+            params.decision.setTURN(params.boat.getDirection().plus(90), STARBOARD);
             return "markrounding action - first phase - port tack - starboard rounding";
         }
         //TODO - potential race condition here if wind shift between first pahse and completion
-        decision.setMARKROUNDING(finaldirection, STARBOARD);
+        params.decision.setMARKROUNDING(finaldirection, STARBOARD);
         return "markrounding action - port tack - starboard rounding";
     }
 }

@@ -15,50 +15,43 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
+import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
-class GybingDownwindStarboardRoundingDecisions extends RoundingDecisions {
+public class GybingDownwindStarboardRoundingDecisions extends RoundingDecisions {
 
     private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
 
-    GybingDownwindStarboardRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+    public GybingDownwindStarboardRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
-    public final String nextTimeInterval(Boat boat, Decision decision, SketchModel sketchproperty, CurrentLeg leg, Strategy strategy, WindFlow windflow, WaterFlow waterflow) {
-        PropertyDegrees winddirection = windflow.getMeanFlowAngle(boat.getLocation());
-        if (boat.isPort(winddirection)) {
-            if (boat.isStarboardRear90Quadrant(leg.getMarkLocation())) {
-                decision.setTURN(boat.getStarboardReachingCourse(winddirection), STARBOARD);
+    public final String nextTimeInterval(Params params) {
+        if (params.boat.isPort(params.winddirection)) {
+            if (params.boat.isStarboardRear90Quadrant(params.leg.getMarkLocation())) {
+                params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
                 return "pre markrounding action - gybe to starboard - port tack - starboard rounding";
             }
-            if (adjustPortDirectCourseToLeewardMarkOffset(boat, decision, leg, strategy, winddirection)) {
+            if (adjustPortDirectCourseToLeewardMarkOffset(params)) {
                 return "course adjustment - approaching mark - port tack - starboard rounding";
             }
-            decision.setTURN(boat.getPortReachingCourse(winddirection), PORT);
+            params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), PORT);
             return "course adjustment - luff up to hold port reaching - port tack - starboard rounding";
         }
-        if (atStarboardRoundingTurnPoint(boat, leg)) {
-            return executeStarboardRounding(boat, decision, getDirectionAfterTurn, winddirection, strategy);
+        if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
+            return executeStarboardRounding(params, getDirectionAfterTurn);
         }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(boat, decision, leg, strategy, winddirection)) {
+        if (adjustStarboardDirectCourseToLeewardMarkOffset(params)) {
             return "course adjustment - approaching mark - starboard tack - starboard rounding";
         }
-        if (gybeifonportlayline(boat, decision, leg, strategy, winddirection)) {
+        if (gybeifonportlayline(params)) {
             return "gybing on port layline - starboard->port";
         }
-        decision.setTURN(boat.getStarboardReachingCourse(winddirection), STARBOARD);
+        params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
         return "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding";
     }
 }
