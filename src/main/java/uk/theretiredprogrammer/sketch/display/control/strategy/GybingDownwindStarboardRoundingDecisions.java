@@ -50,7 +50,7 @@ public class GybingDownwindStarboardRoundingDecisions extends RoundingDecisions 
         if (adjustStarboardDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
             return "course adjustment - approaching mark - starboard tack - starboard rounding";
         }
-        if (gybeifonportlayline(params)) {
+        if (gybeifonportlayline(params, "gybing on port layline - starboard->port")) {
             return "gybing on port layline - starboard->port"; //DONE
         }
         params.setTURN(params.starboardReaching, STARBOARD, MINOR, "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding");

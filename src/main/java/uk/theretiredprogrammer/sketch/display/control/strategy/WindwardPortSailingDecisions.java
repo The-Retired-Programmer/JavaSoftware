@@ -26,7 +26,7 @@ public class WindwardPortSailingDecisions extends SailingDecisions {
 
     @Override
     public String nextTimeInterval(Params params) {
-        if (tackifonstarboardlayline(params)) {
+        if (tackifonstarboardlayline(params, "tacking on starboard layline - port->starboard")) {
             return "tacking on starboard layline - port->starboard";//DONE
         }
         if (adjustPortDirectCourseToWindwardMarkOffset(params, "Beating on Port Layline to windward mark - course adjustment")) {

@@ -50,7 +50,7 @@ public class WindwardStarboardRoundingDecisions extends RoundingDecisions {
         if (adjustPortDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
             return "course adjustment - approaching mark - port tack - starboard rounding";
         }
-        if (tackifonstarboardlayline(params)) {
+        if (tackifonstarboardlayline(params, "tacking on starboard layline - port->starboard")) {
             return "tacking on starboard layline - port->starboard";//DONE
         }
         params.setTURN(params.portCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - starboard rounding");

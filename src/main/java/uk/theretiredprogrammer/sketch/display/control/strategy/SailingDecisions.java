@@ -27,33 +27,33 @@ public abstract class SailingDecisions {
 
     public abstract String nextTimeInterval(Params params);
 
-    boolean tackifonstarboardlayline(Params params) {
+    boolean tackifonstarboardlayline(Params params, String reason) {
         if (params.boat.isPortTackingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {
-            params.setTURN(params.starboardCloseHauled, PORT, MAJOR, "tacking on starboard layline - port->starboard");
+            params.setTURN(params.starboardCloseHauled, PORT, MAJOR, reason);
             return true;
         }
         return false;
     }
 
-    boolean gybeifonstarboardlayline(Params params) {
+    boolean gybeifonstarboardlayline(Params params, String reason) {
         if (params.boat.isStarboardGybingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {
-            params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "gybing on starboard layline - port->starboard");
+            params.setTURN(params.starboardReaching, STARBOARD, MAJOR, reason);
             return true;
         }
         return false;
     }
 
-    boolean tackifonportlayline(Params params) {
+    boolean tackifonportlayline(Params params, String reason) {
         if (params.boat.isStarboardTackingQuadrant(params.leg.getSailToLocation(true), params.winddirection)) {
-            params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "tacking on port layline - starboard->port");
+            params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, reason);
             return true;
         }
         return false;
     }
 
-    boolean gybeifonportlayline(Params params) {
+    boolean gybeifonportlayline(Params params, String reason) {
         if (params.boat.isPortGybingQuadrant(params.leg.getSailToLocation(true), params.winddirection)) {
-            params.setTURN(params.portReaching, PORT, MAJOR, "gybing on port layline - starboard->port");
+            params.setTURN(params.portReaching, PORT, MAJOR, reason);
             return true;
         }
         return false;

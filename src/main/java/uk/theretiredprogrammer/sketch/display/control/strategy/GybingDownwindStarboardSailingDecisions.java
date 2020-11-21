@@ -25,7 +25,7 @@ public class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
 
     @Override
     public String nextTimeInterval(Params params) {
-        if (gybeifonportlayline(params)) {
+        if (gybeifonportlayline(params, "gybing on port layline - starboard->port")) {
             return "Gybing onto port layline"; // DONE
         }
         if (adjustStarboardDirectCourseToLeewardMarkOffset(params, "Reaching on starboard Layline to leeward mark - course adjustment")) {
