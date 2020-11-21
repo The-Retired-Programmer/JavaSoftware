@@ -33,7 +33,7 @@ public class OffwindStarboardRoundingDecisions extends RoundingDecisions {
         if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
             return executeStarboardRounding(params, getDirectionAfterTurn);
         }
-        adjustDirectCourseToDownwindMarkOffset(params);
+        adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - starboard rounding");
         return "course adjustment - approaching mark - starboard rounding";
     }
 }

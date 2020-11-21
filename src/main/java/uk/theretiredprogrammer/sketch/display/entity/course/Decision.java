@@ -16,11 +16,17 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.INSIGNIFICANT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 
 public class Decision {
 
     public static final boolean PORT = true;
     public static final boolean STARBOARD = false;
+
+    public enum Importance {
+        MAJOR, MINOR, INSIGNIFICANT
+    }
 
     public enum DecisionAction {
         SAILON, STOP, MARKROUNDING, TURN
@@ -29,27 +35,32 @@ public class Decision {
     private DecisionAction action = DecisionAction.SAILON;
     private PropertyDegrees degrees = new PropertyDegrees(0);
     private boolean turndirection = STARBOARD;
+    private Importance importance = INSIGNIFICANT;
+    private String reason;
 
     public void setSAILON(PropertyDegrees currentdirection) {
-        set(DecisionAction.SAILON, currentdirection, STARBOARD);
+        set(DecisionAction.SAILON, currentdirection, STARBOARD, INSIGNIFICANT, "Sail On");
     }
 
-    public void setTURN(PropertyDegrees degrees, boolean turndirection) {
-        set(DecisionAction.TURN, degrees, turndirection);
+    public void setTURN(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+        set(DecisionAction.TURN, degrees, turndirection, importance, reason);
     }
 
-    public void setMARKROUNDING(PropertyDegrees degrees, boolean turndirection) {
-        set(DecisionAction.MARKROUNDING, degrees, turndirection);
+    public void setMARKROUNDING(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+        set(DecisionAction.MARKROUNDING, degrees, turndirection, importance, reason);
     }
 
     public void setSTOP(PropertyDegrees currentdirection) {
-        set(DecisionAction.STOP, currentdirection, STARBOARD);
+        set(DecisionAction.STOP, currentdirection, STARBOARD, MAJOR, "Stop");
     }
 
-    private void set(DecisionAction action, PropertyDegrees degrees, boolean turndirection) {
+    private void set(DecisionAction action, PropertyDegrees degrees, boolean turndirection,
+            Importance importance, String reason) {
         this.action = action;
         this.degrees.set(degrees);
         this.turndirection = turndirection;
+        this.importance = importance;
+        this.reason = reason;
     }
 
     public DecisionAction getAction() {
@@ -66,5 +77,13 @@ public class Decision {
 
     public boolean isPort() {
         return turndirection;
+    }
+
+    public Importance getImportance() {
+        return importance;
+    }
+
+    public String getReason() {
+        return reason;
     }
 }

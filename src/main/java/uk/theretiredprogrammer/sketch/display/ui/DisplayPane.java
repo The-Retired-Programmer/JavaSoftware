@@ -35,6 +35,7 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STAR
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapDialog;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertyMapPane;
@@ -253,12 +254,12 @@ public class DisplayPane extends Group {
             // anti clockwise to starboard tack
             PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
-            decision.setTURN(target, PORT);
+            decision.setTURN(target, PORT, MAJOR, "Tack to Starboard - forced by user");
         } else {
             // clockwise to port tack
             PropertyDegrees target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
-            decision.setTURN(target, STARBOARD);
+            decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Port - forced by user");
         }
     }
 
@@ -271,12 +272,12 @@ public class DisplayPane extends Group {
             // clockwise to starboard gybe
             PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
-            decision.setTURN(target, STARBOARD);
+            decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Starboard - forced by user");
         } else {
             // anticlockwise to port gybe
             PropertyDegrees target = boat.getPortReachingCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
-            decision.setTURN(target, PORT);
+            decision.setTURN(target, PORT, MAJOR, "Gybe to Port - forced by user");
         }
     }
 

@@ -15,8 +15,10 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
@@ -27,7 +29,7 @@ public abstract class SailingDecisions {
 
     boolean tackifonstarboardlayline(Params params) {
         if (params.boat.isPortTackingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {
-            params.decision.setTURN(params.boat.getStarboardCloseHauledCourse(params.winddirection), PORT);
+            params.setTURN(params.starboardCloseHauled, PORT, MAJOR, "tacking on starboard layline - port->starboard");
             return true;
         }
         return false;
@@ -35,7 +37,7 @@ public abstract class SailingDecisions {
 
     boolean gybeifonstarboardlayline(Params params) {
         if (params.boat.isStarboardGybingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {
-            params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
+            params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "gybing on starboard layline - port->starboard");
             return true;
         }
         return false;
@@ -43,7 +45,7 @@ public abstract class SailingDecisions {
 
     boolean tackifonportlayline(Params params) {
         if (params.boat.isStarboardTackingQuadrant(params.leg.getSailToLocation(true), params.winddirection)) {
-            params.decision.setTURN(params.boat.getPortCloseHauledCourse(params.winddirection), STARBOARD);
+            params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "tacking on port layline - starboard->port");
             return true;
         }
         return false;
@@ -51,67 +53,56 @@ public abstract class SailingDecisions {
 
     boolean gybeifonportlayline(Params params) {
         if (params.boat.isPortGybingQuadrant(params.leg.getSailToLocation(true), params.winddirection)) {
-            params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), PORT);
+            params.setTURN(params.portReaching, PORT, MAJOR, "gybing on port layline - starboard->port");
             return true;
         }
         return false;
     }
 
-    boolean adjustPortDirectCourseToWindwardMarkOffset(Params params) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), true);
-        PropertyDegrees closehauled = params.boat.getPortCloseHauledCourse(params.winddirection);
+    boolean adjustPortDirectCourseToWindwardMarkOffset(Params params, String reason) {
+        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, true);
+        PropertyDegrees closehauled = params.portCloseHauled;
         if (coursetomark.lt(closehauled)) {
             return false;
         }
-        return adjustCourse(params.boat.getDirection(),
-                coursetomark.gteq(closehauled) ? coursetomark : closehauled, params.decision);
+        return adjustCourse(params, coursetomark.gteq(closehauled) ? coursetomark : closehauled, MINOR, reason);
     }
 
-    boolean adjustStarboardDirectCourseToWindwardMarkOffset(Params params) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), false);
-        PropertyDegrees closehauled = params.boat.getStarboardCloseHauledCourse(params.winddirection);
+    boolean adjustStarboardDirectCourseToWindwardMarkOffset(Params params, String reason) {
+        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, false);
+        PropertyDegrees closehauled = params.starboardCloseHauled;
         if (coursetomark.gt(closehauled)) {
             return false;
         }
-        return adjustCourse(params.boat.getDirection(),
-                coursetomark.lteq(closehauled) ? coursetomark : closehauled, params.decision);
+        return adjustCourse(params, coursetomark.lteq(closehauled) ? coursetomark : closehauled, MINOR, reason);
     }
 
-    boolean adjustPortDirectCourseToLeewardMarkOffset(Params params) {
-        // check and adjust if boat can sail dirctly to next mark (offset)
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), true);
-        PropertyDegrees reaching = params.boat.getPortReachingCourse(params.winddirection);
+    boolean adjustPortDirectCourseToLeewardMarkOffset(Params params, String reason) {
+        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, true);
+        PropertyDegrees reaching = params.portReaching;
         if (coursetomark.gt(reaching)) {
             return false;
         }
-        return adjustCourse(params.boat.getDirection(),
-                coursetomark.lteq(reaching) ? coursetomark : reaching, params.decision);
+        return adjustCourse(params, coursetomark.lteq(reaching) ? coursetomark : reaching, MINOR, reason);
     }
 
-    boolean adjustStarboardDirectCourseToLeewardMarkOffset(Params params) {
-        // check and adjust if boat can sail dirctly to next mark (offset)
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), false);
-        PropertyDegrees reaching = params.boat.getStarboardReachingCourse(params.winddirection);
+    boolean adjustStarboardDirectCourseToLeewardMarkOffset(Params params, String reason) {
+        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, false);
+        PropertyDegrees reaching = params.starboardReaching;
         if (coursetomark.lt(reaching)) {
             return false;
         }
-        return adjustCourse(params.boat.getDirection(),
-                coursetomark.gteq(reaching) ? coursetomark : reaching, params.decision);
+        return adjustCourse(params, coursetomark.gteq(reaching) ? coursetomark : reaching, MINOR, reason);
     }
 
-    boolean adjustDirectCourseToDownwindMarkOffset(Params params) {
-        if (params.boat.isPort(params.winddirection)) {
-            PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), true);
-            return adjustCourse(params.boat.getDirection(), coursetomark, params.decision);
-        } else {
-            PropertyDegrees coursetomark = params.leg.getAngletoSail(params.boat.getLocation(), false);
-            return adjustCourse(params.boat.getDirection(), coursetomark, params.decision);
-        }
+    boolean adjustDirectCourseToDownwindMarkOffset(Params params, String reason) {
+        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, params.isPort);
+        return adjustCourse(params, coursetomark, MINOR, reason);
     }
 
-    private boolean adjustCourse(PropertyDegrees current, PropertyDegrees target, Decision decision) {
-        if (target.neq(current)) {
-            decision.setTURN(target, target.lteq(current));
+    private boolean adjustCourse(Params params, PropertyDegrees target, Importance importance, String reason) {
+        if (target.neq(params.heading)) {
+            params.setTURN(target, target.lteq(params.heading), importance, reason);
         }
         return true;
     }

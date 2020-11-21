@@ -15,7 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
@@ -24,47 +25,46 @@ public class GybingDownwindPortSailingDecisions extends SailingDecisions {
 
     @Override
     public String nextTimeInterval(Params params) {
-        PropertyDegrees boatangletowind = params.boat.getDirection().absDegreesDiff(params.winddirection);
-        PropertyDegrees meanwinddirection = params.windflow.getMeanFlowAngle();
         if (gybeifonstarboardlayline(params)) {
-            return "Gybing onto starboard layline";
+            return "Gybing onto starboard layline";//DONE
         }
-        if (adjustPortDirectCourseToLeewardMarkOffset(params)) {
+        if (adjustPortDirectCourseToLeewardMarkOffset(params, "Reaching on port Layline to leeward mark - course adjustment")) {
             return "Reaching on port Layline to leeward mark - course adjustment";
         }
         if (params.boat.downwindchannel != null) {
-            if (params.leg.getDistanceToMark(params.boat.getLocation()) > params.boat.downwindchannel.getInneroffset(params.leg.getMarkLocation()) * 1.5) {
-                if (!params.boat.downwindchannel.isInchannel(params.boat.getLocation())) {
-                    params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
+            if (params.leg.getDistanceToMark(params.location) > params.boat.downwindchannel.getInneroffset(params.marklocation) * 1.5) {
+                if (!params.boat.downwindchannel.isInchannel(params.location)) {
+                    params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "Gybing onto starboard to stay in channel");
                     return "Gybing onto starboard to stay in channel";
                 }
             }
         }
         // check if need to gybe onto best tack
         if (params.boat.isDownwindsailonbestgybe()) {
-            if (params.winddirection.lt(meanwinddirection)) {
-                params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
+            if (params.winddirection.lt(params.meanwinddirection)) {
+                params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "Gybe onto best tack - starboard");
                 return "Gybe onto best tack - starboard";
             }
         }
         // check if sailing too low
-        if (boatangletowind.gt(params.boat.metrics.downwindrelative)) {
+        if (params.angletowind.gt(params.boat.metrics.downwindrelative)) {
             if (params.boat.isDownwindgybeiflifted()) {
-                params.decision.setTURN(params.boat.getStarboardReachingCourse(params.winddirection), STARBOARD);
+                params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "Reaching - gybe onto starboard if lifted");
                 return "Reaching - gybe onto starboard if lifted";
             }
             if (params.boat.isDownwindluffupiflifted()) {
-                params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), PORT);
+                params.setTURN(params.portReaching, PORT, MINOR, "Reaching - luff if lifted");
                 return "Reaching - luff if lifted";
             }
         }
         // check if sailing too high
-        if (boatangletowind.lt(params.boat.metrics.downwindrelative)) {
+        if (params.angletowind.lt(params.boat.metrics.downwindrelative)) {
             if (params.boat.isDownwindbearawayifheaded()) {
-                params.decision.setTURN(params.boat.getPortReachingCourse(params.winddirection), STARBOARD);
+                params.setTURN(params.portReaching, STARBOARD, MINOR, "Reaching - bearaway if headed");
                 return "Reaching - bearaway if headed";
             }
         }
+        params.setSAILON();
         return "Sail ON";
     }
 }

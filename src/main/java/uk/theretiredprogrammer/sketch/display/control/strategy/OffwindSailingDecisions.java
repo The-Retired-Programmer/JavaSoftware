@@ -16,18 +16,19 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
     public String nextTimeInterval(Params params) {
-        boolean onPort = params.boat.isPort(params.winddirection);
-        PropertyDegrees nextDirection = params.leg.getAngletoSail(params.boat.getLocation(), onPort);
-        if (nextDirection.neq(params.boat.getDirection())) {
-            params.decision.setTURN(nextDirection, params.boat.getDirection().gt(nextDirection));
+        PropertyDegrees nextDirection = params.leg.getAngletoSail(params.location, params.isPort);
+        if (nextDirection.neq(params.heading)) {
+            params.setTURN(nextDirection, params.heading.gt(nextDirection), MINOR, "Adjust direction to sailin directly to mark (offwind sailing)");
             return "Adjust direction to sailin directly to mark (offwind sailing)";
         }
+        params.setSAILON();
         return "Sail ON";
     }
 }

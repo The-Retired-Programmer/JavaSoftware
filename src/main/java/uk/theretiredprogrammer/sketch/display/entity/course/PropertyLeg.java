@@ -17,25 +17,16 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStrategy;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStrategy;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class PropertyLeg implements ModelProperty<PropertyLeg> {
@@ -161,10 +152,6 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
 
     public PropertyLocation getEndLocation() {
         return endat;
-    }
-
-    public PropertyDegrees endLegMeanwinddirection(WindFlow windflow) {
-        return windflow.getMeanFlowAngle(endat);
     }
 
     public PropertyDegrees getAngleofLeg() {

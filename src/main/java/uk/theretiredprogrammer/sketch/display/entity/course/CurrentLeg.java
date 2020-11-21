@@ -82,10 +82,14 @@ public class CurrentLeg {
         Strategy strategy = new Strategy();
         LegType legtype = getLegType(params.boat.metrics, leg.getAngleofLeg(), params.windflow, params.boat.isReachdownwind());
         switch (legtype) {
-            case WINDWARD -> strategy.setWindwardStrategy(params);
-            case OFFWIND -> strategy.setOffwindStrategy(params);
-            case GYBINGDOWNWIND -> strategy.setGybingDownwindStrategy(params);
-            default -> throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
+            case WINDWARD ->
+                strategy.setWindwardStrategy(params);
+            case OFFWIND ->
+                strategy.setOffwindStrategy(params);
+            case GYBINGDOWNWIND ->
+                strategy.setGybingDownwindStrategy(params);
+            default ->
+                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
         }
         return strategy;
     }
@@ -162,10 +166,6 @@ public class CurrentLeg {
         return currentleg.getEndLocation();
     }
 
-    public PropertyDegrees endLegMeanwinddirection(WindFlow windflow) {
-        return currentleg.endLegMeanwinddirection(windflow);
-    }
-
     public PropertyDegrees getAngleofLeg() {
         return currentleg.getAngleofLeg();
     }
@@ -181,10 +181,10 @@ public class CurrentLeg {
 
     public Strategy nextTimeInterval(Params params, int simulationtime, DecisionController timerlog) {
         if (decision.getAction() == SAILON) {
-            String reason = getStrategy(params).strategyTimeInterval(params);
+            getStrategy(params).strategyTimeInterval(params);
             timerlog.add(new BoatLogEntry(params.boat));
             timerlog.add(new DecisionLogEntry(params.boat.getName(), decision));
-            timerlog.add(new ReasonLogEntry(params.boat.getName(), reason));
+            timerlog.add(new ReasonLogEntry(params.boat.getName(), decision.getReason()));
         }
         if (params.boat.moveUsingDecision(params)) {
             return isFollowingLeg()
@@ -193,7 +193,7 @@ public class CurrentLeg {
         }
         return null;
     }
-    
+
     private Strategy getAfterFinishingStrategy(Params params) {
         Strategy newstrategy = new Strategy();
         newstrategy.setAfterFinishStrategy(params);

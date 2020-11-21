@@ -22,6 +22,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
@@ -43,7 +44,7 @@ public class TurnTest {
 
     Boat getUptospeed(int seconds) throws IOException {
         while (seconds > 0) {
-            params.decision.setSAILON(params.boat.getDirection());
+            params.setSAILON();
             params.boat.moveUsingDecision(params);
             seconds--;
         }
@@ -51,7 +52,7 @@ public class TurnTest {
     }
 
     Boat makeTurn(PropertyDegrees finalangle, boolean turndirection) throws IOException {
-        params.decision.setTURN(finalangle, turndirection);
+        params.setTURN(finalangle, turndirection, MAJOR, "Test: makeTurn setup");
         while (params.decision.getAction() != SAILON) {
             params.boat.moveUsingDecision(params);
         }

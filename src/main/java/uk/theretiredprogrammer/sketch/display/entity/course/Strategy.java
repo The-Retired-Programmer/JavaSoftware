@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortRoundingDecisions;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortSailingDecisions;
@@ -33,9 +32,6 @@ import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardPortRound
 import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardPortSailingDecisions;
 import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStarboardRoundingDecisions;
 import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStarboardSailingDecisions;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 public class Strategy {
 
@@ -59,8 +55,8 @@ public class Strategy {
 
     public void setWindwardStrategy(Params params) {
         this.setTimeIntervalHandler(p -> windwardTimeInterval(p));
-        PropertyDegrees winddirection = params.leg.endLegMeanwinddirection(params.windflow);
-        PropertyDegrees relative = params.boat.metrics.upwindrelative;
+        PropertyDegrees winddirection = params.markmeanwinddirection;
+        PropertyDegrees relative = params.upwindrelative;
         if (params.leg.isPortRounding()) {
             setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.plus(90).sub(relative), winddirection.plus(90).plus(relative));
         } else {
@@ -89,7 +85,7 @@ public class Strategy {
 
     public void setGybingDownwindStrategy(Params params) {
         this.setTimeIntervalHandler(p -> leewardTimeInterval(p));
-        PropertyDegrees winddirection = params.leg.endLegMeanwinddirection(params.windflow);
+        PropertyDegrees winddirection = params.markmeanwinddirection;
         PropertyDegrees relative = params.boat.metrics.downwindrelative;
         if (params.leg.isPortRounding()) {
             this.setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.plus(90).sub(relative), winddirection.plus(90).plus(relative));
@@ -152,18 +148,17 @@ public class Strategy {
     }
 
     public void setAfterFinishStrategy(Params params) {
-        PropertyDegrees winddirection = params.leg.endLegMeanwinddirection(params.windflow);
-        this.setMarkOffset(0, winddirection, winddirection);
+        this.setMarkOffset(0, params.markmeanwinddirection, params.markmeanwinddirection);
         this.setTimeIntervalHandler(p -> afterFinishingTimeInterval(p));
     }
 
     public String afterFinishingTimeInterval(Params params) {
-        double fromfinishmark = params.boat.getLocation().to(params.leg.getMarkLocation());
+        double fromfinishmark = params.location.to(params.marklocation);
         if (fromfinishmark > params.boat.metrics.getLength() * 5) {
-            params.decision.setSTOP(params.boat.getDirection());
+            params.setSTOP();
             return "Stopping at end of course";
         } else {
-            params.decision.setSAILON(params.boat.getDirection());
+            params.setSAILON();
             return "Sail ON";
         }
     }
@@ -193,27 +188,25 @@ public class Strategy {
     }
 
     public String windwardTimeInterval(Params params) {
-        PropertyDegrees markMeanwinddirection = params.leg.endLegMeanwinddirection(params.windflow);
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(params);
         }
-        if (params.leg.isNear2WindwardMark(params.boat, markMeanwinddirection)) {
+        if (params.leg.isNear2WindwardMark(params.boat, params.markmeanwinddirection)) {
             useroundingdecisions = true;
             return roundingdecisions.nextTimeInterval(params);
         }
-        return (params.boat.isPort(params.winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(params);
+        return (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
     }
 
     public String leewardTimeInterval(Params params) {
-        PropertyDegrees markMeanwinddirection = params.leg.endLegMeanwinddirection(params.windflow);
         if (useroundingdecisions) {
             return roundingdecisions.nextTimeInterval(params);
         }
-        if (params.leg.isNear2LeewardMark(params.boat, markMeanwinddirection)) {
+        if (params.leg.isNear2LeewardMark(params.boat, params.markmeanwinddirection)) {
             useroundingdecisions = true;
             return roundingdecisions.nextTimeInterval(params);
 
         }
-        return (params.boat.isPort(params.winddirection) ? portdecisions : starboarddecisions).nextTimeInterval(params);
+        return (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
     }
 }

@@ -33,7 +33,7 @@ public class OffwindPortRoundingDecisions extends RoundingDecisions {
         if (atPortRoundingTurnPoint(params.boat, params.leg)) {
             return executePortRounding(params, getDirectionAfterTurn);
         }
-        adjustDirectCourseToDownwindMarkOffset(params);
+        adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - port rounding");
         return "course adjustment - approaching mark - port rounding";
     }
 }

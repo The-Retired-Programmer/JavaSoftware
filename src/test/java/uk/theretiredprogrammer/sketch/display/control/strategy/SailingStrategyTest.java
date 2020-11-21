@@ -33,7 +33,6 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Deci
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.TURN;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
@@ -50,6 +49,7 @@ public class SailingStrategyTest {
         for (var updateaction : updateproperties) {
             updateaction.run();
         }
+        params.refresh();
         params.leg.getStrategy(params).strategyTimeInterval(params);
         return params.decision;
     }
@@ -82,19 +82,19 @@ public class SailingStrategyTest {
     }
 
     PropertyDegrees getStarboardCloseHauled() {
-        return params.boat.getStarboardCloseHauledCourse(params.winddirection);
+        return params.starboardCloseHauled;
     }
 
     PropertyDegrees getPortCloseHauled() {
-        return params.boat.getPortCloseHauledCourse(params.winddirection);
+        return params.portCloseHauled;
     }
 
     PropertyDegrees getStarboardReaching() {
-        return params.boat.getStarboardReachingCourse(params.winddirection);
+        return params.starboardReaching;
     }
 
     PropertyDegrees getPortReaching() {
-        return params.boat.getPortReachingCourse(params.winddirection);
+        return params.portReaching;
     }
 
     void assertTURN(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
@@ -162,5 +162,4 @@ public class SailingStrategyTest {
                 () -> assertEquals(STOP, decision.getAction())
         );
     }
-
 }

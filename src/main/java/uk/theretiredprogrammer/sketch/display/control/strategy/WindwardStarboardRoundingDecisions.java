@@ -17,6 +17,8 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
@@ -31,28 +33,27 @@ public class WindwardStarboardRoundingDecisions extends RoundingDecisions {
 
     @Override
     public final String nextTimeInterval(Params params) {
-
-        if (!params.boat.isPort(params.winddirection)) {
-            if (params.boat.isStarboardRear90Quadrant(params.leg.getMarkLocation())) {
-                params.decision.setTURN(params.boat.getPortCloseHauledCourse(params.winddirection), STARBOARD);
+        if (!params.isPort) {
+            if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
+                params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "pre markrounding action - tack to port - starboard tack - starboard rounding");
                 return "pre markrounding action - tack to port - starboard tack - starboard rounding";
             }
-            if (adjustStarboardDirectCourseToWindwardMarkOffset(params)) {
+            if (adjustStarboardDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
                 return "course adjustment - approaching mark - starboard tack - starboard rounding";
             }
-            params.decision.setTURN(params.boat.getStarboardCloseHauledCourse(params.winddirection), PORT);
+            params.setTURN(params.starboardCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - port rounding");
             return "course adjustment - bearing away to hold port c/h - port tack - port rounding";
         }
         if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
             return executeStarboardRounding(params, getDirectionAfterTurn);
         }
-        if (adjustPortDirectCourseToWindwardMarkOffset(params)) {
+        if (adjustPortDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
             return "course adjustment - approaching mark - port tack - starboard rounding";
         }
         if (tackifonstarboardlayline(params)) {
-            return "tacking on starboard layline - port->starboard";
+            return "tacking on starboard layline - port->starboard";//DONE
         }
-        params.decision.setTURN(params.boat.getPortCloseHauledCourse(params.winddirection), PORT);
+        params.setTURN(params.portCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - starboard rounding");
         return "course adjustment - bearing away to hold port c/h - port tack - starboard rounding";
     }
 }
