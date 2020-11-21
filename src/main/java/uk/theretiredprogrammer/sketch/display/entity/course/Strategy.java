@@ -104,8 +104,8 @@ public class Strategy {
                         : new OffwindStarboardRoundingDecisions((windangle) -> params.leg.getAngleofFollowingLeg());
             case NONE ->
                 roundingdecisions = params.leg.isPortRounding()
-                        ? new OffwindPortRoundingDecisions((windangle) -> params.boat.getPortReachingCourse(windangle))
-                        : new OffwindStarboardRoundingDecisions((windangle) -> params.boat.getStarboardReachingCourse(windangle));
+                        ? new OffwindPortRoundingDecisions((windangle) -> windangle.plus(90))
+                        : new OffwindStarboardRoundingDecisions((windangle) -> windangle.sub(90));
             default ->
                 throw new IllegalStateFailure("Illegal/unknown/Unsupported LEGTYPE combination: Gybing downwind to "
                         + followinglegtype.toString());
