@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
@@ -42,7 +43,7 @@ public class Strategy {
     private PropertyDegrees portoffsetangle;
     private PropertyDegrees starboardoffsetangle;
     private double offset;
-    private Function<Params, String> timeintervalhandler;
+    private Consumer<Params> timeintervalhandler;
 
     public Strategy() {
     }
@@ -152,18 +153,16 @@ public class Strategy {
         this.setTimeIntervalHandler(p -> afterFinishingTimeInterval(p));
     }
 
-    public String afterFinishingTimeInterval(Params params) {
+    public void afterFinishingTimeInterval(Params params) {
         double fromfinishmark = params.location.to(params.marklocation);
         if (fromfinishmark > params.boat.metrics.getLength() * 5) {
             params.setSTOP();
-            return "Stopping at end of course";
         } else {
             params.setSAILON();
-            return "Sail ON";
         }
     }
 
-    public final void setTimeIntervalHandler(Function<Params, String> timeintervalhandler) {
+    public final void setTimeIntervalHandler(Consumer<Params> timeintervalhandler) {
         this.timeintervalhandler = timeintervalhandler;
     }
 
@@ -183,30 +182,33 @@ public class Strategy {
         return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
     }
 
-    public String strategyTimeInterval(Params params) {
-        return timeintervalhandler.apply(params);
+    public void strategyTimeInterval(Params params) {
+        timeintervalhandler.accept(params);
     }
 
-    public String windwardTimeInterval(Params params) {
+    public void windwardTimeInterval(Params params) {
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(params);
+            roundingdecisions.nextTimeInterval(params);
+            return;
         }
         if (params.leg.isNear2WindwardMark(params.boat, params.markmeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(params);
+            roundingdecisions.nextTimeInterval(params);
+            return;
         }
-        return (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
+        (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
     }
 
-    public String leewardTimeInterval(Params params) {
+    public void leewardTimeInterval(Params params) {
         if (useroundingdecisions) {
-            return roundingdecisions.nextTimeInterval(params);
+            roundingdecisions.nextTimeInterval(params);
+            return;
         }
         if (params.leg.isNear2LeewardMark(params.boat, params.markmeanwinddirection)) {
             useroundingdecisions = true;
-            return roundingdecisions.nextTimeInterval(params);
-
+            roundingdecisions.nextTimeInterval(params);
+            return;
         }
-        return (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
+        (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
     }
 }

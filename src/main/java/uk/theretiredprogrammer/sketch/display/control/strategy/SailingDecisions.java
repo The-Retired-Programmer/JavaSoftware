@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public abstract class SailingDecisions {
 
-    public abstract String nextTimeInterval(Params params);
+    public abstract void nextTimeInterval(Params params);
 
     boolean tackifonstarboardlayline(Params params, String reason) {
         if (params.boat.isPortTackingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {

@@ -32,28 +32,28 @@ public class GybingDownwindStarboardRoundingDecisions extends RoundingDecisions 
     }
 
     @Override
-    public final String nextTimeInterval(Params params) {
+    public final void nextTimeInterval(Params params) {
         if (params.isPort) {
             if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
                 params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "pre markrounding action - gybe to starboard - port tack - starboard rounding");
-                return "pre markrounding action - gybe to starboard - port tack - starboard rounding";
+                return;
             }
             if (adjustPortDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
-                return "course adjustment - approaching mark - port tack - starboard rounding";
+                return;
             }
             params.setTURN(params.portReaching, PORT, MINOR, "course adjustment - luff up to hold port reaching - port tack - starboard rounding");
-            return "course adjustment - luff up to hold port reaching - port tack - starboard rounding";
+            return;
         }
         if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
-            return executeStarboardRounding(params, getDirectionAfterTurn);
+            executeStarboardRounding(params, getDirectionAfterTurn);
+            return;
         }
         if (adjustStarboardDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
-            return "course adjustment - approaching mark - starboard tack - starboard rounding";
+            return;
         }
         if (gybeifonportlayline(params, "gybing on port layline - starboard->port")) {
-            return "gybing on port layline - starboard->port"; //DONE
+            return;
         }
         params.setTURN(params.starboardReaching, STARBOARD, MINOR, "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding");
-        return "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding";
     }
 }

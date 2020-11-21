@@ -77,23 +77,27 @@ public class Params {
         angletowind = heading.absDegreesDiff(winddirection);
     }
 
-    public final void setSAILON() {
+    public final boolean setSAILON() {
         decision.setSAILON(heading);
+        return true;
     }
 
-    public final void setTURN(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public final boolean setTURN(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
         if (degrees.absDegreesDiff(heading).lt(0.1)) {
             decision.setSAILON(heading);
         } else {
             decision.setTURN(degrees, turndirection, importance, reason);
         }
+        return true;
     }
 
-    public final void setMARKROUNDING(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public final boolean setMARKROUNDING(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
         decision.setMARKROUNDING(degrees, turndirection, importance, reason);
+        return true;
     }
 
-    public final void setSTOP() {
+    public final boolean setSTOP() {
         decision.setSTOP(heading);
+        return true;
     }
 }

@@ -32,28 +32,28 @@ public class WindwardStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    public final String nextTimeInterval(Params params) {
+    public final void nextTimeInterval(Params params) {
         if (!params.isPort) {
             if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
                 params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "pre markrounding action - tack to port - starboard tack - starboard rounding");
-                return "pre markrounding action - tack to port - starboard tack - starboard rounding";
+                return;
             }
             if (adjustStarboardDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
-                return "course adjustment - approaching mark - starboard tack - starboard rounding";
+                return;
             }
             params.setTURN(params.starboardCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - port rounding");
-            return "course adjustment - bearing away to hold port c/h - port tack - port rounding";
+            return;
         }
         if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
-            return executeStarboardRounding(params, getDirectionAfterTurn);
+            executeStarboardRounding(params, getDirectionAfterTurn);
+            return;
         }
         if (adjustPortDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
-            return "course adjustment - approaching mark - port tack - starboard rounding";
+            return;
         }
         if (tackifonstarboardlayline(params, "tacking on starboard layline - port->starboard")) {
-            return "tacking on starboard layline - port->starboard";//DONE
+            return;
         }
         params.setTURN(params.portCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - starboard rounding");
-        return "course adjustment - bearing away to hold port c/h - port tack - starboard rounding";
     }
 }

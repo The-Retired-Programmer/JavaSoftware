@@ -32,28 +32,29 @@ public class GybingDownwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    public final String nextTimeInterval(Params params) {
+    public final void nextTimeInterval(Params params) {
         if (params.isPort) {
             if (atPortRoundingTurnPoint(params.boat, params.leg)) {
-                return executePortRounding(params, getDirectionAfterTurn);
+                executePortRounding(params, getDirectionAfterTurn);
+                return;
             }
             if (adjustPortDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - port tack - port rounding")) {
-                return "";// DONE
+                return;
             }
             if (gybeifonstarboardlayline(params, "gybing on starboard layline - port->starboard")) {
-                return "gybing on starboard layline - port->starboard"; //DONE
+                return;
             }
             params.setTURN(params.portReaching, PORT, MINOR, "course adjustment - luff up to hold port reaching - port tack - port rounding");
-            return "";
+            return;
         }
         if (params.boat.isPortRear90Quadrant(params.marklocation)) {
             params.setTURN(params.portReaching, PORT, MAJOR, "pre markrounding action - gybe to port - starboard tack - port rounding");
-            return "pre markrounding action - gybe to port - starboard tack - port rounding";
+            return ;
         }
         if (adjustStarboardDirectCourseToLeewardMarkOffset(params,"course adjustment - approaching mark - starboard tack - port rounding")) {
-            return "course adjustment - approaching mark - starboard tack - port rounding";
+            return;
         }
         params.setTURN(params.starboardReaching, STARBOARD, MINOR,"course adjustment - luff up to hold starboard reaching - starboard tack - port rounding");
-        return "course adjustment - luff up to hold starboard reaching - starboard tack - port rounding";
+        return;
     }
 }
