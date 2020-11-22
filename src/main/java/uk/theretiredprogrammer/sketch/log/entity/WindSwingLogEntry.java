@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.decisionslog.entity;
+package uk.theretiredprogrammer.sketch.log.entity;
 
 public class WindSwingLogEntry extends TimerLogEntry {
 

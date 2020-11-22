@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 /**
@@ -70,7 +70,7 @@ public class SimulationController implements Runnable {
                     SketchModel model = controller.getModel();
                     int secondsperdisplay = model.getDisplay().getSecondsperdisplay();
                     while (secondsperdisplay > 0) {
-                        DecisionController decisioncontroller = controller.getDecisionController();
+                        LogController decisioncontroller = controller.getDecisionController();
                         decisioncontroller.setTime(simulationtime);
                         model.getWindFlow().timerAdvance(simulationtime, decisioncontroller);
                         model.getWaterFlow().timerAdvance(simulationtime, decisioncontroller);

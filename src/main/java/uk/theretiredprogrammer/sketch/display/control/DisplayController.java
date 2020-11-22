@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.core.control.Failure;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayPane;
 import uk.theretiredprogrammer.sketch.display.ui.DisplayWindow;
@@ -35,7 +35,7 @@ import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 public class DisplayController extends AbstractController<DisplayWindow> {
 
     private PropertiesController propertiescontroller;
-    private DecisionController decisioncontroller;
+    private LogController decisioncontroller;
     private FileSelectorController fileselectorcontroller;
     private SimulationController simulationcontroller;
     private DisplayPane displaygroup;
@@ -43,7 +43,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
         propertiescontroller = new PropertiesController(pn);
-        decisioncontroller = new DecisionController(pn.toString(), false);
+        decisioncontroller = new LogController(pn.toString(), false);
         simulationcontroller = new SimulationController(this);
         showDisplayWindow(pn.toString());
     }
@@ -54,7 +54,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
         this(resourcename);
-        decisioncontroller = new DecisionController(fn, false);
+        decisioncontroller = new LogController(fn, false);
         this.fileselectorcontroller = fileselectorcontroller;
         showDisplayWindow(fn);
     }
@@ -138,7 +138,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         displaygroup.refreshParameters();
     }
 
-    public DecisionController getDecisionController() {
+    public LogController getDecisionController() {
         return decisioncontroller;
     }
 }

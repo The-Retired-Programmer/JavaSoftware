@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.decisionslog.entity;
+package uk.theretiredprogrammer.sketch.log.entity;
 
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
-public class DecisionLogEntry extends TimerLogEntry {
+public class BoatLogEntry extends TimerLogEntry {
 
-    private final Decision.DecisionAction decisionaction;
-    private final double decisionangle;
-    private final boolean decisionPORT;
+    private final double boatangle;
+    private final double boatx;
+    private final double boaty;
     private final String boatname;
 
-    public DecisionLogEntry(String boatname, Decision decision) {
-        this.boatname = boatname;
-        this.decisionaction = decision.getAction();
-        this.decisionangle = decision.getDegrees();
-        this.decisionPORT = decision.isPort();
+    public BoatLogEntry(Boat boat) {
+        Location loc = boat.getLocation();
+        this.boatx = loc.getX();
+        this.boaty = loc.getY();
+        this.boatangle = boat.getDirection().get();
+        this.boatname = boat.getName();
     }
 
     @Override
@@ -40,18 +42,15 @@ public class DecisionLogEntry extends TimerLogEntry {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
-        sb.append("  DECISION (");
+        sb.append("  BOAT (");
         sb.append(boatname);
-        sb.append("): ");
-        sb.append(decisionaction);
-        switch (decisionaction) {
-            case TURN:
-            case MARKROUNDING:
-                sb.append(" to ");
-                sb.append(format1dp(decisionangle));
-                sb.append("° ");
-                sb.append(decisionPORT ? "PORT" : "STARBOARD");
-        }
+        sb.append("): [");
+        sb.append(format2dp(boatx));
+        sb.append(",");
+        sb.append(format2dp(boaty));
+        sb.append("] ");
+        sb.append(format1dp(boatangle));
+        sb.append("°");
         return sb.toString();
     }
 }

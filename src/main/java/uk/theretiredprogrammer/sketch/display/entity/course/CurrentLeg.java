@@ -20,10 +20,10 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.ReasonLogEntry;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
+import uk.theretiredprogrammer.sketch.log.entity.BoatLogEntry;
+import uk.theretiredprogrammer.sketch.log.entity.DecisionLogEntry;
+import uk.theretiredprogrammer.sketch.log.entity.ReasonLogEntry;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
@@ -179,7 +179,7 @@ public class CurrentLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    public Strategy nextTimeInterval(Params params, int simulationtime, DecisionController timerlog) {
+    public Strategy nextTimeInterval(Params params, int simulationtime, LogController timerlog) {
         if (decision.getAction() == SAILON) {
             getStrategy(params).strategyTimeInterval(params);
             timerlog.add(new BoatLogEntry(params.boat));

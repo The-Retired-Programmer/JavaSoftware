@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.decisionslog.control;
+package uk.theretiredprogrammer.sketch.log.control;
 
 import java.util.ArrayList;
 import java.util.List;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.TimerLogEntry;
-import uk.theretiredprogrammer.sketch.decisionslog.ui.DecisionDisplayWindow;
+import uk.theretiredprogrammer.sketch.log.entity.TimerLogEntry;
+import uk.theretiredprogrammer.sketch.log.ui.LogDisplayWindow;
 
 /**
  *
  * @author richard
  */
-public class DecisionController extends AbstractController<DecisionDisplayWindow> {
+public class LogController extends AbstractController<LogDisplayWindow> {
 
     private String mmsstime;
     private final List<TimerLogEntry> log = new ArrayList<>();
 
-    public DecisionController(String fn, Boolean requiresfilter) {
-        setWindow(new DecisionDisplayWindow(fn, this), ExternalCloseAction.HIDE);
+    public LogController(String fn, Boolean requiresfilter) {
+        setWindow(new LogDisplayWindow(fn, this), ExternalCloseAction.HIDE);
         getWindow().clear();
         if (requiresfilter) {
             log.stream()

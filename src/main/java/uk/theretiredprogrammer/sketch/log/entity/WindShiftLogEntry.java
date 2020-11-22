@@ -13,31 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.decisionslog.entity;
+package uk.theretiredprogrammer.sketch.log.entity;
 
-public class ReasonLogEntry extends TimerLogEntry {
+public class WindShiftLogEntry extends TimerLogEntry {
 
-    private final String reason;
-    private final String boatname;
+    private final double windshift;
 
-    public ReasonLogEntry(String boatname, String reason) {
-        this.boatname = boatname;
-        this.reason = reason;
-    }
-
-    @Override
-    public boolean hasName(String name) {
-        return boatname.equals(name);
+    public WindShiftLogEntry(double shift) {
+        this.windshift = shift;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
-        sb.append("  REASON (");
-        sb.append(boatname);
-        sb.append("): ");
-        sb.append(reason);
+        sb.append("  WINDSHIFT: ");
+        sb.append(format1dp(windshift));
+        sb.append("°");
         return sb.toString();
     }
 }

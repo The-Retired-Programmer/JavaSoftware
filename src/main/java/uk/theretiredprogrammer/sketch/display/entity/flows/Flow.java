@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
 public abstract class Flow {
@@ -39,7 +39,7 @@ public abstract class Flow {
         return flowcomponents;
     }
 
-    public void timerAdvance(int simulationtime, DecisionController timerlog) {
+    public void timerAdvance(int simulationtime, LogController timerlog) {
         flowshiftsproperty.timerAdvance(simulationtime, timerlog);
     }
 

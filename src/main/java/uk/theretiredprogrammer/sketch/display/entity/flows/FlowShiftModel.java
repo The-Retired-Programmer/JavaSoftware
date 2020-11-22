@@ -27,9 +27,9 @@ import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
-import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
+import uk.theretiredprogrammer.sketch.log.entity.WindShiftLogEntry;
+import uk.theretiredprogrammer.sketch.log.entity.WindSwingLogEntry;
 
 public class FlowShiftModel extends ModelMap {
 
@@ -106,7 +106,7 @@ public class FlowShiftModel extends ModelMap {
         return showflowcolour.get();
     }
 
-    void timerAdvance(int simulationtime, DecisionController timerlog) {
+    void timerAdvance(int simulationtime, LogController timerlog) {
         if (swingperiod.get() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
             double radians = Math.toRadians(((double) simulationtime % swingperiod.get()) / swingperiod.get() * 360);

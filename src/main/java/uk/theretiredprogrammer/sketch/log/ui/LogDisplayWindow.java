@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.decisionslog.ui;
+package uk.theretiredprogrammer.sketch.log.ui;
 
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 
 /**
  *
  * @author richard
  */
-public class DecisionDisplayWindow extends AbstractWindow<DecisionController> {
+public class LogDisplayWindow extends AbstractWindow<LogController> {
 
     private final TextFlow textarea;
 
-    public DecisionDisplayWindow(String fn, DecisionController controller) {
-        super(DecisionDisplayWindow.class, controller);
+    public LogDisplayWindow(String fn, LogController controller) {
+        super(LogDisplayWindow.class, controller);
         setTitle("SKETCH Decisions Viewer - " + fn);
         setDefaultWindowWidth(400);
         setContent(textarea = new TextFlow(), SCROLLABLE);

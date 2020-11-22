@@ -19,7 +19,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
-import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
@@ -48,7 +48,7 @@ public class Boats extends ModelNamedList<Boat> {
         return boat;
     }
 
-    public void timerAdvance(SketchModel model, int simulationtime, DecisionController timerlog) {
+    public void timerAdvance(SketchModel model, int simulationtime, LogController timerlog) {
         stream().forEach(boat -> {
             CurrentLeg leg = boat.getCurrentLeg();
             Strategy nextstrategy = leg.nextTimeInterval(new Params(model, boat), simulationtime, timerlog);
