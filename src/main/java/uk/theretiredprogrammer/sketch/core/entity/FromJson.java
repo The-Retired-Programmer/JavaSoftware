@@ -24,8 +24,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class FromJson {
 
@@ -150,11 +150,11 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
 
-    public static PropertyLeg legProperty(JsonValue jvalue, Marks marks, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
+    public static Leg legProperty(JsonValue jvalue, Marks marks, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new PropertyLeg(
+                return new Leg(
                         constrainedStringProperty(values.get(0), markconstraints),
                         constrainedStringProperty(values.get(1), roundingconstraints),
                         marks,
@@ -165,7 +165,7 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
     }
 
-    public static PropertyGradient gradientProperty(JsonValue jvalue) {
+    public static Gradient gradientProperty(JsonValue jvalue) {
         String newtype = "north";
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
@@ -190,7 +190,7 @@ public class FromJson {
                 }
                 count++;
             }
-            return new PropertyGradient(newtype, enteredspeeds);
+            return new Gradient(newtype, enteredspeeds);
         }
         throw new ParseFailure("Illegal number in gradient definition");
     }

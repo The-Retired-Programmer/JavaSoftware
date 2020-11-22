@@ -96,7 +96,7 @@ public class CurrentLeg {
 
     private int legno = 0;
 
-    private PropertyLeg currentleg;
+    private Leg currentleg;
     private final Course course;
     private Strategy strategy;
     public final Decision decision;
@@ -153,7 +153,7 @@ public class CurrentLeg {
                 : null;
     }
 
-    // proxies to current PropertyLeg
+    // proxies to current Leg
     public boolean isPortRounding() {
         return currentleg.isPortRounding();
     }

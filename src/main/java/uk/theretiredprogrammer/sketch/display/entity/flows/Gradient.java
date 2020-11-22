@@ -33,7 +33,7 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyGradient implements ModelProperty<PropertyGradient> {
+public class Gradient implements ModelProperty<Gradient> {
 
     private static final ObservableList<String> typenames;
 
@@ -46,39 +46,39 @@ public class PropertyGradient implements ModelProperty<PropertyGradient> {
         return typenames;
     }
 
-    public static final PropertyGradient GRADIENTDEFAULT = new PropertyGradient();
+    public static final Gradient GRADIENTDEFAULT = new Gradient();
 
     private final PropertyConstrainedString type = new PropertyConstrainedString(typenames);
     private final ObservableList<PropertyDouble> speeds = FXCollections.observableArrayList();
 
-    public PropertyGradient() {
+    public Gradient() {
         setType("north");
     }
 
-    public PropertyGradient(String type) {
+    public Gradient(String type) {
         setType(type);
     }
 
-    public PropertyGradient(PropertyGradient value) {
+    public Gradient(Gradient value) {
         set(value);
     }
 
-    public PropertyGradient(String type, Collection<PropertyDouble> speeds) {
+    public Gradient(String type, Collection<PropertyDouble> speeds) {
         setType(type);
         addAllSpeedProperties(speeds);
     }
 
-    public PropertyGradient(String type, List<Double> speeds) {
+    public Gradient(String type, List<Double> speeds) {
         setType(type);
         addAllSpeeds(speeds);
     }
 
-    public PropertyGradient(String type, Double... speeds) {
+    public Gradient(String type, Double... speeds) {
         setType(type);
         addAllSpeeds(speeds);
     }
 
-    public final void set(PropertyGradient value) {
+    public final void set(Gradient value) {
         setType(value.getType());
         addAllSpeedProperties(value.getSpeeds());
     }
@@ -136,7 +136,7 @@ public class PropertyGradient implements ModelProperty<PropertyGradient> {
     }
 
     @Override
-    public PropertyGradient parsevalue(JsonValue value) {
+    public Gradient parsevalue(JsonValue value) {
         return FromJson.gradientProperty(value);
     }
 

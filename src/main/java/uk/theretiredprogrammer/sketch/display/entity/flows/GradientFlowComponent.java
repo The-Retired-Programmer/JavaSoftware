@@ -23,11 +23,11 @@ import java.util.function.Supplier;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import static uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient.GRADIENTDEFAULT;
+import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADIENTDEFAULT;
 
 public class GradientFlowComponent extends FlowComponent {
 
-    private final PropertyGradient gradient = new PropertyGradient(GRADIENTDEFAULT);
+    private final Gradient gradient = new Gradient(GRADIENTDEFAULT);
 
     public GradientFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
         super(getdisplayarea, type);
@@ -54,7 +54,7 @@ public class GradientFlowComponent extends FlowComponent {
         gradient.setOnChange(onchange);
     }
 
-    public PropertyGradient getGradient() {
+    public Gradient getGradient() {
         return gradient;
     }
 

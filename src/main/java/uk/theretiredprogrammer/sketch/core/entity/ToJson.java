@@ -21,8 +21,8 @@ import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonValue;
 import java.lang.reflect.Field;
 import javafx.scene.paint.Color;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class ToJson {
 
@@ -84,14 +84,14 @@ public class ToJson {
                 .build();
     }
 
-    public static JsonArray serialise(PropertyLeg property) {
+    public static JsonArray serialise(Leg property) {
         return Json.createArrayBuilder()
                 .add(property.getMarkname())
                 .add(property.getRoundingdirection())
                 .build();
     }
 
-    public static JsonArray serialise(PropertyGradient property) {
+    public static JsonArray serialise(Gradient property) {
         JsonArrayBuilder jab = Json.createArrayBuilder().add(property.getType());
         property.getSpeeds().forEach(speed -> jab.add(speed.get()));
         return jab.build();

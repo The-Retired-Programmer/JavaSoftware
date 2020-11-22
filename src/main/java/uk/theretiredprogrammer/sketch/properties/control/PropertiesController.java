@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
 import uk.theretiredprogrammer.sketch.properties.ui.PropertiesWindow;
 import uk.theretiredprogrammer.sketch.upgraders.ConfigFileController;
@@ -100,6 +100,6 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewLeg() {
-        sketchmodel.getCourse().getLegsProperty().add(new PropertyLeg());
+        sketchmodel.getCourse().getLegsProperty().add(new Leg());
     }
 }

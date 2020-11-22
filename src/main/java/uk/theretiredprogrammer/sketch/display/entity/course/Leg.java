@@ -29,7 +29,7 @@ import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
-public class PropertyLeg implements ModelProperty<PropertyLeg> {
+public class Leg implements ModelProperty<Leg> {
 
     private static final ObservableList<String> roundingdirections;
 
@@ -46,16 +46,16 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
     private PropertyLocation endat;
     private Marks marks;
 
-    public PropertyLeg() {
+    public Leg() {
         set(null, null);
     }
 
-    public PropertyLeg(Marks marks, ObservableList<String> marknames) {
+    public Leg(Marks marks, ObservableList<String> marknames) {
         setMarksAndNames(marks, marknames);
         set(null, null);
     }
 
-    public PropertyLeg(String mark, String passing, Marks marks, ObservableList<String> marknames) {
+    public Leg(String mark, String passing, Marks marks, ObservableList<String> marknames) {
         setMarksAndNames(marks, marknames);
         set(mark, passing);
     }
@@ -83,7 +83,7 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
         markname.setConstraints(marknames);
     }
 
-    public final void set(PropertyLeg value) {
+    public final void set(Leg value) {
         setMarksAndNames(value.marks, value.marknames);
         set(value.markname.get(), value.passing.get());
     }
@@ -97,7 +97,7 @@ public class PropertyLeg implements ModelProperty<PropertyLeg> {
     }
 
     @Override
-    public final PropertyLeg parsevalue(JsonValue jvalue) {
+    public final Leg parsevalue(JsonValue jvalue) {
         return FromJson.legProperty(jvalue, marks, marknames, roundingdirections);
     }
 

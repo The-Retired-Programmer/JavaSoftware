@@ -25,13 +25,13 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 public class Course extends ModelMap {
 
     private final PropertyLocation start = new PropertyLocation();
-    private final PropertyLegs legs;
+    private final Legs legs;
 
     private final Marks marks;
     private Runnable onchange;
 
     public Course(Marks marks, ObservableList<String> marknames) {
-        legs = new PropertyLegs(marks, marknames);
+        legs = new Legs(marks, marknames);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
@@ -74,11 +74,11 @@ public class Course extends ModelMap {
         return start;
     }
 
-    public PropertyLegs getLegsProperty() {
+    public Legs getLegsProperty() {
         return legs;
     }
     
-    public PropertyLeg getLeg(int legno){
+    public Leg getLeg(int legno){
        return legs.get().get(legno);
     }
 }

@@ -50,8 +50,8 @@ import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
 import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.display.entity.course.PropertyLeg;
-import uk.theretiredprogrammer.sketch.display.entity.flows.PropertyGradient;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class UI {
 
@@ -189,14 +189,14 @@ public class UI {
         );
     }
 
-    public static HBox control(PropertyLeg property,
+    public static HBox control(Leg property,
             ObservableList<String> marknames, ObservableList<String> roundings) {
         return new HBox(control(property.getMarknameProperty(), marknames),
                 control(property.getRoundingdirectionProperty(), roundings)
         );
     }
 
-    public static HBox control(int size, PropertyGradient property, ObservableList<String> typeconstraints) {
+    public static HBox control(int size, Gradient property, ObservableList<String> typeconstraints) {
         HBox hbox = new HBox(control(property.getTypeProperty(), typeconstraints));
         property.getSpeeds().forEach(speedproperty -> hbox.getChildren().add(control(size, speedproperty)));
         return hbox;
