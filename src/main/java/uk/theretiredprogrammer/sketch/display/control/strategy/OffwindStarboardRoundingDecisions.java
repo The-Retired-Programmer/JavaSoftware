@@ -29,11 +29,10 @@ public class OffwindStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    public final void nextTimeInterval(Params params) {
-        if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
-            executeStarboardRounding(params, getDirectionAfterTurn);
-            return;
+    public final boolean nextTimeInterval(Params params) {
+        if (!ExecuteRoundingIfAtStarboardRoundingTurnPoint(params, getDirectionAfterTurn)) {
+            adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - starboard rounding");
         }
-        adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - starboard rounding");
+        return true;
     }
 }

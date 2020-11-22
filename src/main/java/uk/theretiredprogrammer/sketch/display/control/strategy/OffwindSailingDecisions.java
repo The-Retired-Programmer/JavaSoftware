@@ -22,12 +22,11 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 public class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    public void nextTimeInterval(Params params) {
-        PropertyDegrees nextDirection = params.leg.getAngletoSail(params.location, params.isPort);
+    public boolean nextTimeInterval(Params params) {
+        PropertyDegrees nextDirection = params.angleToSailToMark();
         if (nextDirection.neq(params.heading)) {
-            params.setTURN(nextDirection, params.heading.gt(nextDirection), MINOR, "Adjust direction to sailin directly to mark (offwind sailing)");
-            return;
+            return params.setTURN(nextDirection, params.heading.gt(nextDirection), MINOR, "Adjust direction to sailin directly to mark (offwind sailing)");
         }
-        params.setSAILON();
+        return params.setSAILON();
     }
 }

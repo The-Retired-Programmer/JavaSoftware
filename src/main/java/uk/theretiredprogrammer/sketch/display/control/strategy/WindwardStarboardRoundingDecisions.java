@@ -32,28 +32,22 @@ public class WindwardStarboardRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    public final void nextTimeInterval(Params params) {
-        if (!params.isPort) {
-            if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
-                params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "pre markrounding action - tack to port - starboard tack - starboard rounding");
-                return;
-            }
-            if (adjustStarboardDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
-                return;
-            }
-            params.setTURN(params.starboardCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - port rounding");
-            return;
+    public final boolean nextTimeInterval(Params params) {
+        return params.isPort
+                ? ExecuteRoundingIfAtStarboardRoundingTurnPoint(params, getDirectionAfterTurn)
+                || adjustPortDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")
+                || tackifonstarboardlayline(params, "tacking on starboard layline - port->starboard")
+                || params.setTURN(params.portCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - starboard rounding")
+                : tackIfAtStarboardRoundingTurnPoint(params)
+                || adjustStarboardDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")
+                || params.setTURN(params.starboardCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - port rounding");
+    }
+
+    private boolean tackIfAtStarboardRoundingTurnPoint(Params params) {
+        if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
+            params.setTURN(params.portCloseHauled, STARBOARD, MAJOR, "pre markrounding action - tack to port - starboard tack - starboard rounding");
+            return true;
         }
-        if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
-            executeStarboardRounding(params, getDirectionAfterTurn);
-            return;
-        }
-        if (adjustPortDirectCourseToWindwardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
-            return;
-        }
-        if (tackifonstarboardlayline(params, "tacking on starboard layline - port->starboard")) {
-            return;
-        }
-        params.setTURN(params.portCloseHauled, PORT, MINOR, "course adjustment - bearing away to hold port c/h - port tack - starboard rounding");
+        return false;
     }
 }

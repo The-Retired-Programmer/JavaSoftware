@@ -29,11 +29,10 @@ public class OffwindPortRoundingDecisions extends RoundingDecisions {
     }
 
     @Override
-    public final void nextTimeInterval(Params params) {
-        if (atPortRoundingTurnPoint(params.boat, params.leg)) {
-            executePortRounding(params, getDirectionAfterTurn);
-            return;
+    public final boolean nextTimeInterval(Params params) {
+        if (!executeRoundingIfAtPortRoundingTurnPoint(params, getDirectionAfterTurn)) {
+            adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - port rounding");
         }
-        adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - port rounding");
+        return true;
     }
 }

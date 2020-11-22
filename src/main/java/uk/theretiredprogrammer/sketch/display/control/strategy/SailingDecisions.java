@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public abstract class SailingDecisions {
 
-    public abstract void nextTimeInterval(Params params);
+    public abstract boolean nextTimeInterval(Params params);
 
     boolean tackifonstarboardlayline(Params params, String reason) {
         if (params.boat.isPortTackingQuadrant(params.leg.getSailToLocation(false), params.winddirection)) {
@@ -60,7 +60,7 @@ public abstract class SailingDecisions {
     }
 
     boolean adjustPortDirectCourseToWindwardMarkOffset(Params params, String reason) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, true);
+        PropertyDegrees coursetomark = params.angleToSailToMark(true);
         PropertyDegrees closehauled = params.portCloseHauled;
         if (coursetomark.lt(closehauled)) {
             return false;
@@ -69,7 +69,7 @@ public abstract class SailingDecisions {
     }
 
     boolean adjustStarboardDirectCourseToWindwardMarkOffset(Params params, String reason) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, false);
+        PropertyDegrees coursetomark = params.angleToSailToMark(false);
         PropertyDegrees closehauled = params.starboardCloseHauled;
         if (coursetomark.gt(closehauled)) {
             return false;
@@ -78,7 +78,7 @@ public abstract class SailingDecisions {
     }
 
     boolean adjustPortDirectCourseToLeewardMarkOffset(Params params, String reason) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, true);
+        PropertyDegrees coursetomark = params.angleToSailToMark(true);
         PropertyDegrees reaching = params.portReaching;
         if (coursetomark.gt(reaching)) {
             return false;
@@ -87,7 +87,7 @@ public abstract class SailingDecisions {
     }
 
     boolean adjustStarboardDirectCourseToLeewardMarkOffset(Params params, String reason) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, false);
+        PropertyDegrees coursetomark = params.angleToSailToMark(false);
         PropertyDegrees reaching = params.starboardReaching;
         if (coursetomark.lt(reaching)) {
             return false;
@@ -96,7 +96,7 @@ public abstract class SailingDecisions {
     }
 
     boolean adjustDirectCourseToDownwindMarkOffset(Params params, String reason) {
-        PropertyDegrees coursetomark = params.leg.getAngletoSail(params.location, params.isPort);
+        PropertyDegrees coursetomark = params.angleToSailToMark();
         return adjustCourse(params, coursetomark, MINOR, reason);
     }
 

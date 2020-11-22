@@ -32,28 +32,22 @@ public class GybingDownwindStarboardRoundingDecisions extends RoundingDecisions 
     }
 
     @Override
-    public final void nextTimeInterval(Params params) {
-        if (params.isPort) {
-            if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
-                params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "pre markrounding action - gybe to starboard - port tack - starboard rounding");
-                return;
-            }
-            if (adjustPortDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")) {
-                return;
-            }
-            params.setTURN(params.portReaching, PORT, MINOR, "course adjustment - luff up to hold port reaching - port tack - starboard rounding");
-            return;
+    public final boolean nextTimeInterval(Params params) {
+        return params.isPort
+                ? gybeIfAtStarboardRoundingTurnPoint(params)
+                || adjustPortDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - port tack - starboard rounding")
+                || params.setTURN(params.portReaching, PORT, MINOR, "course adjustment - luff up to hold port reaching - port tack - starboard rounding")
+                : ExecuteRoundingIfAtStarboardRoundingTurnPoint(params, getDirectionAfterTurn)
+                || adjustStarboardDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")
+                || gybeifonportlayline(params, "gybing on port layline - starboard->port")
+                || params.setTURN(params.starboardReaching, STARBOARD, MINOR, "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding");
+    }
+
+    private boolean gybeIfAtStarboardRoundingTurnPoint(Params params) {
+        if (params.boat.isStarboardRear90Quadrant(params.marklocation)) {
+            params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "pre markrounding action - gybe to starboard - port tack - starboard rounding");
+            return true;
         }
-        if (atStarboardRoundingTurnPoint(params.boat, params.leg)) {
-            executeStarboardRounding(params, getDirectionAfterTurn);
-            return;
-        }
-        if (adjustStarboardDirectCourseToLeewardMarkOffset(params, "course adjustment - approaching mark - starboard tack - starboard rounding")) {
-            return;
-        }
-        if (gybeifonportlayline(params, "gybing on port layline - starboard->port")) {
-            return;
-        }
-        params.setTURN(params.starboardReaching, STARBOARD, MINOR, "course adjustment - luff up to hold starboard reaching - starboard tack - starboard rounding");
+        return false;
     }
 }

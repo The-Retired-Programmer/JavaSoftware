@@ -26,35 +26,29 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public abstract class RoundingDecisions extends SailingDecisions {
 
-    final boolean atPortRoundingTurnPoint(Boat boat, CurrentLeg leg) {
-        return boat.isPortRear90Quadrant(leg.getMarkLocation());
-    }
-
-    final boolean atStarboardRoundingTurnPoint(Boat boat, CurrentLeg leg) {
-        return boat.isStarboardRear90Quadrant(leg.getMarkLocation());
-    }
-
-    final String executePortRounding(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
-        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
-        PropertyDegrees turnangle = finaldirection.absDegreesDiff(params.heading);
-        if (turnangle.gt(90)) {
-            params.setTURN(params.heading.sub(90), PORT, MAJOR, "markrounding action - first phase - starboard tack - port rounding");
-            return "markrounding action - first phase - starboard tack - port rounding";
+    final boolean executeRoundingIfAtPortRoundingTurnPoint(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+        if (params.boat.isPortRear90Quadrant(params.leg.getMarkLocation())) {
+            PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+            if (finaldirection.absDegreesDiff(params.heading).gt(90)) {
+                params.setTURN(params.heading.sub(90), PORT, MAJOR, "markrounding action - first phase - starboard tack - port rounding");
+            } else {
+                params.setMARKROUNDING(finaldirection, PORT, MAJOR, "markrounding action - starboard tack - port rounding");
+            }
+            return true;
         }
-        //TODO - potential race condition here if wind shift between first pahse and completion
-        params.setMARKROUNDING(finaldirection, PORT, MAJOR, "markrounding action - starboard tack - port rounding");
-        return "markrounding action - starboard tack - port rounding";
+        return false;
     }
-
-    final String executeStarboardRounding(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
-        PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
-        PropertyDegrees turnangle = finaldirection.absDegreesDiff(params.heading);
-        if (turnangle.gt(90)) {
-            params.setTURN(params.heading.plus(90), STARBOARD, MAJOR, "markrounding action - first phase - port tack - starboard rounding");
-            return "markrounding action - first phase - port tack - starboard rounding";
+    
+    final boolean ExecuteRoundingIfAtStarboardRoundingTurnPoint(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+        if (params.boat.isStarboardRear90Quadrant(params.leg.getMarkLocation())) {
+            PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+            if (finaldirection.absDegreesDiff(params.heading).gt(90)) {
+                params.setTURN(params.heading.plus(90), STARBOARD, MAJOR, "markrounding action - first phase - port tack - starboard rounding");
+            } else {
+                params.setMARKROUNDING(finaldirection, STARBOARD, MAJOR, "markrounding action - port tack - starboard rounding");
+            }
+            return true;
         }
-        //TODO - potential race condition here if wind shift between first pahse and completion
-        params.setMARKROUNDING(finaldirection, STARBOARD, MAJOR, "markrounding action - port tack - starboard rounding");
-        return "markrounding action - port tack - starboard rounding";
+        return false;
     }
 }

@@ -76,6 +76,14 @@ public class Params {
         portReaching = boat.getPortReachingCourse(winddirection);
         angletowind = heading.absDegreesDiff(winddirection);
     }
+    
+    public final PropertyDegrees angleToSailToMark() {
+        return angleToSailToMark(isPort);
+    }
+    
+    public final PropertyDegrees angleToSailToMark(boolean port) {
+        return leg.getAngletoSail(location, port);
+    }
 
     public final boolean setSAILON() {
         decision.setSAILON(heading);
