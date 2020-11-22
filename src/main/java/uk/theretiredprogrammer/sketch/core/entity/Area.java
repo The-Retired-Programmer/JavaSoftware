@@ -20,45 +20,45 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyArea implements ModelProperty<PropertyArea> {
+public class Area implements ModelProperty<Area> {
 
-    public static final PropertyArea AREAZERO = new PropertyArea(new PropertyLocation(0, 0), 0, 0);
+    public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
 
-    private final PropertyLocation bottomleft = new PropertyLocation();
+    private final Location bottomleft = new Location();
     private final SimpleDoubleProperty width = new SimpleDoubleProperty();
     private final SimpleDoubleProperty height = new SimpleDoubleProperty();
 
-    public PropertyArea() {
+    public Area() {
         set(AREAZERO);
     }
 
-    public PropertyArea(PropertyArea area) {
+    public Area(Area area) {
         set(area);
     }
 
-    public PropertyArea(PropertyLocation bottomleft, double width, double height) {
+    public Area(Location bottomleft, double width, double height) {
         set(bottomleft, width, height);
     }
 
-    public PropertyArea(double x, double y, double width, double height) {
+    public Area(double x, double y, double width, double height) {
         set(x, y, width, height);
     }
 
-    public final void set(PropertyArea area) {
+    public final void set(Area area) {
         set(area.bottomleft, area.getWidth(), area.getHeight());
     }
 
-    public final void set(PropertyLocation bottomleft, double width, double height) {
+    public final void set(Location bottomleft, double width, double height) {
         this.bottomleft.set(bottomleft);
         this.width.set(width);
         this.height.set(height);
     }
 
     public final void set(double x, double y, double width, double height) {
-        set(new PropertyLocation(x, y), width, height);
+        set(new Location(x, y), width, height);
     }
 
-    public PropertyLocation getLocationProperty() {
+    public Location getLocationProperty() {
         return bottomleft;
     }
 
@@ -86,7 +86,7 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
     }
 
     @Override
-    public final PropertyArea parsevalue(JsonValue value) {
+    public final Area parsevalue(JsonValue value) {
         return FromJson.areaProperty(value);
     }
 
@@ -110,7 +110,7 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
         set(parsevalue(jvalue));
     }
 
-    public boolean isWithinArea(PropertyLocation location) {
+    public boolean isWithinArea(Location location) {
         return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width.get()
                 && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height.get();
     }
@@ -135,7 +135,7 @@ public class PropertyArea implements ModelProperty<PropertyArea> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PropertyArea other = (PropertyArea) obj;
+        final Area other = (Area) obj;
         if (!this.bottomleft.equals(other.bottomleft)) {
             return false;
         }

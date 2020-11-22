@@ -20,21 +20,21 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
+import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Dble;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 
 public class DisplayModel extends ModelMap {
 
-    public static final PropertyArea DISPLAYAREADEFAULT = new PropertyArea(new PropertyLocation(-500, -500), 1000, 1000);
+    public static final Area DISPLAYAREADEFAULT = new Area(new Location(-500, -500), 1000, 1000);
 
-    private final PropertyDouble zoom = new PropertyDouble(1.0);
-    private final PropertyInteger secondsperdisplay = new PropertyInteger(1);
-    private final PropertyDouble speedup = new PropertyDouble(1.0);
-    private final PropertyArea displayarea = new PropertyArea(DISPLAYAREADEFAULT);
-    private final PropertyArea sailingarea = new PropertyArea();
+    private final Dble zoom = new Dble(1.0);
+    private final Int secondsperdisplay = new Int(1);
+    private final Dble speedup = new Dble(1.0);
+    private final Area displayarea = new Area(DISPLAYAREADEFAULT);
+    private final Area sailingarea = new Area();
 
     public DisplayModel() {
         addProperty("zoom", zoom);
@@ -89,12 +89,12 @@ public class DisplayModel extends ModelMap {
         return speedup.get();
     }
 
-    public PropertyArea getSailingarea() {
-        PropertyArea area = sailingarea;
+    public Area getSailingarea() {
+        Area area = sailingarea;
         return area.equals(AREAZERO) ? getDisplayarea() : area;
     }
 
-    public PropertyArea getDisplayarea() {
+    public Area getDisplayarea() {
         return displayarea;
     }
 }

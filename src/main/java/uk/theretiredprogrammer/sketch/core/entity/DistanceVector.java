@@ -20,28 +20,28 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVector> {
+public class DistanceVector implements ModelProperty<DistanceVector> {
 
     private final SimpleDoubleProperty distanceproperty = new SimpleDoubleProperty();
-    private final PropertyDegrees degreesproperty = new PropertyDegrees();
+    private final Angle degreesproperty = new Angle();
 
-    public PropertyDistanceVector() {
+    public DistanceVector() {
         set(0, 0);
     }
 
-    public PropertyDistanceVector(PropertyDistanceVector value) {
+    public DistanceVector(DistanceVector value) {
         set(value);
     }
 
-    public PropertyDistanceVector(double distance, PropertyDegrees degrees) {
+    public DistanceVector(double distance, Angle degrees) {
         set(distance, degrees);
     }
 
-    public PropertyDistanceVector(double distance, double degrees) {
+    public DistanceVector(double distance, double degrees) {
         set(distance, degrees);
     }
 
-    public PropertyDistanceVector(PropertyLocation origin, PropertyLocation pos) {
+    public DistanceVector(Location origin, Location pos) {
         double deltax = (pos.getX() - origin.getX());
         double deltay = (pos.getY() - origin.getY());
         set(
@@ -56,11 +56,11 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
         degreesproperty.addListener((o, oldval, newval) -> onchange.run());
     }
 
-    public final void set(PropertyDistanceVector value) {
+    public final void set(DistanceVector value) {
         set(value.getDistance(), value.getDegrees());
     }
 
-    public final void set(double distance, PropertyDegrees degrees) {
+    public final void set(double distance, Angle degrees) {
         set(distance, degrees.get());
     }
 
@@ -81,12 +81,12 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
         return degreesproperty.get();
     }
 
-    public PropertyDegrees getDegreesProperty() {
+    public Angle getDegreesProperty() {
         return degreesproperty;
     }
 
     @Override
-    public PropertyDistanceVector parsevalue(JsonValue jvalue) {
+    public DistanceVector parsevalue(JsonValue jvalue) {
         return FromJson.distanceVectorProperty(jvalue);
     }
 
@@ -114,14 +114,14 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
         set(parsevalue(jvalue));
     }
 
-    public PropertyLocation toLocation(PropertyLocation origin) {
+    public Location toLocation(Location origin) {
         double distance = distanceproperty.get();
         double radians = getDegreesProperty().getRadians();
-        return new PropertyLocation(origin.getX() + distance * Math.sin(radians),
+        return new Location(origin.getX() + distance * Math.sin(radians),
                 origin.getY() + distance * Math.cos(radians));
     }
 
-    public PropertyDistanceVector plus(PropertyDistanceVector other) {
+    public DistanceVector plus(DistanceVector other) {
         double distance = distanceproperty.get();
         double radians = degreesproperty.getRadians();
         double otherdistance = other.distanceproperty.get();
@@ -129,10 +129,10 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
         double x = distance * Math.sin(radians) + otherdistance * Math.sin(otherradians);
         double y = distance * Math.cos(radians) + otherdistance * Math.cos(otherradians);
         //
-        return new PropertyDistanceVector(Math.sqrt(x * x + y * y), new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
+        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(x, y))));
     }
 
-    public PropertyDistanceVector sub(PropertyDistanceVector other) {
+    public DistanceVector sub(DistanceVector other) {
         double distance = distanceproperty.get();
         double radians = degreesproperty.getRadians();
         double otherdistance = other.distanceproperty.get();
@@ -140,23 +140,23 @@ public class PropertyDistanceVector implements ModelProperty<PropertyDistanceVec
         double x = distance * Math.sin(radians) - otherdistance * Math.sin(otherradians);
         double y = distance * Math.cos(radians) - otherdistance * Math.cos(otherradians);
         //
-        return new PropertyDistanceVector(Math.sqrt(x * x + y * y), new PropertyDegrees(Math.toDegrees(Math.atan2(x, y))));
+        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(x, y))));
     }
 
-    public PropertyDistanceVector mult(double multiplier) {
+    public DistanceVector mult(double multiplier) {
         double distance = distanceproperty.get();
-        return multiplier < 0 ? new PropertyDistanceVector(-distance * multiplier, degreesproperty.inverse()) : new PropertyDistanceVector(distance * multiplier, degreesproperty);
+        return multiplier < 0 ? new DistanceVector(-distance * multiplier, degreesproperty.inverse()) : new DistanceVector(distance * multiplier, degreesproperty);
     }
 
-    public PropertyDegrees degreesDiff(PropertyDistanceVector p) {
+    public Angle degreesDiff(DistanceVector p) {
         return degreesproperty.degreesDiff(p.getDegreesProperty());
     }
 
-    public PropertyDegrees degreesDiff(PropertyDegrees p) {
+    public Angle degreesDiff(Angle p) {
         return degreesproperty.degreesDiff(p);
     }
 
-    public PropertyDegrees degreesDiff(double p) {
+    public Angle degreesDiff(double p) {
         return degreesproperty.degreesDiff(p);
     }
 }

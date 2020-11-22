@@ -20,15 +20,15 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final PropertySpeedVector flow = new PropertySpeedVector();
+    private final SpeedVector flow = new SpeedVector();
 
-    public ConstantFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
+    public ConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("flow", flow);
     }
@@ -53,12 +53,12 @@ public class ConstantFlowComponent extends FlowComponent {
         flow.setOnChange(onchange);
     }
 
-    public PropertySpeedVector getFlow() {
+    public SpeedVector getFlow() {
         return flow;
     }
 
     @Override
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         testLocationWithinArea(pos);
         return getFlow();
     }

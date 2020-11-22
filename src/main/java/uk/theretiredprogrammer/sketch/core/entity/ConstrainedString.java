@@ -23,19 +23,19 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
+public class ConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
 
     private ObservableList<String> constraints;
     
-    public PropertyConstrainedString() {
+    public ConstrainedString() {
         super.set(null);
     }
 
-    public PropertyConstrainedString(ObservableList<String> constraints) {
+    public ConstrainedString(ObservableList<String> constraints) {
         this(null, constraints);
     }
 
-    public PropertyConstrainedString(String defaultvalue, ObservableList<String> constraints) {
+    public ConstrainedString(String defaultvalue, ObservableList<String> constraints) {
         this.constraints = constraints;
         if (defaultvalue != null && (!constraints.contains(defaultvalue))) {
             throw new IllegalStateFailure("Bad default value - not in constraints list");

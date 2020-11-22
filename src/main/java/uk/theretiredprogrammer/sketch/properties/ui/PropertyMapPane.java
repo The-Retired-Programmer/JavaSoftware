@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
+import uk.theretiredprogrammer.sketch.core.entity.Strg;
 
 public class PropertyMapPane extends TitledPane {
     
@@ -36,7 +36,7 @@ public class PropertyMapPane extends TitledPane {
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
-    public PropertyMapPane(ModelMap properties, String titleroot, PropertyString propertyname) {
+    public PropertyMapPane(ModelMap properties, String titleroot, Strg propertyname) {
         this.textProperty().bind(new SimpleStringProperty(titleroot)
                 .concat(propertyname.get())
         );

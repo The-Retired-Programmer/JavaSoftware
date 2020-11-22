@@ -20,9 +20,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyInteger extends SimpleIntegerProperty implements ModelProperty<Integer> {
+public class Int extends SimpleIntegerProperty implements ModelProperty<Integer> {
 
-    public PropertyInteger(int defaultvalue) {
+    public Int(int defaultvalue) {
         set(defaultvalue);
     }
 

@@ -15,8 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -32,20 +32,20 @@ public class Params {
     //
     public Decision decision;
     public CurrentLeg leg;
-    public PropertyDegrees winddirection;
-    public PropertyDegrees starboardCloseHauled;
-    public PropertyDegrees portCloseHauled;
-    public PropertyDegrees starboardReaching;
-    public PropertyDegrees portReaching;
-    public PropertyDegrees heading;
-    public PropertyLocation location;
-    public PropertyDegrees angletowind;
-    public PropertyDegrees meanwinddirection;
-    public PropertyDegrees downwindrelative;
-    public PropertyDegrees upwindrelative;
+    public Angle winddirection;
+    public Angle starboardCloseHauled;
+    public Angle portCloseHauled;
+    public Angle starboardReaching;
+    public Angle portReaching;
+    public Angle heading;
+    public Location location;
+    public Angle angletowind;
+    public Angle meanwinddirection;
+    public Angle downwindrelative;
+    public Angle upwindrelative;
     public boolean isPort;
-    public PropertyLocation marklocation;
-    public PropertyDegrees markmeanwinddirection;
+    public Location marklocation;
+    public Angle markmeanwinddirection;
 
     public Params(SketchModel model, Boat boat) {
         this.model = model;
@@ -77,11 +77,11 @@ public class Params {
         angletowind = heading.absDegreesDiff(winddirection);
     }
     
-    public final PropertyDegrees angleToSailToMark() {
+    public final Angle angleToSailToMark() {
         return angleToSailToMark(isPort);
     }
     
-    public final PropertyDegrees angleToSailToMark(boolean port) {
+    public final Angle angleToSailToMark(boolean port) {
         return leg.getAngletoSail(location, port);
     }
 
@@ -90,7 +90,7 @@ public class Params {
         return true;
     }
 
-    public final boolean setTURN(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public final boolean setTURN(Angle degrees, boolean turndirection, Importance importance, String reason) {
         if (degrees.absDegreesDiff(heading).lt(0.1)) {
             decision.setSAILON(heading);
         } else {
@@ -99,7 +99,7 @@ public class Params {
         return true;
     }
 
-    public final boolean setMARKROUNDING(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public final boolean setMARKROUNDING(Angle degrees, boolean turndirection, Importance importance, String reason) {
         decision.setMARKROUNDING(degrees, turndirection, importance, reason);
         return true;
     }

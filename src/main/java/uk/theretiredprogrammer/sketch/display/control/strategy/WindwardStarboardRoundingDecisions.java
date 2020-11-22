@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
@@ -25,9 +25,9 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public class WindwardStarboardRoundingDecisions extends RoundingDecisions {
 
-    private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
+    private final Function<Angle, Angle> getDirectionAfterTurn;
 
-    public WindwardStarboardRoundingDecisions(Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+    public WindwardStarboardRoundingDecisions(Function<Angle, Angle> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 

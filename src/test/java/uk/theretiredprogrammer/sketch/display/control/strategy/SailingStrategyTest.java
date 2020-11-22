@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.MARKROUNDING;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.STOP;
@@ -55,18 +55,18 @@ public class SailingStrategyTest {
     }
 
     void setboatdirection(double degrees) {
-        params.boat.setDirection(new PropertyDegrees(degrees));
+        params.boat.setDirection(new Angle(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        params.boat.setLocation(new PropertyLocation(x, y));
+        params.boat.setLocation(new Location(x, y));
     }
 
     void setboattrue(String... propertynames) {
         params.boat.stream().filter(p
                 -> Arrays.asList(propertynames).stream()
-                        .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof PropertyBoolean)))
-                .forEach(p -> ((PropertyBoolean) p.getValue()).set(true));
+                        .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof Bool)))
+                .forEach(p -> ((Bool) p.getValue()).set(true));
     }
 
     void setwindflow(double speed, double degrees) {
@@ -77,27 +77,27 @@ public class SailingStrategyTest {
         params.windflow.getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
+                    ((TestFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
                 });
     }
 
-    PropertyDegrees getStarboardCloseHauled() {
+    Angle getStarboardCloseHauled() {
         return params.starboardCloseHauled;
     }
 
-    PropertyDegrees getPortCloseHauled() {
+    Angle getPortCloseHauled() {
         return params.portCloseHauled;
     }
 
-    PropertyDegrees getStarboardReaching() {
+    Angle getStarboardReaching() {
         return params.starboardReaching;
     }
 
-    PropertyDegrees getPortReaching() {
+    Angle getPortReaching() {
         return params.portReaching;
     }
 
-    void assertTURN(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
+    void assertTURN(Decision decision, Angle angle, boolean isSTARBOARD) {
         assertAll("Decision is TURN?",
                 () -> assertEquals(TURN, decision.getAction()),
                 () -> assertEquals(angle, decision.getDegreesProperty()),
@@ -113,7 +113,7 @@ public class SailingStrategyTest {
         );
     }
 
-    void assertSailing(Decision decision, PropertyDegrees minangle, PropertyDegrees maxangle) {
+    void assertSailing(Decision decision, Angle minangle, Angle maxangle) {
         assertSailing(decision, minangle.get(), maxangle.get());
     }
 
@@ -149,7 +149,7 @@ public class SailingStrategyTest {
         );
     }
 
-    void assertMARKROUNDING(Decision decision, PropertyDegrees angle, boolean isSTARBOARD) {
+    void assertMARKROUNDING(Decision decision, Angle angle, boolean isSTARBOARD) {
         assertAll("Decision is MARKROUNDING?",
                 () -> assertEquals(MARKROUNDING, decision.getAction()),
                 () -> assertEquals(angle, decision.getDegreesProperty()),

@@ -24,8 +24,8 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
@@ -38,7 +38,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 public class SketchModel extends ModelMap {
 
     private final ObservableList<String> marknames = FXCollections.observableArrayList();
-    private final PropertyString type = new PropertyString(null);
+    private final Strg type = new Strg(null);
     private final MetaModel meta = new MetaModel();
     private final DisplayModel display = new DisplayModel();
     private final FlowShiftModel windshifts = new FlowShiftModel();
@@ -57,7 +57,7 @@ public class SketchModel extends ModelMap {
     }
     
     private void markchanged(ObservableValue<? extends String> o, String oldval, String newval) {
-        if (o instanceof PropertyString) {
+        if (o instanceof Strg) {
             int i = 0;
         }
     }
@@ -122,7 +122,7 @@ public class SketchModel extends ModelMap {
 //        boats.setOnChange(onchange);
     }
 
-    public PropertyArea getDisplayArea() {
+    public Area getDisplayArea() {
         return getDisplay().getDisplayarea();
     }
 

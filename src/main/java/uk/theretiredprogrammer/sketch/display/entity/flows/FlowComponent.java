@@ -22,18 +22,18 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import static uk.theretiredprogrammer.sketch.core.entity.PropertyArea.AREAZERO;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
+import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Strg;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public abstract class FlowComponent extends ModelMap {
 
-    public static FlowComponent factory(String type, Supplier<PropertyArea> getdisplayarea) {
+    public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
             case "testflow" -> {
                 return new TestFlowComponent(getdisplayarea, type);
@@ -63,15 +63,15 @@ public abstract class FlowComponent extends ModelMap {
         return typenames;
     }
 
-    private final PropertyString name = new PropertyString("<newname>");
-    private final PropertyInteger zlevel = new PropertyInteger(0);
-    private final PropertyArea area = new PropertyArea();
-    private final PropertyConstrainedString type;
-    private final Supplier<PropertyArea> getdisplayarea;
+    private final Strg name = new Strg("<newname>");
+    private final Int zlevel = new Int(0);
+    private final Area area = new Area();
+    private final ConstrainedString type;
+    private final Supplier<Area> getdisplayarea;
 
-    public FlowComponent(Supplier<PropertyArea> getdisplayarea, String flowtype) {
+    public FlowComponent(Supplier<Area> getdisplayarea, String flowtype) {
         this.getdisplayarea = getdisplayarea;
-        type = new PropertyConstrainedString(flowtype, typenames);
+        type = new ConstrainedString(flowtype, typenames);
         addProperty("name", name);
         addProperty("zlevel", zlevel);
         addProperty("area", area);
@@ -105,7 +105,7 @@ public abstract class FlowComponent extends ModelMap {
         return name.get();
     }
 
-    public PropertyString getNameProperty() {
+    public Strg getNameProperty() {
         return name;
     }
 
@@ -113,8 +113,8 @@ public abstract class FlowComponent extends ModelMap {
         return zlevel.get();
     }
 
-    public PropertyArea getArea() {
-        PropertyArea windarea = area;
+    public Area getArea() {
+        Area windarea = area;
         return windarea.equals(AREAZERO) ? getdisplayarea.get() : windarea;
     }
 
@@ -122,15 +122,15 @@ public abstract class FlowComponent extends ModelMap {
         return type.get();
     }
 
-    public abstract PropertySpeedVector getFlow(PropertyLocation pos);
+    public abstract SpeedVector getFlow(Location pos);
 
-    void testLocationWithinArea(PropertyLocation pos) {
+    void testLocationWithinArea(Location pos) {
         if (!(getArea().isWithinArea(pos))) {
             throw new IllegalStateFailure("PropertyLocation is not with the Area " + pos);
         }
     }
 
-    public PropertyDegrees meanWindAngle() {
+    public Angle meanWindAngle() {
         return null; // should override if manual control  of mean wind angle required
     }
 }

@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.INSIGNIFICANT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 
@@ -33,28 +33,28 @@ public class Decision {
     }
 
     private DecisionAction action = DecisionAction.SAILON;
-    private PropertyDegrees degrees = new PropertyDegrees(0);
+    private Angle degrees = new Angle(0);
     private boolean turndirection = STARBOARD;
     private Importance importance = INSIGNIFICANT;
     private String reason;
 
-    public void setSAILON(PropertyDegrees currentdirection) {
+    public void setSAILON(Angle currentdirection) {
         set(DecisionAction.SAILON, currentdirection, STARBOARD, INSIGNIFICANT, "Sail On");
     }
 
-    public void setTURN(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public void setTURN(Angle degrees, boolean turndirection, Importance importance, String reason) {
         set(DecisionAction.TURN, degrees, turndirection, importance, reason);
     }
 
-    public void setMARKROUNDING(PropertyDegrees degrees, boolean turndirection, Importance importance, String reason) {
+    public void setMARKROUNDING(Angle degrees, boolean turndirection, Importance importance, String reason) {
         set(DecisionAction.MARKROUNDING, degrees, turndirection, importance, reason);
     }
 
-    public void setSTOP(PropertyDegrees currentdirection) {
+    public void setSTOP(Angle currentdirection) {
         set(DecisionAction.STOP, currentdirection, STARBOARD, MAJOR, "Stop");
     }
 
-    private void set(DecisionAction action, PropertyDegrees degrees, boolean turndirection,
+    private void set(DecisionAction action, Angle degrees, boolean turndirection,
             Importance importance, String reason) {
         this.action = action;
         this.degrees.set(degrees);
@@ -67,7 +67,7 @@ public class Decision {
         return action;
     }
 
-    public PropertyDegrees getDegreesProperty() {
+    public Angle getDegreesProperty() {
         return degrees;
     }
 

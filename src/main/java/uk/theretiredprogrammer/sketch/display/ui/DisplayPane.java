@@ -21,11 +21,11 @@ import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.core.ui.DisplayContextMenu;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
@@ -57,7 +57,7 @@ public class DisplayPane extends Group {
         SketchModel sketchproperty = controller.getModel();
         this.zoom = sketchproperty.getDisplay().getZoom();
         mainscale = new Scale(zoom, -zoom);
-        PropertyArea displayarea = sketchproperty.getDisplayArea();
+        Area displayarea = sketchproperty.getDisplayArea();
         maintranslate = new Translate(-displayarea.getLocationProperty().getX(), -displayarea.getHeight() - displayarea.getLocationProperty().getY());
         shapebuilder = new Shapes2D(zoom);
         repaint();
@@ -74,8 +74,8 @@ public class DisplayPane extends Group {
     }
 
     private void displaydraw() {
-        PropertyArea displayarea = controller.getModel().getDisplayArea();
-        PropertyArea sailingarea = controller.getModel().getDisplay().getSailingarea();
+        Area displayarea = controller.getModel().getDisplayArea();
+        Area sailingarea = controller.getModel().getDisplay().getSailingarea();
         getChildren().addAll(
                 Wrap.globalTransform(
                         Wrap.displayContextMenu(
@@ -95,7 +95,7 @@ public class DisplayPane extends Group {
         if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
-            Mark newmark = new Mark(new PropertyLocation(x, y));
+            Mark newmark = new Mark(new Location(x, y));
             if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
                 // insert new property into sketchproperty
                 controller.getModel().getMarks().add(newmark);
@@ -108,7 +108,7 @@ public class DisplayPane extends Group {
             double x = displaycontextmenu.getDisplayX();
             double y = displaycontextmenu.getDisplayY();
             SketchModel model = controller.getModel();
-            Boat newboat = BoatFactory.createBoat("laser2", new PropertyLocation(x, y),
+            Boat newboat = BoatFactory.createBoat("laser2", new Location(x, y),
                     new CurrentLeg(model.getCourse()),
                     model.getWindFlow(),
                     model.getWaterFlow());
@@ -119,8 +119,8 @@ public class DisplayPane extends Group {
     }
 
     private void windflowdraw() {
-        PropertyArea area = controller.getModel().getDisplayArea();
-        PropertyLocation sw = area.getLocationProperty();
+        Area area = controller.getModel().getDisplayArea();
+        Location sw = area.getLocationProperty();
         double westedge = sw.getX();
         double eastedge = westedge + area.getWidth();
         double southedge = sw.getY();
@@ -131,7 +131,7 @@ public class DisplayPane extends Group {
             while (x < eastedge) {
                 double y = southedge + showwindflowinterval;
                 while (y < northedge) {
-                    PropertyLocation here = new PropertyLocation(x, y);
+                    Location here = new Location(x, y);
                     getChildren().addAll(
                             Wrap.globalTransform(
                                     shapebuilder.displayWindGraphic(here, controller.getModel().getWindFlow().getFlow(here), 10, controller.getModel().getWindFlow().getShiftsproperty().getShowflowcolour()),
@@ -157,7 +157,7 @@ public class DisplayPane extends Group {
 //        AffineTransform xform = gc.getTransform();
 //        gc.translate(x, y);
 //        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        PropertySpeedVector flow = getFlow(new PropertyLocation(x, y));
+//        SpeedVector flow = getFlow(new Location(x, y));
 //        gc.rotate(flow.getAngle().getRadians());
 //        gc.setColor(showflowcolor);
 //        gc.setStroke(new BasicStroke(1));
@@ -199,7 +199,7 @@ public class DisplayPane extends Group {
     }
 
     private void laylinesdraw(Mark mark) {
-        PropertyDegrees windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getDegreesProperty();
+        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getDegreesProperty();
         if (mark.isWindwardlaylines()) {
             getChildren().addAll(
                     Wrap.globalTransform(
@@ -247,17 +247,17 @@ public class DisplayPane extends Group {
 
     private void tack(Boat boat) {
         CurrentLeg leg = boat.getCurrentLeg();
-        PropertyLocation position = boat.getLocation();
-        PropertySpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
-        PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
+        Location position = boat.getLocation();
+        SpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
+        Angle delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // anti clockwise to starboard tack
-            PropertyDegrees target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
+            Angle target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
             decision.setTURN(target, PORT, MAJOR, "Tack to Starboard - forced by user");
         } else {
             // clockwise to port tack
-            PropertyDegrees target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
+            Angle target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Port - forced by user");
         }
@@ -265,17 +265,17 @@ public class DisplayPane extends Group {
 
     private void gybe(Boat boat) {
         CurrentLeg leg = boat.getCurrentLeg();
-        PropertyLocation position = boat.getLocation();
-        PropertySpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
-        PropertyDegrees delta = wind.degreesDiff(boat.getDirection());
+        Location position = boat.getLocation();
+        SpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
+        Angle delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // clockwise to starboard gybe
-            PropertyDegrees target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
+            Angle target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Starboard - forced by user");
         } else {
             // anticlockwise to port gybe
-            PropertyDegrees target = boat.getPortReachingCourse(wind.getDegreesProperty());
+            Angle target = boat.getPortReachingCourse(wind.getDegreesProperty());
             Decision decision = leg.getDecision();
             decision.setTURN(target, PORT, MAJOR, "Gybe to Port - forced by user");
         }

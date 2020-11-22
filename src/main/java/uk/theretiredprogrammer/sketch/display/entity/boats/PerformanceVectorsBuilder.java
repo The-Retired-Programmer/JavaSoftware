@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 public class PerformanceVectorsBuilder {
 
     private final Map<Double, double[]> vectors = new HashMap<>();
-    private PropertyDegrees[] angles;
+    private Angle[] angles;
     private int anglescount = 0;
 
     public PerformanceVectorsBuilder defineAngles(int[] inputangles) {
@@ -33,9 +33,9 @@ public class PerformanceVectorsBuilder {
             throw new IllegalStateFailure("PerformanceVectorsBuilder: duplicate angles definition");
         }
         anglescount = inputangles.length;
-        angles = new PropertyDegrees[anglescount];
+        angles = new Angle[anglescount];
         for (int i = 0; i < anglescount; i++) {
-            angles[i] = new PropertyDegrees(inputangles[i]);
+            angles[i] = new Angle(inputangles[i]);
         }
         return this;
     }

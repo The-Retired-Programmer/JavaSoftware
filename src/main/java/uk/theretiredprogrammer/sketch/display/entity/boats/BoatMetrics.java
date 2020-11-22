@@ -15,20 +15,20 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 public class BoatMetrics {
 
     public final double length;// metres
     public final double width;// metres
     private final double inertia;// fraction of speed lost or gained in changing winds
-    private final PropertyDegrees maxTurningAnglePerSecond;
-    public final PropertyDegrees upwindrelative;
-    public final PropertyDegrees downwindrelative;
+    private final Angle maxTurningAnglePerSecond;
+    public final Angle upwindrelative;
+    public final Angle downwindrelative;
     private final PerformanceVectors performancevectors;
 
-    BoatMetrics(double length, double width, double inertia, PropertyDegrees maxTurningAnglePerSecond,
-            PropertyDegrees upwindrelative, PropertyDegrees downwindrelative, PerformanceVectors performancevectors) {
+    BoatMetrics(double length, double width, double inertia, Angle maxTurningAnglePerSecond,
+            Angle upwindrelative, Angle downwindrelative, PerformanceVectors performancevectors) {
         this.length = length;
         this.width = width;
         this.inertia = inertia;
@@ -50,15 +50,15 @@ public class BoatMetrics {
         return inertia;
     }
 
-    public PropertyDegrees getMaxTurningAnglePerSecond() {
+    public Angle getMaxTurningAnglePerSecond() {
         return maxTurningAnglePerSecond;
     }
 
-    public PropertyDegrees getUpwindrelative() {
+    public Angle getUpwindrelative() {
         return upwindrelative;
     }
 
-    public PropertyDegrees getDownwindrelative() {
+    public Angle getDownwindrelative() {
         return downwindrelative;
     }
 
@@ -66,7 +66,7 @@ public class BoatMetrics {
         return performancevectors;
     }
 
-    public double getPotentialBoatSpeed(PropertyDegrees degrees, double windSpeed) {
+    public double getPotentialBoatSpeed(Angle degrees, double windSpeed) {
         return performancevectors.getPotentialBoatSpeed(degrees, windSpeed);
     }
 }

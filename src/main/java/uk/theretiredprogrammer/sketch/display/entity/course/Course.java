@@ -20,11 +20,11 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 public class Course extends ModelMap {
 
-    private final PropertyLocation start = new PropertyLocation();
+    private final Location start = new Location();
     private final Legs legs;
 
     private final Marks marks;
@@ -41,7 +41,7 @@ public class Course extends ModelMap {
     }
 
     private void updatelegs() {
-        PropertyLocation startpos = start;
+        Location startpos = start;
         for (var leg : legs.get() ){
             leg.update(startpos);
             startpos = leg.getEndLocation();
@@ -70,7 +70,7 @@ public class Course extends ModelMap {
         return job.build();
     }
 
-    public PropertyLocation getStartProperty() {
+    public Location getStartProperty() {
         return start;
     }
 

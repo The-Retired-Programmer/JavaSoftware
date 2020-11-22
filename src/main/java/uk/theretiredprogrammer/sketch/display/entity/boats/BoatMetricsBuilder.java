@@ -16,16 +16,16 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 public class BoatMetricsBuilder {
 
     private double length = 3;// metres
     private double width = 1.5;// metres
     private double inertia = 0.5;// fraction of speed lost or gained in changing winds
-    private PropertyDegrees maxTurningAnglePerSecond = new PropertyDegrees(20);
-    private PropertyDegrees upwindrelative = new PropertyDegrees(50);
-    private PropertyDegrees downwindrelative = new PropertyDegrees(180);
+    private Angle maxTurningAnglePerSecond = new Angle(20);
+    private Angle upwindrelative = new Angle(50);
+    private Angle downwindrelative = new Angle(180);
     private PerformanceVectors performancevectors;
 
     public BoatMetricsBuilder length(double length) {
@@ -44,17 +44,17 @@ public class BoatMetricsBuilder {
     }
 
     public BoatMetricsBuilder maxTurningAnglePerSecond(int maxTurningAnglePerSecond) {
-        this.maxTurningAnglePerSecond = new PropertyDegrees(maxTurningAnglePerSecond);
+        this.maxTurningAnglePerSecond = new Angle(maxTurningAnglePerSecond);
         return this;
     }
 
     public BoatMetricsBuilder upwindrelative(int upwindrelative) {
-        this.upwindrelative = new PropertyDegrees(upwindrelative);
+        this.upwindrelative = new Angle(upwindrelative);
         return this;
     }
 
     public BoatMetricsBuilder downwindrelative(int downwindrelative) {
-        this.downwindrelative = new PropertyDegrees(downwindrelative);
+        this.downwindrelative = new Angle(downwindrelative);
         return this;
     }
 

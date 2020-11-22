@@ -19,28 +19,28 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyInteger;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
+import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Dble;
+import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Colour;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.WindSwingLogEntry;
 
 public class FlowShiftModel extends ModelMap {
 
-    private final PropertyBoolean showflow = new PropertyBoolean(false);
-    private final PropertyDouble showflowinterval = new PropertyDouble(100.0);
-    private final PropertyColour showflowcolour = new PropertyColour(Color.BLACK);
-    private final PropertyDegrees swingangle = new PropertyDegrees(0);
-    private final PropertyInteger swingperiod = new PropertyInteger(0);
-    private final PropertyDegrees shiftangle = new PropertyDegrees(0);
-    private final PropertyInteger shiftperiod = new PropertyInteger(0);
-    private final PropertyBoolean randomshifts = new PropertyBoolean(false);
+    private final Bool showflow = new Bool(false);
+    private final Dble showflowinterval = new Dble(100.0);
+    private final Colour showflowcolour = new Colour(Color.BLACK);
+    private final Angle swingangle = new Angle(0);
+    private final Int swingperiod = new Int(0);
+    private final Angle shiftangle = new Angle(0);
+    private final Int shiftperiod = new Int(0);
+    private final Bool randomshifts = new Bool(false);
 
     private double shiftNow = 0;
     private double swingNow = 0;
@@ -148,12 +148,12 @@ public class FlowShiftModel extends ModelMap {
         }
     }
 
-    PropertySpeedVector addShiftandSwing(PropertySpeedVector flow) {
+    SpeedVector addShiftandSwing(SpeedVector flow) {
         if (swingperiod.get() > 0) {
-            flow = new PropertySpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(swingNow));
+            flow = new SpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(swingNow));
         }
         if (shiftperiod.get() > 0 || randomshifts.get()) {
-            flow = new PropertySpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(shiftNow));
+            flow = new SpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(shiftNow));
         }
         return flow;
     }

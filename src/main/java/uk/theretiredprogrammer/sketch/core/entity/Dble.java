@@ -20,9 +20,9 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyDouble extends SimpleDoubleProperty implements ModelProperty<Double> {
+public class Dble extends SimpleDoubleProperty implements ModelProperty<Double> {
 
-    public PropertyDouble(Double value) {
+    public Dble(Double value) {
         set(value);
     }
 

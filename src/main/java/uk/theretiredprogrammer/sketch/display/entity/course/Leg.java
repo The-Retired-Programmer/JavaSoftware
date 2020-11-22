@@ -22,9 +22,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -38,12 +38,12 @@ public class Leg implements ModelProperty<Leg> {
         roundingdirections.addAll("port", "starboard");
     }
 
-    private final PropertyConstrainedString markname = new PropertyConstrainedString();
-    private final PropertyConstrainedString passing = new PropertyConstrainedString(roundingdirections);
+    private final ConstrainedString markname = new ConstrainedString();
+    private final ConstrainedString passing = new ConstrainedString(roundingdirections);
 
     ObservableList<String> marknames;
-    private PropertyLocation startfrom;
-    private PropertyLocation endat;
+    private Location startfrom;
+    private Location endat;
     private Marks marks;
 
     public Leg() {
@@ -60,11 +60,11 @@ public class Leg implements ModelProperty<Leg> {
         set(mark, passing);
     }
 
-    public void setStartLegLocation(PropertyLocation startfrom) {
+    public void setStartLegLocation(Location startfrom) {
         this.startfrom = startfrom;
     }
 
-    void update(PropertyLocation startfrom) {
+    void update(Location startfrom) {
         this.startfrom = startfrom;
         if (markname.get() != null) {
             this.endat = marks.get(markname.get()).getLocation();
@@ -125,7 +125,7 @@ public class Leg implements ModelProperty<Leg> {
         return passing.get();
     }
 
-    public PropertyConstrainedString getRoundingdirectionProperty() {
+    public ConstrainedString getRoundingdirectionProperty() {
         return passing;
     }
 
@@ -137,7 +137,7 @@ public class Leg implements ModelProperty<Leg> {
         return markname.get();
     }
 
-    public PropertyConstrainedString getMarknameProperty() {
+    public ConstrainedString getMarknameProperty() {
         return markname;
     }
 
@@ -146,15 +146,15 @@ public class Leg implements ModelProperty<Leg> {
         return markname.get() + " to " + passing.get();
     }
 
-    public double getDistanceToEnd(PropertyLocation here) {
+    public double getDistanceToEnd(Location here) {
         return here.to(endat);
     }
 
-    public PropertyLocation getEndLocation() {
+    public Location getEndLocation() {
         return endat;
     }
 
-    public PropertyDegrees getAngleofLeg() {
+    public Angle getAngleofLeg() {
         return startfrom.angleto(endat);
     }
 }

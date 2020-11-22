@@ -18,8 +18,8 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortRoundingDecisions;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortSailingDecisions;
 import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStarboardRoundingDecisions;
@@ -40,8 +40,8 @@ public class Strategy {
     private SailingDecisions portdecisions;
     private RoundingDecisions roundingdecisions;
     private boolean useroundingdecisions = false;
-    private PropertyDegrees portoffsetangle;
-    private PropertyDegrees starboardoffsetangle;
+    private Angle portoffsetangle;
+    private Angle starboardoffsetangle;
     private double offset;
     private Consumer<Params> timeintervalhandler;
 
@@ -56,8 +56,8 @@ public class Strategy {
 
     public void setWindwardStrategy(Params params) {
         this.setTimeIntervalHandler(p -> windwardTimeInterval(p));
-        PropertyDegrees winddirection = params.markmeanwinddirection;
-        PropertyDegrees relative = params.upwindrelative;
+        Angle winddirection = params.markmeanwinddirection;
+        Angle relative = params.upwindrelative;
         if (params.leg.isPortRounding()) {
             setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.plus(90).sub(relative), winddirection.plus(90).plus(relative));
         } else {
@@ -86,8 +86,8 @@ public class Strategy {
 
     public void setGybingDownwindStrategy(Params params) {
         this.setTimeIntervalHandler(p -> leewardTimeInterval(p));
-        PropertyDegrees winddirection = params.markmeanwinddirection;
-        PropertyDegrees relative = params.boat.metrics.downwindrelative;
+        Angle winddirection = params.markmeanwinddirection;
+        Angle relative = params.boat.metrics.downwindrelative;
         if (params.leg.isPortRounding()) {
             this.setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.plus(90).sub(relative), winddirection.plus(90).plus(relative));
         } else {
@@ -172,14 +172,14 @@ public class Strategy {
         this.roundingdecisions = roundingdecisions;
     }
 
-    public final void setMarkOffset(double offset, PropertyDegrees starboardoffsetangle, PropertyDegrees portoffsetangle) {
+    public final void setMarkOffset(double offset, Angle starboardoffsetangle, Angle portoffsetangle) {
         this.offset = offset;
         this.starboardoffsetangle = starboardoffsetangle;
         this.portoffsetangle = portoffsetangle;
     }
 
-    public PropertyDistanceVector getOffsetVector(boolean onPort) {
-        return new PropertyDistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
+    public DistanceVector getOffsetVector(boolean onPort) {
+        return new DistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
     }
 
     public void strategyTimeInterval(Params params) {

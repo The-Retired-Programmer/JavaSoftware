@@ -46,27 +46,27 @@ public class PropertyLocationTest {
     }
 
     /**
-     * Test of to method, of class PropertyLocation.
+     * Test of to method, of class Location.
      */
     @Test
     public void testTo() {
         System.out.println("to");
-        PropertyLocation instance = new PropertyLocation(10.0, 20.0);
-        assertEquals(5.0, instance.to(new PropertyLocation(13.0, 24.0)), DELTA);
-        assertEquals(5.0, instance.to(new PropertyLocation(13.0, 16.0)), DELTA);
-        assertEquals(5.0, instance.to(new PropertyLocation(7.0, 24.0)), DELTA);
-        assertEquals(5.0, instance.to(new PropertyLocation(7.0, 16.0)), DELTA);
+        Location instance = new Location(10.0, 20.0);
+        assertEquals(5.0, instance.to(new Location(13.0, 24.0)), DELTA);
+        assertEquals(5.0, instance.to(new Location(13.0, 16.0)), DELTA);
+        assertEquals(5.0, instance.to(new Location(7.0, 24.0)), DELTA);
+        assertEquals(5.0, instance.to(new Location(7.0, 16.0)), DELTA);
     }
 
     @Test
     public void testAngleto() {
         System.out.println("angleto");
-        PropertyLocation instance = new PropertyLocation(10.0, 20.0);
-        assertEquals(45, instance.angleto(new PropertyLocation(13.0, 23.0)).get());
-        assertEquals(0, instance.angleto(new PropertyLocation(10.0, 23.0)).get());
-        assertEquals(180, instance.angleto(new PropertyLocation(10.0, 13.0)).get());
-        assertEquals(135, instance.angleto(new PropertyLocation(13.0, 17.0)).get());
-        assertEquals(-45, instance.angleto(new PropertyLocation(7.0, 23.0)).get());
-        assertEquals(-135, instance.angleto(new PropertyLocation(7.0, 17.0)).get());
+        Location instance = new Location(10.0, 20.0);
+        assertEquals(45, instance.angleto(new Location(13.0, 23.0)).get());
+        assertEquals(0, instance.angleto(new Location(10.0, 23.0)).get());
+        assertEquals(180, instance.angleto(new Location(10.0, 13.0)).get());
+        assertEquals(135, instance.angleto(new Location(13.0, 17.0)).get());
+        assertEquals(-45, instance.angleto(new Location(7.0, 23.0)).get());
+        assertEquals(-135, instance.angleto(new Location(7.0, 17.0)).get());
     }
 }

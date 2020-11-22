@@ -17,8 +17,8 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 public abstract class FlowComponentTest {
@@ -30,12 +30,12 @@ public abstract class FlowComponentTest {
         controller = new DisplayController(filename);
     }
 
-    void assertFlowAtOrigin(PropertySpeedVector expected) throws IOException {
-        assertFlowAt(new PropertyLocation(), expected);
+    void assertFlowAtOrigin(SpeedVector expected) throws IOException {
+        assertFlowAt(new Location(), expected);
     }
 
-    void assertFlowAt(PropertyLocation at, PropertySpeedVector expected) throws IOException {
-        PropertySpeedVector flow = controller.getModel().getWindFlow().getFlow(at);
+    void assertFlowAt(Location at, SpeedVector expected) throws IOException {
+        SpeedVector flow = controller.getModel().getWindFlow().getFlow(at);
         assertEquals(expected.getDegrees(), flow.getDegrees(), DELTA);
         assertEquals(expected.getSpeed(), flow.getSpeed(), DELTA);
     }

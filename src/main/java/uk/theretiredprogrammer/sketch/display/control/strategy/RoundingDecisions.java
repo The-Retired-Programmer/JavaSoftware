@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
@@ -26,9 +26,9 @@ import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public abstract class RoundingDecisions extends SailingDecisions {
 
-    final boolean executeRoundingIfAtPortRoundingTurnPoint(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+    final boolean executeRoundingIfAtPortRoundingTurnPoint(Params params, Function<Angle, Angle> getDirectionAfterTurn) {
         if (params.boat.isPortRear90Quadrant(params.leg.getMarkLocation())) {
-            PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+            Angle finaldirection = getDirectionAfterTurn.apply(params.winddirection);
             if (finaldirection.absDegreesDiff(params.heading).gt(90)) {
                 params.setTURN(params.heading.sub(90), PORT, MAJOR, "markrounding action - first phase - starboard tack - port rounding");
             } else {
@@ -39,9 +39,9 @@ public abstract class RoundingDecisions extends SailingDecisions {
         return false;
     }
     
-    final boolean ExecuteRoundingIfAtStarboardRoundingTurnPoint(Params params, Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+    final boolean ExecuteRoundingIfAtStarboardRoundingTurnPoint(Params params, Function<Angle, Angle> getDirectionAfterTurn) {
         if (params.boat.isStarboardRear90Quadrant(params.leg.getMarkLocation())) {
-            PropertyDegrees finaldirection = getDirectionAfterTurn.apply(params.winddirection);
+            Angle finaldirection = getDirectionAfterTurn.apply(params.winddirection);
             if (finaldirection.absDegreesDiff(params.heading).gt(90)) {
                 params.setTURN(params.heading.plus(90), STARBOARD, MAJOR, "markrounding action - first phase - port tack - starboard rounding");
             } else {

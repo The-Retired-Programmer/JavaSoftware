@@ -19,26 +19,26 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import javafx.beans.value.ChangeListener;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyColour;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyBoolean;
+import uk.theretiredprogrammer.sketch.core.entity.Strg;
+import uk.theretiredprogrammer.sketch.core.entity.Dble;
+import uk.theretiredprogrammer.sketch.core.entity.Colour;
+import uk.theretiredprogrammer.sketch.core.entity.Bool;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 public class Mark extends ModelMap {
 
-    private final PropertyString name = new PropertyString("<newname>");
-    private final PropertyLocation location;
-    private final PropertyBoolean windwardlaylines = new PropertyBoolean(false);
-    private final PropertyBoolean downwindlaylines = new PropertyBoolean(false);
-    private final PropertyDouble laylinelength = new PropertyDouble(0.0);
-    private final PropertyColour laylinecolour = new PropertyColour(Color.BLACK);
-    private final PropertyColour colour = new PropertyColour(Color.RED);
+    private final Strg name = new Strg("<newname>");
+    private final Location location;
+    private final Bool windwardlaylines = new Bool(false);
+    private final Bool downwindlaylines = new Bool(false);
+    private final Dble laylinelength = new Dble(0.0);
+    private final Colour laylinecolour = new Colour(Color.BLACK);
+    private final Colour colour = new Colour(Color.RED);
 
     public Mark() {
-        location = new PropertyLocation();
+        location = new Location();
         registerproperties();
     }
     
@@ -52,8 +52,8 @@ public class Mark extends ModelMap {
         addProperty("colour", colour);
     }
 
-    public Mark(PropertyLocation loc) {
-        location = new PropertyLocation(loc);
+    public Mark(Location loc) {
+        location = new Location(loc);
         registerproperties();
     }
 
@@ -108,11 +108,11 @@ public class Mark extends ModelMap {
         return name.get();
     }
 
-    public PropertyString getNameProperty() {
+    public Strg getNameProperty() {
         return name;
     }
 
-    public PropertyLocation getLocation() {
+    public Location getLocation() {
         return location;
     }
 

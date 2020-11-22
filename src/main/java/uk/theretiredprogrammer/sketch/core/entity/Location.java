@@ -21,24 +21,24 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyLocation implements ModelProperty<PropertyLocation> {
+public class Location implements ModelProperty<Location> {
 
     private final SimpleDoubleProperty x = new SimpleDoubleProperty();
     private final SimpleDoubleProperty y = new SimpleDoubleProperty();
 
-    public PropertyLocation() {
+    public Location() {
         set(0.0, 0.0);
     }
 
-    public PropertyLocation(PropertyLocation defaultvalue) {
+    public Location(Location defaultvalue) {
         set(defaultvalue.getX(), defaultvalue.getY());
     }
 
-    public PropertyLocation(double x, double y) {
+    public Location(double x, double y) {
         set(x, y);
     }
 
-    public final void set(PropertyLocation locationproperty) {
+    public final void set(Location locationproperty) {
         set(locationproperty.getXProperty().get(), locationproperty.getYProperty().get());
     }
 
@@ -70,7 +70,7 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
     }
 
     @Override
-    public PropertyLocation parsevalue(JsonValue jvalue) {
+    public Location parsevalue(JsonValue jvalue) {
         return FromJson.locationProperty(jvalue);
     }
 
@@ -94,14 +94,14 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
         set(parsevalue(jvalue));
     }
 
-    public double to(PropertyLocation target) {
+    public double to(Location target) {
         double deltax = (target.getX() - this.getX());
         double deltay = (target.getY() - this.getY());
         return Math.sqrt(deltax * deltax + deltay * deltay);
     }
 
-    public PropertyDegrees angleto(PropertyLocation target) {
-        return new PropertyDegrees(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
+    public Angle angleto(Location target) {
+        return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
     }
 
     @Override
@@ -123,7 +123,7 @@ public class PropertyLocation implements ModelProperty<PropertyLocation> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PropertyLocation other = (PropertyLocation) obj;
+        final Location other = (Location) obj;
         if (Double.doubleToLongBits(this.getX()) != Double.doubleToLongBits(other.getX())) {
             return false;
         }

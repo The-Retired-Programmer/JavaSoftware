@@ -26,42 +26,42 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class ToJson {
 
-    public static JsonValue serialise(PropertyInteger property) {
+    public static JsonValue serialise(Int property) {
         return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(PropertyDouble property) {
+    public static JsonValue serialise(Dble property) {
         return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(PropertyBoolean property) {
+    public static JsonValue serialise(Bool property) {
         return property.get() ? JsonValue.TRUE : JsonValue.FALSE;
     }
 
-    public static JsonValue serialise(PropertyString property) {
+    public static JsonValue serialise(Strg property) {
         return Json.createValue(property.get());
     }
     
-    public static JsonValue serialise(PropertyConstrainedString property) {
+    public static JsonValue serialise(ConstrainedString property) {
         return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(PropertyColour property) {
+    public static JsonValue serialise(Colour property) {
         return Json.createValue(color2String(property.get()));
     }
 
-    public static JsonValue serialise(PropertyDegrees property) {
+    public static JsonValue serialise(Angle property) {
         return Json.createValue(property.get());
     }
 
-    public static JsonArray serialise(PropertyLocation property) {
+    public static JsonArray serialise(Location property) {
         return Json.createArrayBuilder()
                 .add(property.getX())
                 .add(property.getY())
                 .build();
     }
 
-    public static JsonArray serialise(PropertyArea property) {
+    public static JsonArray serialise(Area property) {
         return Json.createArrayBuilder()
                 .add(property.getLocationProperty().getX())
                 .add(property.getLocationProperty().getY())
@@ -70,14 +70,14 @@ public class ToJson {
                 .build();
     }
     
-    public static JsonArray serialise(PropertyDistanceVector property) {
+    public static JsonArray serialise(DistanceVector property) {
         return Json.createArrayBuilder()
                 .add(property.getDistance())
                 .add(property.getDegrees())
                 .build();
     }
     
-    public static JsonArray serialise(PropertySpeedVector property) {
+    public static JsonArray serialise(SpeedVector property) {
         return Json.createArrayBuilder()
                 .add(property.getSpeed())
                 .add(property.getDegrees())

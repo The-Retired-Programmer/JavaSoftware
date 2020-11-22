@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
@@ -26,7 +26,7 @@ public class Laser2 extends Boat {
         super("laser2",firstleg, windflow, waterflow,getMetrics());
     }
     
-    public Laser2(PropertyLocation location, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow) {
+    public Laser2(Location location, CurrentLeg firstleg, WindFlow windflow, WaterFlow waterflow) {
         super("laser2",location, firstleg, windflow, waterflow,getMetrics());
     }
     

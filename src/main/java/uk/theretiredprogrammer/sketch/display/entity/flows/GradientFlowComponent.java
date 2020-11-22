@@ -20,16 +20,16 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADIENTDEFAULT;
 
 public class GradientFlowComponent extends FlowComponent {
 
     private final Gradient gradient = new Gradient(GRADIENTDEFAULT);
 
-    public GradientFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
+    public GradientFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("gradient", gradient);
     }
@@ -59,7 +59,7 @@ public class GradientFlowComponent extends FlowComponent {
     }
 
     @Override
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         testLocationWithinArea(pos);
         return getGradient().getFlow(pos);
     }

@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.display.control.strategy;
 import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTest {
 
@@ -62,7 +62,7 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
                 () -> setwindflow(4, 45),
                 () -> setboatlocation(50, 13));
-        PropertyDegrees target = new PropertyDegrees(-135);
+        Angle target = new Angle(-135);
         this.assertSailing(decision, -135, -135 + DELTAANGLE);
     }
 

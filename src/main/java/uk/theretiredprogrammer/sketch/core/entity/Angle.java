@@ -20,17 +20,17 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyDegrees extends SimpleDoubleProperty implements ModelProperty<PropertyDegrees> {
+public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> {
 
-    public PropertyDegrees() {
+    public Angle() {
         set(0);
     }
 
-    public PropertyDegrees(PropertyDegrees degrees) {
+    public Angle(Angle degrees) {
         set(degrees);
     }
 
-    public PropertyDegrees(double degrees) {
+    public Angle(double degrees) {
         set(degrees);
     }
 
@@ -39,7 +39,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         super.set(normalise(degrees));
     }
 
-    public final void set(PropertyDegrees degrees) {
+    public final void set(Angle degrees) {
         super.set(normalise(degrees.get()));
     }
 
@@ -58,7 +58,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
     }
 
     @Override
-    public final PropertyDegrees parsevalue(JsonValue jvalue) {
+    public final Angle parsevalue(JsonValue jvalue) {
         return FromJson.degreesProperty(jvalue);
     }
 
@@ -92,47 +92,47 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return angle;
     }
 
-    public final PropertyDegrees plus(PropertyDegrees degrees) {
-        return new PropertyDegrees(get() + degrees.get());
+    public final Angle plus(Angle degrees) {
+        return new Angle(get() + degrees.get());
     }
 
-    public final PropertyDegrees plus(double degrees) {
-        return new PropertyDegrees(get() + degrees);
+    public final Angle plus(double degrees) {
+        return new Angle(get() + degrees);
     }
 
-    public final PropertyDegrees sub(PropertyDegrees degrees) {
-        return new PropertyDegrees(get() - degrees.get());
+    public final Angle sub(Angle degrees) {
+        return new Angle(get() - degrees.get());
     }
 
-    public final PropertyDegrees sub(double degrees) {
-        return new PropertyDegrees(get() - degrees);
+    public final Angle sub(double degrees) {
+        return new Angle(get() - degrees);
     }
 
-    public final PropertyDegrees mult(double mult) {
-        return new PropertyDegrees(get() * mult);
+    public final Angle mult(double mult) {
+        return new Angle(get() * mult);
     }
 
-    public final PropertyDegrees div(double div) {
-        return new PropertyDegrees(get() / div);
+    public final Angle div(double div) {
+        return new Angle(get() / div);
     }
 
-    public final double div(PropertyDegrees div) {
+    public final double div(Angle div) {
         return get() / div.get();
     }
 
-    public final PropertyDegrees abs() {
-        return new PropertyDegrees(Math.abs(get()));
+    public final Angle abs() {
+        return new Angle(Math.abs(get()));
     }
 
-    public final PropertyDegrees negative() {
-        return new PropertyDegrees(-get());
+    public final Angle negative() {
+        return new Angle(-get());
     }
 
-    public final PropertyDegrees negateif(boolean test) {
-        return new PropertyDegrees(test ? -get() : get());
+    public final Angle negateif(boolean test) {
+        return new Angle(test ? -get() : get());
     }
 
-    public final boolean eq(PropertyDegrees degrees) {
+    public final boolean eq(Angle degrees) {
         return get() == degrees.get();
     }
 
@@ -140,7 +140,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return get() == degrees;
     }
 
-    public final boolean neq(PropertyDegrees degrees) {
+    public final boolean neq(Angle degrees) {
         return get() != degrees.get();
     }
 
@@ -148,7 +148,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return get() != degrees;
     }
 
-    public final boolean gt(PropertyDegrees degrees) {
+    public final boolean gt(Angle degrees) {
         return sub(degrees).get() > 0;
     }
 
@@ -156,7 +156,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() > 0;
     }
 
-    public final boolean gteq(PropertyDegrees degrees) {
+    public final boolean gteq(Angle degrees) {
         return sub(degrees).get() >= 0;
     }
 
@@ -164,7 +164,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() >= 0;
     }
 
-    public final boolean lt(PropertyDegrees degrees) {
+    public final boolean lt(Angle degrees) {
         return sub(degrees).get() < 0;
     }
 
@@ -172,7 +172,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() < 0;
     }
 
-    public final boolean lteq(PropertyDegrees degrees) {
+    public final boolean lteq(Angle degrees) {
         return sub(degrees).get() <= 0;
     }
 
@@ -180,7 +180,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return sub(degrees).get() <= 0;
     }
 
-    public final boolean between(PropertyDegrees min, PropertyDegrees max) {
+    public final boolean between(Angle min, Angle max) {
         return gteq(min) && lteq(max);
     }
 
@@ -188,28 +188,28 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         return gteq(min) && lteq(max);
     }
 
-    public final PropertyDegrees degreesDiff(PropertyDegrees degrees) {
-        return new PropertyDegrees(degrees.get() - get());
+    public final Angle degreesDiff(Angle degrees) {
+        return new Angle(degrees.get() - get());
     }
 
-    public final PropertyDegrees degreesDiff(double degrees) {
-        return new PropertyDegrees(degrees - get());
+    public final Angle degreesDiff(double degrees) {
+        return new Angle(degrees - get());
     }
 
-    public final PropertyDegrees absDegreesDiff(PropertyDegrees degrees) {
-        return new PropertyDegrees(Math.abs(normalise(degrees.get() - get())));
+    public final Angle absDegreesDiff(Angle degrees) {
+        return new Angle(Math.abs(normalise(degrees.get() - get())));
     }
 
-    public final PropertyDegrees absDegreesDiff(double degrees) {
-        return new PropertyDegrees(Math.abs(normalise(degrees - get())));
+    public final Angle absDegreesDiff(double degrees) {
+        return new Angle(Math.abs(normalise(degrees - get())));
     }
 
-    public final PropertyDegrees inverse() {
-        return new PropertyDegrees(get() + 180);
+    public final Angle inverse() {
+        return new Angle(get() + 180);
     }
 
-    public final PropertyDegrees inverseif(boolean test) {
-        return new PropertyDegrees(test ? get() + 180 : get());
+    public final Angle inverseif(boolean test) {
+        return new Angle(test ? get() + 180 : get());
     }
 
     @Override
@@ -230,7 +230,7 @@ public class PropertyDegrees extends SimpleDoubleProperty implements ModelProper
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PropertyDegrees other = (PropertyDegrees) obj;
+        final Angle other = (Angle) obj;
         return this.get() == other.get();
     }
 

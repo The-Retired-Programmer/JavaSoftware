@@ -45,11 +45,11 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
@@ -134,7 +134,7 @@ public class UI {
         return stringfield;
     }
 
-    public static ComboBox<String> control(PropertyConstrainedString property, ObservableList<String> constraints) {
+    public static ComboBox<String> control(ConstrainedString property, ObservableList<String> constraints) {
         ComboBox<String> combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(property);
         return combofield;
@@ -149,7 +149,7 @@ public class UI {
         return picker;
     }
 
-    public static TextFlow control(int size, PropertyLocation property) {
+    public static TextFlow control(int size, Location property) {
         return new TextFlow(
                 createTextFor("["),
                 control(size, property.getXProperty()),
@@ -159,7 +159,7 @@ public class UI {
         );
     }
 
-    public static TextFlow control(int distancesize, int directionsize, PropertyDistanceVector property) {
+    public static TextFlow control(int distancesize, int directionsize, DistanceVector property) {
         return new TextFlow(
                 control(distancesize, property.getDistanceProperty()),
                 createTextFor("@"),
@@ -167,7 +167,7 @@ public class UI {
                 createTextFor("˚"));
     }
 
-    public static TextFlow control(int speedsize, int directionsize, PropertySpeedVector property) {
+    public static TextFlow control(int speedsize, int directionsize, SpeedVector property) {
         return new TextFlow(
                 control(speedsize, property.getSpeedProperty()),
                 createTextFor("@"),
@@ -175,8 +175,8 @@ public class UI {
                 createTextFor("˚"));
     }
 
-    public static HBox control(int size, PropertyArea property) {
-        PropertyLocation bottomleft = property.getLocationProperty();
+    public static HBox control(int size, Area property) {
+        Location bottomleft = property.getLocationProperty();
         return new HBox(
                 createTextFor("["),
                 control(size, bottomleft.getXProperty()),

@@ -25,7 +25,7 @@ public class PropertySpeedVectorTest {
     @Test
     public void testCreation() {
         System.out.println("creation<speed,degrees>");
-        PropertySpeedVector instance = new PropertySpeedVector(100, 90);
+        SpeedVector instance = new SpeedVector(100, 90);
         assertEquals(100, instance.getSpeed());
         assertEquals(90, instance.getDegrees());
     }

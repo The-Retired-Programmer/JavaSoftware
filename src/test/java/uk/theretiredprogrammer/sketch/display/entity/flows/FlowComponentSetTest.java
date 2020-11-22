@@ -17,8 +17,8 @@ package uk.theretiredprogrammer.sketch.display.entity.flows;
 
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class FlowComponentSetTest extends FlowComponentTest {
 
@@ -26,15 +26,15 @@ public class FlowComponentSetTest extends FlowComponentTest {
     public void testFlowElementSet() throws IOException {
         System.out.println("FlowElementSet");
         initialiseFlow("/windflowset.json");
-        assertFlowAtOrigin(new PropertySpeedVector(4, 0));
-        assertFlowAt(new PropertyLocation(50, 50), new PropertySpeedVector(8, 10));
-        assertFlowAt(new PropertyLocation(90, 65), new PropertySpeedVector(8, 10));
-        assertFlowAt(new PropertyLocation(50, 65), new PropertySpeedVector(8, 10));
-        assertFlowAt(new PropertyLocation(90, 50), new PropertySpeedVector(8, 10));
-        assertFlowAt(new PropertyLocation(60, 40), new PropertySpeedVector(12, -15));
-        assertFlowAt(new PropertyLocation(80, 40), new PropertySpeedVector(12, -15));
-        assertFlowAt(new PropertyLocation(60, 60), new PropertySpeedVector(12, -15));
-        assertFlowAt(new PropertyLocation(80, 60), new PropertySpeedVector(12, -15));
+        assertFlowAtOrigin(new SpeedVector(4, 0));
+        assertFlowAt(new Location(50, 50), new SpeedVector(8, 10));
+        assertFlowAt(new Location(90, 65), new SpeedVector(8, 10));
+        assertFlowAt(new Location(50, 65), new SpeedVector(8, 10));
+        assertFlowAt(new Location(90, 50), new SpeedVector(8, 10));
+        assertFlowAt(new Location(60, 40), new SpeedVector(12, -15));
+        assertFlowAt(new Location(80, 40), new SpeedVector(12, -15));
+        assertFlowAt(new Location(60, 60), new SpeedVector(12, -15));
+        assertFlowAt(new Location(80, 60), new SpeedVector(12, -15));
         assertMeanFlowAngle(-0.2270468);
     }
 }

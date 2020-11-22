@@ -16,15 +16,15 @@
 package uk.theretiredprogrammer.sketch.display.control.strategy;
 
 import java.util.function.Function;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public class OffwindStarboardRoundingDecisions extends RoundingDecisions {
 
-    private final Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn;
+    private final Function<Angle, Angle> getDirectionAfterTurn;
 
     public OffwindStarboardRoundingDecisions(
-            Function<PropertyDegrees, PropertyDegrees> getDirectionAfterTurn) {
+            Function<Angle, Angle> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 

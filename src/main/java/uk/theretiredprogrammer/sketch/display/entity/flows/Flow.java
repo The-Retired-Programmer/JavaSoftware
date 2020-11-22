@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.flows;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
@@ -43,15 +43,15 @@ public abstract class Flow {
         flowshiftsproperty.timerAdvance(simulationtime, timerlog);
     }
 
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         return flowshiftsproperty.addShiftandSwing(flowcomponents.getFlowwithoutswing(pos));
     }
 
-    public PropertyDegrees getMeanFlowAngle() {
+    public Angle getMeanFlowAngle() {
         return flowcomponents.getMeanFlowAngle();
     }
 
-    public PropertyDegrees getMeanFlowAngle(PropertyLocation pos) {
+    public Angle getMeanFlowAngle(Location pos) {
         return flowcomponents.getMeanFlowAngle(pos);
     }
 }

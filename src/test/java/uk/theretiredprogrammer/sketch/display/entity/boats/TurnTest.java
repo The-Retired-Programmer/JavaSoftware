@@ -16,9 +16,9 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import java.io.IOException;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -51,7 +51,7 @@ public class TurnTest {
         return params.boat;
     }
 
-    Boat makeTurn(PropertyDegrees finalangle, boolean turndirection) throws IOException {
+    Boat makeTurn(Angle finalangle, boolean turndirection) throws IOException {
         params.setTURN(finalangle, turndirection, MAJOR, "Test: makeTurn setup");
         while (params.decision.getAction() != SAILON) {
             params.boat.moveUsingDecision(params);
@@ -60,11 +60,11 @@ public class TurnTest {
     }
 
     void setboatdirection(double degrees) {
-        params.boat.setDirection(new PropertyDegrees(degrees));
+        params.boat.setDirection(new Angle(degrees));
     }
 
     void setboatlocation(double x, double y) {
-        params.boat.setLocation(new PropertyLocation(x, y));
+        params.boat.setLocation(new Location(x, y));
     }
 
     void setwindflow(double speed, double degrees) {
@@ -75,7 +75,7 @@ public class TurnTest {
         params.windflow.getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new PropertySpeedVector(speed, degrees));
+                    ((TestFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
                 });
     }
 }

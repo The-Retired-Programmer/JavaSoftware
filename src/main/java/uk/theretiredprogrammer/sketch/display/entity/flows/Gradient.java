@@ -26,10 +26,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDouble;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyConstrainedString;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Dble;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
@@ -48,8 +48,8 @@ public class Gradient implements ModelProperty<Gradient> {
 
     public static final Gradient GRADIENTDEFAULT = new Gradient();
 
-    private final PropertyConstrainedString type = new PropertyConstrainedString(typenames);
-    private final ObservableList<PropertyDouble> speeds = FXCollections.observableArrayList();
+    private final ConstrainedString type = new ConstrainedString(typenames);
+    private final ObservableList<Dble> speeds = FXCollections.observableArrayList();
 
     public Gradient() {
         setType("north");
@@ -63,7 +63,7 @@ public class Gradient implements ModelProperty<Gradient> {
         set(value);
     }
 
-    public Gradient(String type, Collection<PropertyDouble> speeds) {
+    public Gradient(String type, Collection<Dble> speeds) {
         setType(type);
         addAllSpeedProperties(speeds);
     }
@@ -91,15 +91,15 @@ public class Gradient implements ModelProperty<Gradient> {
         speeds.clear();
     }
 
-    public final void add(PropertyDouble speed) {
+    public final void add(Dble speed) {
         speeds.add(speed);
     }
 
     public final void add(double speed) {
-        speeds.add(new PropertyDouble(speed));
+        speeds.add(new Dble(speed));
     }
 
-    public final void addAllSpeedProperties(Collection<PropertyDouble> speeds) {
+    public final void addAllSpeedProperties(Collection<Dble> speeds) {
         this.speeds.addAll(speeds);
     }
 
@@ -107,23 +107,23 @@ public class Gradient implements ModelProperty<Gradient> {
         addAllSpeedProperties(collectiontoList(speeds));
     }
 
-    private List<PropertyDouble> collectiontoList(Collection<Double> speeds) {
-        return speeds.stream().map(s -> new PropertyDouble(s)).collect(Collectors.toList());
+    private List<Dble> collectiontoList(Collection<Double> speeds) {
+        return speeds.stream().map(s -> new Dble(s)).collect(Collectors.toList());
     }
 
     public final void addAllSpeeds(Double... speeds) {
         addAllSpeedProperties(arraytoList(speeds));
     }
 
-    private List<PropertyDouble> arraytoList(Double... speeds) {
-        return Arrays.asList(speeds).stream().map(s -> new PropertyDouble(s)).collect(Collectors.toList());
+    private List<Dble> arraytoList(Double... speeds) {
+        return Arrays.asList(speeds).stream().map(s -> new Dble(s)).collect(Collectors.toList());
     }
 
-    public ObservableList<PropertyDouble> getSpeeds() {
+    public ObservableList<Dble> getSpeeds() {
         return speeds;
     }
 
-    public PropertyConstrainedString getTypeProperty() {
+    public ConstrainedString getTypeProperty() {
         return type;
     }
 
@@ -160,7 +160,7 @@ public class Gradient implements ModelProperty<Gradient> {
         set(parsevalue(jvalue));
     }
 
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         return null;  //TODO - getFlow not yet implemented - return null
     }
 

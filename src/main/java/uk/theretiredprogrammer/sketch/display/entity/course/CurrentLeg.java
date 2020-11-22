@@ -17,9 +17,9 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import java.util.Optional;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDistanceVector;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.decisionslog.control.DecisionController;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.decisionslog.entity.DecisionLogEntry;
@@ -39,24 +39,24 @@ public class CurrentLeg {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    public static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, PropertyDegrees refangle) {
+    public static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
         return getRefDistance(location, marklocation, refangle.get());
     }
 
-    public static Optional<Double> getRefDistance(PropertyLocation location, PropertyLocation marklocation, double refangle) {
-        PropertyDistanceVector tomark = new PropertyDistanceVector(location, marklocation);
-        PropertyDegrees refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
+    public static Optional<Double> getRefDistance(Location location, Location marklocation, double refangle) {
+        DistanceVector tomark = new DistanceVector(location, marklocation);
+        Angle refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
         if (refangle2mark.gt(90)) {
             return Optional.empty();
         }
         return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
     }
 
-    public static LegType getLegType(BoatMetrics metrics, PropertyDegrees legangle, WindFlow windflow, boolean reachesdownwind) {
+    public static LegType getLegType(BoatMetrics metrics, Angle legangle, WindFlow windflow, boolean reachesdownwind) {
         if (legangle == null) {
             return NONE;
         }
-        PropertyDegrees legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
+        Angle legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
         if (legtowind.lteq(metrics.upwindrelative)) {
             return WINDWARD;
         }
@@ -66,11 +66,11 @@ public class CurrentLeg {
         return OFFWIND;
     }
 
-    private static PropertyDegrees refangletomark(PropertyDegrees tomarkangle, PropertyDegrees refangle) {
+    private static Angle refangletomark(Angle tomarkangle, Angle refangle) {
         return tomarkangle.absDegreesDiff(refangle);
     }
 
-    private static double refdistancetomark(double distancetomark, PropertyDegrees refangle2mark) {
+    private static double refdistancetomark(double distancetomark, Angle refangle2mark) {
         return distancetomark * Math.cos(refangle2mark.getRadians());
     }
 
@@ -147,7 +147,7 @@ public class CurrentLeg {
         return this;
     }
 
-    public PropertyDegrees getAngleofFollowingLeg() {
+    public Angle getAngleofFollowingLeg() {
         return isFollowingLeg()
                 ? course.getLeg(legno + 1).getAngleofLeg()
                 : null;
@@ -158,24 +158,24 @@ public class CurrentLeg {
         return currentleg.isPortRounding();
     }
 
-    public double getDistanceToMark(PropertyLocation here) {
+    public double getDistanceToMark(Location here) {
         return currentleg.getDistanceToEnd(here);
     }
 
-    public PropertyLocation getMarkLocation() {
+    public Location getMarkLocation() {
         return currentleg.getEndLocation();
     }
 
-    public PropertyDegrees getAngleofLeg() {
+    public Angle getAngleofLeg() {
         return currentleg.getAngleofLeg();
     }
 
-    public PropertyLocation getSailToLocation(boolean onPort) {
+    public Location getSailToLocation(boolean onPort) {
         return strategy.getOffsetVector(onPort)
                 .toLocation(getMarkLocation());
     }
 
-    public PropertyDegrees getAngletoSail(PropertyLocation here, boolean onPort) {
+    public Angle getAngletoSail(Location here, boolean onPort) {
         return here.angleto(getSailToLocation(onPort));
     }
 
@@ -200,12 +200,12 @@ public class CurrentLeg {
         return newstrategy;
     }
 
-    public boolean isNear2WindwardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
+    public boolean isNear2WindwardMark(Boat boat, Angle markMeanwinddirection) {
         Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }
 
-    public boolean isNear2LeewardMark(Boat boat, PropertyDegrees markMeanwinddirection) {
+    public boolean isNear2LeewardMark(Boat boat, Angle markMeanwinddirection) {
         Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.sub(180).get());
         return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
     }

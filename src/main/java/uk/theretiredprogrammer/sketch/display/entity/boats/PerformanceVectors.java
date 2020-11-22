@@ -15,24 +15,24 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
 public class PerformanceVectors {
 
-    private final PropertyDegrees[] windAngleData;
+    private final Angle[] windAngleData;
     private final double[] windSpeedData;
     private final double[][] boatSpeedData;
 
-    public PerformanceVectors(double[][] boatSpeedData, PropertyDegrees[] windAngleData, double[] windSpeedData) {
+    public PerformanceVectors(double[][] boatSpeedData, Angle[] windAngleData, double[] windSpeedData) {
         this.boatSpeedData = boatSpeedData;
         this.windAngleData = windAngleData;
         this.windSpeedData = windSpeedData;
     }
 
-    double getPotentialBoatSpeed(PropertyDegrees degrees, double windSpeed) {
+    double getPotentialBoatSpeed(Angle degrees, double windSpeed) {
         // find the lookup point for wind direction
         int angleindex = -1;
-        for (PropertyDegrees windangldata : windAngleData) {
+        for (Angle windangldata : windAngleData) {
             if (windangldata.gteq(degrees)) {
                 // found higher
                 break;
@@ -56,7 +56,7 @@ public class PerformanceVectors {
         return extrapolateSpeed(boatspeedlower, boatspeedupper, windSpeed, windSpeedData, speedindex);
     }
 
-    private double extrapolateFromTable(double[][] boatSpeedData, PropertyDegrees[] windAngleData, PropertyDegrees relative,
+    private double extrapolateFromTable(double[][] boatSpeedData, Angle[] windAngleData, Angle relative,
             int speedindex, int angleindex) {
         double boatspeedlower = boatSpeedData[speedindex][angleindex];
         double boatspeedupper = boatSpeedData[speedindex][angleindex + 1];

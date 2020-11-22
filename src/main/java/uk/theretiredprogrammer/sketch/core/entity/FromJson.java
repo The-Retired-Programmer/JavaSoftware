@@ -89,18 +89,18 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - Colour name or hex string expected");
     }
 
-    public static PropertyDegrees degreesProperty(JsonValue jvalue) {
+    public static Angle degreesProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
-            return new PropertyDegrees(((JsonNumber) jvalue).doubleValue());
+            return new Angle(((JsonNumber) jvalue).doubleValue());
         }
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static PropertyLocation locationProperty(JsonValue jvalue) {
+    public static Location locationProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new PropertyLocation(
+                return new Location(
                         doubleProperty(values.get(0)),
                         doubleProperty(values.get(1))
                 );
@@ -109,11 +109,11 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
     }
 
-    public static PropertyArea areaProperty(JsonValue jvalue) {
+    public static Area areaProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 4) {
-                return new PropertyArea(
+                return new Area(
                         doubleProperty(values.get(0)),
                         doubleProperty(values.get(1)),
                         doubleProperty(values.get(2)),
@@ -124,11 +124,11 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - Area expects a list of 4 numbers");
     }
 
-    public static PropertyDistanceVector distanceVectorProperty(JsonValue jvalue) {
+    public static DistanceVector distanceVectorProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new PropertyDistanceVector(
+                return new DistanceVector(
                         doubleProperty(values.get(0)),
                         degreesProperty(values.get(1))
                 );
@@ -137,11 +137,11 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
     
-    public static PropertySpeedVector speedVectorProperty(JsonValue jvalue) {
+    public static SpeedVector speedVectorProperty(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new PropertySpeedVector(
+                return new SpeedVector(
                         doubleProperty(values.get(0)),
                         degreesProperty(values.get(1))
                 );
@@ -170,7 +170,7 @@ public class FromJson {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             int count = -1;
-            ObservableList<PropertyDouble> enteredspeeds = new SimpleListProperty<>();
+            ObservableList<Dble> enteredspeeds = new SimpleListProperty<>();
             for (JsonValue val : values) {
                 switch (val.getValueType()) {
                     case STRING -> {
@@ -183,7 +183,7 @@ public class FromJson {
                         if (count < 0) {
                             throw new ParseFailure("Illegal parameter in gradient definition");
                         }
-                        enteredspeeds.add(new PropertyDouble(((JsonNumber) val).doubleValue()));
+                        enteredspeeds.add(new Dble(((JsonNumber) val).doubleValue()));
                     }
                     default ->
                         throw new ParseFailure("Illegal parameter in gradient definition");

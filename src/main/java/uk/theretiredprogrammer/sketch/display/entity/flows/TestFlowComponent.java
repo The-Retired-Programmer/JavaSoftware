@@ -20,17 +20,17 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class TestFlowComponent extends FlowComponent {
 
-    private final PropertySpeedVector flow = new PropertySpeedVector();
-    private final PropertyDegrees mean = new PropertyDegrees();
+    private final SpeedVector flow = new SpeedVector();
+    private final Angle mean = new Angle();
 
-    public TestFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
+    public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("flow", flow);
         addProperty("mean", mean);
@@ -59,26 +59,26 @@ public class TestFlowComponent extends FlowComponent {
         mean.setOnChange(onchange);
     }
 
-    public PropertySpeedVector getFlow() {
+    public SpeedVector getFlow() {
         return flow;
     }
 
-    public PropertyDegrees getmean() {
+    public Angle getmean() {
         return mean;
     }
 
-    public void setFlow(PropertySpeedVector newvalue) {
+    public void setFlow(SpeedVector newvalue) {
         flow.set(newvalue);
     }
 
     @Override
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         testLocationWithinArea(pos);
         return getFlow();
     }
 
     @Override
-    public PropertyDegrees meanWindAngle() {
+    public Angle meanWindAngle() {
         return getmean();
     }
 }

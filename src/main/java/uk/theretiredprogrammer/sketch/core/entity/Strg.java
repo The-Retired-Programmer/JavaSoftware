@@ -16,14 +16,13 @@
 package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class PropertyColour extends SimpleObjectProperty<Color> implements ModelProperty<Color> {
+public class Strg extends SimpleStringProperty implements ModelProperty<String> {
 
-    public PropertyColour(Color value) {
+    public Strg(String value) {
         set(value);
     }
 
@@ -31,10 +30,10 @@ public class PropertyColour extends SimpleObjectProperty<Color> implements Model
     public void setOnChange(Runnable onchange) {
         addListener((o, oldval, newval) -> onchange.run());
     }
-
+    
     @Override
-    public Color parsevalue(JsonValue value) {
-        return FromJson.colourProperty(value);
+    public final String parsevalue(JsonValue value) {
+        return FromJson.stringProperty(value);
     }
 
     @Override

@@ -21,25 +21,25 @@ import java.util.Comparator;
 import java.util.function.Supplier;
 import javafx.collections.ListChangeListener;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyDegrees;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class FlowComponentSet extends ModelList<FlowComponent> {
 
     final static int WIDTHSTEPS = 100;
     final static int HEIGHTSTEPS = 100;
 
-    private final Supplier<PropertyArea> getdisplayarea;
-    private final PropertySpeedVector[][] flowarray = new PropertySpeedVector[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
+    private final Supplier<Area> getdisplayarea;
+    private final SpeedVector[][] flowarray = new SpeedVector[WIDTHSTEPS + 1][HEIGHTSTEPS + 1];
     private double wstepsize;
     private double hstepsize;
 
-    private PropertyDegrees meanflowangle = new PropertyDegrees();
+    private Angle meanflowangle = new Angle();
 
-    public FlowComponentSet(Supplier<PropertyArea> getdisplayarea) {
+    public FlowComponentSet(Supplier<Area> getdisplayarea) {
         this.getdisplayarea = getdisplayarea;
         setOnChange(() -> flowchange());
         addListChangeListener((ListChangeListener<FlowComponent>) (c) -> flowchange());
@@ -68,7 +68,7 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
             double y = hpos + hstepsize * h;
             for (int w = 0; w < WIDTHSTEPS + 1; w++) {
                 double x = wpos + wstepsize * w;
-                flowarray[w][h] = getFlow(new PropertyLocation(x, y));
+                flowarray[w][h] = getFlow(new Location(x, y));
             }
         }
         meanflowangle = meanWindAngle(); // check if we are using a forced mean
@@ -77,39 +77,39 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         }
     }
 
-    private PropertySpeedVector getFlow(PropertyLocation pos) {
+    private SpeedVector getFlow(Location pos) {
         return this.stream()
                 .filter(flowcomponent -> flowcomponent.getArea().isWithinArea(pos))
                 .sorted(Comparator.comparingInt(FlowComponent::getZlevel).reversed())
                 .findFirst()
                 .map(flowcomponent -> flowcomponent.getFlow(pos))
-                .orElse(new PropertySpeedVector());
+                .orElse(new SpeedVector());
     }
 
-    private PropertyDegrees meanWindAngle() {
+    private Angle meanWindAngle() {
         return stream().map(flowcomponent -> flowcomponent.meanWindAngle())
                 .filter(angle -> angle != null)
                 .findFirst().orElse(null);
     }
 
-    private PropertyDegrees meanAngle(PropertySpeedVector[][] array) {
+    private Angle meanAngle(SpeedVector[][] array) {
         double x = 0;
         double y = 0;
-        for (PropertySpeedVector[] column : array) {
-            for (PropertySpeedVector cell : column) {
+        for (SpeedVector[] column : array) {
+            for (SpeedVector cell : column) {
                 double r = cell.getDegreesProperty().getRadians();
                 x += Math.sin(r);
                 y += Math.cos(r);
             }
         }
-        return new PropertyDegrees(Math.toDegrees(Math.atan2(x, y)));
+        return new Angle(Math.toDegrees(Math.atan2(x, y)));
     }
 
-    PropertySpeedVector getFlowwithoutswing(PropertyLocation pos) {
-        return stream().count() == 0? new PropertySpeedVector() : calculateFlowwithoutswing(pos);
+    SpeedVector getFlowwithoutswing(Location pos) {
+        return stream().count() == 0? new SpeedVector() : calculateFlowwithoutswing(pos);
     }
     
-    private PropertySpeedVector calculateFlowwithoutswing(PropertyLocation pos) {
+    private SpeedVector calculateFlowwithoutswing(Location pos) {
         int w = (int) Math.floor((pos.getX() - getdisplayarea.get().getLocationProperty().getX()) / wstepsize);
         if (w < 0) {
             w = 0;
@@ -127,11 +127,11 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         return flowarray[w][h];
     }
 
-    PropertyDegrees getMeanFlowAngle(PropertyLocation pos) {
+    Angle getMeanFlowAngle(Location pos) {
         return getFlowwithoutswing(pos).getDegreesProperty();
     }
 
-    PropertyDegrees getMeanFlowAngle() {
+    Angle getMeanFlowAngle() {
         return meanflowangle;
     }
 }

@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.decisionslog.entity;
 
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 
 public class BoatLogEntry extends TimerLogEntry {
@@ -26,7 +26,7 @@ public class BoatLogEntry extends TimerLogEntry {
     private final String boatname;
 
     public BoatLogEntry(Boat boat) {
-        PropertyLocation loc = boat.getLocation();
+        Location loc = boat.getLocation();
         this.boatx = loc.getX();
         this.boaty = loc.getY();
         this.boatangle = boat.getDirection().get();

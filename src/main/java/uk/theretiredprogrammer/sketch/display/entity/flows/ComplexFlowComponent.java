@@ -20,18 +20,18 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.util.function.Supplier;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyArea;
-import uk.theretiredprogrammer.sketch.core.entity.PropertyLocation;
-import uk.theretiredprogrammer.sketch.core.entity.PropertySpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class ComplexFlowComponent extends FlowComponent {
 
-    private final PropertySpeedVector northwestflow = new PropertySpeedVector();
-    private final PropertySpeedVector northeastflow = new PropertySpeedVector();
-    private final PropertySpeedVector southeastflow = new PropertySpeedVector();
-    private final PropertySpeedVector southwestflow = new PropertySpeedVector();
+    private final SpeedVector northwestflow = new SpeedVector();
+    private final SpeedVector northeastflow = new SpeedVector();
+    private final SpeedVector southeastflow = new SpeedVector();
+    private final SpeedVector southwestflow = new SpeedVector();
 
-    public ComplexFlowComponent(Supplier<PropertyArea> getdisplayarea, String type) {
+    public ComplexFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
         addProperty("northwestflow", northwestflow);
         addProperty("northeastflow", northeastflow);
@@ -68,29 +68,29 @@ public class ComplexFlowComponent extends FlowComponent {
         southwestflow.setOnChange(onchange);
     }
 
-    public PropertySpeedVector getNorthwestflow() {
+    public SpeedVector getNorthwestflow() {
         return northwestflow;
     }
 
-    public PropertySpeedVector getNortheastflow() {
+    public SpeedVector getNortheastflow() {
         return northeastflow;
     }
 
-    public PropertySpeedVector getSoutheastflow() {
+    public SpeedVector getSoutheastflow() {
         return southeastflow;
     }
 
-    public PropertySpeedVector getSouthwestflow() {
+    public SpeedVector getSouthwestflow() {
         return southwestflow;
     }
 
     @Override
-    public PropertySpeedVector getFlow(PropertyLocation pos) {
+    public SpeedVector getFlow(Location pos) {
         testLocationWithinArea(pos);
-        PropertyLocation bottomleft = getArea().getLocationProperty();
+        Location bottomleft = getArea().getLocationProperty();
         double xfraction = (pos.getX() - bottomleft.getX()) / getArea().getWidth();
         double yfraction = (pos.getY() - bottomleft.getY()) / getArea().getHeight();
-        PropertyLocation fractions = new PropertyLocation(xfraction, yfraction);
+        Location fractions = new Location(xfraction, yfraction);
         return getSouthwestflow().extrapolate(
                 getNorthwestflow(),
                 getNortheastflow(),
