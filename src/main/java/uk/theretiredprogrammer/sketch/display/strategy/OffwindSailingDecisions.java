@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.control.strategy;
+package uk.theretiredprogrammer.sketch.display.strategy;
 
-import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
-public class OffwindStarboardRoundingDecisions extends RoundingDecisions {
-
-    private final Function<Angle, Angle> getDirectionAfterTurn;
-
-    public OffwindStarboardRoundingDecisions(
-            Function<Angle, Angle> getDirectionAfterTurn) {
-        this.getDirectionAfterTurn = getDirectionAfterTurn;
-    }
+public class OffwindSailingDecisions extends SailingDecisions {
 
     @Override
-    public final boolean nextTimeInterval(Params params) {
-        if (!ExecuteRoundingIfAtStarboardRoundingTurnPoint(params, getDirectionAfterTurn)) {
-            adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - starboard rounding");
+    public boolean nextTimeInterval(Params params) {
+        Angle nextDirection = params.angleToSailToMark();
+        if (nextDirection.neq(params.heading)) {
+            return params.setTURN(nextDirection, params.heading.gt(nextDirection), MINOR, "Adjust direction to sailin directly to mark (offwind sailing)");
         }
-        return true;
+        return params.setSAILON();
     }
 }

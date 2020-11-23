@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.control.strategy;
+package uk.theretiredprogrammer.sketch.display.strategy;
 
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;

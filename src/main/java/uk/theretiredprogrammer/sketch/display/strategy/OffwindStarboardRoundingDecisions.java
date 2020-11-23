@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.control.strategy;
+package uk.theretiredprogrammer.sketch.display.strategy;
 
 import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
-public class OffwindPortRoundingDecisions extends RoundingDecisions {
+public class OffwindStarboardRoundingDecisions extends RoundingDecisions {
 
     private final Function<Angle, Angle> getDirectionAfterTurn;
 
-    public OffwindPortRoundingDecisions(
+    public OffwindStarboardRoundingDecisions(
             Function<Angle, Angle> getDirectionAfterTurn) {
         this.getDirectionAfterTurn = getDirectionAfterTurn;
     }
 
     @Override
     public final boolean nextTimeInterval(Params params) {
-        if (!executeRoundingIfAtPortRoundingTurnPoint(params, getDirectionAfterTurn)) {
-            adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - port rounding");
+        if (!ExecuteRoundingIfAtStarboardRoundingTurnPoint(params, getDirectionAfterTurn)) {
+            adjustDirectCourseToDownwindMarkOffset(params, "course adjustment - approaching mark - starboard rounding");
         }
         return true;
     }

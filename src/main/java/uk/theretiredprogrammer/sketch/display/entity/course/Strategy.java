@@ -20,19 +20,19 @@ import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindPortSailingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStarboardRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.GybingDownwindStarboardSailingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindPortRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindSailingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.OffwindStarboardRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.RoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.SailingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardPortRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardPortSailingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStarboardRoundingDecisions;
-import uk.theretiredprogrammer.sketch.display.control.strategy.WindwardStarboardSailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.GybingDownwindPortRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.GybingDownwindPortSailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.GybingDownwindStarboardRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.GybingDownwindStarboardSailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.OffwindPortRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.OffwindSailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.OffwindStarboardRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.RoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.SailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.WindwardPortRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.WindwardPortSailingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.WindwardStarboardRoundingDecisions;
+import uk.theretiredprogrammer.sketch.display.strategy.WindwardStarboardSailingDecisions;
 
 public class Strategy {
 
