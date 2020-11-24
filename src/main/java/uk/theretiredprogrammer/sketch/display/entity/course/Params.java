@@ -41,11 +41,13 @@ public class Params {
     public Location location;
     public Angle angletowind;
     public Angle meanwinddirection;
+    public boolean reachesdownwind;
     public Angle downwindrelative;
     public Angle upwindrelative;
     public boolean isPort;
     public Location marklocation;
     public Angle markmeanwinddirection;
+    public Angle angletomark;
 
     public Params(SketchModel model, Boat boat) {
         this.model = model;
@@ -69,13 +71,16 @@ public class Params {
         location = boat.getLocation();
         downwindrelative = boat.metrics.downwindrelative;
         upwindrelative = boat.metrics.upwindrelative;
+        reachesdownwind = boat.isReachdownwind();
         isPort = boat.isPort(winddirection);
         starboardCloseHauled = boat.getStarboardCloseHauledCourse(winddirection);
         portCloseHauled = boat.getPortCloseHauledCourse(winddirection);
         starboardReaching = boat.getStarboardReachingCourse(winddirection);
         portReaching = boat.getPortReachingCourse(winddirection);
         angletowind = heading.absDegreesDiff(winddirection);
+        angletomark = leg.getAngleofLeg();
     }
+    
     
     public final Angle angleToSailToMark() {
         return angleToSailToMark(isPort);

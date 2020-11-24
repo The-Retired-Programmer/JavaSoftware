@@ -34,6 +34,7 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Deci
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
+import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
 
 public class SailingStrategyTest {
@@ -50,7 +51,9 @@ public class SailingStrategyTest {
             updateaction.run();
         }
         params.refresh();
-        params.leg.getStrategy(params).strategyTimeInterval(params);
+        Strategy strategy = params.leg.getStrategy();
+        strategy.setStrategy(params, params.leg);
+        strategy.strategyTimeInterval(params);
         return params.decision;
     }
 

@@ -19,8 +19,6 @@ import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 

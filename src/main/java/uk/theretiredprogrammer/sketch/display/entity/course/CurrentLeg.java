@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import java.util.Optional;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
@@ -24,14 +23,11 @@ import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.log.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.ReasonLogEntry;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
-import uk.theretiredprogrammer.sketch.display.entity.boats.BoatMetrics;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.NONE;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.OFFWIND;
 import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.WINDWARD;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class CurrentLeg {
 
@@ -39,66 +35,35 @@ public class CurrentLeg {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    public static Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
-        return getRefDistance(location, marklocation, refangle.get());
+    public LegType getLegType(Params params) {
+        return getLegTypeFromMarkAngle(params.angletomark, params);
     }
 
-    public static Optional<Double> getRefDistance(Location location, Location marklocation, double refangle) {
-        DistanceVector tomark = new DistanceVector(location, marklocation);
-        Angle refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
-        if (refangle2mark.gt(90)) {
-            return Optional.empty();
-        }
-        return Optional.of(refdistancetomark(tomark.getDistance(), refangle2mark));
+    public Strategy getStrategy() {
+        return strategy;
     }
 
-    public static LegType getLegType(BoatMetrics metrics, Angle legangle, WindFlow windflow, boolean reachesdownwind) {
-        if (legangle == null) {
-            return NONE;
-        }
-        Angle legtowind = legangle.absDegreesDiff(windflow.getMeanFlowAngle());
-        if (legtowind.lteq(metrics.upwindrelative)) {
+    public LegType getFollowingLegType(Params params) {
+        Angle angletofollowingmark = params.leg.getAngleofFollowingLeg();
+        return angletofollowingmark == null ? NONE : getLegTypeFromMarkAngle(angletofollowingmark, params);
+    }
+
+    private LegType getLegTypeFromMarkAngle(Angle angletomark, Params params) {
+        Angle legtowind = angletomark.absDegreesDiff(params.meanwinddirection);
+        if (legtowind.lteq(params.upwindrelative)) {
             return WINDWARD;
         }
-        if (reachesdownwind && legtowind.gteq(metrics.downwindrelative)) {
+        if (params.reachesdownwind && legtowind.gteq(params.downwindrelative)) {
             return GYBINGDOWNWIND;
         }
         return OFFWIND;
-    }
-
-    private static Angle refangletomark(Angle tomarkangle, Angle refangle) {
-        return tomarkangle.absDegreesDiff(refangle);
-    }
-
-    private static double refdistancetomark(double distancetomark, Angle refangle2mark) {
-        return distancetomark * Math.cos(refangle2mark.getRadians());
-    }
-
-    public static Strategy get(Strategy clonefrom) {
-        return new Strategy(clonefrom);
-    }
-
-    public static Strategy get(Params params, CurrentLeg leg) {
-        Strategy strategy = new Strategy();
-        LegType legtype = getLegType(params.boat.metrics, leg.getAngleofLeg(), params.windflow, params.boat.isReachdownwind());
-        switch (legtype) {
-            case WINDWARD ->
-                strategy.setWindwardStrategy(params);
-            case OFFWIND ->
-                strategy.setOffwindStrategy(params);
-            case GYBINGDOWNWIND ->
-                strategy.setGybingDownwindStrategy(params);
-            default ->
-                throw new IllegalStateFailure("Illegal/unknown LEGTYPE: " + legtype.toString());
-        }
-        return strategy;
     }
 
     private int legno = 0;
 
     private Leg currentleg;
     private final Course course;
-    private Strategy strategy;
+    private final Strategy strategy = new Strategy();
     public final Decision decision;
 
     public CurrentLeg(Course course) {
@@ -123,17 +88,6 @@ public class CurrentLeg {
 
     public Decision getDecision() {
         return decision;
-    }
-
-    public Strategy getStrategy(Params params) {
-        if (strategy == null) {
-            strategy = get(params, this);
-        }
-        return strategy;
-    }
-
-    public void setStrategy(Strategy strategy) {
-        this.strategy = strategy;
     }
 
     public boolean isFollowingLeg() {
@@ -179,35 +133,25 @@ public class CurrentLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    public Strategy nextTimeInterval(Params params, int simulationtime, LogController timerlog) {
+    public void nextTimeInterval(Params params, int simulationtime, LogController timerlog) {
+        if (!strategy.hasStrategy()) {
+            strategy.setStrategy(params, this);
+        }
         if (decision.getAction() == SAILON) {
-            getStrategy(params).strategyTimeInterval(params);
+            strategy.strategyTimeInterval(params);
             timerlog.add(new BoatLogEntry(params.boat));
             timerlog.add(new DecisionLogEntry(params.boat.getName(), decision));
             timerlog.add(new ReasonLogEntry(params.boat.getName(), decision.getReason()));
         }
         if (params.boat.moveUsingDecision(params)) {
-            return isFollowingLeg()
-                    ? get(params, toFollowingLeg())
-                    : getAfterFinishingStrategy(params);
+            if (isFollowingLeg()) {
+                toFollowingLeg();
+                params.refresh();
+                strategy.setStrategy(params, this);
+            } else {
+                params.refresh();
+                strategy.setAfterFinishStrategy(params);
+            }
         }
-        return null;
     }
-
-    private Strategy getAfterFinishingStrategy(Params params) {
-        Strategy newstrategy = new Strategy();
-        newstrategy.setAfterFinishStrategy(params);
-        return newstrategy;
-    }
-
-    public boolean isNear2WindwardMark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.get());
-        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
-    }
-
-    public boolean isNear2LeewardMark(Boat boat, Angle markMeanwinddirection) {
-        Optional<Double> refdistance = getRefDistance(boat.getLocation(), getMarkLocation(), markMeanwinddirection.sub(180).get());
-        return refdistance.isPresent() ? refdistance.get() <= boat.metrics.getLength() * 5 : true;
-    }
-
 }
