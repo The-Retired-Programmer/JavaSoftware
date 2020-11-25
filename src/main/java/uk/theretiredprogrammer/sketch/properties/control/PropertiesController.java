@@ -72,7 +72,7 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
         sketchmodel.parse(configfilecontroller.getParsedConfigFile());
     }
 
-    public SketchModel getProperty() {
+    public SketchModel getModel() {
         return sketchmodel;
     }
 
@@ -100,6 +100,6 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewLeg() {
-        sketchmodel.getCourse().getLegsProperty().add(new Leg());
+        sketchmodel.getCourse().getLegs().add(new Leg());
     }
 }

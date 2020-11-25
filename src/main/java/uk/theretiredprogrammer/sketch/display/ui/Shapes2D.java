@@ -153,7 +153,7 @@ public class Shapes2D {
     }
 
     public Shape[] displayWindGraphic(Location location, SpeedVector flow, double size, Color colour) {
-        return new Shape[]{drawLine(location, size / zoom, flow.getDegreesProperty(), 1, colour)};
+        return new Shape[]{drawLine(location, size / zoom, flow.getAngle(), 1, colour)};
     }
 
 //        GeneralPath p = new GeneralPath();

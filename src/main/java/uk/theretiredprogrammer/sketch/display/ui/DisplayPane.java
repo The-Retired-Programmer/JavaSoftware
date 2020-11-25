@@ -199,7 +199,7 @@ public class DisplayPane extends Group {
     }
 
     private void laylinesdraw(Mark mark) {
-        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getDegreesProperty();
+        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getAngle();
         if (mark.isWindwardlaylines()) {
             getChildren().addAll(
                     Wrap.globalTransform(
@@ -229,7 +229,7 @@ public class DisplayPane extends Group {
                 Wrap.globalTransform(
                         Wrap.contextMenu(
                                 shapebuilder.drawboat(boat.getLocation(), boat.getDirection(), boat.getColour(),
-                                        controller.getModel().getWindFlow().getFlow(boat.getLocation()).getDegreesProperty(),
+                                        controller.getModel().getWindFlow().getFlow(boat.getLocation()).getAngle(),
                                         boat.metrics.length, boat.metrics.width, boat.sailcolor),
                                 UI.contextMenu(
                                         UI.menuitem("tack", ev -> tack(boat)),
@@ -252,12 +252,12 @@ public class DisplayPane extends Group {
         Angle delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // anti clockwise to starboard tack
-            Angle target = boat.getStarboardCloseHauledCourse(wind.getDegreesProperty());
+            Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
             Decision decision = leg.getDecision();
             decision.setTURN(target, PORT, MAJOR, "Tack to Starboard - forced by user");
         } else {
             // clockwise to port tack
-            Angle target = boat.getPortCloseHauledCourse(wind.getDegreesProperty());
+            Angle target = boat.getPortCloseHauledCourse(wind.getAngle());
             Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Port - forced by user");
         }
@@ -270,12 +270,12 @@ public class DisplayPane extends Group {
         Angle delta = wind.degreesDiff(boat.getDirection());
         if (delta.gt(0)) {
             // clockwise to starboard gybe
-            Angle target = boat.getStarboardReachingCourse(wind.getDegreesProperty());
+            Angle target = boat.getStarboardReachingCourse(wind.getAngle());
             Decision decision = leg.getDecision();
             decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Starboard - forced by user");
         } else {
             // anticlockwise to port gybe
-            Angle target = boat.getPortReachingCourse(wind.getDegreesProperty());
+            Angle target = boat.getPortReachingCourse(wind.getAngle());
             Decision decision = leg.getDecision();
             decision.setTURN(target, PORT, MAJOR, "Gybe to Port - forced by user");
         }

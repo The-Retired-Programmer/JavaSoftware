@@ -70,6 +70,13 @@ public abstract class ModelList<P extends Model> implements Model {
     public ObservableList<P> get() {
         return list;
     }
+    
+    public P get(int index) {
+        if (index < 0 || index >= list.size()) {
+            return null;
+        }
+        return list.get(index);
+    }
 
     public void add(P value) {
         list.add(value);
@@ -83,9 +90,5 @@ public abstract class ModelList<P extends Model> implements Model {
 
     public void clear() {
         list.clear();
-    }
-
-    public int size() {
-        return list.size();
     }
 }

@@ -97,7 +97,7 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
         double y = 0;
         for (SpeedVector[] column : array) {
             for (SpeedVector cell : column) {
-                double r = cell.getDegreesProperty().getRadians();
+                double r = cell.getAngle().getRadians();
                 x += Math.sin(r);
                 y += Math.cos(r);
             }
@@ -128,7 +128,7 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
     }
 
     Angle getMeanFlowAngle(Location pos) {
-        return getFlowwithoutswing(pos).getDegreesProperty();
+        return getFlowwithoutswing(pos).getAngle();
     }
 
     Angle getMeanFlowAngle() {

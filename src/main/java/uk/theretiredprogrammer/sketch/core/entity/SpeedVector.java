@@ -79,7 +79,7 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
         return degreesproperty.get();
     }
 
-    public Angle getDegreesProperty() {
+    public Angle getAngle() {
         return degreesproperty;
     }
 
@@ -140,7 +140,7 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
     }
 
     public Angle degreesDiff(SpeedVector p) {
-        return degreesproperty.degreesDiff(p.getDegreesProperty());
+        return degreesproperty.degreesDiff(p.getAngle());
     }
 
     public Angle degreesDiff(Angle p) {
@@ -152,10 +152,10 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
     }
 
     private Angle extrapolateAngle(Angle other, double fraction) {
-        return new SpeedVector(1, getDegreesProperty())
+        return new SpeedVector(1, getAngle())
                 .mult(1.0 - fraction)
                 .plus(new SpeedVector(1, other).mult(fraction))
-                .getDegreesProperty();
+                .getAngle();
     }
 
     private double extrapolateSpeed(double other, double fraction) {
@@ -164,7 +164,7 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
 
     private SpeedVector extrapolate(SpeedVector other, double fraction) {
         return new SpeedVector(extrapolateSpeed(other.getSpeed(), fraction),
-                extrapolateAngle(other.getDegreesProperty(), fraction));
+                extrapolateAngle(other.getAngle(), fraction));
     }
 
     public SpeedVector extrapolate(SpeedVector nw, SpeedVector ne, SpeedVector se, Location fractions) {

@@ -59,13 +59,14 @@ public class Params {
 
     public final void refresh() {
         leg = boat.getCurrentLeg();
-        //
-        marklocation = leg.getMarkLocation();
         decision = leg.decision;
         //
-        winddirection = windflow.getFlow(boat.getLocation()).getDegreesProperty();
+        angletomark = leg.getAngleofLeg();
+        marklocation = leg.getMarkLocation();
+        //
+        winddirection = windflow.getFlow(boat.getLocation()).getAngle();
         meanwinddirection = windflow.getMeanFlowAngle();
-        markmeanwinddirection = windflow.getMeanFlowAngle(marklocation);
+        markmeanwinddirection = marklocation == null ? null : windflow.getMeanFlowAngle(marklocation);
         //
         heading = boat.getDirection();
         location = boat.getLocation();
@@ -78,7 +79,6 @@ public class Params {
         starboardReaching = boat.getStarboardReachingCourse(winddirection);
         portReaching = boat.getPortReachingCourse(winddirection);
         angletowind = heading.absDegreesDiff(winddirection);
-        angletomark = leg.getAngleofLeg();
     }
     
     

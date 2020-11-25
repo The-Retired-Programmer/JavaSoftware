@@ -35,7 +35,7 @@ import uk.theretiredprogrammer.sketch.properties.control.PropertiesController;
 public class DisplayController extends AbstractController<DisplayWindow> {
 
     private PropertiesController propertiescontroller;
-    private LogController decisioncontroller;
+    private LogController logcontroller;
     private FileSelectorController fileselectorcontroller;
     private SimulationController simulationcontroller;
     private DisplayPane displaygroup;
@@ -43,7 +43,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
         propertiescontroller = new PropertiesController(pn);
-        decisioncontroller = new LogController(pn.toString(), false);
+        logcontroller = new LogController(pn.toString(), false);
         simulationcontroller = new SimulationController(this);
         showDisplayWindow(pn.toString());
     }
@@ -54,7 +54,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
         this(resourcename);
-        decisioncontroller = new LogController(fn, false);
+        logcontroller = new LogController(fn, false);
         this.fileselectorcontroller = fileselectorcontroller;
         showDisplayWindow(fn);
     }
@@ -62,14 +62,14 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     private void showDisplayWindow(String fn) {
         displaygroup = new DisplayPane(this);
         setWindow(new DisplayWindow(fn, this, this.getModel(), displaygroup));
-        propertiescontroller.getProperty().setOnChange(() -> refreshrepaint());
+        propertiescontroller.getModel().setOnChange(() -> refreshrepaint());
     }
 
     @Override
     protected void whenWindowIsClosing() {
         simulationcontroller.close();
         propertiescontroller.close();
-        decisioncontroller.close();
+        logcontroller.close();
     }
 
     @Override
@@ -88,12 +88,12 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public void resetSimulation() {
         simulationcontroller.stop();
-        decisioncontroller.clear();
+        logcontroller.clear();
         resetObjectProperties();
     }
 
     public final SketchModel getModel() {
-        return propertiescontroller.getProperty();
+        return propertiescontroller.getModel();
     }
 
     public void save(DisplayController controller, String fn) {
@@ -114,12 +114,12 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         propertiescontroller.showWindow();
     }
 
-    public void showFullDecisionWindow() {
-        decisioncontroller.showWindow();
+    public void showFullLogWindow() {
+        logcontroller.showWindow();
     }
 
-    public void showFilteredDecisionWindow() {
-        decisioncontroller.showWindow();
+    public void showFilteredLogWindow() {
+        logcontroller.showWindow();
     }
 
     public SimulationController getSimulationController() {
@@ -138,7 +138,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         displaygroup.refreshParameters();
     }
 
-    public LogController getDecisionController() {
-        return decisioncontroller;
+    public LogController getLogController() {
+        return logcontroller;
     }
 }

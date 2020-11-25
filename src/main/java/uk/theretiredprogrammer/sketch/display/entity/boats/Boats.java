@@ -19,10 +19,8 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
-import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 
 public class Boats extends ModelNamedList<Boat> {
 
@@ -45,12 +43,5 @@ public class Boats extends ModelNamedList<Boat> {
                 model.getWaterFlow());
         boat.parse(jobj);
         return boat;
-    }
-
-    public void timerAdvance(SketchModel model, int simulationtime, LogController timerlog) {
-        stream().forEach(boat -> {
-            CurrentLeg leg = boat.getCurrentLeg();
-            leg.nextTimeInterval(new Params(model, boat), simulationtime, timerlog);
-        });
     }
 }

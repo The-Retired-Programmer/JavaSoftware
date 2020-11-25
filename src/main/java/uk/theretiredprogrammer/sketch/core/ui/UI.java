@@ -163,7 +163,7 @@ public class UI {
         return new TextFlow(
                 control(distancesize, property.getDistanceProperty()),
                 createTextFor("@"),
-                control(directionsize, property.getDegreesProperty()),
+                control(directionsize, property.getAngle()),
                 createTextFor("˚"));
     }
 
@@ -171,7 +171,7 @@ public class UI {
         return new TextFlow(
                 control(speedsize, property.getSpeedProperty()),
                 createTextFor("@"),
-                control(directionsize, property.getDegreesProperty()),
+                control(directionsize, property.getAngle()),
                 createTextFor("˚"));
     }
 

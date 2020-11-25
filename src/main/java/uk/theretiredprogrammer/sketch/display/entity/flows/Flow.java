@@ -39,7 +39,7 @@ public abstract class Flow {
         return flowcomponents;
     }
 
-    public void timerAdvance(int simulationtime, LogController timerlog) {
+    public void tick(int simulationtime, LogController timerlog) {
         flowshiftsproperty.timerAdvance(simulationtime, timerlog);
     }
 

@@ -16,17 +16,13 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import java.util.Optional;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.log.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.DecisionLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.ReasonLogEntry;
-import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.GYBINGDOWNWIND;
-import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.NONE;
-import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.OFFWIND;
-import static uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg.LegType.WINDWARD;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 
 public class CurrentLeg {
@@ -35,33 +31,8 @@ public class CurrentLeg {
         WINDWARD, OFFWIND, GYBINGDOWNWIND, NONE
     }
 
-    public LegType getLegType(Params params) {
-        return getLegTypeFromMarkAngle(params.angletomark, params);
-    }
-
-    public Strategy getStrategy() {
-        return strategy;
-    }
-
-    public LegType getFollowingLegType(Params params) {
-        Angle angletofollowingmark = params.leg.getAngleofFollowingLeg();
-        return angletofollowingmark == null ? NONE : getLegTypeFromMarkAngle(angletofollowingmark, params);
-    }
-
-    private LegType getLegTypeFromMarkAngle(Angle angletomark, Params params) {
-        Angle legtowind = angletomark.absDegreesDiff(params.meanwinddirection);
-        if (legtowind.lteq(params.upwindrelative)) {
-            return WINDWARD;
-        }
-        if (params.reachesdownwind && legtowind.gteq(params.downwindrelative)) {
-            return GYBINGDOWNWIND;
-        }
-        return OFFWIND;
-    }
-
     private int legno = 0;
-
-    private Leg currentleg;
+    private Optional<Leg> currentleg;
     private final Course course;
     private final Strategy strategy = new Strategy();
     public final Decision decision;
@@ -90,38 +61,34 @@ public class CurrentLeg {
         return decision;
     }
 
-    public boolean isFollowingLeg() {
-        return course.getLegsProperty().size() > legno + 1;
-    }
-
-    public CurrentLeg toFollowingLeg() {
-        if (isFollowingLeg()) {
-            currentleg = course.getLeg(++legno);
-        }
-        return this;
+    public Strategy getStrategy() {
+        return strategy;
     }
 
     public Angle getAngleofFollowingLeg() {
-        return isFollowingLeg()
-                ? course.getLeg(legno + 1).getAngleofLeg()
-                : null;
+        Optional<Leg> followingleg = course.getLeg(legno + 1);
+        return followingleg.map(fleg -> fleg.getAngleofLeg()).orElse(null);
     }
 
     // proxies to current Leg
     public boolean isPortRounding() {
-        return currentleg.isPortRounding();
+        return currentleg.map(cleg -> cleg.isPortRounding())
+                .orElseThrow(() -> new IllegalStateFailure("No CurrentLeg proxy"));
     }
 
     public double getDistanceToMark(Location here) {
-        return currentleg.getDistanceToEnd(here);
+        return currentleg.map(cleg -> cleg.getDistanceToEnd(here))
+                .orElseThrow(() -> new IllegalStateFailure("No CurrentLeg proxy"));
     }
 
     public Location getMarkLocation() {
-        return currentleg.getEndLocation();
+        return currentleg.map(cleg -> cleg.getEndLocation())
+                .orElse(null);
     }
 
     public Angle getAngleofLeg() {
-        return currentleg.getAngleofLeg();
+        return currentleg.map(cleg -> cleg.getAngleofLeg())
+                .orElse(null);
     }
 
     public Location getSailToLocation(boolean onPort) {
@@ -133,25 +100,20 @@ public class CurrentLeg {
         return here.angleto(getSailToLocation(onPort));
     }
 
-    public void nextTimeInterval(Params params, int simulationtime, LogController timerlog) {
-        if (!strategy.hasStrategy()) {
-            strategy.setStrategy(params, this);
-        }
+    public void tick(Params params, int simulationtime, LogController timerlog) {
         if (decision.getAction() == SAILON) {
-            strategy.strategyTimeInterval(params);
+            strategy.tick(params);
             timerlog.add(new BoatLogEntry(params.boat));
             timerlog.add(new DecisionLogEntry(params.boat.getName(), decision));
             timerlog.add(new ReasonLogEntry(params.boat.getName(), decision.getReason()));
         }
         if (params.boat.moveUsingDecision(params)) {
-            if (isFollowingLeg()) {
-                toFollowingLeg();
-                params.refresh();
-                strategy.setStrategy(params, this);
-            } else {
-                params.refresh();
-                strategy.setAfterFinishStrategy(params);
-            }
+            currentleg = course.getLeg(++legno);
+            params.refresh();
+            currentleg.ifPresentOrElse(
+                    (cleg) -> strategy.setStrategy(params),
+                    () -> strategy.setAfterFinishStrategy(params)
+            );
         }
     }
 }

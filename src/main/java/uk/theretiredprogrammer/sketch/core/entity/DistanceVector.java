@@ -81,7 +81,7 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
         return degreesproperty.get();
     }
 
-    public Angle getDegreesProperty() {
+    public Angle getAngle() {
         return degreesproperty;
     }
 
@@ -116,7 +116,7 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
 
     public Location toLocation(Location origin) {
         double distance = distanceproperty.get();
-        double radians = getDegreesProperty().getRadians();
+        double radians = getAngle().getRadians();
         return new Location(origin.getX() + distance * Math.sin(radians),
                 origin.getY() + distance * Math.cos(radians));
     }
@@ -149,7 +149,7 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
     }
 
     public Angle degreesDiff(DistanceVector p) {
-        return degreesproperty.degreesDiff(p.getDegreesProperty());
+        return degreesproperty.degreesDiff(p.getAngle());
     }
 
     public Angle degreesDiff(Angle p) {

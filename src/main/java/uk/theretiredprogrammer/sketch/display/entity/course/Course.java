@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
+import java.util.Optional;
 import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
@@ -70,15 +71,11 @@ public class Course extends ModelMap {
         return job.build();
     }
 
-    public Location getStartProperty() {
-        return start;
-    }
-
-    public Legs getLegsProperty() {
+    public Legs getLegs() {
         return legs;
     }
     
-    public Leg getLeg(int legno){
-       return legs.get().get(legno);
+    public Optional<Leg> getLeg(int legno){
+       return Optional.ofNullable(legs.get(legno));
     }
 }

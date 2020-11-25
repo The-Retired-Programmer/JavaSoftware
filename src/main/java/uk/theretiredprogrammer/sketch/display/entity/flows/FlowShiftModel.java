@@ -150,10 +150,10 @@ public class FlowShiftModel extends ModelMap {
 
     SpeedVector addShiftandSwing(SpeedVector flow) {
         if (swingperiod.get() > 0) {
-            flow = new SpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(swingNow));
+            flow = new SpeedVector(flow.getSpeed(), flow.getAngle().plus(swingNow));
         }
         if (shiftperiod.get() > 0 || randomshifts.get()) {
-            flow = new SpeedVector(flow.getSpeed(), flow.getDegreesProperty().plus(shiftNow));
+            flow = new SpeedVector(flow.getSpeed(), flow.getAngle().plus(shiftNow));
         }
         return flow;
     }

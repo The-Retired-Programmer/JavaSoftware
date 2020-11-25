@@ -38,7 +38,7 @@ public class PropertiesPane extends Accordion {
     }
 
     private void createCoursePropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getCourse().getLegsProperty().addListChangeListener(new ListChangeListener() {
+        sketchmodel.getCourse().getLegs().addListChangeListener(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
                 refreshcontent(sketchmodel);

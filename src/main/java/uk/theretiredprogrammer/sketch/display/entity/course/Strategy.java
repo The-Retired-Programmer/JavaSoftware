@@ -45,7 +45,8 @@ public class Strategy {
     private Angle portoffsetangle;
     private Angle starboardoffsetangle;
     private double offset;
-    private Consumer<Params> timeintervalhandler;
+    private Consumer<Params> tickhandler;
+    private Location thislocation;
 
     public Strategy() {
     }
@@ -56,12 +57,8 @@ public class Strategy {
         this.setMarkOffset(clonefrom.offset, clonefrom.starboardoffsetangle, clonefrom.portoffsetangle);
     }
 
-    public boolean hasStrategy() {
-        return roundingdecisions != null;
-    }
-
-    public void setStrategy(Params params, CurrentLeg leg) {
-        LegType legtype = leg.getLegType(params);
+    public void setStrategy(Params params) {
+        LegType legtype = getLegType(params);
         switch (legtype) {
             case WINDWARD ->
                 setWindwardStrategy(params);
@@ -76,7 +73,7 @@ public class Strategy {
     }
 
     private void setWindwardStrategy(Params params) {
-        this.setTimeIntervalHandler(p -> windwardTimeInterval(p));
+        this.setTickhandler(p -> windwardTick(p));
         Angle winddirection = params.markmeanwinddirection;
         Angle relative = params.upwindrelative;
         if (params.leg.isPortRounding()) {
@@ -84,7 +81,7 @@ public class Strategy {
         } else {
             setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.sub(90).sub(relative), winddirection.sub(90).plus(relative));
         }
-        LegType followinglegtype = params.leg.getFollowingLegType(params);
+        LegType followinglegtype = getFollowingLegType(params);
         switch (followinglegtype) {
             case OFFWIND ->
                 roundingdecisions = params.leg.isPortRounding()
@@ -106,7 +103,7 @@ public class Strategy {
     }
 
     private void setGybingDownwindStrategy(Params params) {
-        this.setTimeIntervalHandler(p -> leewardTimeInterval(p));
+        this.setTickhandler(p -> leewardTick(p));
         Angle winddirection = params.markmeanwinddirection;
         Angle relative = params.boat.metrics.downwindrelative;
         if (params.leg.isPortRounding()) {
@@ -114,7 +111,7 @@ public class Strategy {
         } else {
             this.setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.sub(90).sub(relative), winddirection.sub(90).plus(relative));
         }
-        LegType followinglegtype = params.leg.getFollowingLegType(params);
+        LegType followinglegtype = getFollowingLegType(params);
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = params.leg.isPortRounding()
@@ -137,13 +134,13 @@ public class Strategy {
     }
 
     private void setOffwindStrategy(Params params) {
-        this.setTimeIntervalHandler(p -> leewardTimeInterval(p));
+        this.setTickhandler(p -> leewardTick(p));
         if (params.leg.isPortRounding()) {
             this.setMarkOffset(params.boat.metrics.getWidth() * 2, params.leg.getAngleofLeg().plus(90), params.leg.getAngleofLeg().plus(90));
         } else {
             this.setMarkOffset(params.boat.metrics.getWidth() * 2, params.leg.getAngleofLeg().sub(90), params.leg.getAngleofLeg().sub(90));
         }
-        LegType followinglegtype = params.leg.getFollowingLegType(params);
+        LegType followinglegtype = getFollowingLegType(params);
         switch (followinglegtype) {
             case WINDWARD ->
                 roundingdecisions = params.leg.isPortRounding()
@@ -169,14 +166,35 @@ public class Strategy {
         this.portdecisions = new OffwindSailingDecisions();
     }
 
-    void setAfterFinishStrategy(Params params) {
-        this.setMarkOffset(0, params.markmeanwinddirection, params.markmeanwinddirection);
-        this.setTimeIntervalHandler(p -> afterFinishingTimeInterval(p));
-        useroundingdecisions = false;
+    private LegType getLegType(Params params) {
+        return getLegTypeUsingMarkAngle(params.angletomark, params);
     }
 
-    private void afterFinishingTimeInterval(Params params) {
-        double fromfinishmark = params.location.to(params.marklocation);
+    private LegType getFollowingLegType(Params params) {
+        Angle angletofollowingmark = params.leg.getAngleofFollowingLeg();
+        return angletofollowingmark == null ? LegType.NONE : getLegTypeUsingMarkAngle(angletofollowingmark, params);
+    }
+
+    private LegType getLegTypeUsingMarkAngle(Angle angletomark, Params params) {
+        Angle legtowind = angletomark.absDegreesDiff(params.meanwinddirection);
+        if (legtowind.lteq(params.upwindrelative)) {
+            return LegType.WINDWARD;
+        }
+        if (params.reachesdownwind && legtowind.gteq(params.downwindrelative)) {
+            return LegType.GYBINGDOWNWIND;
+        }
+        return LegType.OFFWIND;
+    }
+
+    void setAfterFinishStrategy(Params params) {
+        this.setMarkOffset(0, params.meanwinddirection, params.meanwinddirection);
+        this.setTickhandler(p -> afterFinishingTick(p));
+        useroundingdecisions = false;
+        thislocation = new Location(params.location);
+    }
+
+    private void afterFinishingTick(Params params) {
+        double fromfinishmark = params.location.to(thislocation);
         if (fromfinishmark > params.boat.metrics.getLength() * 5) {
             params.setSTOP();
         } else {
@@ -184,8 +202,15 @@ public class Strategy {
         }
     }
 
-    private void setTimeIntervalHandler(Consumer<Params> timeintervalhandler) {
-        this.timeintervalhandler = timeintervalhandler;
+    private void setTickhandler(Consumer<Params> tickhandler) {
+        this.tickhandler = tickhandler;
+    }
+
+    public void tick(Params params) {
+        if (roundingdecisions == null) {
+            setStrategy(params);
+        }
+        tickhandler.accept(params);
     }
 
     private void setDecisions(SailingDecisions starboarddecisions, SailingDecisions portdecisions, RoundingDecisions roundingdecisions) {
@@ -204,11 +229,7 @@ public class Strategy {
         return new DistanceVector(offset, onPort ? portoffsetangle : starboardoffsetangle);
     }
 
-    public void strategyTimeInterval(Params params) {
-        timeintervalhandler.accept(params);
-    }
-
-    private void windwardTimeInterval(Params params) {
+    private void windwardTick(Params params) {
         if (useroundingdecisions) {
             roundingdecisions.nextTimeInterval(params);
             return;
@@ -221,7 +242,7 @@ public class Strategy {
         (params.isPort ? portdecisions : starboarddecisions).nextTimeInterval(params);
     }
 
-    private void leewardTimeInterval(Params params) {
+    private void leewardTick(Params params) {
         if (useroundingdecisions) {
             roundingdecisions.nextTimeInterval(params);
             return;
@@ -244,13 +265,9 @@ public class Strategy {
         return refdistance.isPresent() ? refdistance.get() <= params.boat.metrics.getLength() * 5 : true;
     }
 
-    private Optional<Double> getRefDistance(Location location, Location marklocation, Angle refangle) {
-        return getRefDistance(location, marklocation, refangle.get());
-    }
-
-    public static  Optional<Double> getRefDistance(Location location, Location marklocation, double refangle) {
+    public static Optional<Double> getRefDistance(Location location, Location marklocation, double refangle) {
         DistanceVector tomark = new DistanceVector(location, marklocation);
-        Angle refangle2mark = tomark.getDegreesProperty().absDegreesDiff(refangle);
+        Angle refangle2mark = tomark.getAngle().absDegreesDiff(refangle);
         if (refangle2mark.gt(90)) {
             return Optional.empty();
         }

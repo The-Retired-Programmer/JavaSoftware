@@ -37,6 +37,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
@@ -44,6 +45,7 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Deci
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 
 public abstract class Boat extends ModelMap {
 
@@ -322,6 +324,10 @@ public abstract class Boat extends ModelMap {
         return getLocation().angleto(location).between(min, max);
     }
 
+    public void tick(SketchModel model, int simulationtime, LogController logcontroller) {
+        currentleg.tick(new Params(model, this), simulationtime, logcontroller);
+    }
+
     public boolean moveUsingDecision(Params params) {
         SpeedVector windpolar = params.windflow.getFlow(getLocation());
         SpeedVector waterpolar = params.waterflow.getFlow(getLocation());
@@ -359,12 +365,12 @@ public abstract class Boat extends ModelMap {
     void moveBoat(Angle nextdirection, SpeedVector windspeedvector, SpeedVector waterspeedvector) {
         // calculate the potential boat speed - based on wind speed and relative angle 
         double potentialBoatspeed = SpeedVector.convertKnots2MetresPerSecond(
-                metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windspeedvector.getDegreesProperty()),
+                metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windspeedvector.getAngle()),
                         windspeedvector.getSpeed()));
         boatspeed += metrics.getInertia() * (potentialBoatspeed - boatspeed);
         // start by calculating the vector components of the boats movement
         DistanceVector move = new DistanceVector(boatspeed, nextdirection)
-                .sub(new DistanceVector(waterspeedvector.getSpeedMetresPerSecond(), waterspeedvector.getDegreesProperty()));
+                .sub(new DistanceVector(waterspeedvector.getSpeedMetresPerSecond(), waterspeedvector.getAngle()));
         setLocation(move.toLocation(getLocation())); // updated position calculated
         track.add(getLocation()); // record it in track
         setDirection(nextdirection); // and update the directionproperty

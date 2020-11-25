@@ -51,9 +51,7 @@ public class SailingStrategyTest {
             updateaction.run();
         }
         params.refresh();
-        Strategy strategy = params.leg.getStrategy();
-        strategy.setStrategy(params, params.leg);
-        strategy.strategyTimeInterval(params);
+        boat.getCurrentLeg().getStrategy().tick(params);
         return params.decision;
     }
 

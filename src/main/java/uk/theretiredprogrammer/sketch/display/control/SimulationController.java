@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard linsdale.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,6 @@ import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class SimulationController implements Runnable {
 
     private int simulationtime = 0;
@@ -70,11 +66,9 @@ public class SimulationController implements Runnable {
                     SketchModel model = controller.getModel();
                     int secondsperdisplay = model.getDisplay().getSecondsperdisplay();
                     while (secondsperdisplay > 0) {
-                        LogController decisioncontroller = controller.getDecisionController();
+                        LogController decisioncontroller = controller.getLogController();
                         decisioncontroller.setTime(simulationtime);
-                        model.getWindFlow().timerAdvance(simulationtime, decisioncontroller);
-                        model.getWaterFlow().timerAdvance(simulationtime, decisioncontroller);
-                        model.getBoats().timerAdvance(model, simulationtime, decisioncontroller);
+                        model.tick(simulationtime, decisioncontroller);
                         secondsperdisplay--;
                         simulationtime++;
                     }

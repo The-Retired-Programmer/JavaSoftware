@@ -34,6 +34,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
+import uk.theretiredprogrammer.sketch.log.control.LogController;
 
 public class SketchModel extends ModelMap {
 
@@ -55,7 +56,7 @@ public class SketchModel extends ModelMap {
         marks.addListChangeListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
         marks.addNameChangeListener((o, oldval, newval) -> markchanged(o, oldval, newval));
     }
-    
+
     private void markchanged(ObservableValue<? extends String> o, String oldval, String newval) {
         if (o instanceof Strg) {
             int i = 0;
@@ -138,30 +139,14 @@ public class SketchModel extends ModelMap {
         return display;
     }
 
-//    public FlowShiftModel getWindshifts() {
-//        return windshifts;
-//    }
-//
-//    public FlowComponentSet getWind() {
-//        return wind;
-//    }
-//
-//    public FlowShiftModel getWatershifts() {
-//        return watershifts;
-//    }
-//
-//    public FlowComponentSet getWater() {
-//        return water;
-//    }
-
-    public final WaterFlow getWaterFlow(){
+    public final WaterFlow getWaterFlow() {
         return waterflow;
     }
-    
+
     public final WindFlow getWindFlow() {
         return windflow;
     }
-    
+
     public final Marks getMarks() {
         return marks;
     }
@@ -176,5 +161,11 @@ public class SketchModel extends ModelMap {
 
     public ObservableList<String> getMarkNames() {
         return marknames;
+    }
+
+    public void tick(int simulationtime, LogController logcontroller) {
+        windflow.tick(simulationtime, logcontroller);
+        waterflow.tick(simulationtime, logcontroller);
+        boats.stream().forEach(boat -> boat.tick(this, simulationtime, logcontroller));
     }
 }
