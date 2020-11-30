@@ -18,17 +18,11 @@ package uk.theretiredprogrammer.sketch.display.entity.base;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.display.entity.course.Course;
-import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
 import uk.theretiredprogrammer.sketch.display.entity.flows.FlowShiftModel;
@@ -38,7 +32,6 @@ import uk.theretiredprogrammer.sketch.log.control.LogController;
 
 public class SketchModel extends ModelMap {
 
-    private final ObservableList<String> marknames = FXCollections.observableArrayList();
     private final Strg type = new Strg(null);
     private final MetaModel meta = new MetaModel();
     private final DisplayModel display = new DisplayModel();
@@ -49,34 +42,8 @@ public class SketchModel extends ModelMap {
     private final FlowComponentSet water = new FlowComponentSet(() -> getDisplayArea());
     private final WaterFlow waterflow = new WaterFlow(this, watershifts, water);
     private final Marks marks = new Marks();
-    private final Course course = new Course(marks, getMarkNames());
+    private final Course course = new Course(marks);
     private final Boats boats = new Boats(this);
-
-    public SketchModel() {
-        marks.addListChangeListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
-        marks.addNameChangeListener((o, oldval, newval) -> markchanged(o, oldval, newval));
-    }
-
-    private void markchanged(ObservableValue<? extends String> o, String oldval, String newval) {
-        if (o instanceof Strg) {
-            int i = 0;
-        }
-    }
-
-    private void marklistchanged(ListChangeListener.Change<Mark> c) {
-        while (c.next()) {
-            c.getRemoved().forEach(remitem -> {
-                marknames.remove(remitem.getName());
-            });
-            c.getAddedSubList().forEach(additem -> {
-                marknames.add(additem.getName());
-            });
-        }
-        if (marknames.size() != marks.stream().count()) {
-            // trap - maybe removed later
-            throw new IllegalStateFailure("Number of Marks does not equal number of Marknames");
-        }
-    }
 
     @Override
     protected void parseValues(JsonObject jobj) {
@@ -157,10 +124,6 @@ public class SketchModel extends ModelMap {
 
     public Boats getBoats() {
         return boats;
-    }
-
-    public ObservableList<String> getMarkNames() {
-        return marknames;
     }
 
     public void tick(int simulationtime, LogController logcontroller) {

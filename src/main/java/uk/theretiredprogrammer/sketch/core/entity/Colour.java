@@ -34,7 +34,7 @@ public class Colour extends SimpleObjectProperty<Color> implements ModelProperty
 
     @Override
     public Color parsevalue(JsonValue value) {
-        return FromJson.colourProperty(value);
+        return FromJson.colour(value);
     }
 
     @Override

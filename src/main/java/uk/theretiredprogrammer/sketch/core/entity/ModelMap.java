@@ -26,7 +26,11 @@ import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 public abstract class ModelMap implements Model {
 
-    private final ObservableMap<String, Model> properties = FXCollections.observableMap(new LinkedHashMap<>());
+    private final ObservableMap<String, Model> properties;
+    
+    public ModelMap(){
+        properties = FXCollections.observableMap(new LinkedHashMap<>());
+    }
     
     protected abstract void parseValues(JsonObject jobj);
 

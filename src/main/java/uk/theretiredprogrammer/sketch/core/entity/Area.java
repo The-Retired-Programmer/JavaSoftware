@@ -87,7 +87,7 @@ public class Area implements ModelProperty<Area> {
 
     @Override
     public final Area parsevalue(JsonValue value) {
-        return FromJson.areaProperty(value);
+        return FromJson.area(value);
     }
 
     @Override

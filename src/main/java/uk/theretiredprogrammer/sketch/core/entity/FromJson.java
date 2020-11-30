@@ -20,16 +20,16 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
-import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
-import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.LegValues;
 import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class FromJson {
 
-    public static Integer integerProperty(JsonValue jvalue) {
+    public static Integer intgr(JsonValue jvalue) {
         if (jvalue != null & jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             try {
                 return ((JsonNumber) jvalue).intValueExact();
@@ -39,14 +39,14 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - Integer expected");
     }
 
-    public static Double doubleProperty(JsonValue jvalue) {
+    public static Double dble(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             return ((JsonNumber) jvalue).doubleValue();
         }
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static Boolean booleanProperty(JsonValue jvalue) {
+    public static Boolean booln(JsonValue jvalue) {
         if (jvalue != null) {
             switch (jvalue.getValueType()) {
                 case TRUE -> {
@@ -60,14 +60,14 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - Boolean expected");
     }
 
-    public static String stringProperty(JsonValue jvalue) {
+    public static String strg(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
             return ((JsonString) jvalue).getString();
         }
         throw new ParseFailure("Malformed Definition file - String expected");
     }
 
-    public static String constrainedStringProperty(JsonValue jvalue, ObservableList<String> constraints) {
+    public static String constrainedString(JsonValue jvalue, ObservableList<String> constraints) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
             String val = ((JsonString) jvalue).getString();
             for (var v : constraints) {
@@ -79,93 +79,82 @@ public class FromJson {
         throw new ParseFailure("Malformed Definition file - value not in constrained set");
     }
 
-    public static Color colourProperty(JsonValue jvalue) {
+    public static Color colour(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.STRING) {
-            Color color = string2color(((JsonString) jvalue).getString());
-            if (color != null) {
-                return color;
+            try {
+                return Color.valueOf(((JsonString) jvalue).getString().toLowerCase());
+            } catch (IllegalArgumentException ex) {
             }
         }
         throw new ParseFailure("Malformed Definition file - Colour name or hex string expected");
     }
 
-    public static Angle degreesProperty(JsonValue jvalue) {
+    public static Angle angle(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.NUMBER) {
             return new Angle(((JsonNumber) jvalue).doubleValue());
         }
         throw new ParseFailure("Malformed Definition file - Decimal expected");
     }
 
-    public static Location locationProperty(JsonValue jvalue) {
+    public static Location location(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new Location(
-                        doubleProperty(values.get(0)),
-                        doubleProperty(values.get(1))
-                );
+                return new Location(dble(values.get(0)),dble(values.get(1)));
             }
         }
         throw new ParseFailure("Malformed Definition file - List of 2 numbers expected");
     }
 
-    public static Area areaProperty(JsonValue jvalue) {
+    public static Area area(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 4) {
                 return new Area(
-                        doubleProperty(values.get(0)),
-                        doubleProperty(values.get(1)),
-                        doubleProperty(values.get(2)),
-                        doubleProperty(values.get(3))
+                        dble(values.get(0)),
+                        dble(values.get(1)),
+                        dble(values.get(2)),
+                        dble(values.get(3))
                 );
             }
         }
         throw new ParseFailure("Malformed Definition file - Area expects a list of 4 numbers");
     }
 
-    public static DistanceVector distanceVectorProperty(JsonValue jvalue) {
+    public static DistanceVector distanceVector(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new DistanceVector(
-                        doubleProperty(values.get(0)),
-                        degreesProperty(values.get(1))
-                );
+                return new DistanceVector(dble(values.get(0)),angle(values.get(1)));
             }
         }
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
-    
-    public static SpeedVector speedVectorProperty(JsonValue jvalue) {
+
+    public static SpeedVector speedVector(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
                 return new SpeedVector(
-                        doubleProperty(values.get(0)),
-                        degreesProperty(values.get(1))
+                        dble(values.get(0)),
+                        angle(values.get(1))
                 );
             }
         }
         throw new ParseFailure("Malformed Definition file - two numbers expected");
     }
 
-    public static Leg legProperty(JsonValue jvalue, Marks marks, ObservableList<String> markconstraints, ObservableList<String> roundingconstraints) {
+    public static LegValues legvalues(JsonValue jvalue) {
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
             if (values.size() == 2) {
-                return new Leg(
-                        constrainedStringProperty(values.get(0), markconstraints),
-                        constrainedStringProperty(values.get(1), roundingconstraints),
-                        marks,
-                        markconstraints
-                );
+                return new LegValues(strg(values.get(0)),strg(values.get(1)).toLowerCase());
             }
         }
         throw new ParseFailure("Malformed Definition file - List of 2 Strings expected");
     }
 
-    public static Gradient gradientProperty(JsonValue jvalue) {
+    public static Gradient gradient(JsonValue jvalue) {
         String newtype = "north";
         if (jvalue != null && jvalue.getValueType() == JsonValue.ValueType.ARRAY) {
             JsonArray values = (JsonArray) jvalue;
@@ -193,13 +182,5 @@ public class FromJson {
             return new Gradient(newtype, enteredspeeds);
         }
         throw new ParseFailure("Illegal number in gradient definition");
-    }
-
-    private static Color string2color(String value) {
-        try {
-            return Color.valueOf(value.toLowerCase());
-        } catch (IllegalArgumentException ex) {
-            return null;
-        }
     }
 }

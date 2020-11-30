@@ -100,6 +100,6 @@ public class PropertiesController extends AbstractController<PropertiesWindow> {
     }
 
     public void addNewLeg() {
-        sketchmodel.getCourse().getLegs().add(new Leg());
+        sketchmodel.getCourse().getLegs().add(new Leg(sketchmodel.getMarks()));
     }
 }

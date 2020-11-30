@@ -27,7 +27,7 @@ public class Boats extends ModelNamedList<Boat> {
     private final SketchModel model;
 
     public Boats(SketchModel model) {
-        super("Boat", (boat) -> boat.getName());
+        super("Boat");
         this.model = model;
     }
 

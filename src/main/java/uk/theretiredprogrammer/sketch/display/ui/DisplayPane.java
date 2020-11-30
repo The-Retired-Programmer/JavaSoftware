@@ -282,13 +282,13 @@ public class DisplayPane extends Group {
     }
 
     private void duplicatetack(Boat boat) {
-        Boat newboat = BoatFactory.cloneBoat(boat.getName() + "-1", boat);
+        Boat newboat = BoatFactory.cloneBoat(boat.getNamed() + "-1", boat);
         controller.getModel().getBoats().add(newboat);
         tack(newboat);
     }
 
     private void duplicategybe(Boat boat) {
-        Boat newboat = BoatFactory.cloneBoat(boat.getName() + "-1", boat);
+        Boat newboat = BoatFactory.cloneBoat(boat.getNamed() + "-1", boat);
         controller.getModel().getBoats().add(newboat);
         gybe(newboat);
     }

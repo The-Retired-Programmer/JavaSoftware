@@ -85,7 +85,7 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
 
     @Override
     public SpeedVector parsevalue(JsonValue jvalue) {
-        return FromJson.speedVectorProperty(jvalue);
+        return FromJson.speedVector(jvalue);
     }
 
     @Override

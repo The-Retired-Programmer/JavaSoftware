@@ -22,6 +22,7 @@ import jakarta.json.JsonValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -30,11 +31,12 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Channel;
 import static uk.theretiredprogrammer.sketch.core.entity.Channel.CHANNELOFF;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import uk.theretiredprogrammer.sketch.core.entity.Colour;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
@@ -47,7 +49,7 @@ import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
 import uk.theretiredprogrammer.sketch.log.control.LogController;
 
-public abstract class Boat extends ModelMap {
+public abstract class Boat extends ModelMap implements ModelNamed {
 
     private static final ObservableList<String> classes;
 
@@ -69,15 +71,15 @@ public abstract class Boat extends ModelMap {
     private final Location location;
     private final Colour colour = new Colour(Color.BLACK);
     private final Colour trackcolour = new Colour(Color.BLACK);
-    private final Bool upwindsailonbesttack = new Bool(false);
-    private final Bool upwindtackifheaded = new Bool(false);
-    private final Bool upwindbearawayifheaded = new Bool(false);
-    private final Bool upwindluffupiflifted = new Bool(false);
-    private final Bool reachdownwind = new Bool(false);
-    private final Bool downwindsailonbestgybe = new Bool(false);
-    private final Bool downwindbearawayifheaded = new Bool(false);
-    private final Bool downwindgybeiflifted = new Bool(false);
-    private final Bool downwindluffupiflifted = new Bool(false);
+    private final Booln upwindsailonbesttack = new Booln(false);
+    private final Booln upwindtackifheaded = new Booln(false);
+    private final Booln upwindbearawayifheaded = new Booln(false);
+    private final Booln upwindluffupiflifted = new Booln(false);
+    private final Booln reachdownwind = new Booln(false);
+    private final Booln downwindsailonbestgybe = new Booln(false);
+    private final Booln downwindbearawayifheaded = new Booln(false);
+    private final Booln downwindgybeiflifted = new Booln(false);
+    private final Booln downwindluffupiflifted = new Booln(false);
     public final Color sailcolor = Color.WHITE;
     public final BoatMetrics metrics;
     //
@@ -204,7 +206,8 @@ public abstract class Boat extends ModelMap {
         return currentleg;
     }
 
-    public final String getName() {
+    @Override
+    public final String getNamed() {
         return name.get();
     }
 

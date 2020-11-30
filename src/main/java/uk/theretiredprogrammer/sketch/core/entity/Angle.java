@@ -59,7 +59,7 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
 
     @Override
     public final Angle parsevalue(JsonValue jvalue) {
-        return FromJson.degreesProperty(jvalue);
+        return FromJson.angle(jvalue);
     }
 
     @Override

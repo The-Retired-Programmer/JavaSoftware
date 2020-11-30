@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.sketch.core.ui;
 
 import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
+import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -43,14 +44,20 @@ import javafx.scene.text.Font;
 import static javafx.scene.text.FontWeight.NORMAL;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Model;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
+import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
 import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class UI {
@@ -189,9 +196,10 @@ public class UI {
         );
     }
 
-    public static HBox control(Leg property,
-            ObservableList<String> marknames, ObservableList<String> roundings) {
-        return new HBox(control(property.getMarknameProperty(), marknames),
+    public static HBox control(Leg property, Marks marks, ObservableList<String> roundings) {
+        ComboBoxFactory<SimpleObjectProperty<Mark>, Mark> markcombofactory = new ComboBoxFactory<>();
+        return new HBox(
+                markcombofactory.create(property.getMarkProperty(), marks),
                 control(property.getRoundingdirectionProperty(), roundings)
         );
     }
@@ -220,5 +228,27 @@ public class UI {
         Text text = new Text(input);
         text.setFont(Font.font("System", NORMAL, 28));
         return text;
+    }
+
+    public static class ComboBoxFactory<P extends Property, T extends ModelNamed & Model> {
+
+        public ComboBox<T> create(P property, ModelNamedList<T> constraints) {
+            ComboBox<T> combofield = new ComboBox(constraints.get());
+
+            combofield.setConverter(
+                    new StringConverter<T>() {
+                @Override
+                public String toString(T object) {
+                    return object == null ? "" : object.getNamed();
+                }
+
+                @Override
+                public T fromString(String s) {
+                    return constraints.get(s);
+                }
+            });
+            combofield.valueProperty().bindBidirectional(property);
+            return combofield;
+        }
     }
 }

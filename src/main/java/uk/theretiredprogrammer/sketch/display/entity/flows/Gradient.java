@@ -137,7 +137,7 @@ public class Gradient implements ModelProperty<Gradient> {
 
     @Override
     public Gradient parsevalue(JsonValue value) {
-        return FromJson.gradientProperty(value);
+        return FromJson.gradient(value);
     }
 
     @Override

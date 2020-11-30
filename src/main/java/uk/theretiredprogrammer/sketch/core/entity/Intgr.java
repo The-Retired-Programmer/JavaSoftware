@@ -16,14 +16,14 @@
 package uk.theretiredprogrammer.sketch.core.entity;
 
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
-public class Bool extends SimpleBooleanProperty implements ModelProperty<Boolean> {
+public class Intgr extends SimpleIntegerProperty implements ModelProperty<Integer> {
 
-    public Bool(Boolean defaultvalue) {
-        super(defaultvalue);
+    public Intgr(int defaultvalue) {
+        set(defaultvalue);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class Bool extends SimpleBooleanProperty implements ModelProperty<Boolean
     }
 
     @Override
-    public final Boolean parsevalue(JsonValue value) {
-        return FromJson.booleanProperty(value);
+    public Integer parsevalue(JsonValue value) {
+        return FromJson.intgr(value);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class Bool extends SimpleBooleanProperty implements ModelProperty<Boolean
 
     @Override
     public Node getControl() {
-        return UI.control(this);
+        return getControl(5);
     }
 
     @Override
     public Node getControl(int size) {
-        return getControl();
+        return UI.control(size, this);
     }
 
     @Override

@@ -17,9 +17,12 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
+import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
@@ -27,7 +30,6 @@ import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
-import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class Leg implements ModelProperty<Leg> {
 
@@ -38,26 +40,35 @@ public class Leg implements ModelProperty<Leg> {
         roundingdirections.addAll("port", "starboard");
     }
 
-    private final ConstrainedString markname = new ConstrainedString();
-    private final ConstrainedString passing = new ConstrainedString(roundingdirections);
+    //private final ConstrainedString markname;
+    private final SimpleObjectProperty<Mark> mark;
+    private final ConstrainedString passing;
 
-    ObservableList<String> marknames;
     private Location startfrom;
     private Location endat;
-    private Marks marks;
+    private final Marks marks;
 
-    public Leg() {
-        set(null, null);
+    public Leg(Marks marks) {
+        mark = new SimpleObjectProperty<>();
+        passing = new ConstrainedString(roundingdirections);
+        this.marks = marks;
+        mark.set(null);
+        passing.set(null);
     }
 
-    public Leg(Marks marks, ObservableList<String> marknames) {
-        setMarksAndNames(marks, marknames);
-        set(null, null);
+    public SimpleObjectProperty<Mark> getMarkProperty() {
+        return mark;
     }
 
-    public Leg(String mark, String passing, Marks marks, ObservableList<String> marknames) {
-        setMarksAndNames(marks, marknames);
-        set(mark, passing);
+    public Mark getMark() {
+        return mark.get();
+    }
+
+    public void setMark(Mark mark) {
+        this.mark.set(mark);
+        if (mark != null) {
+            this.endat = mark.getLocation();
+        }
     }
 
     public void setStartLegLocation(Location startfrom) {
@@ -66,39 +77,42 @@ public class Leg implements ModelProperty<Leg> {
 
     void update(Location startfrom) {
         this.startfrom = startfrom;
-        if (markname.get() != null) {
-            this.endat = marks.get(markname.get()).getLocation();
+        if (mark != null) {
+            this.endat = mark.get().getLocation();
         }
     }
 
     @Override
     public void setOnChange(Runnable onchange) {
-        markname.setOnChange(onchange);
+        // not listening to mark changes at the moment
         passing.setOnChange(onchange);
     }
 
-    final void setMarksAndNames(Marks marks, ObservableList<String> marknames) {
-        this.marks = marks;
-        this.marknames = marknames;
-        markname.setConstraints(marknames);
-    }
-
     public final void set(Leg value) {
-        setMarksAndNames(value.marks, value.marknames);
-        set(value.markname.get(), value.passing.get());
+        set(value.mark.get(), value.passing.get());
     }
 
-    public final void set(String mark, String passing) {
-        this.markname.set(mark);
-        this.passing.set(passing == null ? null : passing.toLowerCase());
-        if (markname.get() != null) {
-            this.endat = marks.get(markname.get()).getLocation();
+    public final void set(Mark mark, String passing) {
+        this.mark.set(mark);
+        this.passing.set(passing);
+        if (mark != null) {
+            this.endat = mark.getLocation();
         }
     }
 
     @Override
+    public final void parse(JsonValue jvalue) {
+        LegValues legvalues = FromJson.legvalues(jvalue);
+        mark.set(marks.get(legvalues.markname));
+        if (mark.get() == null) {
+            throw new ParseFailure("Leg: markname requested is not in set of defined marks");
+        }
+        passing.set(legvalues.passing);
+    }
+
+    @Override
     public final Leg parsevalue(JsonValue jvalue) {
-        return FromJson.legProperty(jvalue, marks, marknames, roundingdirections);
+        throw new IllegalStateFailure("Leg: parsevalue should not be used");
     }
 
     @Override
@@ -108,17 +122,12 @@ public class Leg implements ModelProperty<Leg> {
 
     @Override
     public Node getControl() {
-        return UI.control(this, marknames, roundingdirections);
+        return UI.control(this, marks, roundingdirections);
     }
 
     @Override
     public Node getControl(int size) {
         return getControl();
-    }
-
-    @Override
-    public final void parse(JsonValue jvalue) {
-        set(parsevalue(jvalue));
     }
 
     public String getRoundingdirection() {
@@ -134,16 +143,7 @@ public class Leg implements ModelProperty<Leg> {
     }
 
     public String getMarkname() {
-        return markname.get();
-    }
-
-    public ConstrainedString getMarknameProperty() {
-        return markname;
-    }
-
-    @Override
-    public String toString() {
-        return markname.get() + " to " + passing.get();
+        return mark.get().getNamed();
     }
 
     public double getDistanceToEnd(Location here) {

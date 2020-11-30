@@ -20,7 +20,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
-import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Intgr;
 import uk.theretiredprogrammer.sketch.core.entity.Dble;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
@@ -31,7 +31,7 @@ public class DisplayModel extends ModelMap {
     public static final Area DISPLAYAREADEFAULT = new Area(new Location(-500, -500), 1000, 1000);
 
     private final Dble zoom = new Dble(1.0);
-    private final Int secondsperdisplay = new Int(1);
+    private final Intgr secondsperdisplay = new Intgr(1);
     private final Dble speedup = new Dble(1.0);
     private final Area displayarea = new Area(DISPLAYAREADEFAULT);
     private final Area sailingarea = new Area();

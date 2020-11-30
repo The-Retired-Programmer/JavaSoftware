@@ -80,11 +80,11 @@ public abstract class ModelList<P extends Model> implements Model {
 
     public void add(P value) {
         list.add(value);
-        if (onchange != null) {
-            value.setOnChange(onchange);
-        }
         if (setChildListener != null) {
             setChildListener.accept(value);
+        }
+        if (onchange != null) {
+            value.setOnChange(onchange);
         }
     }
 

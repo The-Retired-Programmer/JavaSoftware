@@ -16,14 +16,45 @@
 package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonValue;
-import javafx.beans.value.ChangeListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 
 public class Marks extends ModelNamedList<Mark> {
-    
-     public Marks() {
-        super("Mark", (mark)-> mark.getName());
+
+    private final ObservableList<SimpleStringProperty> marknames = FXCollections.observableArrayList();
+
+    public Marks() {
+        super("Mark");
+//        addListChangeListener((ListChangeListener<Mark>) (c) -> marklistchanged((ListChangeListener.Change<Mark>) c));
+//        addNameChangeListener((mark, oldval, newval) -> marknamechanged(mark, oldval, newval));
     }
+
+//    private void marknamechanged(Mark mark, String oldval, String newval) {
+//        for (int i = 0; i < marknames.size(); i++) {
+//            if (marknames.get(i).equals(oldval)) {
+//                marknames.set(i, newval);
+//                return;
+//            }
+//        }
+//        throw new IllegalStateFailure("Marks: Can't find a Mark with name " + oldval + " to change to " + newval);
+//    }
+//
+//    private void marklistchanged(ListChangeListener.Change<Mark> c) {
+//        while (c.next()) {
+//            c.getRemoved().forEach(remitem -> {
+//                marknames.remove(remitem.getName());
+//            });
+//            c.getAddedSubList().forEach(additem -> {
+//                marknames.add(additem.getName());
+//            });
+//        }
+//        if (marknames.size() != stream().count()) {
+//            // trap - maybe removed later
+//            throw new IllegalStateFailure("Number of Marks does not equal number of Marknames");
+//        }
+//    }
 
     @Override
     protected Mark createAndParse(JsonValue jobj) {
@@ -31,8 +62,12 @@ public class Marks extends ModelNamedList<Mark> {
         mark.parse(jobj);
         return mark;
     }
-    
-    public void addNameChangeListener(ChangeListener<String> childlistener) {
-        addChildChangeListener(mark-> mark.addNameChangeListener(childlistener));
-    }
+
+//    public final void addNameChangeListener(NameChangeListener<Mark> childlistener) {
+//        addChildChangeListener(mark -> mark.addNameChangeListener(childlistener));
+//    }
+
+//    public final ObservableList<SimpleStringProperty> getMarkNames() {
+//        return marknames;
+//    }
 }

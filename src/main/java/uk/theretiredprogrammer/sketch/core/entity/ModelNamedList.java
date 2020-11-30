@@ -15,21 +15,18 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import java.util.function.Function;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 
-public abstract class ModelNamedList<P extends Model> extends ModelList<P> implements Model {
+public abstract class ModelNamedList<P extends Model & ModelNamed> extends ModelList<P>  {
 
-    private final String messagename;
-    private final Function<P, String> nameextractor;
+    private final String childclassname;
 
-    public ModelNamedList(String messagename, Function<P, String> nameextractor) {
-        this.messagename = messagename;
-        this.nameextractor = nameextractor;
+    public ModelNamedList(String childclassname) {
+        this.childclassname = childclassname;
     }
 
     public final P get(String name) {
-        return stream().filter(property -> name.equals(nameextractor.apply(property))).findFirst()
-                .orElseThrow(() -> new IllegalStateFailure("can't find " + messagename + " with name " + name));
+        return stream().filter(property -> name.equals(property.getNamed())).findFirst()
+                .orElseThrow(() -> new IllegalStateFailure("ModelNamedList: can't find " + childclassname + " with name " + name));
     }
 }

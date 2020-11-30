@@ -87,7 +87,7 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
 
     @Override
     public DistanceVector parsevalue(JsonValue jvalue) {
-        return FromJson.distanceVectorProperty(jvalue);
+        return FromJson.distanceVector(jvalue);
     }
 
     @Override

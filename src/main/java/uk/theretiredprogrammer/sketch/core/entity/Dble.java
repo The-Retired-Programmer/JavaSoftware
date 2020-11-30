@@ -33,7 +33,7 @@ public class Dble extends SimpleDoubleProperty implements ModelProperty<Double> 
 
     @Override
     public Double parsevalue(JsonValue jvalue) {
-        return FromJson.doubleProperty(jvalue);
+        return FromJson.dble(jvalue);
     }
 
     @Override

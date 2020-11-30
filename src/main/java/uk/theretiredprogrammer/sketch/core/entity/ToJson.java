@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.Gradient;
 
 public class ToJson {
 
-    public static JsonValue serialise(Int property) {
+    public static JsonValue serialise(Intgr property) {
         return Json.createValue(property.get());
     }
 
@@ -34,7 +34,7 @@ public class ToJson {
         return Json.createValue(property.get());
     }
 
-    public static JsonValue serialise(Bool property) {
+    public static JsonValue serialise(Booln property) {
         return property.get() ? JsonValue.TRUE : JsonValue.FALSE;
     }
 

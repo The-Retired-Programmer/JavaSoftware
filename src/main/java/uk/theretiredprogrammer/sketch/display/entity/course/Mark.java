@@ -22,27 +22,28 @@ import javafx.beans.value.ChangeListener;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.core.entity.Dble;
 import uk.theretiredprogrammer.sketch.core.entity.Colour;
-import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 
-public class Mark extends ModelMap {
+public class Mark extends ModelMap implements ModelNamed {
 
     private final Strg name = new Strg("<newname>");
     private final Location location;
-    private final Bool windwardlaylines = new Bool(false);
-    private final Bool downwindlaylines = new Bool(false);
+    private final Booln windwardlaylines = new Booln(false);
+    private final Booln downwindlaylines = new Booln(false);
     private final Dble laylinelength = new Dble(0.0);
     private final Colour laylinecolour = new Colour(Color.BLACK);
     private final Colour colour = new Colour(Color.RED);
 
     public Mark() {
-        location = new Location();
-        registerproperties();
+        this(new Location());
     }
-    
-    private void registerproperties() {
+
+    public Mark(Location loc) {
+        location = new Location(loc);
         addProperty("name", name);
         addProperty("location", location);
         addProperty("windwardlaylines", windwardlaylines);
@@ -51,12 +52,16 @@ public class Mark extends ModelMap {
         addProperty("laylinecolour", laylinecolour);
         addProperty("colour", colour);
     }
-
-    public Mark(Location loc) {
-        location = new Location(loc);
-        registerproperties();
+    
+     public Mark get() {
+        return this;
     }
-
+    
+    @Override
+    public String getNamed() {
+        return name.get();
+    }
+    
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("name", name, jobj);
@@ -78,9 +83,9 @@ public class Mark extends ModelMap {
         laylinecolour.setOnChange(onchange);
         colour.setOnChange(onchange);
     }
-    
-    public void addNameChangeListener(ChangeListener<String> listener) {
-        name.addListener(listener);
+
+    public void addNameChangeListener(ChangeListener<String> childlistener) {
+        name.addListener(childlistener);
     }
 
     @Override
@@ -97,15 +102,7 @@ public class Mark extends ModelMap {
     }
 
     public boolean hasName(String name) {
-        return getName().equals(name);
-    }
-
-    public Mark get() {
-        return this;
-    }
-
-    public String getName() {
-        return name.get();
+        return getNamed().equals(name);
     }
 
     public Strg getNameProperty() {

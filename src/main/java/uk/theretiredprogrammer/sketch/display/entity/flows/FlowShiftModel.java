@@ -19,9 +19,9 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
-import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Intgr;
 import uk.theretiredprogrammer.sketch.core.entity.Dble;
-import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import uk.theretiredprogrammer.sketch.core.entity.Colour;
 import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
@@ -33,14 +33,14 @@ import uk.theretiredprogrammer.sketch.log.entity.WindSwingLogEntry;
 
 public class FlowShiftModel extends ModelMap {
 
-    private final Bool showflow = new Bool(false);
+    private final Booln showflow = new Booln(false);
     private final Dble showflowinterval = new Dble(100.0);
     private final Colour showflowcolour = new Colour(Color.BLACK);
     private final Angle swingangle = new Angle(0);
-    private final Int swingperiod = new Int(0);
+    private final Intgr swingperiod = new Intgr(0);
     private final Angle shiftangle = new Angle(0);
-    private final Int shiftperiod = new Int(0);
-    private final Bool randomshifts = new Bool(false);
+    private final Intgr shiftperiod = new Intgr(0);
+    private final Booln randomshifts = new Booln(false);
 
     private double shiftNow = 0;
     private double swingNow = 0;

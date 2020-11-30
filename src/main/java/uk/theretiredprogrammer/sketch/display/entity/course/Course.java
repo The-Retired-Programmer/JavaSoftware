@@ -19,7 +19,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import java.util.Optional;
-import javafx.collections.ObservableList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 
@@ -31,23 +30,22 @@ public class Course extends ModelMap {
     private final Marks marks;
     private Runnable onchange;
 
-    public Course(Marks marks, ObservableList<String> marknames) {
-        legs = new Legs(marks, marknames);
+    public Course(Marks marks) {
+        legs = new Legs(marks);
         this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
-        marks.setOnChange(() -> updatelegs());
         legs.setOnChange(() -> updatelegs());
         legs.addListChangeListener((c) -> updatelegs());
     }
 
     private void updatelegs() {
         Location startpos = start;
-        for (var leg : legs.get() ){
+        for (var leg : legs.get()) {
             leg.update(startpos);
             startpos = leg.getEndLocation();
         }
-        if (onchange != null){
+        if (onchange != null) {
             onchange.run();
         }
     }
@@ -74,8 +72,8 @@ public class Course extends ModelMap {
     public Legs getLegs() {
         return legs;
     }
-    
-    public Optional<Leg> getLeg(int legno){
-       return Optional.ofNullable(legs.get(legno));
+
+    public Optional<Leg> getLeg(int legno) {
+        return Optional.ofNullable(legs.get(legno));
     }
 }

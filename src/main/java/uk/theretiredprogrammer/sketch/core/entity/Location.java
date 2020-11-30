@@ -71,7 +71,7 @@ public class Location implements ModelProperty<Location> {
 
     @Override
     public Location parsevalue(JsonValue jvalue) {
-        return FromJson.locationProperty(jvalue);
+        return FromJson.location(jvalue);
     }
 
     @Override

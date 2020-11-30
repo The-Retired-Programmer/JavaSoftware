@@ -26,12 +26,13 @@ import uk.theretiredprogrammer.sketch.core.entity.Area;
 import static uk.theretiredprogrammer.sketch.core.entity.Area.AREAZERO;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.Int;
+import uk.theretiredprogrammer.sketch.core.entity.Intgr;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
-public abstract class FlowComponent extends ModelMap {
+public abstract class FlowComponent extends ModelMap implements ModelNamed {
 
     public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
@@ -64,7 +65,7 @@ public abstract class FlowComponent extends ModelMap {
     }
 
     private final Strg name = new Strg("<newname>");
-    private final Int zlevel = new Int(0);
+    private final Intgr zlevel = new Intgr(0);
     private final Area area = new Area();
     private final ConstrainedString type;
     private final Supplier<Area> getdisplayarea;
@@ -101,7 +102,8 @@ public abstract class FlowComponent extends ModelMap {
         type.setOnChange(onchange);
     }
 
-    public String getName() {
+    @Override
+    public String getNamed() {
         return name.get();
     }
 

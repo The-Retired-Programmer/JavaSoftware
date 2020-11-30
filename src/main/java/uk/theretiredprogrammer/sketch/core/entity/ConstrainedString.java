@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 public class ConstrainedString extends SimpleStringProperty implements ModelProperty<String> {
 
     private ObservableList<String> constraints;
-    
+
     public ConstrainedString() {
         super.set(null);
     }
@@ -40,11 +40,6 @@ public class ConstrainedString extends SimpleStringProperty implements ModelProp
         if (defaultvalue != null && (!constraints.contains(defaultvalue))) {
             throw new IllegalStateFailure("Bad default value - not in constraints list");
         }
-        super.set(defaultvalue);
-    }
-    
-    public void setConstraints(ObservableList<String> constraints) {
-        this.constraints = constraints;
     }
 
     @Override
@@ -57,22 +52,17 @@ public class ConstrainedString extends SimpleStringProperty implements ModelProp
         if (newvalue == null) {
             super.set(null);
         } else {
-        if (constraints.contains(newvalue)) {
-            super.set(newvalue);
-        } else {
-            throw new ParseFailure("Constrained String - value not in allowed set");
+            if (constraints.contains(newvalue)) {
+                super.set(newvalue);
+            } else {
+                throw new ParseFailure("Constrained String - value not in allowed set");
+            }
         }
-        }
-    }
-    
-    public final void set(String newvalue, ObservableList<String> constraints) {
-        this.constraints = constraints;
-        set(newvalue);
     }
 
     @Override
     public String parsevalue(JsonValue jvalue) {
-        return FromJson.constrainedStringProperty(jvalue, constraints);
+        return FromJson.constrainedString(jvalue, constraints);
     }
 
     @Override

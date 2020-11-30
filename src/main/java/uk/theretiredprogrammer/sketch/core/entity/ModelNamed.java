@@ -15,13 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.JsonValue;
-
-public interface Model {
+public interface ModelNamed {
     
-    public JsonValue toJson();
-    
-    public void setOnChange(Runnable onchange);
-    
-    public void parse(JsonValue jvalue);
+    public String getNamed();
 }

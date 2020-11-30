@@ -21,11 +21,11 @@ import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class Strg extends SimpleStringProperty implements ModelProperty<String> {
-
+    
     public Strg(String value) {
         set(value);
     }
-
+    
     @Override
     public void setOnChange(Runnable onchange) {
         addListener((o, oldval, newval) -> onchange.run());
@@ -33,7 +33,7 @@ public class Strg extends SimpleStringProperty implements ModelProperty<String> 
     
     @Override
     public final String parsevalue(JsonValue value) {
-        return FromJson.stringProperty(value);
+        return FromJson.strg(value);
     }
 
     @Override

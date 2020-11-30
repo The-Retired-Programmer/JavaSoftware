@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.Bool;
+import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.MARKROUNDING;
@@ -66,8 +66,8 @@ public class SailingStrategyTest {
     void setboattrue(String... propertynames) {
         params.boat.stream().filter(p
                 -> Arrays.asList(propertynames).stream()
-                        .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof Bool)))
-                .forEach(p -> ((Bool) p.getValue()).set(true));
+                        .anyMatch(pn -> pn.equals(p.getKey()) && (p.getValue() instanceof Booln)))
+                .forEach(p -> ((Booln) p.getValue()).set(true));
     }
 
     void setwindflow(double speed, double degrees) {

@@ -36,10 +36,8 @@ public class PropertyMapPane extends TitledPane {
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
-    public PropertyMapPane(ModelMap properties, String titleroot, Strg propertyname) {
-        this.textProperty().bind(new SimpleStringProperty(titleroot)
-                .concat(propertyname.get())
-        );
+    public PropertyMapPane(ModelMap properties, String titleroot, Strg name) {
+        this.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
         this.setContent(createpropertiescontent(properties));
     }
 
