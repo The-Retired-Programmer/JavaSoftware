@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.sketch.display.entity.course;
+package uk.theretiredprogrammer.sketch.core.entity;
 
-import jakarta.json.JsonValue;
-import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
+import javafx.beans.property.SimpleObjectProperty;
 
-public class Marks extends ModelNamedList<Mark> {
+public class Obj<T extends Model> extends SimpleObjectProperty<T> {
 
-    public Marks() {
-        super("Mark");
+    public Obj(T value) {
+        set(value);
     }
 
-    @Override
-    protected Mark createAndParse(JsonValue jobj) {
-        Mark mark = new Mark();
-        mark.parse(jobj);
-        return mark;
+    public void setOnChange(Runnable onchange) {
+        addListener((o, oldval, newval) -> onchange.run());
     }
+
 }

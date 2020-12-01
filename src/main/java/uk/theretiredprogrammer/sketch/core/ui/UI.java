@@ -54,6 +54,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
+import uk.theretiredprogrammer.sketch.core.entity.Obj;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
@@ -135,12 +136,12 @@ public class UI {
         return booleanfield;
     }
 
-    public static TextField control(SimpleStringProperty property) {
-        TextField stringfield = new TextField(property.get());
+    public static TextFieldWithFocusManagement control(SimpleStringProperty property) {
+        TextFieldWithFocusManagement stringfield = new TextFieldWithFocusManagement(property.get());
         stringfield.textProperty().bindBidirectional(property);
         return stringfield;
     }
-
+    
     public static ComboBox<String> control(ConstrainedString property, ObservableList<String> constraints) {
         ComboBox<String> combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(property);
@@ -197,7 +198,7 @@ public class UI {
     }
 
     public static HBox control(Leg property, Marks marks, ObservableList<String> roundings) {
-        ComboBoxFactory<SimpleObjectProperty<Mark>, Mark> markcombofactory = new ComboBoxFactory<>();
+        ComboBoxFactory<Obj<Mark>, Mark> markcombofactory = new ComboBoxFactory<>();
         return new HBox(
                 markcombofactory.create(property.getMarkProperty(), marks),
                 control(property.getRoundingdirectionProperty(), roundings)

@@ -21,14 +21,16 @@ import javafx.scene.Node;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class Strg extends SimpleStringProperty implements ModelProperty<String> {
+
+    private Runnable onchanged;
     
     public Strg(String value) {
         set(value);
     }
     
     @Override
-    public void setOnChange(Runnable onchange) {
-        addListener((o, oldval, newval) -> onchange.run());
+    public void setOnChange(Runnable onchanged) {
+        this.onchanged = onchanged;
     }
     
     @Override
@@ -48,7 +50,9 @@ public class Strg extends SimpleStringProperty implements ModelProperty<String> 
 
     @Override
     public Node getControl(int size) {
-        return UI.control(this);
+        var field = UI.control(this);
+        field.setOnChanged(onchanged);
+        return field;
     }
 
     @Override

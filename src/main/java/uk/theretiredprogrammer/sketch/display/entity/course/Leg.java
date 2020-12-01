@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.display.entity.course;
 
 import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -28,6 +27,7 @@ import uk.theretiredprogrammer.sketch.core.entity.FromJson;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.core.entity.Obj;
 import uk.theretiredprogrammer.sketch.core.entity.ToJson;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
@@ -40,8 +40,7 @@ public class Leg implements ModelProperty<Leg> {
         roundingdirections.addAll("port", "starboard");
     }
 
-    //private final ConstrainedString markname;
-    private final SimpleObjectProperty<Mark> mark;
+    private final Obj<Mark> mark;
     private final ConstrainedString passing;
 
     private Location startfrom;
@@ -49,14 +48,12 @@ public class Leg implements ModelProperty<Leg> {
     private final Marks marks;
 
     public Leg(Marks marks) {
-        mark = new SimpleObjectProperty<>();
-        passing = new ConstrainedString(roundingdirections);
+        mark = new Obj<>(null);
+        passing = new ConstrainedString(null, roundingdirections);
         this.marks = marks;
-        mark.set(null);
-        passing.set(null);
     }
 
-    public SimpleObjectProperty<Mark> getMarkProperty() {
+    public Obj<Mark> getMarkProperty() {
         return mark;
     }
 
@@ -84,7 +81,7 @@ public class Leg implements ModelProperty<Leg> {
 
     @Override
     public void setOnChange(Runnable onchange) {
-        // not listening to mark changes at the moment
+        mark.setOnChange(onchange);
         passing.setOnChange(onchange);
     }
 

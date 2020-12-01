@@ -37,6 +37,7 @@ public class Course extends ModelMap {
         this.addProperty("legs", legs);
         legs.setOnChange(() -> updatelegs());
         legs.addListChangeListener((c) -> updatelegs());
+        marks.setOnChange(()-> updatelegs());
     }
 
     private void updatelegs() {
