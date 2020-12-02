@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,6 @@
  */
 package uk.theretiredprogrammer.sketch.core.control;
 
-/**
- *
- * @author richard
- */
 public class IllegalStateFailure extends RuntimeException {
 
     public IllegalStateFailure(String message) {

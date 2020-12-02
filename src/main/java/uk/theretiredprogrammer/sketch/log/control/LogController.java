@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,6 @@ import uk.theretiredprogrammer.sketch.core.control.AbstractController;
 import uk.theretiredprogrammer.sketch.log.entity.TimerLogEntry;
 import uk.theretiredprogrammer.sketch.log.ui.LogDisplayWindow;
 
-/**
- *
- * @author richard
- */
 public class LogController extends AbstractController<LogDisplayWindow> {
 
     private String mmsstime;

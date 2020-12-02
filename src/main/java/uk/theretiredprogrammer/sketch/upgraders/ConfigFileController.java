@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
-/**
- *
- * @author richard
- */
 public class ConfigFileController {
 
     private final static int CURRENTVERSION = 1;

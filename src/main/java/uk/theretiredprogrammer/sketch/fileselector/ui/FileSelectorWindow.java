@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,6 @@ import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.fileselector.control.FileSelectorController;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
 
-/**
- *
- * @author richard
- */
 public class FileSelectorWindow extends AbstractWindow<FileSelectorController> {
 
     private final FileSelectorPane fileselectorpane;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 richard.
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,6 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonPointer;
 import java.io.IOException;
 
-/**
- *
- * @author richard
- */
 public abstract class Upgrader {
 
     public abstract JsonObject upgrade(JsonObject oldversion);

@@ -20,10 +20,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 
-/**
- *
- * @author Richard Linsdale (richard at theretiredprogrammer.uk)
- */
 public class GybingDownwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTest {
 
     private static final Angle DELTAANGLE = new Angle(5);
