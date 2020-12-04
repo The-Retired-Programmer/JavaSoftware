@@ -26,10 +26,17 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
 
 public class ConstantFlowComponent extends FlowComponent {
 
-    private final SpeedVector flow = new SpeedVector();
+    private final SpeedVector flow;
 
     public ConstantFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
+        flow = new SpeedVector();
+        addProperty("flow", flow);
+    }
+
+    public ConstantFlowComponent(String name, ConstantFlowComponent clonefrom) {
+        super(name, clonefrom);
+        this.flow = new SpeedVector(clonefrom.flow);
         addProperty("flow", flow);
     }
 

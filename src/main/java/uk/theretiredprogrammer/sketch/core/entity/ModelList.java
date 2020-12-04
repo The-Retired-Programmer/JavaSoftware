@@ -87,6 +87,10 @@ public abstract class ModelList<P extends Model> implements Model {
             value.setOnChange(onchange);
         }
     }
+    
+    public void remove(P value){
+        list.remove(value);
+    }
 
     public void clear() {
         list.clear();

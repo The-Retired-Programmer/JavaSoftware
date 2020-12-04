@@ -40,6 +40,7 @@ public class ConstrainedString extends SimpleStringProperty implements ModelProp
         if (defaultvalue != null && (!constraints.contains(defaultvalue))) {
             throw new IllegalStateFailure("Bad default value - not in constraints list");
         }
+        super.set(defaultvalue);
     }
 
     @Override

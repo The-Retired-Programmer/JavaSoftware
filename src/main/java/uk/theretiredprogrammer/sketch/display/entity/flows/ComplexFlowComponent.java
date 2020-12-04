@@ -26,13 +26,29 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class ComplexFlowComponent extends FlowComponent {
 
-    private final SpeedVector northwestflow = new SpeedVector();
-    private final SpeedVector northeastflow = new SpeedVector();
-    private final SpeedVector southeastflow = new SpeedVector();
-    private final SpeedVector southwestflow = new SpeedVector();
+    private final SpeedVector northwestflow;
+    private final SpeedVector northeastflow;
+    private final SpeedVector southeastflow;
+    private final SpeedVector southwestflow;
 
     public ComplexFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
+        northwestflow = new SpeedVector();
+        northeastflow = new SpeedVector();
+        southeastflow = new SpeedVector();
+        southwestflow = new SpeedVector();
+        addProperty("northwestflow", northwestflow);
+        addProperty("northeastflow", northeastflow);
+        addProperty("southeastflow", southeastflow);
+        addProperty("southwestflow", southwestflow);
+    }
+    
+    public ComplexFlowComponent(String name, ComplexFlowComponent clonefrom) {
+        super(name, clonefrom);
+        northwestflow = new SpeedVector(clonefrom.northwestflow);
+        northeastflow = new SpeedVector(clonefrom.northeastflow);
+        southeastflow = new SpeedVector(clonefrom.southeastflow);
+        southwestflow = new SpeedVector(clonefrom.southwestflow);
         addProperty("northwestflow", northwestflow);
         addProperty("northeastflow", northeastflow);
         addProperty("southeastflow", southeastflow);

@@ -52,6 +52,27 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
                 throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition (" + type + ")");
         }
     }
+    
+    public static FlowComponent factory(FlowComponent clonefrom) {
+        String type = clonefrom.getType();
+        String newname = clonefrom.getNamed()+"-1";
+        switch (type) {
+            case "testflow" -> {
+                return new TestFlowComponent(newname, (TestFlowComponent)clonefrom);
+            }
+            case "complexflow" -> {
+                return new ComplexFlowComponent(newname, (ComplexFlowComponent)clonefrom);
+            }
+            case "constantflow" -> {
+                return new ConstantFlowComponent(newname, (ConstantFlowComponent)clonefrom);
+            }
+            case "gradientflow" -> {
+                return new GradientFlowComponent(newname, (GradientFlowComponent)clonefrom);
+            }
+            default ->
+                throw new IllegalStateFailure("Unknown type parameter in a flow (" + type + ")");
+        }
+    }
 
     private static final ObservableList<String> typenames;
 
@@ -64,16 +85,31 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
         return typenames;
     }
 
-    private final Strg name = new Strg("<newname>");
-    private final Intgr zlevel = new Intgr(0);
-    private final Area area = new Area();
+    private final Strg name;
+    private final Intgr zlevel;
+    private final Area area;
     private final ConstrainedString type;
     private final Supplier<Area> getdisplayarea;
 
     public FlowComponent(Supplier<Area> getdisplayarea, String flowtype) {
         this.getdisplayarea = getdisplayarea;
         type = new ConstrainedString(flowtype, typenames);
+        this.name = new Strg("<newname>");
+        area = new Area();
+        zlevel = new Intgr(0);
         addProperty("name", name);
+        addProperty("zlevel", zlevel);
+        addProperty("area", area);
+        addProperty("type", type);
+    }
+    
+    public FlowComponent(String name, FlowComponent clonefrom){
+        this.getdisplayarea = clonefrom.getdisplayarea;
+        this.type = new ConstrainedString(clonefrom.getType(), typenames);
+        this.name = new Strg(name);
+        this.area = new Area(clonefrom.area);
+        this.zlevel = new Intgr(clonefrom.getZlevel()); 
+        addProperty("name", this.name);
         addProperty("zlevel", zlevel);
         addProperty("area", area);
         addProperty("type", type);

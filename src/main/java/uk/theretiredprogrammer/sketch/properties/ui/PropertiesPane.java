@@ -18,13 +18,15 @@ package uk.theretiredprogrammer.sketch.properties.ui;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Accordion;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.FlowComponentSet;
 
 public class PropertiesPane extends Accordion {
-    
+
     public PropertiesPane(SketchModel sketchmodel) {
         refreshcontent(sketchmodel);
     }
-    
+
     private void refreshcontent(SketchModel sketchmodel) {
         this.getPanes().clear();
         this.getPanes().add(new PropertyMapPane(sketchmodel.getDisplay(), "Display"));
@@ -36,7 +38,7 @@ public class PropertiesPane extends Accordion {
         createAllMarksPropertiesSection(sketchmodel);
         createAllBoatsPropertiesSection(sketchmodel);
     }
-    
+
     private void createCoursePropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getCourse().getLegs().addListChangeListener(new ListChangeListener() {
             @Override
@@ -47,11 +49,17 @@ public class PropertiesPane extends Accordion {
         sketchmodel.getCourse().setOnChange(() -> refreshcontent(sketchmodel));
         this.getPanes().add(new PropertyMapPane(sketchmodel.getCourse(), "Course"));
     }
-    
+
     private void createAllWindComponentPropertiesSection(SketchModel sketchmodel) {
-        sketchmodel.getWindFlow().getFlowcomponents().stream().forEach(
-                component -> this.getPanes().add(new PropertyMapPane(component, "Wind Component - ", component.getNameProperty()))
-        );
+        FlowComponentSet components = sketchmodel.getWindFlow().getFlowcomponents();
+                
+        components.stream().forEach(
+                component -> {
+                    var pane = new PropertyMapPane(component, "Wind Component - ", component.getNameProperty());
+                    pane.addTitleButton("add.png", "Duplicate", (ev) -> duplicate(components, component));
+                    pane.addTitleButton("delete.png", "Delete", (ev) -> delete(components, component));
+                    this.getPanes().add(pane);
+                });
         sketchmodel.getWindFlow().getFlowcomponents().addListChangeListener(new ListChangeListener() {
             @Override
             public void onChanged(ListChangeListener.Change change) {
@@ -59,7 +67,15 @@ public class PropertiesPane extends Accordion {
             }
         });
     }
-    
+
+    private void duplicate(FlowComponentSet components, FlowComponent component) {
+        components.add(FlowComponent.factory(component));
+    }
+
+    private void delete(FlowComponentSet components, FlowComponent component) {
+        components.remove(component);
+    }
+
     private void createAllWaterComponentPropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getWaterFlow().getFlowcomponents().stream().forEach(
                 component -> this.getPanes().add(new PropertyMapPane(component, "Water Component - ", component.getNameProperty()))
@@ -71,7 +87,7 @@ public class PropertiesPane extends Accordion {
             }
         });
     }
-    
+
     private void createAllBoatsPropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getBoats().stream().forEach(boat -> this.getPanes().add(new PropertyMapPane(boat, "Boat - ", boat.getNameProperty())));
         sketchmodel.getBoats().addListChangeListener(new ListChangeListener() {
@@ -81,7 +97,7 @@ public class PropertiesPane extends Accordion {
             }
         });
     }
-    
+
     private void createAllMarksPropertiesSection(SketchModel sketchmodel) {
         sketchmodel.getMarks().stream().forEach(mark -> this.getPanes().add(new PropertyMapPane(mark, "Mark - ", mark.getNameProperty())));
         sketchmodel.getMarks().addListChangeListener(new ListChangeListener() {

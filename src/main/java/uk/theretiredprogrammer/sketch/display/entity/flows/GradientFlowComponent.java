@@ -27,10 +27,17 @@ import static uk.theretiredprogrammer.sketch.display.entity.flows.Gradient.GRADI
 
 public class GradientFlowComponent extends FlowComponent {
 
-    private final Gradient gradient = new Gradient(GRADIENTDEFAULT);
+    private final Gradient gradient;
 
     public GradientFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
+        gradient = new Gradient(GRADIENTDEFAULT);
+        addProperty("gradient", gradient);
+    }
+
+    public GradientFlowComponent(String name, GradientFlowComponent clonefrom) {
+        super(name, clonefrom);
+        gradient = new Gradient(clonefrom.gradient);
         addProperty("gradient", gradient);
     }
 

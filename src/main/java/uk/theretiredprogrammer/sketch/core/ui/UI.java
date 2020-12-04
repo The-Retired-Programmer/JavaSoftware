@@ -26,19 +26,25 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import static javafx.scene.text.FontWeight.NORMAL;
@@ -56,6 +62,7 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 import uk.theretiredprogrammer.sketch.core.entity.Obj;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
+import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
@@ -109,7 +116,21 @@ public class UI {
         menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e, menuitem.getParentPopup())));
         return menuitem;
     }
-
+    
+    public static void insertTitle(TitledPane titledpane, String titleroot, Strg name) {
+        HBox titlearea = new HBox();
+        titlearea.setAlignment(Pos.CENTER);
+        titlearea.setPadding(new Insets(0, 30, 0, 0));
+        titlearea.minWidthProperty().bind(titledpane.widthProperty());
+        HBox filler = new HBox();
+        filler.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(filler, Priority.ALWAYS);
+        Label titletext = new Label();
+        titletext.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
+        titlearea.getChildren().addAll(titletext, filler);
+        titledpane.setGraphic(titlearea);
+    }
+    
     // 
     public static TextField control(int size, SimpleIntegerProperty property) {
         TextField intfield = new TextField(Integer.toString(property.get()));

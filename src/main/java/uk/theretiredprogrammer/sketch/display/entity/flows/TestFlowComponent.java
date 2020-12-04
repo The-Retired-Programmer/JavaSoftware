@@ -27,11 +27,21 @@ import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
 public class TestFlowComponent extends FlowComponent {
 
-    private final SpeedVector flow = new SpeedVector();
-    private final Angle mean = new Angle();
+    private final SpeedVector flow;
+    private final Angle mean;
 
     public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
+        flow = new SpeedVector();
+        mean = new Angle();
+        addProperty("flow", flow);
+        addProperty("mean", mean);
+    }
+
+    public TestFlowComponent(String name, TestFlowComponent clonefrom) {
+        super(name, clonefrom);
+        this.flow = new SpeedVector(clonefrom.flow);
+        this.mean = new Angle(clonefrom.mean);
         addProperty("flow", flow);
         addProperty("mean", mean);
     }

@@ -15,20 +15,23 @@
  */
 package uk.theretiredprogrammer.sketch.properties.ui;
 
-import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.ModelList;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
+import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class PropertyMapPane extends TitledPane {
-    
+
     private int row = 0;
 
     public PropertyMapPane(ModelMap properties, String title) {
@@ -36,9 +39,14 @@ public class PropertyMapPane extends TitledPane {
         this.setContent(new ScrollPane(createpropertiescontent(properties)));
     }
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public PropertyMapPane(ModelMap properties, String titleroot, Strg name) {
-        this.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
+        UI.insertTitle(this, titleroot, name);
         this.setContent(createpropertiescontent(properties));
+    }
+    
+    public void addTitleButton(String imagefilename, String tooltip, EventHandler<ActionEvent> action){
+        ((HBox) getGraphic()).getChildren().add(UI.toolbarButton(imagefilename, tooltip, action));
     }
 
     private ScrollPane createpropertiescontent(ModelMap properties) {
@@ -49,7 +57,7 @@ public class PropertyMapPane extends TitledPane {
     }
 
     private void createpropertymapcontent(GridPane propertiestable, ModelMap properties) {
-        properties.stream().forEach( entry -> {
+        properties.stream().forEach(entry -> {
             Model value = entry.getValue();
             if (value instanceof ModelMap propertymap) {
                 createpropertymapcontent(propertiestable, propertymap);
@@ -78,9 +86,9 @@ public class PropertyMapPane extends TitledPane {
     }
 
     private void createpropertyelementcontent(GridPane propertiestable, ModelProperty propertyelement) {
-        createpropertyelementcontent(propertiestable,  "", propertyelement);
+        createpropertyelementcontent(propertiestable, "", propertyelement);
     }
-    
+
     private void createpropertyelementcontent(GridPane propertiestable, String key, ModelProperty propertyelement) {
         propertiestable.add(new Label(key), 0, row, 1, 1);
         propertiestable.add(propertyelement.getControl(), 1, row++, 1, 1);
