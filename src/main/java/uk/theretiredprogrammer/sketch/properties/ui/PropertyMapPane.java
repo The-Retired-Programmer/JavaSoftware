@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.properties.ui;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -109,11 +110,25 @@ public class PropertyMapPane extends TitledPane {
     private void delete(Legs legs, Leg leg) {
         legs.remove(leg);
     }
-    
+
     private void moveup(Legs legs, Leg leg) {
+        ObservableList<Leg> list = legs.get();
+        int index = list.indexOf(leg);
+        if (index == 0) {
+            return;
+        }
+        list.remove(index);
+        list.add(index - 1, leg);
     }
 
     private void movedown(Legs legs, Leg leg) {
+        ObservableList<Leg> list = legs.get();
+        int index = list.indexOf(leg);
+        if (index >= list.size() - 1) {
+            return;
+        }
+        list.remove(index);
+        list.add(index + 1, leg);
     }
 
     private void createpropertyelementcontent(GridPane propertiestable, ModelProperty propertyelement) {
