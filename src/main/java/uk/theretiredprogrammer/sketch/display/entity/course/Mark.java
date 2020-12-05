@@ -30,20 +30,26 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
 
 public class Mark extends ModelMap implements ModelNamed {
 
-    private final Strg name = new Strg("<newname>");
+    private final Strg name;
     private final Location location;
-    private final Booln windwardlaylines = new Booln(false);
-    private final Booln downwindlaylines = new Booln(false);
-    private final Dble laylinelength = new Dble(0.0);
-    private final Colour laylinecolour = new Colour(Color.BLACK);
-    private final Colour colour = new Colour(Color.RED);
+    private final Booln windwardlaylines;
+    private final Booln downwindlaylines;
+    private final Dble laylinelength;
+    private final Colour laylinecolour;
+    private final Colour colour;
 
     public Mark() {
         this(new Location());
     }
 
     public Mark(Location loc) {
+        name = new Strg("<newname>");
         location = new Location(loc);
+        windwardlaylines = new Booln(false);
+        downwindlaylines = new Booln(false);
+        laylinelength = new Dble(0.0);
+        laylinecolour = new Colour(Color.BLACK);
+        colour = new Colour(Color.RED);
         addProperty("name", name);
         addProperty("location", location);
         addProperty("windwardlaylines", windwardlaylines);
@@ -52,16 +58,33 @@ public class Mark extends ModelMap implements ModelNamed {
         addProperty("laylinecolour", laylinecolour);
         addProperty("colour", colour);
     }
-    
-     public Mark get() {
+
+    public Mark(Mark clonefrom) {
+        name = new Strg(clonefrom.getNamed()+"-1");
+        location = new Location(clonefrom.location);
+        windwardlaylines = new Booln(clonefrom.windwardlaylines);
+        downwindlaylines = new Booln(clonefrom.downwindlaylines);
+        laylinelength = new Dble(clonefrom.laylinelength);
+        laylinecolour = new Colour(clonefrom.laylinecolour);
+        colour = new Colour(clonefrom.colour);
+        addProperty("name", name);
+        addProperty("location", location);
+        addProperty("windwardlaylines", windwardlaylines);
+        addProperty("downwindlaylines", downwindlaylines);
+        addProperty("laylinelength", laylinelength);
+        addProperty("laylinecolour", laylinecolour);
+        addProperty("colour", colour);
+    }
+
+    public Mark get() {
         return this;
     }
-    
+
     @Override
     public String getNamed() {
         return name.get();
     }
-    
+
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("name", name, jobj);

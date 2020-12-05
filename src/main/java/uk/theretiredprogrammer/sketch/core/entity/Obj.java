@@ -22,6 +22,10 @@ public class Obj<T extends Model> extends SimpleObjectProperty<T> {
     public Obj(T value) {
         set(value);
     }
+    
+    public Obj(Obj<T> clonefrom){
+        set(clonefrom.get());
+    }
 
     public void setOnChange(Runnable onchange) {
         addListener((o, oldval, newval) -> onchange.run());

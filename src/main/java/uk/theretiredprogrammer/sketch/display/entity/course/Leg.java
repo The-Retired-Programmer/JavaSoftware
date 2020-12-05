@@ -20,6 +20,7 @@ import jakarta.json.JsonValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
@@ -48,9 +49,17 @@ public class Leg implements ModelProperty<Leg> {
     private final Marks marks;
 
     public Leg(Marks marks) {
-        mark = new Obj<>(null);
-        passing = new ConstrainedString(null, roundingdirections);
+        mark = new Obj<>(marks.get(0));
+        passing = new ConstrainedString("port", roundingdirections);
         this.marks = marks;
+    }
+    
+    public Leg(Leg clonefrom) {
+        this.startfrom = clonefrom.startfrom;
+        this.endat = clonefrom.endat;
+        this.marks = clonefrom.marks;
+        this.mark = new Obj<>(clonefrom.mark);
+        this.passing = new ConstrainedString(clonefrom.passing);
     }
 
     public Obj<Mark> getMarkProperty() {
@@ -118,12 +127,12 @@ public class Leg implements ModelProperty<Leg> {
     }
 
     @Override
-    public Node getControl() {
+    public HBox getControl() {
         return UI.control(this, marks, roundingdirections);
     }
 
     @Override
-    public Node getControl(int size) {
+    public HBox getControl(int size) {
         return getControl();
     }
 

@@ -42,6 +42,11 @@ public class ConstrainedString extends SimpleStringProperty implements ModelProp
         }
         super.set(defaultvalue);
     }
+    
+    public ConstrainedString(ConstrainedString clonefrom){
+        this.constraints = clonefrom.constraints;
+        super.set(clonefrom.get());
+    }
 
     @Override
     public void setOnChange(Runnable onchange) {

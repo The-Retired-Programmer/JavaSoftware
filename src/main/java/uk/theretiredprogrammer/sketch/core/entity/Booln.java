@@ -25,6 +25,14 @@ public class Booln extends SimpleBooleanProperty implements ModelProperty<Boolea
     public Booln(Boolean defaultvalue) {
         super(defaultvalue);
     }
+    
+    public Booln(boolean defaultvalue) {
+        super(defaultvalue);
+    }
+    
+    public Booln(Booln clonefrom) {
+        super(clonefrom.get());
+    }
 
     @Override
     public void setOnChange(Runnable onchange) {

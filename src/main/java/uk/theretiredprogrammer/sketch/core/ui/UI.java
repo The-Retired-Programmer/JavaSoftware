@@ -28,7 +28,6 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
@@ -220,11 +219,38 @@ public class UI {
 
     public static HBox control(Leg property, Marks marks, ObservableList<String> roundings) {
         ComboBoxFactory<Obj<Mark>, Mark> markcombofactory = new ComboBoxFactory<>();
-        return new HBox(
+//        return new HBox(
+//                markcombofactory.create(property.getMarkProperty(), marks),
+//                control(property.getRoundingdirectionProperty(), roundings)
+//        );
+        HBox legdisplay = new HBox();
+        legdisplay.setAlignment(Pos.CENTER);
+        legdisplay.setPadding(new Insets(0, 0, 0, 0));
+        //titlearea.minWidthProperty().bind(titledpane.widthProperty());
+        HBox filler = new HBox();
+        filler.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(filler, Priority.ALWAYS);
+//        Label titletext = new Label();
+//        titletext.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
+        legdisplay.getChildren().addAll(
                 markcombofactory.create(property.getMarkProperty(), marks),
-                control(property.getRoundingdirectionProperty(), roundings)
-        );
+                control(property.getRoundingdirectionProperty(), roundings),
+                filler);
+        return legdisplay;
+        //titledpane.setGraphic(legdisplay);
     }
+    
+//    HBox titlearea = new HBox();
+//        titlearea.setAlignment(Pos.CENTER);
+//        titlearea.setPadding(new Insets(0, 30, 0, 0));
+//        titlearea.minWidthProperty().bind(titledpane.widthProperty());
+//        HBox filler = new HBox();
+//        filler.setMaxWidth(Double.MAX_VALUE);
+//        HBox.setHgrow(filler, Priority.ALWAYS);
+//        Label titletext = new Label();
+//        titletext.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
+//        titlearea.getChildren().addAll(titletext, filler);
+//        titledpane.setGraphic(titlearea);
 
     public static HBox control(int size, Gradient property, ObservableList<String> typeconstraints) {
         HBox hbox = new HBox(control(property.getTypeProperty(), typeconstraints));

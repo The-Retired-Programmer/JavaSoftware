@@ -29,6 +29,8 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.ModelProperty;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
+import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
+import uk.theretiredprogrammer.sketch.display.entity.course.Legs;
 
 public class PropertyMapPane extends TitledPane {
 
@@ -44,8 +46,8 @@ public class PropertyMapPane extends TitledPane {
         UI.insertTitle(this, titleroot, name);
         this.setContent(createpropertiescontent(properties));
     }
-    
-    public void addTitleButton(String imagefilename, String tooltip, EventHandler<ActionEvent> action){
+
+    public void addTitleButton(String imagefilename, String tooltip, EventHandler<ActionEvent> action) {
         ((HBox) getGraphic()).getChildren().add(UI.toolbarButton(imagefilename, tooltip, action));
     }
 
@@ -78,11 +80,40 @@ public class PropertyMapPane extends TitledPane {
             } else if (value instanceof ModelMap propertymap) {
                 createpropertymapcontent(propertiestable, propertymap);
             } else if (value instanceof ModelProperty propertyelement) {
-                createpropertyelementcontent(propertiestable, propertyelement);
+                if (propertyelement instanceof Leg leg) {
+                    createpropertyelementcontent(propertiestable, leg, (Legs) properties);
+                } else {
+                    createpropertyelementcontent(propertiestable, propertyelement);
+                }
             } else {
                 throw new IllegalStateFailure("PropertiesPane: Unknown Property instance");
             }
         });
+    }
+
+    private void createpropertyelementcontent(GridPane propertiestable, Leg propertyelement, Legs propertylist) {
+        propertiestable.add(new Label(""), 0, row, 1, 1);
+        HBox elements = (HBox) propertyelement.getControl();
+        //elements.minWidthProperty().bind(titledpane.widthProperty());
+        elements.getChildren().add(UI.toolbarButton("add.png", "Duplicate", (ev) -> duplicate(propertylist, propertyelement)));
+        elements.getChildren().add(UI.toolbarButton("delete.png", "Delete", (ev) -> delete(propertylist, propertyelement)));
+        elements.getChildren().add(UI.toolbarButton("arrow_up.png", "Move Up", (ev) -> moveup(propertylist, propertyelement)));
+        elements.getChildren().add(UI.toolbarButton("arrow_down.png", "Move Down", (ev) -> movedown(propertylist, propertyelement)));
+        propertiestable.add(elements, 1, row++, 1, 1);
+    }
+
+    private void duplicate(Legs legs, Leg leg) {
+        legs.add(new Leg(leg));
+    }
+
+    private void delete(Legs legs, Leg leg) {
+        legs.remove(leg);
+    }
+    
+    private void moveup(Legs legs, Leg leg) {
+    }
+
+    private void movedown(Legs legs, Leg leg) {
     }
 
     private void createpropertyelementcontent(GridPane propertiestable, ModelProperty propertyelement) {

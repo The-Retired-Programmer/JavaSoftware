@@ -26,6 +26,10 @@ public class Colour extends SimpleObjectProperty<Color> implements ModelProperty
     public Colour(Color value) {
         set(value);
     }
+    
+    public Colour(Colour clonefrom) {
+        set(clonefrom.get());
+    }
 
     @Override
     public void setOnChange(Runnable onchange) {

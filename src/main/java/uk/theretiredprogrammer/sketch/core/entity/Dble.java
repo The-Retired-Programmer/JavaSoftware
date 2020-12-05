@@ -25,6 +25,14 @@ public class Dble extends SimpleDoubleProperty implements ModelProperty<Double> 
     public Dble(Double value) {
         set(value);
     }
+    
+    public Dble(double value) {
+        set(value);
+    }
+    
+    public Dble(Dble clonefrom){
+        set(clonefrom.get());
+    }
 
     @Override
     public void setOnChange(Runnable onchange) {
