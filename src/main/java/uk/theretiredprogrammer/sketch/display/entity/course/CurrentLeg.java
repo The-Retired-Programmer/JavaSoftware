@@ -20,9 +20,7 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.log.control.LogController;
-import uk.theretiredprogrammer.sketch.log.entity.BoatLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.DecisionLogEntry;
-import uk.theretiredprogrammer.sketch.log.entity.ReasonLogEntry;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction.SAILON;
 
 public class CurrentLeg {

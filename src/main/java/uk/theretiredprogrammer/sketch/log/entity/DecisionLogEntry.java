@@ -33,6 +33,10 @@ public class DecisionLogEntry extends TimerLogEntry {
     private final double boaty;
     private final Importance decisionimportance;
     private final String reason;
+    private final double windangleatboat;
+    private final double windspeedatboat;
+    private final double meanwindangle;
+    private final double meanwindangleatboat;
 
     public DecisionLogEntry(Boat boat, WindFlow windflow, Decision decision) {
         this.boatname = boat.getNamed();
@@ -45,6 +49,11 @@ public class DecisionLogEntry extends TimerLogEntry {
         this.decisionangle = decision.getDegrees();
         this.decisionPORT = decision.isPort();
         this.reason = decision.getReason();
+        var flow = windflow.getFlow(loc);
+        this.windangleatboat = flow.getDegrees();
+        this.windspeedatboat = flow.getSpeed();
+        this.meanwindangle = windflow.getMeanFlowAngle().get();
+        this.meanwindangleatboat = windflow.getMeanFlowAngle(loc).get();
     }
 
     @Override
@@ -66,9 +75,26 @@ public class DecisionLogEntry extends TimerLogEntry {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
-        sb.append("  DECISION (");
+        sb.append("DECISION by ");
         sb.append(boatname);
-        sb.append("): ");
+        sb.append(" -  ");
+        sb.append(reason);
+        sb.append(" AT: ");
+        sb.append(format2dp(boatx));
+        sb.append(",");
+        sb.append(format2dp(boaty));
+        sb.append(" ");
+        sb.append(format1dp(boatangle));
+        sb.append("° WIND: ");
+        sb.append(format2dp(windspeedatboat));
+        sb.append("knt,");
+        sb.append(format1dp(windangleatboat));
+        sb.append("° meanatboat:");
+        sb.append(format1dp(meanwindangleatboat));
+        sb.append("°");
+        sb.append(" meanoncourse:");
+        sb.append(format1dp(meanwindangle));
+        sb.append("° ");
         sb.append(decisionaction);
         switch (decisionaction) {
             case TURN, MARKROUNDING -> {
@@ -78,19 +104,6 @@ public class DecisionLogEntry extends TimerLogEntry {
                 sb.append(decisionPORT ? "PORT" : "STARBOARD");
             }
         }
-        sb.append("  BOAT (");
-        sb.append(boatname);
-        sb.append("): [");
-        sb.append(format2dp(boatx));
-        sb.append(",");
-        sb.append(format2dp(boaty));
-        sb.append("] ");
-        sb.append(format1dp(boatangle));
-        sb.append("°");
-        sb.append("  REASON (");
-        sb.append(boatname);
-        sb.append("): ");
-        sb.append(reason);
         return sb.toString();
     }
 }
