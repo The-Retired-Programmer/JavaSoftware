@@ -48,4 +48,11 @@ public abstract class TimerLogEntry {
     public boolean hasName(String name) {
         return true;
     }
+    
+    public boolean hasMajorImportance() {
+        return true;
+    }
+    public boolean hasMajorMinorImportance() {
+        return true;
+    }
 }

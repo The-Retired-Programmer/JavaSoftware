@@ -15,28 +15,26 @@
  */
 package uk.theretiredprogrammer.sketch.log.control;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import uk.theretiredprogrammer.sketch.core.control.AbstractController;
+import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boats;
 import uk.theretiredprogrammer.sketch.log.entity.TimerLogEntry;
 import uk.theretiredprogrammer.sketch.log.ui.LogDisplayWindow;
 
 public class LogController extends AbstractController<LogDisplayWindow> {
 
     private String mmsstime;
-    private final List<TimerLogEntry> log = new ArrayList<>();
+    private final LinkedList<TimerLogEntry> log = new LinkedList<>();
+    private final SketchModel model;
 
-    public LogController(String fn, Boolean requiresfilter) {
+    public LogController(String fn, SketchModel model) {
+        this.model = model;
         setWindow(new LogDisplayWindow(fn, this), ExternalCloseAction.HIDE);
-        getWindow().clear();
-        if (requiresfilter) {
-            log.stream()
-                    .filter(entry -> entry.hasName("SELECTED"))
-                    .forEach(entry -> getWindow().writeline(entry.toString()));
-        } else {
-            log.stream()
-                    .forEach(entry -> getWindow().writeline(entry.toString()));
-        }
+    }
+
+    public Boats getBoats() {
+        return model.getBoats();
     }
 
     public void setTime(int seconds) {
@@ -58,4 +56,7 @@ public class LogController extends AbstractController<LogDisplayWindow> {
         log.add(entry);
     }
 
+    public LinkedList getLogs() {
+        return log;
+    }
 }

@@ -103,9 +103,7 @@ public class CurrentLeg {
     public void tick(Params params, int simulationtime, LogController timerlog) {
         if (decision.getAction() == SAILON) {
             strategy.tick(params);
-            timerlog.add(new BoatLogEntry(params.boat));
-            timerlog.add(new DecisionLogEntry(params.boat.getNamed(), decision));
-            timerlog.add(new ReasonLogEntry(params.boat.getNamed(), decision.getReason()));
+            timerlog.add(new DecisionLogEntry(params.boat, params.windflow, decision));
         }
         if (params.boat.moveUsingDecision(params)) {
             currentleg = course.getLeg(++legno);

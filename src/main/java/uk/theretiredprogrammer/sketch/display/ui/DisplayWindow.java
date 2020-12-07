@@ -37,8 +37,7 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 ),
                 UI.menu("Window Management",
                         UI.menuitem("Show Properties", ev -> controller.showPropertiesWindow()),
-                        UI.menuitem("Show Decision Log", ev -> controller.showFullLogWindow()),
-                        UI.menuitem("Show Filtered Decision Log", ev -> controller.showFilteredLogWindow())
+                        UI.menuitem("Show Decision Log", ev -> controller.showLogWindow())
                 )
         );
         addtoToolbar(
@@ -48,8 +47,7 @@ public class DisplayWindow extends AbstractWindow<DisplayController> {
                 UI.toolbarButton("table_save.png", "Save Properties", ev -> controller.save(controller,
                 "/Users/richard/SKETCHSAVE/save.json")),
                 UI.toolbarButton("table.png", "Show Properties", ev -> controller.showPropertiesWindow()),
-                UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showFullLogWindow()),
-                UI.toolbarButton("script_code.png", "Show Filtered Decision Log", ev -> controller.showFilteredLogWindow()),
+                UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showLogWindow()),
                 UI.toolbarButton("arrow_refresh.png", "Refresh", ev -> controller.refreshrepaint()),
                 timetext = new Text("      ")
         );

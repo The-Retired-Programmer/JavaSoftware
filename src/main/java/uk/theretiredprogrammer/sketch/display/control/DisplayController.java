@@ -43,7 +43,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
     public DisplayController(PathWithShortName pn, FileSelectorController fileselectorcontroller) {
         this.fileselectorcontroller = fileselectorcontroller;
         propertiescontroller = new PropertiesController(pn);
-        logcontroller = new LogController(pn.toString(), false);
+        logcontroller = new LogController(pn.toString(), propertiescontroller.getModel());
         simulationcontroller = new SimulationController(this);
         showDisplayWindow(pn.toString());
     }
@@ -54,7 +54,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
 
     public DisplayController(String resourcename, String fn, FileSelectorController fileselectorcontroller) {
         this(resourcename);
-        logcontroller = new LogController(fn, false);
+        logcontroller = new LogController(fn, propertiescontroller.getModel());
         this.fileselectorcontroller = fileselectorcontroller;
         showDisplayWindow(fn);
     }
@@ -114,11 +114,7 @@ public class DisplayController extends AbstractController<DisplayWindow> {
         propertiescontroller.showWindow();
     }
 
-    public void showFullLogWindow() {
-        logcontroller.showWindow();
-    }
-
-    public void showFilteredLogWindow() {
+    public void showLogWindow() {
         logcontroller.showWindow();
     }
 

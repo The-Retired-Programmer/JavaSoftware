@@ -15,25 +15,51 @@
  */
 package uk.theretiredprogrammer.sketch.log.entity;
 
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision.DecisionAction;
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class DecisionLogEntry extends TimerLogEntry {
 
-    private final Decision.DecisionAction decisionaction;
+    private final DecisionAction decisionaction;
     private final double decisionangle;
     private final boolean decisionPORT;
     private final String boatname;
+    private final double boatangle;
+    private final double boatx;
+    private final double boaty;
+    private final Importance decisionimportance;
+    private final String reason;
 
-    public DecisionLogEntry(String boatname, Decision decision) {
-        this.boatname = boatname;
+    public DecisionLogEntry(Boat boat, WindFlow windflow, Decision decision) {
+        this.boatname = boat.getNamed();
+        Location loc = boat.getLocation();
+        this.boatx = loc.getX();
+        this.boaty = loc.getY();
+        this.boatangle = boat.getDirection().get();
+        this.decisionimportance = decision.getImportance();
         this.decisionaction = decision.getAction();
         this.decisionangle = decision.getDegrees();
         this.decisionPORT = decision.isPort();
+        this.reason = decision.getReason();
     }
 
     @Override
     public boolean hasName(String name) {
         return boatname.equals(name);
+    }
+
+    @Override
+    public boolean hasMajorImportance() {
+        return decisionimportance == Importance.MAJOR;
+    }
+
+    @Override
+    public boolean hasMajorMinorImportance() {
+        return decisionimportance == Importance.MAJOR || decisionimportance == Importance.MINOR;
     }
 
     @Override
@@ -45,13 +71,26 @@ public class DecisionLogEntry extends TimerLogEntry {
         sb.append("): ");
         sb.append(decisionaction);
         switch (decisionaction) {
-            case TURN:
-            case MARKROUNDING:
+            case TURN, MARKROUNDING -> {
                 sb.append(" to ");
                 sb.append(format1dp(decisionangle));
                 sb.append("° ");
                 sb.append(decisionPORT ? "PORT" : "STARBOARD");
+            }
         }
+        sb.append("  BOAT (");
+        sb.append(boatname);
+        sb.append("): [");
+        sb.append(format2dp(boatx));
+        sb.append(",");
+        sb.append(format2dp(boaty));
+        sb.append("] ");
+        sb.append(format1dp(boatangle));
+        sb.append("°");
+        sb.append("  REASON (");
+        sb.append(boatname);
+        sb.append("): ");
+        sb.append(reason);
         return sb.toString();
     }
 }

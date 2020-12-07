@@ -53,8 +53,10 @@ import javafx.util.StringConverter;
 import javafx.util.converter.NumberStringConverter;
 import uk.theretiredprogrammer.sketch.core.control.ExecuteAndCatch;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
+import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import uk.theretiredprogrammer.sketch.core.entity.ConstrainedString;
 import uk.theretiredprogrammer.sketch.core.entity.DistanceVector;
+import uk.theretiredprogrammer.sketch.core.entity.Intgr;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.Model;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
@@ -62,6 +64,7 @@ import uk.theretiredprogrammer.sketch.core.entity.ModelNamedList;
 import uk.theretiredprogrammer.sketch.core.entity.Obj;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 import uk.theretiredprogrammer.sketch.core.entity.Strg;
+import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.display.entity.course.Leg;
 import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 import uk.theretiredprogrammer.sketch.display.entity.course.Marks;
@@ -75,6 +78,46 @@ public class UI {
         button.setOnAction((e) -> new ExecuteAndCatch(() -> action.handle(e)));
         button.setTooltip(new Tooltip(tooltip));
         return button;
+    }
+
+    public static HBox toolbarCheckBox(String label, Booln property) {
+        CheckBox cbox = new CheckBox();
+        cbox.selectedProperty().bindBidirectional(property);
+        HBox cboxdisplay = new HBox();
+        cboxdisplay.setAlignment(Pos.CENTER);
+        cboxdisplay.getChildren().addAll(new Label(label), cbox);
+        return cboxdisplay;
+    }
+
+    public static HBox toolbarInteger(String label, Intgr property) {
+        TextField intfield = new TextField();
+        intfield.setPrefColumnCount(7);
+        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
+        intfield.setTextFormatter(textformatter);
+        textformatter.valueProperty().bindBidirectional(property);
+        HBox intdisplay = new HBox();
+        intdisplay.setAlignment(Pos.CENTER);
+        intdisplay.getChildren().addAll(new Label(label), intfield);
+        return intdisplay;
+    }
+
+    public static HBox toolbarComboBox(String label, Strg property, String... options) {
+        ComboBox<String> cbox = new ComboBox<>();
+        cbox.getItems().addAll(options);
+        cbox.valueProperty().bindBidirectional(property);
+        HBox stringdisplay = new HBox();
+        stringdisplay.setAlignment(Pos.CENTER);
+        stringdisplay.getChildren().addAll(new Label(label), cbox);
+        return stringdisplay;
+    }
+
+    public static HBox toolbarBoatComboBox(String label, Obj<Boat> property, ModelNamedList<Boat> boats) {
+        ComboBoxFactory<Obj<Boat>, Boat> boatcombofactory = new ComboBoxFactory<>();
+        HBox boatdisplay = new HBox();
+        boatdisplay.setAlignment(Pos.CENTER);
+        boatdisplay.setPadding(new Insets(0, 0, 0, 0));
+        boatdisplay.getChildren().addAll(new Label(label), boatcombofactory.create(property, boats));
+        return boatdisplay;
     }
 
     public static Menu menu(String name, MenuItem... menuitems) {
@@ -115,7 +158,7 @@ public class UI {
         menuitem.setOnAction((e) -> new ExecuteAndCatch(() -> action.accept(e, menuitem.getParentPopup())));
         return menuitem;
     }
-    
+
     public static void insertTitle(TitledPane titledpane, String titleroot, Strg name) {
         HBox titlearea = new HBox();
         titlearea.setAlignment(Pos.CENTER);
@@ -129,7 +172,7 @@ public class UI {
         titlearea.getChildren().addAll(titletext, filler);
         titledpane.setGraphic(titlearea);
     }
-    
+
     // 
     public static TextField control(int size, SimpleIntegerProperty property) {
         TextField intfield = new TextField(Integer.toString(property.get()));
@@ -161,7 +204,7 @@ public class UI {
         stringfield.textProperty().bindBidirectional(property);
         return stringfield;
     }
-    
+
     public static ComboBox<String> control(ConstrainedString property, ObservableList<String> constraints) {
         ComboBox<String> combofield = new ComboBox(constraints);
         combofield.valueProperty().bindBidirectional(property);
@@ -219,38 +262,18 @@ public class UI {
 
     public static HBox control(Leg property, Marks marks, ObservableList<String> roundings) {
         ComboBoxFactory<Obj<Mark>, Mark> markcombofactory = new ComboBoxFactory<>();
-//        return new HBox(
-//                markcombofactory.create(property.getMarkProperty(), marks),
-//                control(property.getRoundingdirectionProperty(), roundings)
-//        );
         HBox legdisplay = new HBox();
         legdisplay.setAlignment(Pos.CENTER);
         legdisplay.setPadding(new Insets(0, 0, 0, 0));
-        //titlearea.minWidthProperty().bind(titledpane.widthProperty());
         HBox filler = new HBox();
         filler.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(filler, Priority.ALWAYS);
-//        Label titletext = new Label();
-//        titletext.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
         legdisplay.getChildren().addAll(
                 markcombofactory.create(property.getMarkProperty(), marks),
                 control(property.getRoundingdirectionProperty(), roundings),
                 filler);
         return legdisplay;
-        //titledpane.setGraphic(legdisplay);
     }
-    
-//    HBox titlearea = new HBox();
-//        titlearea.setAlignment(Pos.CENTER);
-//        titlearea.setPadding(new Insets(0, 30, 0, 0));
-//        titlearea.minWidthProperty().bind(titledpane.widthProperty());
-//        HBox filler = new HBox();
-//        filler.setMaxWidth(Double.MAX_VALUE);
-//        HBox.setHgrow(filler, Priority.ALWAYS);
-//        Label titletext = new Label();
-//        titletext.textProperty().bind(new SimpleStringProperty(titleroot).concat(name));
-//        titlearea.getChildren().addAll(titletext, filler);
-//        titledpane.setGraphic(titlearea);
 
     public static HBox control(int size, Gradient property, ObservableList<String> typeconstraints) {
         HBox hbox = new HBox(control(property.getTypeProperty(), typeconstraints));

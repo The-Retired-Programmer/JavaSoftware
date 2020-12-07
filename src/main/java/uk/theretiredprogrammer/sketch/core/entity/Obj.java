@@ -22,9 +22,13 @@ public class Obj<T extends Model> extends SimpleObjectProperty<T> {
     public Obj(T value) {
         set(value);
     }
-    
-    public Obj(Obj<T> clonefrom){
+
+    public Obj(Obj<T> clonefrom) {
         set(clonefrom.get());
+    }
+
+    public Obj() {
+        set(null);
     }
 
     public void setOnChange(Runnable onchange) {
