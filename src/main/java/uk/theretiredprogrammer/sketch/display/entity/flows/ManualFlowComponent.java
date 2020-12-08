@@ -25,12 +25,12 @@ import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
-public class TestFlowComponent extends FlowComponent {
+public class ManualFlowComponent extends FlowComponent {
 
     private final SpeedVector flow;
     private final Angle mean;
 
-    public TestFlowComponent(Supplier<Area> getdisplayarea, String type) {
+    public ManualFlowComponent(Supplier<Area> getdisplayarea, String type) {
         super(getdisplayarea, type);
         flow = new SpeedVector();
         mean = new Angle();
@@ -38,7 +38,7 @@ public class TestFlowComponent extends FlowComponent {
         addProperty("mean", mean);
     }
 
-    public TestFlowComponent(String name, TestFlowComponent clonefrom) {
+    public ManualFlowComponent(String name, ManualFlowComponent clonefrom) {
         super(name, clonefrom);
         this.flow = new SpeedVector(clonefrom.flow);
         this.mean = new Angle(clonefrom.mean);

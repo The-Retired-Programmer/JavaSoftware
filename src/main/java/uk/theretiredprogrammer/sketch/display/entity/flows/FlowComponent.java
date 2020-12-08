@@ -37,7 +37,10 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
     public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
             case "testflow" -> {
-                return new TestFlowComponent(getdisplayarea, type);
+                return new ManualFlowComponent(getdisplayarea, type);
+            }
+            case "manualflow" -> {
+                return new ManualFlowComponent(getdisplayarea, type);
             }
             case "complexflow" -> {
                 return new ComplexFlowComponent(getdisplayarea, type);
@@ -58,7 +61,10 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
         String newname = clonefrom.getNamed()+"-1";
         switch (type) {
             case "testflow" -> {
-                return new TestFlowComponent(newname, (TestFlowComponent)clonefrom);
+                return new ManualFlowComponent(newname, (ManualFlowComponent)clonefrom);
+            }
+            case "manualflow" -> {
+                return new ManualFlowComponent(newname, (ManualFlowComponent)clonefrom);
             }
             case "complexflow" -> {
                 return new ComplexFlowComponent(newname, (ComplexFlowComponent)clonefrom);
@@ -78,7 +84,7 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
 
     static {
         typenames = FXCollections.observableArrayList();
-        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow");
+        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow","manaulflow");
     }
 
     public static ObservableList<String> getTypenames() {

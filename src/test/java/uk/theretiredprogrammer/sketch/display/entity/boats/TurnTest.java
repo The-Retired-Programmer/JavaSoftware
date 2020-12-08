@@ -24,7 +24,7 @@ import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
-import uk.theretiredprogrammer.sketch.display.entity.flows.TestFlowComponent;
+import uk.theretiredprogrammer.sketch.display.entity.flows.ManualFlowComponent;
 
 public class TurnTest {
 
@@ -75,7 +75,7 @@ public class TurnTest {
         params.windflow.getFlowcomponents().stream()
                 .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
                 .forEach(tfc -> {
-                    ((TestFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
+                    ((ManualFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
                 });
     }
 }
