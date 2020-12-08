@@ -22,6 +22,8 @@ import uk.theretiredprogrammer.sketch.display.entity.flows.WaterFlow;
 import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.INSIGNIFICANT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
 
 public class Params {
 
@@ -96,8 +98,11 @@ public class Params {
     }
 
     public final boolean setTURN(Angle degrees, boolean turndirection, Importance importance, String reason) {
-        if (degrees.absDegreesDiff(heading).lt(0.1)) {
+        Angle change = degrees.absDegreesDiff(heading);
+        if (change.lt(0.1)) {
             decision.setSAILON(heading);
+        } else if (change.lt(1) && importance != MAJOR) {
+            decision.setTURN(degrees, turndirection, INSIGNIFICANT, reason);
         } else {
             decision.setTURN(degrees, turndirection, importance, reason);
         }

@@ -27,6 +27,9 @@ import javafx.scene.paint.Color;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Angle;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.INSIGNIFICANT;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
+import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MINOR;
 import uk.theretiredprogrammer.sketch.log.control.LogController;
 import uk.theretiredprogrammer.sketch.log.entity.WindShiftLogEntry;
 import uk.theretiredprogrammer.sketch.log.entity.WindSwingLogEntry;
@@ -106,12 +109,25 @@ public class FlowShiftModel extends ModelMap {
         return showflowcolour.get();
     }
 
+    private double lastshiftnow = 0;
+    private double lastswingnow = 0;
+    private boolean swingdirection = false;
+
     void timerAdvance(int simulationtime, LogController timerlog) {
         if (swingperiod.get() != 0) {
             // as we are using a sine rule for swing - convert to an angle (in radians)
             double radians = Math.toRadians(((double) simulationtime % swingperiod.get()) / swingperiod.get() * 360);
             swingNow = swingangle.mult(Math.sin(radians)).get();
-            timerlog.add(new WindSwingLogEntry(swingNow));
+            double swingchange = swingNow - lastswingnow;
+            if ((swingNow >= 0 && lastswingnow < 0) || (swingNow <= 0 && lastswingnow > 0)) {
+                timerlog.add(new WindSwingLogEntry(swingNow, MAJOR));
+            } else if (swingdirection != (swingchange >= 0)) {
+                timerlog.add(new WindSwingLogEntry(swingNow, MAJOR));
+            } else {
+                timerlog.add(new WindSwingLogEntry(swingNow, swingchange >= 1 ? MINOR : INSIGNIFICANT));
+            }
+            swingdirection = swingNow >= lastswingnow;
+            lastswingnow = swingNow;
         } else {
             swingNow = 0;
         }
@@ -143,8 +159,9 @@ public class FlowShiftModel extends ModelMap {
         } else {
             shiftNow = shiftval; // apply the shift
         }
-        if (shifting) {
-            timerlog.add(new WindShiftLogEntry(shiftNow));
+        if (shifting && (shiftNow != lastshiftnow)) {
+            timerlog.add(new WindShiftLogEntry(shiftNow, MAJOR));
+            lastshiftnow = shiftNow;
         }
     }
 

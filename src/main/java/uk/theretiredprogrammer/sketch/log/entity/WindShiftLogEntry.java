@@ -15,12 +15,16 @@
  */
 package uk.theretiredprogrammer.sketch.log.entity;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance;
+
 public class WindShiftLogEntry extends TimerLogEntry {
 
     private final double windshift;
+    private final Importance importance;
 
-    public WindShiftLogEntry(double shift) {
+    public WindShiftLogEntry(double shift, Importance importance) {
         this.windshift = shift;
+        this.importance = importance;
     }
 
     @Override
@@ -31,5 +35,15 @@ public class WindShiftLogEntry extends TimerLogEntry {
         sb.append(format1dp(windshift));
         sb.append("°");
         return sb.toString();
+    }
+    
+    @Override
+    public boolean hasMajorImportance() {
+        return importance == Importance.MAJOR;
+    }
+
+    @Override
+    public boolean hasMajorMinorImportance() {
+        return importance == Importance.MAJOR || importance == Importance.MINOR;
     }
 }

@@ -15,14 +15,18 @@
  */
 package uk.theretiredprogrammer.sketch.log.entity;
 
+import uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance;
+
 public class WindSwingLogEntry extends TimerLogEntry {
 
     private final double windswing;
+    private final Importance importance;
 
-    public WindSwingLogEntry(double swing) {
+    public WindSwingLogEntry(double swing, Importance importance) {
         this.windswing = swing;
+        this.importance = importance;
     }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -31,5 +35,15 @@ public class WindSwingLogEntry extends TimerLogEntry {
         sb.append(format1dp(windswing));
         sb.append("°");
         return sb.toString();
+    }
+    
+    @Override
+    public boolean hasMajorImportance() {
+        return importance == Importance.MAJOR;
+    }
+
+    @Override
+    public boolean hasMajorMinorImportance() {
+        return importance == Importance.MAJOR || importance == Importance.MINOR;
     }
 }
