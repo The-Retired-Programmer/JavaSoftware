@@ -24,8 +24,11 @@ public class UpgraderFactory {
             case 0 -> {
                 return new Upgrader0();
             }
+            case 1 -> {
+                return new Upgrader1();
+            }
             default ->
-                throw new IllegalStateFailure("UpgraderFactory - no upgrader available: " + version + " to " + version + 1);
+                throw new IllegalStateFailure("UpgraderFactory - no upgrader available: " + version + " to " + Integer.toString(version + 1));
         }
     }
 }

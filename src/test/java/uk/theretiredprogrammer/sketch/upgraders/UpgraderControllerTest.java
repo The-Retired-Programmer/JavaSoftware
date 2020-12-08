@@ -32,11 +32,18 @@ public class UpgraderControllerTest {
         System.out.println("Test1 -> swinging");
         upgradeTest(Path.of("/Users/richard/Race training Scenarios/UnitTests/Test1.json"));
     }
+    
+    @Test
+    public void testConstructorActionTest2() throws IOException {
+        System.out.println("Test2 -> trapezoid");
+        upgradeTest(Path.of("/Users/richard/Race training Scenarios/UnitTests/Test2.json"));
+    }
 
     private void upgradeTest(Path path) throws IOException {
         ConfigFileController uc = new ConfigFileController(path);
         if (uc.needsUpgrade()) {
             uc.upgrade();
+            uc.rewriteFile(path);
         }
     }
 }

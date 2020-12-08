@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.upgraders;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonPointer;
-import java.io.IOException;
 
 public abstract class Upgrader {
 

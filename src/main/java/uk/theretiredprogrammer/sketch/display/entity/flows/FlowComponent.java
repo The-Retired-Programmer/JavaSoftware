@@ -84,7 +84,7 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
 
     static {
         typenames = FXCollections.observableArrayList();
-        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow","manaulflow");
+        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow","manualflow");
     }
 
     public static ObservableList<String> getTypenames() {

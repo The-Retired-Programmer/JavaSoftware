@@ -73,7 +73,7 @@ public class TurnTest {
 
     void setwindflow(double speed, double degrees, int zlevel) {
         params.windflow.getFlowcomponents().stream()
-                .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
+                .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("manualflow")))
                 .forEach(tfc -> {
                     ((ManualFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
                 });

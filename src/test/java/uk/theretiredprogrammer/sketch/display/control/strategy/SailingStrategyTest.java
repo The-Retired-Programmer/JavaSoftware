@@ -34,7 +34,6 @@ import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Deci
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
 import uk.theretiredprogrammer.sketch.display.entity.course.Params;
-import uk.theretiredprogrammer.sketch.display.entity.course.Strategy;
 import uk.theretiredprogrammer.sketch.display.entity.flows.ManualFlowComponent;
 
 public class SailingStrategyTest {
@@ -76,7 +75,7 @@ public class SailingStrategyTest {
 
     void setwindflow(double speed, double degrees, int zlevel) {
         params.windflow.getFlowcomponents().stream()
-                .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("testflow")))
+                .filter(pfc -> (pfc.getZlevel() == zlevel) && (pfc.getType().equals("manualflow")))
                 .forEach(tfc -> {
                     ((ManualFlowComponent) tfc).setFlow(new SpeedVector(speed, degrees));
                 });
