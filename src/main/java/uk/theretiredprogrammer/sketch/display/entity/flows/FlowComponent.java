@@ -36,9 +36,6 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
 
     public static FlowComponent factory(String type, Supplier<Area> getdisplayarea) {
         switch (type) {
-            case "testflow" -> {
-                return new ManualFlowComponent(getdisplayarea, type);
-            }
             case "manualflow" -> {
                 return new ManualFlowComponent(getdisplayarea, type);
             }
@@ -55,25 +52,22 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
                 throw new IllegalStateFailure("Missing or Unknown type parameter in a flow definition (" + type + ")");
         }
     }
-    
+
     public static FlowComponent factory(FlowComponent clonefrom) {
         String type = clonefrom.getType();
-        String newname = clonefrom.getNamed()+"-1";
+        String newname = clonefrom.getNamed() + "-1";
         switch (type) {
-            case "testflow" -> {
-                return new ManualFlowComponent(newname, (ManualFlowComponent)clonefrom);
-            }
             case "manualflow" -> {
-                return new ManualFlowComponent(newname, (ManualFlowComponent)clonefrom);
+                return new ManualFlowComponent(newname, (ManualFlowComponent) clonefrom);
             }
             case "complexflow" -> {
-                return new ComplexFlowComponent(newname, (ComplexFlowComponent)clonefrom);
+                return new ComplexFlowComponent(newname, (ComplexFlowComponent) clonefrom);
             }
             case "constantflow" -> {
-                return new ConstantFlowComponent(newname, (ConstantFlowComponent)clonefrom);
+                return new ConstantFlowComponent(newname, (ConstantFlowComponent) clonefrom);
             }
             case "gradientflow" -> {
-                return new GradientFlowComponent(newname, (GradientFlowComponent)clonefrom);
+                return new GradientFlowComponent(newname, (GradientFlowComponent) clonefrom);
             }
             default ->
                 throw new IllegalStateFailure("Unknown type parameter in a flow (" + type + ")");
@@ -84,7 +78,7 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
 
     static {
         typenames = FXCollections.observableArrayList();
-        typenames.addAll("complexflow", "constantflow", "gradientflow", "testflow","manualflow");
+        typenames.addAll("complexflow", "constantflow", "gradientflow", "manualflow");
     }
 
     public static ObservableList<String> getTypenames() {
@@ -108,13 +102,13 @@ public abstract class FlowComponent extends ModelMap implements ModelNamed {
         addProperty("area", area);
         addProperty("type", type);
     }
-    
-    public FlowComponent(String name, FlowComponent clonefrom){
+
+    public FlowComponent(String name, FlowComponent clonefrom) {
         this.getdisplayarea = clonefrom.getdisplayarea;
         this.type = new ConstrainedString(clonefrom.getType(), typenames);
         this.name = new Strg(name);
         this.area = new Area(clonefrom.area);
-        this.zlevel = new Intgr(clonefrom.getZlevel()); 
+        this.zlevel = new Intgr(clonefrom.getZlevel());
         addProperty("name", this.name);
         addProperty("zlevel", zlevel);
         addProperty("area", area);

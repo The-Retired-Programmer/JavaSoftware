@@ -19,11 +19,11 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
 
-public class TestFlowComponentTest extends FlowComponentTest {
+public class ManualFlowComponentTest extends FlowComponentTest {
 
     @Test
-    public void testGetTestFlow() throws IOException {
-        System.out.println("getTestFlow");
+    public void testGetManualFlow() throws IOException {
+        System.out.println("getManualFlow");
         initialiseFlow("/testwindflow.json");
         assertFlowAtOrigin(new SpeedVector(4, 0));
         assertMeanFlowAngle(-30);
