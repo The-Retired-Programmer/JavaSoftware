@@ -26,6 +26,10 @@ public class Intgr extends SimpleIntegerProperty implements ModelProperty<Intege
         set(defaultvalue);
     }
 
+    public Intgr(Intgr defaultvalue) {
+        set(defaultvalue.get());
+    }
+
     @Override
     public void setOnChange(Runnable onchange) {
         addListener((o, oldval, newval) -> onchange.run());

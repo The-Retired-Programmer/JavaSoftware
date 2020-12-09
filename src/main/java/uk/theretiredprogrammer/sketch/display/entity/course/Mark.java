@@ -24,6 +24,7 @@ import uk.theretiredprogrammer.sketch.core.entity.Dble;
 import uk.theretiredprogrammer.sketch.core.entity.Colour;
 import uk.theretiredprogrammer.sketch.core.entity.Booln;
 import javafx.scene.paint.Color;
+import uk.theretiredprogrammer.sketch.core.entity.Intgr;
 import uk.theretiredprogrammer.sketch.core.entity.ModelMap;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
 import uk.theretiredprogrammer.sketch.core.entity.ModelNamed;
@@ -37,6 +38,8 @@ public class Mark extends ModelMap implements ModelNamed {
     private final Dble laylinelength;
     private final Colour laylinecolour;
     private final Colour colour;
+    private final Dble ladderspacing;
+    private Intgr laddersteps;
 
     public Mark() {
         this(new Location());
@@ -50,6 +53,8 @@ public class Mark extends ModelMap implements ModelNamed {
         laylinelength = new Dble(0.0);
         laylinecolour = new Colour(Color.BLACK);
         colour = new Colour(Color.RED);
+        ladderspacing = new Dble(0.0);
+        laddersteps = new Intgr(0);
         addProperty("name", name);
         addProperty("location", location);
         addProperty("windwardlaylines", windwardlaylines);
@@ -57,16 +62,20 @@ public class Mark extends ModelMap implements ModelNamed {
         addProperty("laylinelength", laylinelength);
         addProperty("laylinecolour", laylinecolour);
         addProperty("colour", colour);
+        addProperty("ladderspacing", ladderspacing);
+        addProperty("laddersteps", laddersteps);
     }
 
     public Mark(Mark clonefrom) {
-        name = new Strg(clonefrom.getNamed()+"-1");
+        name = new Strg(clonefrom.getNamed() + "-1");
         location = new Location(clonefrom.location);
         windwardlaylines = new Booln(clonefrom.windwardlaylines);
         downwindlaylines = new Booln(clonefrom.downwindlaylines);
         laylinelength = new Dble(clonefrom.laylinelength);
         laylinecolour = new Colour(clonefrom.laylinecolour);
         colour = new Colour(clonefrom.colour);
+        ladderspacing = new Dble(clonefrom.ladderspacing);
+        laddersteps = new Intgr(clonefrom.laddersteps);
         addProperty("name", name);
         addProperty("location", location);
         addProperty("windwardlaylines", windwardlaylines);
@@ -74,6 +83,8 @@ public class Mark extends ModelMap implements ModelNamed {
         addProperty("laylinelength", laylinelength);
         addProperty("laylinecolour", laylinecolour);
         addProperty("colour", colour);
+        addProperty("ladderspacing", ladderspacing);
+        addProperty("laddersteps", laddersteps);
     }
 
     public Mark get() {
@@ -94,6 +105,8 @@ public class Mark extends ModelMap implements ModelNamed {
         parseOptionalProperty("laylinelength", laylinelength, jobj);
         parseOptionalProperty("laylinecolour", laylinecolour, jobj);
         parseOptionalProperty("colour", colour, jobj);
+        parseOptionalProperty("ladderspacing", ladderspacing, jobj);
+        parseOptionalProperty("laddersteps", laddersteps, jobj);
     }
 
     @Override
@@ -105,6 +118,8 @@ public class Mark extends ModelMap implements ModelNamed {
         laylinelength.setOnChange(onchange);
         laylinecolour.setOnChange(onchange);
         colour.setOnChange(onchange);
+        ladderspacing.setOnChange(onchange);
+        laddersteps.setOnChange(onchange);
     }
 
     public void addNameChangeListener(ChangeListener<String> childlistener) {
@@ -121,6 +136,8 @@ public class Mark extends ModelMap implements ModelNamed {
         job.add("laylinelength", laylinelength.toJson());
         job.add("laylinecolour", laylinecolour.toJson());
         job.add("colour", colour.toJson());
+        job.add("ladderspacing", ladderspacing.toJson());
+        job.add("laddersteps", laddersteps.toJson());
         return job.build();
     }
 
@@ -154,5 +171,13 @@ public class Mark extends ModelMap implements ModelNamed {
 
     public Color getColour() {
         return colour.get();
+    }
+
+    public double getLadderspacing() {
+        return ladderspacing.get();
+    }
+
+    public int getLaddersteps() {
+        return laddersteps.get();
     }
 }

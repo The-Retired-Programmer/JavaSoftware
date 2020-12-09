@@ -70,6 +70,7 @@ public class DisplayPane extends Group {
         windflowdraw();
         //waterflow.draw();
         laylinesdraw();
+        laddersdraw();
         boatsdraw();
     }
 
@@ -186,6 +187,10 @@ public class DisplayPane extends Group {
         controller.getModel().getMarks().stream().forEach(mark -> laylinesdraw(mark));
     }
 
+    private void laddersdraw() {
+        controller.getModel().getMarks().stream().forEach(mark -> ladderdraw(mark));
+    }
+
     private static final double SIZE = 1; // set up as 1 metre diameter object
 
     private void markdraw(Mark mark) {
@@ -213,6 +218,28 @@ public class DisplayPane extends Group {
             getChildren().addAll(
                     Wrap.globalTransform(
                             shapebuilder.drawleewardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
+                            maintranslate,
+                            mainscale
+                    )
+            );
+        }
+    }
+
+    private void ladderdraw(Mark mark) {
+        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getAngle();
+        if (mark.isWindwardlaylines()) {
+            getChildren().addAll(
+                    Wrap.globalTransform(
+                            shapebuilder.drawwindwardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
+                            maintranslate,
+                            mainscale
+                    )
+            );
+        }
+        if (mark.isDownwindlaylines()) {
+            getChildren().addAll(
+                    Wrap.globalTransform(
+                            shapebuilder.drawleewardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
                             maintranslate,
                             mainscale
                     )

@@ -68,6 +68,38 @@ public class Shapes2D {
         };
     }
 
+    public Shape[] drawwindwardladder(Location location, Angle windAngle, double ladderspacing, Color laylinecolour, int numberofsteps) {
+        if (numberofsteps != 0) {
+            Shape[] ladderlines = new Shape[numberofsteps * 2];
+            for (int i = 0; i < numberofsteps; i++) {
+                double offsetdistance = ladderspacing * (i + 1);
+                DistanceVector offset = new DistanceVector(offsetdistance, windAngle.plus(180));
+                Location offsetlocation = offset.toLocation(location);
+                double halflinelength = offsetdistance * 1.2;
+                ladderlines[i * 2] = drawLine(offsetlocation, halflinelength, windAngle.plus(90), 1, laylinecolour);
+                ladderlines[i * 2 + 1] = drawLine(offsetlocation, halflinelength, windAngle.sub(90), 1, laylinecolour);
+            }
+            return ladderlines;
+        }
+        return new Shape[]{};
+    }
+
+    public Shape[] drawleewardladder(Location location, Angle windAngle, double ladderspacing, Color laylinecolour, int numberofsteps) {
+        if (numberofsteps != 0) {
+            Shape[] ladderlines = new Shape[numberofsteps * 2];
+            for (int i = 0; i < numberofsteps; i++) {
+                double offsetdistance = ladderspacing * (i + 1);
+                DistanceVector offset = new DistanceVector(offsetdistance, windAngle);
+                Location offsetlocation = offset.toLocation(location);
+                double halflinelength = offsetdistance * 1.2;
+                ladderlines[i * 2] = drawLine(offsetlocation, halflinelength, windAngle.plus(90), 1, laylinecolour);
+                ladderlines[i * 2 + 1] = drawLine(offsetlocation, halflinelength, windAngle.sub(90), 1, laylinecolour);
+            }
+            return ladderlines;
+        }
+        return new Shape[]{};
+    }
+
     public Shape[] drawboat(Location location, Angle direction, Color fill, Angle winddirection,
             double length, double width, Color sailcolour) {
         if (length < 17 / zoom) {
