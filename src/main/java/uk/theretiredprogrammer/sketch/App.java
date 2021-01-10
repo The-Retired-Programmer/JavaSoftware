@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ public class App extends Application {
     }
 
     @Override
+    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FileSelectorController(stage));
+       new ExecuteAndCatch(() -> new FileSelectorController(stage));
     }
 }
