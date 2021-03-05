@@ -24,60 +24,33 @@ import javafx.scene.transform.Rotate;
 
 public class BoatHull3D extends MeshView {
 
-    public BoatHull3D() {
+    public BoatHull3D(HullDimensions3D dimensions) {
 
-        // testing the potential metrics
-        // made-up for testing
-//        int numsurfaces = 2;
-//        float[] sectionlocations = new float[] { 0f, 1.2f, 2.5f, 3f};
-//        float[][] sectiondimensions = new float[][]{
-//            { 0f, 0f, 0f, 0f, 0f, 0.5f},
-//            { 0f, -0.05f, 0.3f, 0f, 0.6f, 0.4f},
-//            { 0f, -0.1f, 0.4f, 0f, 0.75f, 0.35f},
-//            { 0f, 0f, 0.4f, 0.1f, 0.6f, 0.3f}
-//        };
-//        float[] deckclheights = new float[]{ 0.5f, 0f ,  0f ,0.15f};
-//        boolean hardchines = false;
-        // START SOLO
-        int numsurfaces = 3;
-        float[] sectionlocations = new float[]{0f, 0.728f, 1.338f, 1.948f, 2.558f, 3.168f, 3.778f};
-        float[][] sectiondimensions = new float[][]{
-            {0f, 00.0f, 0f, -00.1f, 0f, -00.2f, 0f, -00.31f},
-            {0f, 0.061f, 0.241f, -0.038f, 0.363f, -0.159f, 0.469f, -0.324f},
-            {0f, 0.105f, 0.398f, 0.014f, 0.506f, -0.097f, 00.619f, -00.334f},
-            {0f, 0.115f, 0.489f, 0.045f, 0.641f, -0.076f, 0.749f, -0.345f},
-            {0f, 0.096f, 0.503f, 0.025f, 00.640f, -00.096f, 0.744f, -00.345f},// need estimates for upper chine and sheerline
-            {0f, 0.051f, 0.458f, -0.013f, 00.550f, -00.116f, 00.630f, -00.305f}, // need estimates for upper chine and sheerline
-            {0f, 0f, 0.33f, -0.05f, 0.448f, -0.136f, 0.505f, -0.28f}
-        };
-        float[] deckclheights = new float[]{-00.31f, -00.36f, -00.39f, -00.3f, -00.3f, -000.3f, -0.3f};
-        boolean hardchines = true;
-        // END SOLO
         // now build the mesh
         TriangleMesh mesh = new TriangleMesh();
         var facesmoothinggroups = mesh.getFaceSmoothingGroups();
         mesh.getTexCoords().addAll(0, 0);
         // all hull points
-        for (int section = 0; section < sectionlocations.length; section++) {
-            float y = sectionlocations[section];
-            for (int point = 0; point < sectiondimensions[section].length / 2; point++) {
-                float x = sectiondimensions[section][point * 2];
-                float z = sectiondimensions[section][point * 2 + 1];
+        for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
+            float y = dimensions.getSectionlocations()[section];
+            for (int point = 0; point < dimensions.getSectiondimensions()[section].length / 2; point++) {
+                float x = dimensions.getSectiondimensions()[section][point * 2];
+                float z = dimensions.getSectiondimensions()[section][point * 2 + 1];
                 mesh.getPoints().addAll(-x, y, z);
                 mesh.getPoints().addAll(x, y, z);
             }
         }
         int deckclindex = mesh.getPoints().size() / 3;
-        for (int section = 0; section < sectionlocations.length; section++) {
-            mesh.getPoints().addAll(0f, sectionlocations[section], deckclheights[section]);
+        for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
+            mesh.getPoints().addAll(0f, dimensions.getSectionlocations()[section], dimensions.getDeckclheights()[section]);
         }
         // build hull mesh
-        for (int surface = 0; surface < numsurfaces; surface++) {
-            for (int section = 0; section < sectionlocations.length - 1; section++) {
+        for (int surface = 0; surface < dimensions.getNumsurfaces(); surface++) {
+            for (int section = 0; section < dimensions.getSectionlocations().length - 1; section++) {
                 // port
-                int lowerforward = section * (numsurfaces + 1) * 2 + surface * 2;
+                int lowerforward = section * (dimensions.getNumsurfaces() + 1) * 2 + surface * 2;
                 int upperforward = lowerforward + 2;
-                int lowerbackward = lowerforward + (numsurfaces + 1) * 2;
+                int lowerbackward = lowerforward + (dimensions.getNumsurfaces() + 1) * 2;
                 int upperbackwards = lowerbackward + 2;
                 mesh.getFaces().addAll(
                         //port
@@ -87,16 +60,16 @@ public class BoatHull3D extends MeshView {
                         lowerforward + 1, 0, upperforward + 1, 0, lowerbackward + 1, 0,
                         upperforward + 1, 0, upperbackwards + 1, 0, lowerbackward + 1, 0
                 );
-                int pgroup = hardchines ? 4<<(surface * 2) : 4;
-                int sgroup = hardchines ? 8<<(surface * 2) : 8;
-                facesmoothinggroups.addAll(pgroup,pgroup, sgroup, sgroup);
+                int pgroup = dimensions.isHardchines() ? 4 << (surface * 2) : 4;
+                int sgroup = dimensions.isHardchines() ? 8 << (surface * 2) : 8;
+                facesmoothinggroups.addAll(pgroup, pgroup, sgroup, sgroup);
             }
             // add the face smoothing groups (one port and one startboard
         }
         // build transom mesh
-        int lastsection = sectionlocations.length - 1;
-        for (int surface = 0; surface < numsurfaces; surface++) {
-            int lower = lastsection * (numsurfaces + 1) * 2 + surface * 2;
+        int lastsection = dimensions.getSectionlocations().length - 1;
+        for (int surface = 0; surface < dimensions.getNumsurfaces(); surface++) {
+            int lower = lastsection * (dimensions.getNumsurfaces() + 1) * 2 + surface * 2;
             int upper = lower + 2;
             mesh.getFaces().addAll(
                     //port
@@ -104,13 +77,13 @@ public class BoatHull3D extends MeshView {
                     //starboard
                     lower + 1, 0, upper + 1, 0, deckclindex + lastsection, 0
             );
-            facesmoothinggroups.addAll(2,2);
+            facesmoothinggroups.addAll(2, 2);
         }
         // build deck mesh
-        for (int section = 0; section < sectionlocations.length - 1; section++) {
-            int outerforward = (section + 1) * (numsurfaces + 1) * 2 - 2;
+        for (int section = 0; section < dimensions.getSectionlocations().length - 1; section++) {
+            int outerforward = (section + 1) * (dimensions.getNumsurfaces() + 1) * 2 - 2;
             int innerforward = deckclindex + section;
-            int outerbackward = outerforward + (numsurfaces + 1) * 2;
+            int outerbackward = outerforward + (dimensions.getNumsurfaces() + 1) * 2;
             int innerbackward = innerforward + 1;
             mesh.getFaces().addAll(
                     //port
@@ -120,7 +93,7 @@ public class BoatHull3D extends MeshView {
                     outerforward + 1, 0, innerbackward, 0, outerbackward + 1, 0,
                     outerforward + 1, 0, innerforward, 0, innerbackward, 0
             );
-            facesmoothinggroups.addAll(1,1, 1,1);
+            facesmoothinggroups.addAll(1, 1, 1, 1);
         }
         PhongMaterial material = new PhongMaterial(Color.LIGHTGRAY);
         setMesh(mesh);

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import static javafx.scene.paint.Color.SILVER;
 import javafx.scene.paint.PhongMaterial;
@@ -25,29 +27,45 @@ import javafx.scene.transform.Translate;
 
 public class BoatRig3D extends Group {
 
-    public BoatRig3D() {
+    private final Rotate boomrotate;
+    private final DoubleProperty boomangle = new SimpleDoubleProperty(0);
 
-        // SOLO
-        float[] spardimensions = new float[]{0.857f, 5.932f, 0.050f, 0.902f, 2.693f};
+    public BoatRig3D(SparDimensions3D dimensions) {
 
-        Cylinder mast = new Cylinder(spardimensions[2] / 2, spardimensions[1]);
+        Cylinder mast = new Cylinder(dimensions.getDiameter() / 2, dimensions.getMastHeight());
         PhongMaterial rigmaterial = new PhongMaterial(SILVER);
         mast.setDrawMode(DrawMode.FILL);
         mast.setMaterial(rigmaterial);
         mast.getTransforms().addAll(
                 new Rotate(90, Rotate.X_AXIS),
-                new Translate(0f, spardimensions[1]/2,0f )
+                new Translate(0f, dimensions.getMastHeight() / 2, 0f)
         );
         //
-        Cylinder boom = new Cylinder(spardimensions[2] / 2, spardimensions[4]);
+        Cylinder boom = new Cylinder(dimensions.getDiameter() / 2, dimensions.getBoomLength());
         boom.setDrawMode(DrawMode.FILL);
         boom.setMaterial(rigmaterial);
         boom.getTransforms().addAll(
                 new Rotate(-90, Rotate.Z_AXIS),
-                new Translate( 0f, -(spardimensions[4] + spardimensions[2]) / 2, spardimensions[3] -spardimensions[2] / 2)
+                new Translate(0f, -(dimensions.getBoomLength() + dimensions.getDiameter()) / 2, dimensions.getGooseNeckHeight() - dimensions.getDiameter() / 2)
         );
         //
         this.getChildren().addAll(mast, boom);
-        this.getTransforms().add(new Translate(-spardimensions[0], 0f, 0f));
+        this.getTransforms().addAll(
+                new Translate(-dimensions.getBowtoMast(), 0f, 0f),
+                boomrotate = new Rotate(0, Rotate.Z_AXIS)
+        );
+        boomrotate.angleProperty().bind(boomangle);
+    }
+
+    public void setBoomAngle(double angle) {
+        boomangle.set(angle);
+    }
+
+    public void incBoomAngle(double delta) {
+        boomangle.set(boomangle.get() + delta);
+    }
+
+    public void decBoomAngle(double delta) {
+        boomangle.set(boomangle.get() - delta);
     }
 }

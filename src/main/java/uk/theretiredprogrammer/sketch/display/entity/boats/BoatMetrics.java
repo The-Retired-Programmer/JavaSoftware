@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,11 @@ public class BoatMetrics {
     public final Angle upwindrelative;
     public final Angle downwindrelative;
     private final PerformanceVectors performancevectors;
+    private final Dimensions3D dimensions3d;
 
     BoatMetrics(double length, double width, double inertia, Angle maxTurningAnglePerSecond,
-            Angle upwindrelative, Angle downwindrelative, PerformanceVectors performancevectors) {
+            Angle upwindrelative, Angle downwindrelative, PerformanceVectors performancevectors,
+            Dimensions3D dimensions3d) {
         this.length = length;
         this.width = width;
         this.inertia = inertia;
@@ -36,6 +38,7 @@ public class BoatMetrics {
         this.upwindrelative = upwindrelative;
         this.downwindrelative = downwindrelative;
         this.performancevectors = performancevectors;
+        this.dimensions3d = dimensions3d;
     }
 
     public double getLength() {
@@ -68,5 +71,9 @@ public class BoatMetrics {
 
     public double getPotentialBoatSpeed(Angle degrees, double windSpeed) {
         return performancevectors.getPotentialBoatSpeed(degrees, windSpeed);
+    }
+    
+    public Dimensions3D getDimensions3D() {
+        return dimensions3d;
     }
 }

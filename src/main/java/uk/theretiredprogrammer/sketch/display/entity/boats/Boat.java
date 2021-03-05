@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2014-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,6 +142,7 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         this.currentleg = new CurrentLeg(clonefrom.currentleg);
     }
 
+    
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("name", name, jobj);
@@ -377,5 +378,9 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         track.add(getLocation()); // record it in track
         setDirection(nextdirection); // and update the directionproperty
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
+    }
+    
+    Boat3D getBoat3D() {
+        return new Boat3D(metrics.getDimensions3D());
     }
 }

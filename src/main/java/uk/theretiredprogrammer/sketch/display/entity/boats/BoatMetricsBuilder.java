@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ public class BoatMetricsBuilder {
     private Angle upwindrelative = new Angle(50);
     private Angle downwindrelative = new Angle(180);
     private PerformanceVectors performancevectors;
+    private Dimensions3D dimensions;
 
     public BoatMetricsBuilder length(double length) {
         this.length = length;
@@ -62,13 +63,22 @@ public class BoatMetricsBuilder {
         this.performancevectors = performancevectors;
         return this;
     }
+    
+    public BoatMetricsBuilder dimensions3D(Dimensions3D dimensions){
+        this.dimensions = dimensions;
+        return this;
+    }
 
     public BoatMetrics build() {
         if (performancevectors == null) {
             throw new IllegalStateFailure("BoatMetricsBuilder: no performance vectors defined");
         }
+         if (dimensions == null) {
+            throw new IllegalStateFailure("BoatMetricsBuilder: no 3D dimensions defined");
+        }
+        
         return new BoatMetrics(length, width, inertia, maxTurningAnglePerSecond,
-                upwindrelative, downwindrelative, performancevectors);
+                upwindrelative, downwindrelative, performancevectors, dimensions);
     }
 
 }
