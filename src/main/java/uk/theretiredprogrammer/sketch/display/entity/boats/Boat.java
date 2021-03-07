@@ -142,7 +142,6 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         this.currentleg = new CurrentLeg(clonefrom.currentleg);
     }
 
-    
     @Override
     protected void parseValues(JsonObject jobj) {
         parseMandatoryProperty("name", name, jobj);
@@ -379,8 +378,8 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         setDirection(nextdirection); // and update the directionproperty
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
-    
+
     Boat3D getBoat3D() {
-        return new Boat3D(metrics.getDimensions3D());
+        return new Boat3D(metrics.getDimensions3D(), new BoatCoordinates());
     }
 }

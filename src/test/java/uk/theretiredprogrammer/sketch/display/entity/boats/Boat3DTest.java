@@ -39,6 +39,10 @@ public class Boat3DTest extends Application {
     private Boat3D boat;
     private Rotate camerarotate;
     private final DoubleProperty cameraangle = new SimpleDoubleProperty(220f);
+    private final Dimensions3D dimensions = new Dimensions3D(
+            new HullDimensions3DBuilder().build(),
+            new SparDimensions3DBuilder().build());
+    private final BoatCoordinates coordinates = new BoatCoordinates();
 
     @Test
     public void displayBoatRig3D() {
@@ -48,11 +52,8 @@ public class Boat3DTest extends Application {
 
     @Override
     public void start(Stage stage) {
-        
-        Dimensions3D dimensions = new Dimensions3D(
-                new HullDimensions3DBuilder().build(),
-                new SparDimensions3DBuilder().build());
-        boat = new Boat3D(dimensions);
+
+        boat = new Boat3D(dimensions, coordinates);
 
         Camera camera = new PerspectiveCamera(true);
         //camera.setNearClip(10f);
@@ -89,22 +90,29 @@ public class Boat3DTest extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case P ->
-                    boat.incBoatAngle(10);
+                    coordinates.setAngle(coordinates.getAngleProperty().get() + 10);
                 case S ->
-                    boat.decBoatAngle(10);
+                    coordinates.setAngle(coordinates.getAngleProperty().get() - 10);
                 case COMMA ->
-                    boat.decBoomAngle(10);
+                    coordinates.setBoomAngle(coordinates.getBoomAngleProperty().get() - 10);
                 case PERIOD ->
-                    boat.incBoomAngle(10);
+                    coordinates.setBoomAngle(coordinates.getBoomAngleProperty().get() + 10);
                 case UP ->
                     camerup(10);
                 case DOWN ->
                     cameradown(10);
                 case F ->
-                    boat.incBoatPos(2);
+                    move(2);
                 case B ->
-                    boat.incBoatPos(-2);
+                    move(-2);
             }
         });
+    }
+
+    private void move(double delta) {
+        double radians = Math.toRadians(coordinates.getAngleProperty().get());
+        coordinates.setPosition(
+                coordinates.getXProperty().get() + delta * Math.cos(radians),
+                coordinates.getYProperty().get() + delta * Math.sin(radians));
     }
 }

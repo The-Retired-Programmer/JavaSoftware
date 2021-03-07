@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Group;
 import static javafx.scene.paint.Color.SILVER;
 import javafx.scene.paint.PhongMaterial;
@@ -28,9 +27,8 @@ import javafx.scene.transform.Translate;
 public class BoatRig3D extends Group {
 
     private final Rotate boomrotate;
-    private final DoubleProperty boomangle = new SimpleDoubleProperty(0);
 
-    public BoatRig3D(SparDimensions3D dimensions) {
+    public BoatRig3D(SparDimensions3D dimensions, DoubleProperty boomangle) {
 
         Cylinder mast = new Cylinder(dimensions.getDiameter() / 2, dimensions.getMastHeight());
         PhongMaterial rigmaterial = new PhongMaterial(SILVER);
@@ -57,15 +55,4 @@ public class BoatRig3D extends Group {
         boomrotate.angleProperty().bind(boomangle);
     }
 
-    public void setBoomAngle(double angle) {
-        boomangle.set(angle);
-    }
-
-    public void incBoomAngle(double delta) {
-        boomangle.set(boomangle.get() + delta);
-    }
-
-    public void decBoomAngle(double delta) {
-        boomangle.set(boomangle.get() - delta);
-    }
 }
