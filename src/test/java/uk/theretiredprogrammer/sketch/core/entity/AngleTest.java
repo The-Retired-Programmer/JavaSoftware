@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import uk.theretiredprogrammer.sketch.core.control.MissingFeatureFailure;
 
-public class PropertyDegreesTest {
+public class AngleTest {
 
     private static final double DELTA = 0.0000001;
 
@@ -28,11 +29,11 @@ public class PropertyDegreesTest {
         Angle instance = new Angle(20.0);
         assertEquals(20, instance.get(), DELTA);
         instance = new Angle(-20.0);
-        assertEquals(-20, instance.get(), DELTA);
+        assertEquals(340, instance.get(), DELTA);
         instance = new Angle(-180.0);
         assertEquals(180, instance.get(), DELTA);
         instance = new Angle(181.0);
-        assertEquals(-179, instance.get(), DELTA);
+        assertEquals(181, instance.get(), DELTA);
         instance = new Angle(720.0);
         assertEquals(0, instance.get(), DELTA);
         //
@@ -41,13 +42,13 @@ public class PropertyDegreesTest {
         assertEquals(20, instance.get(), DELTA);
         from.set(-20);
         instance = new Angle(from);
-        assertEquals(-20, instance.get(), DELTA);
+        assertEquals(340, instance.get(), DELTA);
         from.set(-180.0);
         instance = new Angle(from);
         assertEquals(180, instance.get(), DELTA);
         from.set(-179.0);
         instance = new Angle(from);
-        assertEquals(-179, instance.get(), DELTA);
+        assertEquals(181, instance.get(), DELTA);
         from.set(720.0);
         instance = new Angle(from);
         assertEquals(0, instance.get(), DELTA);
@@ -60,12 +61,12 @@ public class PropertyDegreesTest {
         assertEquals(110, instance.plus(90).get(), DELTA);
         instance = new Angle(40);
         Angle addvalue = new Angle(150);
-        assertEquals(-170, instance.plus(addvalue).get(), DELTA);
+        assertEquals(190, instance.plus(addvalue).get(), DELTA);
         instance = new Angle(0);
-        addvalue.set(-270);
+        addvalue.set(90);
         assertEquals(90, instance.plus(addvalue).get(), DELTA);
-        instance = new Angle(-40);
-        addvalue.set(-150);
+        instance = new Angle(320);
+        addvalue.set(210);
         assertEquals(170, instance.plus(addvalue).get(), DELTA);
     }
 
@@ -76,10 +77,10 @@ public class PropertyDegreesTest {
         Angle subvalue = new Angle(20);
         assertEquals(70, instance.sub(subvalue).get(), DELTA);
         instance = new Angle(20);
-        assertEquals(-70, instance.sub(90).get(), DELTA);
+        assertEquals(290, instance.sub(90).get(), DELTA);
         instance = new Angle(90);
-        subvalue.set(-100);
-        assertEquals(-170, instance.sub(subvalue).get(), DELTA);
+        subvalue.set(260);
+        assertEquals(190, instance.sub(subvalue).get(), DELTA);
     }
 
     @Test
@@ -99,46 +100,48 @@ public class PropertyDegreesTest {
     }
 
     @Test
-    public void testNegative() {
-        System.out.println("negative");
+    public void testOpposite() {
+        System.out.println("opposite");
         Angle instance = new Angle(100);
-        assertEquals(-100, instance.negative().get(), DELTA);
-        instance = new Angle(-100);
-        assertEquals(100, instance.negative().get(), DELTA);
+        assertEquals(260, instance.opposite().get(), DELTA);
+        instance = new Angle(260);
+        assertEquals(100, instance.opposite().get(), DELTA);
         instance = new Angle(0);
-        assertEquals(0, instance.negative().get(), DELTA);
+        assertEquals(0, instance.opposite().get(), DELTA);
         instance = new Angle(180);
-        assertEquals(180, instance.negative().get(), DELTA);
+        assertEquals(180, instance.opposite().get(), DELTA);
     }
 
     @Test
+    @SuppressWarnings("ThrowableResultIgnored")
     public void testAbs() {
         System.out.println("abs");
         Angle instance = new Angle(-100);
-        assertEquals(100, instance.abs().get(), DELTA);
-        instance = new Angle(100);
-        assertEquals(100, instance.abs().get(), DELTA);
+        assertThrows(MissingFeatureFailure.class, () -> instance.abs());
+//        assertEquals(100, instance.abs().get(), DELTA);
+//        instance = new Angle(100);
+//        assertEquals(100, instance.abs().get(), DELTA);
     }
 
     @Test
-    public void testNegateif() {
-        System.out.println("negateif");
+    public void testOppositeif() {
+        System.out.println("oppositeif");
         Angle instance = new Angle(100);
-        assertEquals(-100, instance.negateif(true).get(), DELTA);
+        assertEquals(260, instance.oppositeif(true).get(), DELTA);
         instance = new Angle(-100);
-        assertEquals(100, instance.negateif(true).get(), DELTA);
+        assertEquals(100, instance.oppositeif(true).get(), DELTA);
         instance = new Angle(0);
-        assertEquals(0, instance.negateif(true).get(), DELTA);
+        assertEquals(0, instance.oppositeif(true).get(), DELTA);
         instance = new Angle(180);
-        assertEquals(180, instance.negateif(true).get(), DELTA);
+        assertEquals(180, instance.oppositeif(true).get(), DELTA);
         instance = new Angle(100);
-        assertEquals(100, instance.negateif(false).get(), DELTA);
-        instance = new Angle(-100);
-        assertEquals(-100, instance.negateif(false).get(), DELTA);
+        assertEquals(100, instance.oppositeif(false).get(), DELTA);
+        instance = new Angle(260);
+        assertEquals(260, instance.oppositeif(false).get(), DELTA);
         instance = new Angle(0);
-        assertEquals(0, instance.negateif(false).get(), DELTA);
+        assertEquals(0, instance.oppositeif(false).get(), DELTA);
         instance = new Angle(180);
-        assertEquals(180, instance.negateif(false).get(), DELTA);
+        assertEquals(180, instance.oppositeif(false).get(), DELTA);
     }
 
     @Test
@@ -151,13 +154,20 @@ public class PropertyDegreesTest {
         assert (!instance.gt(compare));
         compare.set(101);
         assert (!instance.gt(compare));
-        instance = new Angle(-100);
-        compare.set(-99);
-        assert (!instance.gt(compare));
-        compare.set(-100);
-        assert (!instance.gt(compare));
-        compare.set(-101);
+        instance = new Angle(0);
+        compare.set(359);
         assert (instance.gt(compare));
+        compare.set(0);
+        assert (!instance.gt(compare));
+        compare.set(1);
+        assert (!instance.gt(compare));
+        instance = new Angle(359);
+        compare.set(358);
+        assert (instance.gt(compare));
+        compare.set(359);
+        assert (!instance.gt(compare));
+        compare.set(0);
+        assert (!instance.gt(compare));
     }
 
     @Test
@@ -170,14 +180,20 @@ public class PropertyDegreesTest {
         assert (instance.gteq(compare));
         compare.set(101);
         assert (!instance.gteq(compare));
-        //
-        instance = new Angle(-100);
-        compare.set(-99);
+        instance = new Angle(0);
+        compare.set(359);
+        assert (instance.gteq(compare));
+        compare.set(0);
+        assert (instance.gteq(compare));
+        compare.set(1);
         assert (!instance.gteq(compare));
-        compare.set(-100);
+        instance = new Angle(359);
+        compare.set(358);
         assert (instance.gteq(compare));
-        compare.set(-101);
+        compare.set(359);
         assert (instance.gteq(compare));
+        compare.set(0);
+        assert (!instance.gteq(compare));
     }
 
     @Test
@@ -190,14 +206,20 @@ public class PropertyDegreesTest {
         assert (!instance.lt(compare));
         compare.set(101);
         assert (instance.lt(compare));
-        //
-        instance = new Angle(-100);
-        compare.set(-99);
+        instance = new Angle(0);
+        compare.set(359);
+        assert (!instance.lt(compare));
+        compare.set(0);
+        assert (!instance.lt(compare));
+        compare.set(1);
         assert (instance.lt(compare));
-        compare.set(-100);
+        instance = new Angle(359);
+        compare.set(358);
         assert (!instance.lt(compare));
-        compare.set(-101);
+        compare.set(359);
         assert (!instance.lt(compare));
+        compare.set(0);
+        assert (instance.lt(compare));
     }
 
     @Test
@@ -210,14 +232,20 @@ public class PropertyDegreesTest {
         assert (instance.lteq(compare));
         compare.set(101);
         assert (instance.lteq(compare));
-        //
-        instance = new Angle(-100);
-        compare.set(-99);
-        assert (instance.lteq(compare));
-        compare.set(-100);
-        assert (instance.lteq(compare));
-        compare.set(-101);
+        instance = new Angle(0);
+        compare.set(359);
         assert (!instance.lteq(compare));
+        compare.set(0);
+        assert (instance.lteq(compare));
+        compare.set(1);
+        assert (instance.lteq(compare));
+        instance = new Angle(359);
+        compare.set(358);
+        assert (!instance.lteq(compare));
+        compare.set(359);
+        assert (instance.lteq(compare));
+        compare.set(0);
+        assert (instance.lteq(compare));
     }
 
     @Test
@@ -226,47 +254,49 @@ public class PropertyDegreesTest {
         Angle instance = new Angle(88);
         assertEquals(92, instance.degreesDiff(180).get(), DELTA);
         instance = new Angle(175);
-        Angle diff = new Angle(-175);
+        Angle diff = new Angle(185);
         assertEquals(10, instance.degreesDiff(diff).get(), DELTA);
-        instance = new Angle(-175);
+        instance = new Angle(185);
         assertEquals(175, instance.degreesDiff(0).get(), DELTA);
         instance = new Angle(0);
         assertEquals(180, instance.degreesDiff(180).get(), DELTA);
-        instance = new Angle(-10);
-        assertEquals(-170, instance.degreesDiff(180).get(), DELTA);
+        instance = new Angle(350);
+        assertEquals(190, instance.degreesDiff(180).get(), DELTA);
     }
 
     @Test
+    @SuppressWarnings("ThrowableResultIgnored")
     public void testAbsDegreesDiff() {
         System.out.println("absDegreesDiff");
         Angle instance = new Angle(88);
-        assertEquals(92, instance.absDegreesDiff(180).get(), DELTA);
-        instance = new Angle(175);
-        Angle diff = new Angle(-175);
-        assertEquals(10, instance.absDegreesDiff(diff).get(), DELTA);
-        instance = new Angle(-175);
-        assertEquals(175, instance.absDegreesDiff(0).get(), DELTA);
-        instance = new Angle(0);
-        assertEquals(180, instance.absDegreesDiff(180).get(), DELTA);
-        instance = new Angle(-10);
-        assertEquals(170, instance.absDegreesDiff(180).get(), DELTA);
+        assertThrows(MissingFeatureFailure.class, () -> instance.absDegreesDiff(180));
+//        assertEquals(92, instance.absDegreesDiff(180).get(), DELTA);
+//        instance = new Angle(175);
+//        Angle diff = new Angle(-175);
+//        assertEquals(10, instance.absDegreesDiff(diff).get(), DELTA);
+//        instance = new Angle(-175);
+//        assertEquals(175, instance.absDegreesDiff(0).get(), DELTA);
+//        instance = new Angle(0);
+//        assertEquals(180, instance.absDegreesDiff(180).get(), DELTA);
+//        instance = new Angle(-10);
+//        assertEquals(170, instance.absDegreesDiff(180).get(), DELTA);
     }
 
     @Test
     public void testBetween() {
         System.out.println("between");
-        Angle instance = new Angle(-90);
+        Angle instance = new Angle(270);
         assert (!instance.between(90, 180));
         instance = new Angle(140);
         assert (instance.between(90, 180));
-        assert (instance.between(90, -179));
+        assert (instance.between(90, 181));
         instance = new Angle(160);
-        Angle min = new Angle(-117);
-        Angle max = new Angle(-27);
+        Angle min = new Angle(243);
+        Angle max = new Angle(343);
         assert (!instance.between(min, max));
         instance = new Angle(151);
-        min.set(-118);
-        max.set(-28);
+        min.set(242);
+        max.set(326);
         assert (!instance.between(min, max));
         instance = new Angle(152);
         assert (!instance.between(min, max));
@@ -274,7 +304,7 @@ public class PropertyDegreesTest {
         assert (!instance.between(min, max));
         instance = new Angle(180);
         assert (!instance.between(min, max));
-        instance = new Angle(-179);
+        instance = new Angle(181);
         assert (!instance.between(min, max));
     }
 
@@ -298,10 +328,10 @@ public class PropertyDegreesTest {
         Angle instance = new Angle(0);
         assertEquals(180, instance.inverse().get());
         instance = new Angle(10);
-        assertEquals(-170, instance.inverse().get());
+        assertEquals(190, instance.inverse().get());
         instance = new Angle(90);
-        assertEquals(-90, instance.inverse().get());
-        instance = new Angle(-90);
+        assertEquals(270, instance.inverse().get());
+        instance = new Angle(270);
         assertEquals(90, instance.inverse().get());
     }
 

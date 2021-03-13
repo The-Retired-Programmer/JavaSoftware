@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
+import uk.theretiredprogrammer.sketch.core.control.MissingFeatureFailure;
+import uk.theretiredprogrammer.sketch.core.control.ReplacedMethodFailure;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
 public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> {
@@ -83,10 +85,10 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     private double normalise(double angle) {
-        while (angle > 180.0) {
+        while (angle >= 360.0) {
             angle -= 360.0;
         }
-        while (angle <= -180.0) {
+        while (angle < 0) {
             angle += 360.0;
         }
         return angle;
@@ -121,15 +123,24 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final Angle abs() {
-        return new Angle(Math.abs(get()));
+        throw new MissingFeatureFailure("Angle:abs");
+//        return new Angle(Math.abs(get()));
     }
 
-    public final Angle negative() {
+    public final Angle opposite() {
         return new Angle(-get());
     }
 
-    public final Angle negateif(boolean test) {
+    public final Angle negative() {
+        throw new ReplacedMethodFailure("Angle:negative use Angle:opposite");
+    }
+
+    public final Angle oppositeif(boolean test) {
         return new Angle(test ? -get() : get());
+    }
+
+    public final Angle negateif(boolean test) {
+        throw new ReplacedMethodFailure("Angle:negativeif use Angle:oppositeif");
     }
 
     public final boolean eq(Angle degrees) {
@@ -149,35 +160,39 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final boolean gt(Angle degrees) {
-        return sub(degrees).get() > 0;
+        double diff = sub(degrees).get();
+        return diff > 0 && diff < 180;
     }
 
     public final boolean gt(double degrees) {
-        return sub(degrees).get() > 0;
+        double diff = sub(degrees).get();
+        return diff > 0 && diff < 180;
     }
 
     public final boolean gteq(Angle degrees) {
-        return sub(degrees).get() >= 0;
+        double diff = sub(degrees).get();
+        return diff >= 0 && diff < 180;
     }
 
     public final boolean gteq(double degrees) {
-        return sub(degrees).get() >= 0;
+        double diff = sub(degrees).get();
+        return diff >= 0 && diff < 180;
     }
 
     public final boolean lt(Angle degrees) {
-        return sub(degrees).get() < 0;
+        return !gteq(degrees);
     }
 
     public final boolean lt(double degrees) {
-        return sub(degrees).get() < 0;
+        return !gteq(degrees);
     }
 
     public final boolean lteq(Angle degrees) {
-        return sub(degrees).get() <= 0;
+        return !gt(degrees);
     }
 
     public final boolean lteq(double degrees) {
-        return sub(degrees).get() <= 0;
+        return !gteq(degrees);
     }
 
     public final boolean between(Angle min, Angle max) {
@@ -197,11 +212,13 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final Angle absDegreesDiff(Angle degrees) {
-        return new Angle(Math.abs(normalise(degrees.get() - get())));
+        throw new MissingFeatureFailure("Angle:absDegreesDiff(Angle)");
+//        return new Angle(Math.abs(normalise(degrees.get() - get())));
     }
 
     public final Angle absDegreesDiff(double degrees) {
-        return new Angle(Math.abs(normalise(degrees - get())));
+        throw new MissingFeatureFailure("Angle:absDegreesDiff(double)");
+//        return new Angle(Math.abs(normalise(degrees - get())));
     }
 
     public final Angle inverse() {
