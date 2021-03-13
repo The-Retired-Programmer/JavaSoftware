@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,19 @@ import uk.theretiredprogrammer.sketch.core.control.IllegalStateFailure;
 import uk.theretiredprogrammer.sketch.core.control.SketchPreferences;
 import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 import uk.theretiredprogrammer.sketch.core.entity.PathWithShortName;
+import uk.theretiredprogrammer.sketch.display.control.Display3DController;
 import uk.theretiredprogrammer.sketch.fileselector.ui.FileSelectorWindow;
 
 public class FileSelectorController extends AbstractController<FileSelectorWindow> {
 
     private final List<DisplayController> displayscreated;
+    private final List<Display3DController> displays3Dcreated;
     private final ObservableList<PathWithShortName> recentFileList;
     private final ObservableList<PathWithShortName> folderList;
 
     public FileSelectorController(Stage stage) {
         this.displayscreated = new ArrayList<>();
+        this.displays3Dcreated = new ArrayList<>();
         recentFileList = SketchPreferences.getRecentFileList(FileSelectorWindow.class);
         folderList = SketchPreferences.getFoldersList(FileSelectorWindow.class);
         folderList.addListener((ListChangeListener) (c) -> onfolderlistchange(c));
@@ -56,9 +59,12 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
 
     @Override
     protected void whenWindowIsClosing() {
-        for (var controller : displayscreated) {
+        displayscreated.forEach(controller -> {
             controller.close();
-        }
+        });
+        displays3Dcreated.forEach(controller -> {
+            controller.close();
+        });
     }
 
     @Override
@@ -69,6 +75,10 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
 
     public void removeparentchildrelationship(DisplayController childcontroller) {
         displayscreated.remove(childcontroller);
+    }
+    
+    public void remove3Dparentchildrelationship(Display3DController childcontroller) {
+        displays3Dcreated.remove(childcontroller);
     }
 
     public ObservableList<PathWithShortName> getRecents() {
@@ -132,6 +142,7 @@ public class FileSelectorController extends AbstractController<FileSelectorWindo
         getWindow().clearStatusbar();
         updateRecentFileList(pn);
         displayscreated.add(new DisplayController(pn, this));
+        displays3Dcreated.add(new Display3DController(pn, this));
     }
 
     private void updateRecentFileList(PathWithShortName pn) {

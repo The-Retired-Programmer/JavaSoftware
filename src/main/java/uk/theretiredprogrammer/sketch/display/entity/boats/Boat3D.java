@@ -33,13 +33,13 @@ public class Boat3D extends Group {
         rig = new BoatRig3D(dimensions.getSpardimensions(), boatcoordinates.getBoomAngleProperty());
         boat.getChildren().addAll(hull, rig);
         boat.getTransforms().addAll(
-                boatrotate = new Rotate(0, Rotate.Z_AXIS),
-                new Translate(1.25f, 0f, 0f)
+                boatrotate = new Rotate(0, Rotate.Z_AXIS)
+//                new Translate(1.25f, 0f, 0f),
         );
         boatrotate.angleProperty().bind(boatcoordinates.getAngleProperty());
         getChildren().add(boat);
         getTransforms().addAll(
-                new Translate(-1.25f, 0f, 0f),
+//                new Translate(-1.25f, 0f, 0f),
                 boattranslate = new Translate(0f, 0f, 0f)
         );
         boattranslate.xProperty().bind(boatcoordinates.getXProperty());

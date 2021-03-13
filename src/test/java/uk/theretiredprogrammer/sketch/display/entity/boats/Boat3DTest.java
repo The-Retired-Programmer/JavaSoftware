@@ -24,10 +24,13 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import static javafx.scene.paint.Color.STEELBLUE;
+import static javafx.scene.paint.Color.YELLOW;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.DrawMode;
+import javafx.scene.shape.Sphere;
 import javafx.scene.transform.Rotate;
+import static javafx.scene.transform.Rotate.X_AXIS;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
@@ -38,7 +41,7 @@ public class Boat3DTest extends Application {
     private final float HEIGHT = 1000;
     private Boat3D boat;
     private Rotate camerarotate;
-    private final DoubleProperty cameraangle = new SimpleDoubleProperty(220f);
+    private final DoubleProperty cameraangle = new SimpleDoubleProperty(225f);
     private final Dimensions3D dimensions = new Dimensions3D(
             new HullDimensions3DBuilder().build(),
             new SparDimensions3DBuilder().build());
@@ -59,7 +62,7 @@ public class Boat3DTest extends Application {
         //camera.setNearClip(10f);
         //camera.setFarClip(100f);
         camera.getTransforms().addAll(
-                camerarotate = new Rotate(220f, Rotate.X_AXIS),
+                camerarotate = new Rotate(0f, X_AXIS),
                 new Translate(0f, 0f, -30f)
         );
         camerarotate.angleProperty().bind(cameraangle);
@@ -67,8 +70,14 @@ public class Boat3DTest extends Application {
         PhongMaterial watermaterial = new PhongMaterial(STEELBLUE);
         water.setDrawMode(DrawMode.FILL);
         water.setMaterial(watermaterial);
-
-        Group waterg = new Group(water, boat);
+        //
+        PhongMaterial markmaterial = new PhongMaterial(YELLOW);
+        water.setDrawMode(DrawMode.FILL);
+        water.setMaterial(watermaterial);
+        Sphere mark = new Sphere(0.3);
+        mark.setDrawMode(DrawMode.FILL);
+        mark.setMaterial(markmaterial);
+        Group waterg = new Group(water, boat, mark);
         Scene scene = new Scene(waterg, WIDTH, HEIGHT, true);
         scene.setCamera(camera);
         initMouseControl(boat, scene, stage);
@@ -90,13 +99,9 @@ public class Boat3DTest extends Application {
         stage.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             switch (event.getCode()) {
                 case P ->
-                    coordinates.setAngle(coordinates.getAngleProperty().get() + 10);
-                case S ->
                     coordinates.setAngle(coordinates.getAngleProperty().get() - 10);
-                case COMMA ->
-                    coordinates.setBoomAngle(coordinates.getBoomAngleProperty().get() - 10);
-                case PERIOD ->
-                    coordinates.setBoomAngle(coordinates.getBoomAngleProperty().get() + 10);
+                case S ->
+                    coordinates.setAngle(coordinates.getAngleProperty().get() + 10);
                 case UP ->
                     camerup(10);
                 case DOWN ->
@@ -112,7 +117,7 @@ public class Boat3DTest extends Application {
     private void move(double delta) {
         double radians = Math.toRadians(coordinates.getAngleProperty().get());
         coordinates.setPosition(
-                coordinates.getXProperty().get() + delta * Math.cos(radians),
-                coordinates.getYProperty().get() + delta * Math.sin(radians));
+                coordinates.getXProperty().get() + delta * Math.sin(radians),
+                coordinates.getYProperty().get() + delta * Math.cos(radians));
     }
 }

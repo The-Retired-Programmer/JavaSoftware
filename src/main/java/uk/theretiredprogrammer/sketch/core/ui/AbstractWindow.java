@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package uk.theretiredprogrammer.sketch.core.ui;
 
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Camera;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -50,6 +51,7 @@ public abstract class AbstractWindow<C extends AbstractController> {
     private boolean scrollable = false;
     private C controller;
     private final ContextMenu contextmenu = new ContextMenu();
+    private Camera camera;
 
     public AbstractWindow(Class clazz, Stage stage, C controller) {
         this.clazz = clazz;
@@ -163,6 +165,10 @@ public abstract class AbstractWindow<C extends AbstractController> {
         this.scrollable = scrollable;
     }
 
+    public final void setCamera(Camera camera) {
+        this.camera = camera;
+    }
+
     public final void build() {
         BorderPane borderpane = new BorderPane();
         borderpane.setTop(new VBox(menubar, toolbar));
@@ -171,6 +177,9 @@ public abstract class AbstractWindow<C extends AbstractController> {
         borderpane.setBottom(statusbar);
         Scene scene = new Scene(borderpane);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
+        if (camera != null) {
+            scene.setCamera(camera);
+        }
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);

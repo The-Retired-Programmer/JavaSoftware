@@ -87,6 +87,7 @@ public abstract class Boat extends ModelMap implements ModelNamed {
     private final List<Location> track = Collections.synchronizedList(new ArrayList<Location>());
 
     private final CurrentLeg currentleg;
+    private final WindFlow windflow;
 
     public Boat(String classtype, CurrentLeg currentleg, WindFlow windflow, WaterFlow waterflow, BoatMetrics metrics) {
         this("<newname>", classtype, new Location(), currentleg, windflow, waterflow, metrics);
@@ -103,6 +104,7 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         this.metrics = metrics;
         this.rotationAnglePerSecond = metrics.getMaxTurningAnglePerSecond().div(2);
         this.currentleg = currentleg;
+        this.windflow = windflow;
         addProperty("name", name);
         addProperty("type", type);
         addProperty("heading", heading);
@@ -140,6 +142,7 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         this.downwindgybeiflifted.set(clonefrom.downwindgybeiflifted.get());
         this.downwindluffupiflifted.set(clonefrom.downwindluffupiflifted.get());
         this.currentleg = new CurrentLeg(clonefrom.currentleg);
+        this.windflow = clonefrom.windflow;
     }
 
     @Override
@@ -379,7 +382,7 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         rotationAnglePerSecond = boatspeed < 1 ? metrics.getMaxTurningAnglePerSecond().div(2) : metrics.getMaxTurningAnglePerSecond();
     }
 
-    Boat3D getBoat3D() {
-        return new Boat3D(metrics.getDimensions3D(), new BoatCoordinates());
+    public Boat3D getBoat3D() {
+        return new Boat3D(metrics.getDimensions3D(), new BoatCoordinates(location, heading, windflow));
     }
 }

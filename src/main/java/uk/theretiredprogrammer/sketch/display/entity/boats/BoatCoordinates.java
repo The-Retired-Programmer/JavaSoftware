@@ -16,49 +16,68 @@
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
+import uk.theretiredprogrammer.sketch.core.entity.Angle;
+import uk.theretiredprogrammer.sketch.core.entity.Location;
+import uk.theretiredprogrammer.sketch.display.entity.flows.WindFlow;
 
 public class BoatCoordinates {
 
-    private final DoubleProperty boatangle;
-    private final DoubleProperty boatxpos;
-    private final DoubleProperty boatypos;
-    private final DoubleProperty boomangle;
+    private final Angle boatangle;
+    private final Location position;
+    private final Angle boomangle = new Angle(0);
+    private final Angle winddirection;
+    private final WindFlow windflow;
 
-    public BoatCoordinates(double x, double y, double angle, double boomangle) {
-        boatxpos = new SimpleDoubleProperty(x);
-        boatypos = new SimpleDoubleProperty(y);
-        boatangle = new SimpleDoubleProperty(angle);
-        this.boomangle = new SimpleDoubleProperty(boomangle);
+    public BoatCoordinates(Location position, Angle boatangle, Angle winddirection) {
+        this.position = position;
+        this.boatangle = boatangle;
+        this.winddirection = new Angle(winddirection);
+        windflow = null;
+        setBoomangle();
+    }
+
+    public BoatCoordinates(Location position, Angle boatangle, WindFlow windflow) {
+        this.position = position;
+        this.boatangle = boatangle;
+        this.windflow = windflow;
+        winddirection = null;
+        setBoomangle();
+    }
+
+    private void setBoomangle() {
+        Angle wdirection = windflow == null ? winddirection : windflow.getFlow(position).getAngle();
+        Angle relative = boatangle.degreesDiff(wdirection);
+        boolean onStarboard = relative.lt(0);
+        Angle absrelative = relative.abs();
+        Angle sailRotation = absrelative.lteq(45) ? new Angle(0) : absrelative.sub(45).mult(2.0 / 3);
+        sailRotation = sailRotation.negateif(onStarboard);
+        boomangle.set(sailRotation);
     }
 
     public BoatCoordinates() {
-        this(0,0,0,0);
+        this(new Location(0, 0), new Angle(0), new Angle(0));
     }
 
     public void setPosition(double x, double y) {
-        boatxpos.set(x);
-        boatypos.set(y);
+        position.getXProperty().set(x);
+        position.getYProperty().set(y);
     }
 
     DoubleProperty getXProperty() {
-        return boatxpos;
+        return position.getXProperty();
     }
 
     DoubleProperty getYProperty() {
-        return boatypos;
+        return position.getYProperty();
     }
 
     public void setAngle(double angle) {
         boatangle.set(angle);
+        setBoomangle();
     }
 
     DoubleProperty getAngleProperty() {
         return boatangle;
-    }
-
-    public void setBoomAngle(double angle) {
-        boomangle.set(angle);
     }
 
     DoubleProperty getBoomAngleProperty() {

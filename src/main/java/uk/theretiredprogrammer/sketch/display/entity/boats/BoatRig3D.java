@@ -43,13 +43,11 @@ public class BoatRig3D extends Group {
         boom.setDrawMode(DrawMode.FILL);
         boom.setMaterial(rigmaterial);
         boom.getTransforms().addAll(
-                new Rotate(-90, Rotate.Z_AXIS),
                 new Translate(0f, -(dimensions.getBoomLength() + dimensions.getDiameter()) / 2, dimensions.getGooseNeckHeight() - dimensions.getDiameter() / 2)
         );
-        //
         this.getChildren().addAll(mast, boom);
         this.getTransforms().addAll(
-                new Translate(-dimensions.getBowtoMast(), 0f, 0f),
+                new Translate(0f, -dimensions.getBowtoMast(), 0f),
                 boomrotate = new Rotate(0, Rotate.Z_AXIS)
         );
         boomrotate.angleProperty().bind(boomangle);

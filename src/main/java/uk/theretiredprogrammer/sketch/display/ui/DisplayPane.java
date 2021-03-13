@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-21 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.transform.Rotate;
+import static javafx.scene.transform.Rotate.X_AXIS;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
@@ -47,6 +49,7 @@ public class DisplayPane extends Group {
     private Shapes2D shapebuilder;
     private Scale mainscale;
     private Translate maintranslate;
+    private Rotate mainrotate;
 
     public DisplayPane(DisplayController controller) {
         this.controller = controller;
@@ -56,7 +59,8 @@ public class DisplayPane extends Group {
     public final void refreshParameters() {
         SketchModel sketchproperty = controller.getModel();
         this.zoom = sketchproperty.getDisplay().getZoom();
-        mainscale = new Scale(zoom, -zoom);
+        mainrotate = new Rotate(180, X_AXIS);
+        mainscale = new Scale(zoom, zoom);
         Area displayarea = sketchproperty.getDisplayArea();
         maintranslate = new Translate(-displayarea.getLocationProperty().getX(), -displayarea.getHeight() - displayarea.getLocationProperty().getY());
         shapebuilder = new Shapes2D(zoom);
@@ -87,7 +91,8 @@ public class DisplayPane extends Group {
                                 )
                         ),
                         maintranslate,
-                        mainscale
+                        mainscale,
+                        mainrotate
                 )
         );
     }
@@ -137,7 +142,8 @@ public class DisplayPane extends Group {
                             Wrap.globalTransform(
                                     shapebuilder.displayWindGraphic(here, controller.getModel().getWindFlow().getFlow(here), 10, controller.getModel().getWindFlow().getShiftsproperty().getShowflowcolour()),
                                     maintranslate,
-                                    mainscale
+                                    mainscale,
+                                    mainrotate
                             )
                     );
                     y += showwindflowinterval;
@@ -198,7 +204,8 @@ public class DisplayPane extends Group {
                 Wrap.globalTransform(
                         shapebuilder.drawmark(mark.getLocation(), SIZE, mark.getColour()),
                         maintranslate,
-                        mainscale
+                        mainscale,
+                        mainrotate
                 )
         );
     }
@@ -210,7 +217,8 @@ public class DisplayPane extends Group {
                     Wrap.globalTransform(
                             shapebuilder.drawwindwardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
                             maintranslate,
-                            mainscale
+                            mainscale,
+                            mainrotate
                     )
             );
         }
@@ -219,7 +227,8 @@ public class DisplayPane extends Group {
                     Wrap.globalTransform(
                             shapebuilder.drawleewardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
                             maintranslate,
-                            mainscale
+                            mainscale,
+                            mainrotate
                     )
             );
         }
@@ -232,7 +241,8 @@ public class DisplayPane extends Group {
                     Wrap.globalTransform(
                             shapebuilder.drawwindwardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
                             maintranslate,
-                            mainscale
+                            mainscale,
+                            mainrotate
                     )
             );
         }
@@ -241,7 +251,8 @@ public class DisplayPane extends Group {
                     Wrap.globalTransform(
                             shapebuilder.drawleewardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
                             maintranslate,
-                            mainscale
+                            mainscale,
+                            mainrotate
                     )
             );
         }
@@ -267,7 +278,8 @@ public class DisplayPane extends Group {
                                 Cursor.CROSSHAIR
                         ),
                         maintranslate,
-                        mainscale
+                        mainscale,
+                        mainrotate
                 )
         );
     }
