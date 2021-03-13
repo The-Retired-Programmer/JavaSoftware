@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,39 +15,13 @@
  */
 package uk.theretiredprogrammer.sketch.core.entity;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PropertyLocationTest {
+public class LocationTest {
 
     private final static double DELTA = 0.0000001;
 
-    public PropertyLocationTest() {
-    }
-
-    @BeforeAll
-    public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
-    @BeforeEach
-    public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
-    }
-
-    /**
-     * Test of to method, of class Location.
-     */
     @Test
     public void testTo() {
         System.out.println("to");
@@ -66,7 +40,7 @@ public class PropertyLocationTest {
         assertEquals(0, instance.angleto(new Location(10.0, 23.0)).get());
         assertEquals(180, instance.angleto(new Location(10.0, 13.0)).get());
         assertEquals(135, instance.angleto(new Location(13.0, 17.0)).get());
-        assertEquals(-45, instance.angleto(new Location(7.0, 23.0)).get());
-        assertEquals(-135, instance.angleto(new Location(7.0, 17.0)).get());
+        assertEquals(315, instance.angleto(new Location(7.0, 23.0)).get());
+        assertEquals(225, instance.angleto(new Location(7.0, 17.0)).get());
     }
 }
