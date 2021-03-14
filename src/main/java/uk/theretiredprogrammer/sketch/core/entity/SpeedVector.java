@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,10 +117,10 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
         double radians = degreesproperty.getRadians();
         double otherspeed = other.speedproperty.get();
         double otherradians = other.degreesproperty.getRadians();
-        double x = speed * Math.sin(radians) + otherspeed * Math.sin(otherradians);
-        double y = speed * Math.cos(radians) + otherspeed * Math.cos(otherradians);
+        double x = speed * Math.cos(radians) + otherspeed * Math.cos(otherradians);
+        double y = speed * Math.sin(radians) + otherspeed * Math.sin(otherradians);
         //
-        return new SpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(x, y)));
+        return new SpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(y, x)));
     }
 
     public SpeedVector sub(SpeedVector other) {
@@ -128,10 +128,10 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
         double radians = degreesproperty.getRadians();
         double otherspeed = other.speedproperty.get();
         double otherradians = other.degreesproperty.getRadians();
-        double x = speed * Math.sin(radians) - otherspeed * Math.sin(otherradians);
-        double y = speed * Math.cos(radians) - otherspeed * Math.cos(otherradians);
+        double x = speed * Math.cos(radians) - otherspeed * Math.cos(otherradians);
+        double y = speed * Math.sin(radians) - otherspeed * Math.sin(otherradians);
         //
-        return new SpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(x, y)));
+        return new SpeedVector(Math.sqrt(x * x + y * y), Math.toDegrees(Math.atan2(y, x)));
     }
 
     public SpeedVector mult(double multiplier) {
@@ -144,6 +144,10 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
     }
 
     public Angle degreesDiff(Angle p) {
+        return degreesproperty.degreesDiff(p);
+    }
+    
+    public Angle degreesDiff(double p) {
         return degreesproperty.degreesDiff(p);
     }
 

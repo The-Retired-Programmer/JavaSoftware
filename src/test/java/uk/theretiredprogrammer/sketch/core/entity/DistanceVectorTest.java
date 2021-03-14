@@ -65,40 +65,40 @@ public class DistanceVectorTest {
     }
 
     @Test
-    public void testAdd() {
-        System.out.println("add");
+    public void testPlus() {
+        System.out.println("plus");
         DistanceVector instance = new DistanceVector(100, 0);
-        DistanceVector res = (DistanceVector) instance.plus(instance);
+        DistanceVector res =  instance.plus(instance);
         assertEquals(0, res.getDegrees());
         assertEquals(200, res.getDistance());
         assertEquals(100, instance.getDistance());
         assertEquals(0, instance.getDegrees());
         DistanceVector other = new DistanceVector(100, 90);
-        res = (DistanceVector) instance.plus(other);
+        res =  instance.plus(other);
         assertEquals(45, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
         other = new DistanceVector(100, 180);
-        res = (DistanceVector) instance.plus(other);
+        res =  instance.plus(other);
         assertEquals(90, res.getDegrees());
         assertEquals(0, res.getDistance(), DELTA);
     }
 
     @Test
-    public void testSubtract() {
-        System.out.println("subtract");
+    public void testSub() {
+        System.out.println("sub");
         DistanceVector instance = new DistanceVector(100, 0);
         DistanceVector other = new DistanceVector(50, 0);
-        DistanceVector res = (DistanceVector) instance.sub(other);
+        DistanceVector res =  instance.sub(other);
         assertEquals(0, res.getDegrees());
         assertEquals(50, res.getDistance());
         assertEquals(100, instance.getDistance());
         assertEquals(0, instance.getDegrees());
         other = new DistanceVector(100, 90);
-        res = (DistanceVector) instance.sub(other);
+        res =  instance.sub(other);
         assertEquals(315, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
         other = new DistanceVector(100, 180);
-        res = (DistanceVector) instance.sub(other);
+        res =  instance.sub(other);
         assertEquals(0, res.getDegrees(), DELTA);
         assertEquals(200, res.getDistance(), DELTA);
     }
@@ -107,13 +107,13 @@ public class DistanceVectorTest {
     public void testMult() {
         System.out.println("mult");
         DistanceVector instance = new DistanceVector(100, 0);
-        DistanceVector res = (DistanceVector) instance.mult(2);
+        DistanceVector res =  instance.mult(2);
         assertEquals(0, res.getDegrees());
         assertEquals(200, res.getDistance());
-        res = (DistanceVector) instance.mult(0.655);
+        res =  instance.mult(0.655);
         assertEquals(0, res.getDegrees());
         assertEquals(65.5, res.getDistance(), DELTA);
-        res = (DistanceVector) instance.mult(-0.655);
+        res =  instance.mult(-0.655);
         assertEquals(180, res.getDegrees());
         assertEquals(65.5, res.getDistance(), DELTA);
     }
