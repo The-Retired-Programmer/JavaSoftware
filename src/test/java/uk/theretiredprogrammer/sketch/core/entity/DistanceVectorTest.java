@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PropertyDistanceVectorTest {
+public class DistanceVectorTest {
 
     private final static double DELTA = 0.0000001;
 
@@ -35,10 +35,10 @@ public class PropertyDistanceVectorTest {
         System.out.println("creation<location.location>");
         DistanceVector instance = new DistanceVector(new Location(), new Location(10, 0));
         assertEquals(10, instance.getDistance());
-        assertEquals(90, instance.getDegrees());
+        assertEquals(0, instance.getDegrees());
         instance = new DistanceVector(new Location(), new Location(0, 10));
         assertEquals(10, instance.getDistance());
-        assertEquals(0, instance.getDegrees());
+        assertEquals(90, instance.getDegrees());
     }
 
     @Test
@@ -46,16 +46,16 @@ public class PropertyDistanceVectorTest {
         System.out.println("polar2Location");
         DistanceVector instance = new DistanceVector(100, new Angle(90));
         Location res = instance.toLocation(new Location(10, 10));
-        assertEquals(110, res.getX(), DELTA);
-        assertEquals(10, res.getY(), DELTA);
-        instance = new DistanceVector(100, new Angle(180));
-        res = instance.toLocation(new Location(10, 10));
         assertEquals(10, res.getX(), DELTA);
-        assertEquals(-90, res.getY(), DELTA);
-        instance = new DistanceVector(100, new Angle(-90));
+        assertEquals(110, res.getY(), DELTA);
+        instance = new DistanceVector(100, new Angle(180));
         res = instance.toLocation(new Location(10, 10));
         assertEquals(-90, res.getX(), DELTA);
         assertEquals(10, res.getY(), DELTA);
+        instance = new DistanceVector(100, new Angle(270));
+        res = instance.toLocation(new Location(10, 10));
+        assertEquals(10, res.getX(), DELTA);
+        assertEquals(-90, res.getY(), DELTA);
         instance = new DistanceVector(1, new Angle(45));
         res = instance.toLocation(new Location());
         assertEquals(1 / Math.sqrt(2), res.getX(), DELTA);
@@ -95,7 +95,7 @@ public class PropertyDistanceVectorTest {
         assertEquals(0, instance.getDegrees());
         other = new DistanceVector(100, 90);
         res = (DistanceVector) instance.sub(other);
-        assertEquals(-45, res.getDegrees());
+        assertEquals(315, res.getDegrees());
         assertEquals(100 * Math.sqrt(2), res.getDistance(), DELTA);
         other = new DistanceVector(100, 180);
         res = (DistanceVector) instance.sub(other);

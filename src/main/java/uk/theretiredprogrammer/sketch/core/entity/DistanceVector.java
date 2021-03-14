@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2014-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
         double deltay = (pos.getY() - origin.getY());
         set(
                 Math.sqrt(deltax * deltax + deltay * deltay),
-                Math.toDegrees(Math.atan2(pos.getX() - origin.getX(), pos.getY() - origin.getY()))
+                Math.toDegrees(Math.atan2(pos.getY() - origin.getY(), pos.getX() - origin.getX()))
         );
     }
 
@@ -117,8 +117,8 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
     public Location toLocation(Location origin) {
         double distance = distanceproperty.get();
         double radians = getAngle().getRadians();
-        return new Location(origin.getX() + distance * Math.sin(radians),
-                origin.getY() + distance * Math.cos(radians));
+        return new Location(origin.getX() + distance * Math.cos(radians),
+                origin.getY() + distance * Math.sin(radians));
     }
 
     public DistanceVector plus(DistanceVector other) {
@@ -126,10 +126,10 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
         double radians = degreesproperty.getRadians();
         double otherdistance = other.distanceproperty.get();
         double otherradians = other.degreesproperty.getRadians();
-        double x = distance * Math.sin(radians) + otherdistance * Math.sin(otherradians);
-        double y = distance * Math.cos(radians) + otherdistance * Math.cos(otherradians);
+        double x = distance * Math.cos(radians) + otherdistance * Math.cos(otherradians);
+        double y = distance * Math.sin(radians) + otherdistance * Math.sin(otherradians);
         //
-        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(x, y))));
+        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(y, x))));
     }
 
     public DistanceVector sub(DistanceVector other) {
@@ -137,10 +137,10 @@ public class DistanceVector implements ModelProperty<DistanceVector> {
         double radians = degreesproperty.getRadians();
         double otherdistance = other.distanceproperty.get();
         double otherradians = other.degreesproperty.getRadians();
-        double x = distance * Math.sin(radians) - otherdistance * Math.sin(otherradians);
-        double y = distance * Math.cos(radians) - otherdistance * Math.cos(otherradians);
+        double x = distance * Math.cos(radians) - otherdistance * Math.cos(otherradians);
+        double y = distance * Math.sin(radians) - otherdistance * Math.sin(otherradians);
         //
-        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(x, y))));
+        return new DistanceVector(Math.sqrt(x * x + y * y), new Angle(Math.toDegrees(Math.atan2(y, x))));
     }
 
     public DistanceVector mult(double multiplier) {
