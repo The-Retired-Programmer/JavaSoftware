@@ -46,11 +46,15 @@ public class BoatCoordinates {
 
     private void setBoomangle() {
         Angle wdirection = windflow == null ? winddirection : windflow.getFlow(position).getAngle();
-        Angle relative = boatangle.degreesDiff(wdirection);
-        boolean onStarboard = relative.lt(0);
-        Angle absrelative = relative.abs();
-        Angle sailRotation = absrelative.lteq(45) ? new Angle(0) : absrelative.sub(45).mult(2.0 / 3);
-        sailRotation = sailRotation.negateif(onStarboard);
+        double relative = boatangle.degreesDiff(wdirection).get();
+        boolean onStarboard = relative > 180;
+        double sailRotation;
+        if (onStarboard) {
+            sailRotation = relative > 320 ? 0 : (360 - relative) / 2;
+
+        } else {
+            sailRotation = relative < 40 ? 0 : relative / 2;
+        }
         boomangle.set(sailRotation);
     }
 
