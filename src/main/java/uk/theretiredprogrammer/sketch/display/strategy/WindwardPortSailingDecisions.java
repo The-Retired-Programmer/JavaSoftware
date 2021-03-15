@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class WindwardPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if pointing high
-        if (params.angletowind.lt(params.upwindrelative)) {
+        if (params.angletowind < params.upwindrelative) {
             if (params.boat.isUpwindtackifheaded()) {
                 return params.setTURN(params.starboardCloseHauled, PORT, MAJOR, "Tack onto starboard when headed");
             }
@@ -55,7 +55,7 @@ public class WindwardPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if pointing low
-        if (params.angletowind.gt(params.upwindrelative)) {
+        if (params.angletowind < params.upwindrelative ) {
             if (params.boat.isUpwindluffupiflifted()) {
                 return params.setTURN(params.portCloseHauled, PORT, MINOR, "Luff when lifted");
             }

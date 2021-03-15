@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class GybingDownwindPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if sailing too low
-        if (params.angletowind.gt(params.boat.metrics.downwindrelative)) {
+        if (params.angletowind > params.downwindrelative) {
             if (params.boat.isDownwindgybeiflifted()) {
                 return params.setTURN(params.starboardReaching, STARBOARD, MAJOR, "Reaching - gybe onto starboard if lifted");
             }
@@ -54,7 +54,7 @@ public class GybingDownwindPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if sailing too high
-        if (params.angletowind.lt(params.boat.metrics.downwindrelative)) {
+        if (params.angletowind < params.downwindrelative) {
             if (params.boat.isDownwindbearawayifheaded()) {
                 return params.setTURN(params.portReaching, STARBOARD, MINOR, "Reaching - bearaway if headed");
             }

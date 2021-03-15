@@ -18,7 +18,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 import jakarta.json.JsonValue;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.TextField;
-import uk.theretiredprogrammer.sketch.core.control.MissingFeatureFailure;
 import uk.theretiredprogrammer.sketch.core.control.ReplacedMethodFailure;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
 
@@ -123,8 +122,15 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final Angle abs() {
-        throw new MissingFeatureFailure("Angle:abs");
-//        return new Angle(Math.abs(get()));
+        throw new ReplacedMethodFailure("Angle:abs consider use of Angle:fold");
+    }
+    
+    public final Angle fold() {
+        return get() > 180 ? opposite(): this;
+    }
+    
+    public final Angle foldif(boolean test) {
+        return test ? fold(): this;
     }
 
     public final Angle opposite() {
@@ -136,7 +142,7 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final Angle oppositeif(boolean test) {
-        return new Angle(test ? -get() : get());
+        return test ? opposite() : this;
     }
 
     public final Angle negateif(boolean test) {
@@ -212,12 +218,12 @@ public class Angle extends SimpleDoubleProperty implements ModelProperty<Angle> 
     }
 
     public final Angle absDegreesDiff(Angle degrees) {
-        throw new MissingFeatureFailure("Angle:absDegreesDiff(Angle)");
+         throw new ReplacedMethodFailure("Angle:abs consider use of Angle:fold");
 //        return new Angle(Math.abs(normalise(degrees.get() - get())));
     }
 
     public final Angle absDegreesDiff(double degrees) {
-        throw new MissingFeatureFailure("Angle:absDegreesDiff(double)");
+        throw new ReplacedMethodFailure("Angle:abs consider use of Angle:fold");
 //        return new Angle(Math.abs(normalise(degrees - get())));
     }
 

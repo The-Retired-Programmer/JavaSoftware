@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,11 +41,11 @@ public class Params {
     public Angle portReaching;
     public Angle heading;
     public Location location;
-    public Angle angletowind;
+    public double angletowind;
     public Angle meanwinddirection;
     public boolean reachesdownwind;
-    public Angle downwindrelative;
-    public Angle upwindrelative;
+    public double downwindrelative;
+    public double upwindrelative;
     public boolean isPort;
     public Location marklocation;
     public Angle markmeanwinddirection;
@@ -72,15 +72,15 @@ public class Params {
         //
         heading = boat.getDirection();
         location = boat.getLocation();
-        downwindrelative = boat.metrics.downwindrelative;
-        upwindrelative = boat.metrics.upwindrelative;
+        downwindrelative = boat.metrics.downwindrelative.get();
+        upwindrelative = boat.metrics.upwindrelative.get();
         reachesdownwind = boat.isReachdownwind();
         isPort = boat.isPort(winddirection);
         starboardCloseHauled = boat.getStarboardCloseHauledCourse(winddirection);
         portCloseHauled = boat.getPortCloseHauledCourse(winddirection);
         starboardReaching = boat.getStarboardReachingCourse(winddirection);
         portReaching = boat.getPortReachingCourse(winddirection);
-        angletowind = heading.absDegreesDiff(winddirection);
+        angletowind = heading.degreesDiff(winddirection).get();
     }
     
     
@@ -98,7 +98,7 @@ public class Params {
     }
 
     public final boolean setTURN(Angle degrees, boolean turndirection, Importance importance, String reason) {
-        Angle change = degrees.absDegreesDiff(heading);
+        Angle change = degrees.degreesDiff(heading).fold();
         if (change.lt(0.1)) {
             decision.setSAILON(heading);
         } else if (change.lt(1) && importance != MAJOR) {

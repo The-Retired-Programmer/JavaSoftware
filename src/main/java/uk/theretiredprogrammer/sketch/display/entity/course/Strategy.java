@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class Strategy {
     private void setWindwardStrategy(Params params) {
         this.setTickhandler(p -> windwardTick(p));
         Angle winddirection = params.markmeanwinddirection;
-        Angle relative = params.upwindrelative;
+        double relative = params.upwindrelative;
         if (params.leg.isPortRounding()) {
             setMarkOffset(params.boat.metrics.getWidth() * 2, winddirection.plus(90).sub(relative), winddirection.plus(90).plus(relative));
         } else {

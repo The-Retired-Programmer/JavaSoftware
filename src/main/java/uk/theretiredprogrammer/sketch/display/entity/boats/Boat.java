@@ -358,19 +358,19 @@ public abstract class Boat extends ModelMap implements ModelNamed {
 
     private boolean turn(Decision decision, SpeedVector windflow, SpeedVector waterflow) {
         Angle newdirection = currentleg.getDecision().getDegreesProperty();
-        if (heading.absDegreesDiff(newdirection).lteq(rotationAnglePerSecond)) {
+        if (heading.degreesDiff(newdirection).fold().lteq(rotationAnglePerSecond)) {
             moveBoat(newdirection, windflow, waterflow);
             decision.setSAILON(heading);
             return true;
         }
-        moveBoat(getDirection().plus(rotationAnglePerSecond.negateif(decision.isPort())), windflow, waterflow);
+        moveBoat(getDirection().plus(rotationAnglePerSecond.oppositeif(decision.isPort())), windflow, waterflow);
         return false;
     }
 
     void moveBoat(Angle nextdirection, SpeedVector windspeedvector, SpeedVector waterspeedvector) {
         // calculate the potential boat speed - based on wind speed and relative angle 
         double potentialBoatspeed = SpeedVector.convertKnots2MetresPerSecond(
-                metrics.getPotentialBoatSpeed(nextdirection.absDegreesDiff(windspeedvector.getAngle()),
+                metrics.getPotentialBoatSpeed(nextdirection.degreesDiff(windspeedvector.getAngle()).fold(),
                         windspeedvector.getSpeed()));
         boatspeed += metrics.getInertia() * (potentialBoatspeed - boatspeed);
         // start by calculating the vector components of the boats movement
