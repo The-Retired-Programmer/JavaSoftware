@@ -1,28 +1,32 @@
 {
-    "TITLE": {
+   "type": "sketch-v2",
+    "meta": {
         "title": "gybedownwindstarboardtack"
     },
-    "DISPLAY": {
+     "display": {
         "zoom": 10,
-        "speedup": 5
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
-    "SAILING AREA": {
-        "west": 0,
-        "east": 100,
-        "north": 100,
-        "south": 0
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
     },
-    "WIND": [
-        {
-            "name": "northly",
-            "type": "testflow",
-            "speed": 4,
-            "from": 0,
-            "mean": 0
-        }
-    ],
-    "MARKS": [
-        {
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+   "course": {
+        "start": [50, 10],
+        "legs": [
+            ["mark1", "port"],
+            ["mark2", "port"]
+        ]
+    },
+    "marks": [{
             "name": "mark1",
             "location": [50, 90],
             "colour": "yellow"
@@ -31,23 +35,13 @@
             "name": "mark2",
             "location": [50, 10],
             "colour": "yellow"
-        }
-    ],
-    "COURSE": {
-        "start": [50, 90],
-        "legs": [
-            ["mark2", "port"],
-            ["mark1", "port"]
-        ]
-    },
-    "BOATS": [
-        {
+        }],
+    "boats": [{
             "name": "Red",
             "type": "laser2",
-            "location": [50, 75],
-            "heading": -135,
+            "location": [50,25],
+            "heading": 135,
             "reachdownwind": true,
             "colour": "red"
-        }
-    ]
+        }]
 }

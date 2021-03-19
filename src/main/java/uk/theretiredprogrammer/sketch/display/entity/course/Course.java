@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2014-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,10 @@ public class Course extends ModelMap {
     private final Location start = new Location();
     private final Legs legs;
 
-    private final Marks marks;
     private Runnable onchange;
 
     public Course(Marks marks) {
         legs = new Legs(marks);
-        this.marks = marks;
         this.addProperty("start", start);
         this.addProperty("legs", legs);
         legs.setOnChange(() -> updatelegs());

@@ -45,7 +45,7 @@ public class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
             }
         }
         // check if sailing too low
-        if (params.angletowind < 360 - params.downwindrelative) {
+        if (params.boat.absAngleFrom(params.winddirection).gt(params.downwindrelative)) {
             if (params.boat.isDownwindgybeiflifted()) {
                 return params.setTURN(params.portReaching, PORT, MAJOR, "Reaching - gybe oto port if lifted");
             }
@@ -54,7 +54,7 @@ public class GybingDownwindStarboardSailingDecisions extends SailingDecisions {
             }
         }
         // check if sailing too high
-        if (params.angletowind > 360 - params.downwindrelative) {
+        if (params.boat.absAngleFrom(params.winddirection).lt(params.downwindrelative)) {
             if (params.boat.isDownwindbearawayifheaded()) {
                 return params.setTURN(params.starboardReaching, PORT, MINOR, "Reaching - bearaway if headed");
             }
