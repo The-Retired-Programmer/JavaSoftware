@@ -8,15 +8,6 @@
         "speedup": 5,
         "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
-    "WIND": [
-        {
-            "name": "northly",
-            "type": "testflow",
-            "speed": 4,
-            "from": 270,
-            "mean": 0
-        }
-    ],
     "windshifts": {
         "showflow": true,
         "showflowinterval": 15,
@@ -37,7 +28,6 @@
             "location": [50, 10],
             "colour": "yellow"
         }],
-
     "boats": [{
             "name": "Red",
             "type": "laser2",

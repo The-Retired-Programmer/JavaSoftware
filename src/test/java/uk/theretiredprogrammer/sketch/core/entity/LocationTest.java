@@ -36,11 +36,13 @@ public class LocationTest {
     public void testAngleto() {
         System.out.println("angleto");
         Location instance = new Location(10.0, 20.0);
+        assertEquals(0, instance.angleto(new Location(13.0, 20.0)).get());
         assertEquals(45, instance.angleto(new Location(13.0, 23.0)).get());
-        assertEquals(0, instance.angleto(new Location(10.0, 23.0)).get());
-        assertEquals(180, instance.angleto(new Location(10.0, 13.0)).get());
-        assertEquals(135, instance.angleto(new Location(13.0, 17.0)).get());
-        assertEquals(315, instance.angleto(new Location(7.0, 23.0)).get());
+        assertEquals(90, instance.angleto(new Location(10.0, 23.0)).get());
+        assertEquals(135, instance.angleto(new Location(7.0, 23.0)).get());
+        assertEquals(180, instance.angleto(new Location(7.0, 20.0)).get());
         assertEquals(225, instance.angleto(new Location(7.0, 17.0)).get());
+        assertEquals(270, instance.angleto(new Location(10.0, 17.0)).get());
+        assertEquals(315, instance.angleto(new Location(13.0, 17.0)).get());
     }
 }

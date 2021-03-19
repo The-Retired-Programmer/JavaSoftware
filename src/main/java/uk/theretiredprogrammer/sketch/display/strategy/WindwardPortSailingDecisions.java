@@ -46,7 +46,7 @@ public class WindwardPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if pointing high
-        if (params.angletowind < params.upwindrelative) {
+        if (params.boat.absAngleFrom(params.winddirection).lt(params.upwindrelative)) {
             if (params.boat.isUpwindtackifheaded()) {
                 return params.setTURN(params.starboardCloseHauled, PORT, MAJOR, "Tack onto starboard when headed");
             }
@@ -55,7 +55,7 @@ public class WindwardPortSailingDecisions extends SailingDecisions {
             }
         }
         // check if pointing low
-        if (params.angletowind < params.upwindrelative ) {
+        if (params.boat.absAngleFrom(params.winddirection).gt(params.upwindrelative)) {
             if (params.boat.isUpwindluffupiflifted()) {
                 return params.setTURN(params.portCloseHauled, PORT, MINOR, "Luff when lifted");
             }

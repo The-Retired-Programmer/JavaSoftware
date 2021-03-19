@@ -32,7 +32,7 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test2() throws IOException {
         System.out.println("don't luff to closehauled (on port) - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, -5));
+                () -> setwindflow(4.0, 265));
         assertSAILON(decision);
     }
 
@@ -40,36 +40,36 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test3() throws IOException {
         System.out.println("luff to closehauled (on port) - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, -5),
+                () -> setwindflow(4.0, 265),
                 () -> setboattrue("upwindluffupiflifted"));
-        assertTURN(decision, 40, false);
+        assertTURN(decision, 310, false);
     }
 
     @Test
     public void test4() throws IOException {
         System.out.println("bearaway to closehauled (stay on port) - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, 5),
+                () -> setwindflow(4.0, 275),
                 () -> setboattrue("upwindbearawayifheaded"));
-        assertTURN(decision, 50, true);
+        assertTURN(decision, 320, true);
     }
 
     @Test
     public void test5() throws IOException {
         System.out.println("tack if headed (to starboard) - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, 5),
+                () -> setwindflow(4.0, 275),
                 () -> setboattrue("upwindtackifheaded"));
-        assertTURN(decision, -40, false);
+        assertTURN(decision, 230, false);
     }
 
     @Test
     public void test6() throws IOException {
         System.out.println("still best tack (port) - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, -5),
+                () -> setwindflow(4.0, 265),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
-                () -> setboatdirection(40));
+                () -> setboatdirection(310));
         assertSAILON(decision);
     }
 
@@ -77,56 +77,56 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test7() throws IOException {
         System.out.println("still best tack (port), bearway to closehauled - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, -5),
+                () -> setwindflow(4.0, 265),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
-                () -> setboatdirection(35));
-        assertTURN(decision, 40, true);
+                () -> setboatdirection(305));
+        assertTURN(decision, 310, true);
     }
 
     @Test
     public void test8() throws IOException {
         System.out.println("still best tack (port), luff to closehauled - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, -5),
+                () -> setwindflow(4.0, 265),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
-                () -> setboatdirection(50));
-        assertTURN(decision, 40, false);
+                () -> setboatdirection(315));
+        assertTURN(decision, 310, false);
     }
 
     @Test
     public void test9() throws IOException {
         System.out.println("tack onto best tack (starboard), from closehauled - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, 5),
+                () -> setwindflow(4.0, 275),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
-                () -> setboatdirection(50));
-        assertTURN(decision, -40, false);
+                () -> setboatdirection(320));
+        assertTURN(decision, 230, false);
     }
 
     @Test
     public void test10() throws IOException {
         System.out.println("tack onto best tack (starboard), above closehauled - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, 5),
+                () -> setwindflow(4.0, 275),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"));
-        assertTURN(decision, -40, false);
+        assertTURN(decision, 230, false);
     }
 
     @Test
     public void test11() throws IOException {
         System.out.println("tack onto best tack (starboard), below closehauled - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setwindflow(4.0, 5),
+                () -> setwindflow(4.0, 275),
                 () -> setboattrue("upwindsailonbesttack", "upwindbearawayifheaded", "upwindluffupiflifted"),
-                () -> setboatdirection(55));
-        assertTURN(decision, -40, false);
+                () -> setboatdirection(315));
+        assertTURN(decision, 230, false);
     }
 
     @Test
     public void test12() throws IOException {
         System.out.println("sail near to starboard corner - sailon");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setboatlocation(88, 48));
+                () -> setboatlocation(88, 52));
         assertSAILON(decision);
     }
 
@@ -142,19 +142,15 @@ public class WindwardSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test14() throws IOException {
         System.out.println("sail beyond starboard corner - tack onto starboard - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setboatlocation(92.2, 52.2));
-        assertTURN(decision, -45, false);
+                () -> setboatlocation(92.2, 47.8));
+        assertTURN(decision, 225, false);
     }
 
     @Test
     public void test15() throws IOException {
         System.out.println("sail beyond starboard corner - tack onto starboard - turn");
         Decision decision = makeDecision("/upwind-porttack-portrounding.json",
-                () -> setboatlocation(94, 54));
-        assertTURN(decision, -45, false);
+                () -> setboatlocation(94, 46));
+        assertTURN(decision, 225, false);
     }
-    // TODO - all tests are based on port mark roundings - 12-15 both _ and A should be repeated on starboard
-    // TODO - need to add tests for mean wind direction at alternative angle 
-    // TODO - need to add tests for case when wind angles move across discontinuity (ie ANGLE180)
-    // TODO - need to add channel decision tests
 }

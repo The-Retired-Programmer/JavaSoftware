@@ -1,52 +1,46 @@
 {
-    "TITLE": {
+    "type": "sketch-v2",
+    "meta": {
         "title": "upwind-starboardtack-starboardrounding"
     },
-    "DISPLAY": {
+    "display": {
         "zoom": 10,
-        "speedup": 5
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
-    "SAILING AREA": {
-        "west": 0,
-        "east": 100,
-        "north": 100,
-        "south": 0
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
     },
-    "WIND": [
-        {
-            "name": "northly",
-            "type": "testflow",
-            "speed": 4,
-            "from": 0,
-            "mean": 0
-        }
-    ],
-    "MARKS": [
-        {
-            "name": "mark1",
-            "location": [50, 90],
-            "colour": "yellow"
-        },
-        {
-            "name": "mark2",
-            "location": [50, 10],
-            "colour": "yellow"
-        }
-    ],
-    "COURSE": {
-        "start": [50, 10],
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
+        "start": [50, 90],
         "legs": [
             ["mark1", "port"],
             ["mark2", "port"]
         ]
     },
-    "BOATS": [
+    "marks": [{
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        },
         {
+            "name": "mark2",
+            "location": [50, 90],
+            "colour": "yellow"
+        }],
+    "boats": [{
             "name": "Red",
             "type": "laser2",
-            "location": [50, 25],
-            "heading": -45,
+            "location": [50, 75],
+            "heading": 225,
             "colour": "red"
-        }
-    ]
+        }]
 }

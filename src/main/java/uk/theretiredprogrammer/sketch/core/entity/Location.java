@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class Location implements ModelProperty<Location> {
     }
 
     public Angle angleto(Location target) {
-        return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getX() - this.getX(), target.getY() - this.getY()))));
+        return new Angle(Math.round(Math.toDegrees(Math.atan2(target.getY() - this.getY(), target.getX() - this.getX()))));
     }
 
     @Override

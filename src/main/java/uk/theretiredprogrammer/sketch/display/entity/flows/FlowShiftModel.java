@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ public class FlowShiftModel extends ModelMap {
             if (delta < quarterPeriod) {
                 shiftval = 0;
             } else if (delta < quarterPeriod * 2) {
-                shiftval = shiftangle.negative().get();
+                shiftval = shiftangle.opposite().get();
             } else if (delta < quarterPeriod * 3) {
                 shiftval = 0;
             } else {

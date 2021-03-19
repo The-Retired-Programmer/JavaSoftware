@@ -176,7 +176,7 @@ public class Strategy {
     }
 
     private LegType getLegTypeUsingMarkAngle(Angle angletomark, Params params) {
-        Angle legtowind = angletomark.absDegreesDiff(params.meanwinddirection);
+        Angle legtowind = angletomark.degreesDiff(params.meanwinddirection).fold();
         if (legtowind.lteq(params.upwindrelative)) {
             return LegType.WINDWARD;
         }
@@ -267,7 +267,7 @@ public class Strategy {
 
     public static Optional<Double> getRefDistance(Location location, Location marklocation, double refangle) {
         DistanceVector tomark = new DistanceVector(location, marklocation);
-        Angle refangle2mark = tomark.getAngle().absDegreesDiff(refangle);
+        Angle refangle2mark = tomark.getAngle().degreesDiff(refangle).fold();
         if (refangle2mark.gt(90)) {
             return Optional.empty();
         }

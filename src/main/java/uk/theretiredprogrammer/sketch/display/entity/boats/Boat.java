@@ -281,8 +281,15 @@ public abstract class Boat extends ModelMap implements ModelNamed {
         return downwindluffupiflifted.get();
     }
 
-    public boolean isPort(Angle winddirection) {
-        return heading.gteq(winddirection);
+//    public boolean isPort(Angle winddirection) {
+//        return heading.gteq(winddirection);
+//    }
+    
+    public boolean isPort(Angle winddirection){
+        return winddirection.degreesDiff(heading).get() < 180.0;
+    }
+    public Angle absAngleFrom(Angle winddirection){
+        return winddirection.degreesDiff(heading).fold();
     }
 
     public Angle getStarboardCloseHauledCourse(Angle winddirection) {

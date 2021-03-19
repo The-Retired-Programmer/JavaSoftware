@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,9 +108,9 @@ public class Shapes2D {
         }
         Angle relative = direction.degreesDiff(winddirection);
         boolean onStarboard = relative.lt(0);
-        Angle absrelative = relative.abs();
+        Angle absrelative = relative.fold();
         Angle sailRotation = absrelative.lteq(45) ? new Angle(0) : absrelative.sub(45).mult(2.0 / 3);
-        sailRotation = sailRotation.negateif(!onStarboard);
+        sailRotation = sailRotation.oppositeif(!onStarboard);
         Translate positiontranslate = new Translate(location.getX(), location.getY());
         Rotate directionrotation = new Rotate(-direction.get());
         Rotate sailreachrotation = new Rotate(sailRotation.get());

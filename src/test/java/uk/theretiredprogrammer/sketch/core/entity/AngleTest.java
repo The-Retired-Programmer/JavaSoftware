@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.core.entity;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.sketch.core.control.MissingFeatureFailure;
 
 public class AngleTest {
 
@@ -110,17 +109,6 @@ public class AngleTest {
         assertEquals(0, instance.opposite().get(), DELTA);
         instance = new Angle(180);
         assertEquals(180, instance.opposite().get(), DELTA);
-    }
-
-    @Test
-    @SuppressWarnings("ThrowableResultIgnored")
-    public void testAbs() {
-        System.out.println("abs");
-        Angle instance = new Angle(-100);
-        assertThrows(MissingFeatureFailure.class, () -> instance.abs());
-//        assertEquals(100, instance.abs().get(), DELTA);
-//        instance = new Angle(100);
-//        assertEquals(100, instance.abs().get(), DELTA);
     }
 
     @Test
@@ -262,24 +250,6 @@ public class AngleTest {
         assertEquals(180, instance.degreesDiff(180).get(), DELTA);
         instance = new Angle(350);
         assertEquals(190, instance.degreesDiff(180).get(), DELTA);
-    }
-
-    @Test
-    @SuppressWarnings("ThrowableResultIgnored")
-    public void testAbsDegreesDiff() {
-        System.out.println("absDegreesDiff");
-        Angle instance = new Angle(88);
-        assertThrows(MissingFeatureFailure.class, () -> instance.absDegreesDiff(180));
-//        assertEquals(92, instance.absDegreesDiff(180).get(), DELTA);
-//        instance = new Angle(175);
-//        Angle diff = new Angle(-175);
-//        assertEquals(10, instance.absDegreesDiff(diff).get(), DELTA);
-//        instance = new Angle(-175);
-//        assertEquals(175, instance.absDegreesDiff(0).get(), DELTA);
-//        instance = new Angle(0);
-//        assertEquals(180, instance.absDegreesDiff(180).get(), DELTA);
-//        instance = new Angle(-10);
-//        assertEquals(170, instance.absDegreesDiff(180).get(), DELTA);
     }
 
     @Test
