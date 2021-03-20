@@ -32,16 +32,16 @@ public class OffwindSailingStrategy_PortTack_Test extends SailingStrategyTest {
     public void test2() throws IOException {
         System.out.println("on port reach - pointing high - turn");
         Decision decision = makeDecision("/reach-porttack.json",
-                () -> setboatdirection(80));
-        assertTURN(decision, 90, true);
+                () -> setboatdirection(350));
+        assertTURN(decision, 0, true);
     }
 
     @Test
     public void test3() throws IOException {
         System.out.println("on port reach - pointing low - turn");
         Decision decision = makeDecision("/reach-porttack.json",
-                () -> setboatdirection(100));
-        assertTURN(decision, 90, false);
+                () -> setboatdirection(10));
+        assertTURN(decision, 0, false);
     }
 
     @Test
@@ -49,6 +49,6 @@ public class OffwindSailingStrategy_PortTack_Test extends SailingStrategyTest {
         System.out.println("on port reach - sailing low - turn to closer reach");
         Decision decision = makeDecision("/reach-porttack.json",
                 () -> setboatlocation(60, 50));
-        assertTURN(decision, 84, false);
+        assertTURN(decision, 354, false);
     }
 }

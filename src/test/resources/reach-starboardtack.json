@@ -1,27 +1,32 @@
 {
-    "TITLE": {
+    "type": "sketch-v2",
+    "meta": {
         "title": "reach-starboardtack"
     },
-    "DISPLAY": {
+    "display": {
         "zoom": 10,
-        "speedup": 5
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
-    "SAILING AREA": {
-        "west": 0,
-        "east": 100,
-        "north": 100,
-        "south": 0
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
     },
-    "WIND": [
-        {
-            "name": "northly",
-            "type": "testflow",
-            "speed": 4,
-            "from": 0,
-            "mean": 0
-        }
-    ],
-    "MARKS": [
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
+        "start": [90, 50],
+        "legs": [
+            ["mark2", "port"],
+            ["mark1", "port"]
+        ]
+    },
+    "marks": [
         {
             "name": "mark1",
             "location": [90, 50],
@@ -33,19 +38,12 @@
             "colour": "yellow"
         }
     ],
-    "COURSE": {
-        "start": [90, 50],
-        "legs": [
-            ["mark2", "port"],
-            ["mark1", "port"]
-        ]
-    },
-    "BOATS": [
+    "boats": [
         {
             "name": "Red",
             "type": "laser2",
-            "location": [50, 53],
-            "heading": -90,
+            "location": [50, 47],
+            "heading": 180,
             "colour": "red"
         }
     ]

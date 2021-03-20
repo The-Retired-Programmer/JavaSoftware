@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,16 +32,16 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
     public void test2() throws IOException {
         System.out.println("on starboard reach - pointing high - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
-                () -> setboatdirection(-80));
-        assertTURN(decision, -90, false);
+                () -> setboatdirection(190));
+        assertTURN(decision, 180, false);
     }
 
     @Test
     public void test3() throws IOException {
         System.out.println("on starboard reach - pointing low - turn");
         Decision decision = makeDecision("/reach-starboardtack.json",
-                () -> setboatdirection(-100));
-        assertTURN(decision, -90, true);
+                () -> setboatdirection(170));
+        assertTURN(decision, 180, true);
     }
 
     @Test
@@ -49,6 +49,6 @@ public class OffwindSailingStrategy_StarboardTack_Test extends SailingStrategyTe
         System.out.println("on starboard reach - sailing low - turn to closer reach");
         Decision decision = makeDecision("/reach-starboardtack.json",
                 () -> setboatlocation(40, 50));
-        assertTURN(decision, -84, true);
+        assertTURN(decision, 186, true);
     }
 }
