@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
     public void test2() throws IOException {
         System.out.println("don't luff to downwind (on port) - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatdirection(140));
+                () -> setboatdirection(50));
         assertSAILON(decision);
     }
 
@@ -40,35 +40,35 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
     public void test3() throws IOException {
         System.out.println("luff to downwind (on port) - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatdirection(140),
+                () -> setboatdirection(50),
                 () -> setboattrue("downwindluffupiflifted"));
-        assertTURN(decision, 135, false);
+        assertTURN(decision, 45, false);
     }
 
     @Test
     public void test4() throws IOException {
         System.out.println("bearaway to downwind (stay on port) - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatdirection(130),
+                () -> setboatdirection(40),
                 () -> setboattrue("downwindbearawayifheaded"));
-        assertTURN(decision, 135, true);
+        assertTURN(decision, 45, true);
     }
 
     @Test
     public void test5() throws IOException {
         System.out.println("gybe if headed (to starboard) - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatdirection(140),
+                () -> setboatdirection(50),
                 () -> setboattrue("downwindgybeiflifted"));
-        assertTURN(decision, -135, true);
+        assertTURN(decision, 135, true);
     }
 
     @Test
     public void test6() throws IOException {
         System.out.println("still best tack (port) - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, 5),
-                () -> setboatdirection(140),
+                () -> setwindflow(4, 275),
+                () -> setboatdirection(50),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
         assertSAILON(decision);
     }
@@ -77,58 +77,57 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
     public void test7() throws IOException {
         System.out.println("still best tack (port), bearway to downwind - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, 5),
-                () -> setboatdirection(125),
+                () -> setwindflow(4, 275),
+                () -> setboatdirection(35),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertTURN(decision, 140, true);
+        assertTURN(decision, 50, true);
     }
 
     @Test
     public void test8() throws IOException {
         System.out.println("still best tack (port), luff to downwind - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, 5),
-                () -> setboatdirection(145),
+                () -> setwindflow(4, 275),
+                () -> setboatdirection(55),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertTURN(decision, 140, false);
+        assertTURN(decision, 50, false);
     }
 
     @Test
     public void test9() throws IOException {
         System.out.println("gybe onto best tack (starboard), from downwind - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, -5),
-                () -> setboatdirection(135),
+                () -> setwindflow(4, 265),
+                () -> setboatdirection(45),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertTURN(decision, -140, true);
+        assertTURN(decision, 130, true);
     }
 
     @Test
     public void test10() throws IOException {
         System.out.println("gybe onto best tack (starboard), above downwind - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, -5),
-                () -> setboatdirection(125),
+                () -> setwindflow(4, 265),
+                () -> setboatdirection(35),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertTURN(decision, -140, true);
-
+        assertTURN(decision, 130, true);
     }
 
     @Test
     public void test11() throws IOException {
         System.out.println("gybe onto best tack (starboard), below closehauled - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setwindflow(4, -5),
-                () -> setboatdirection(150),
+                () -> setwindflow(4, 265),
+                () -> setboatdirection(60),
                 () -> setboattrue("downwindsailonbestgybe", "downwindbearawayifheaded", "downwindluffupiflifted"));
-        assertTURN(decision, -140, true);
+        assertTURN(decision, 130, true);
     }
 
     @Test
     public void test12() throws IOException {
         System.out.println("sail near to rh corner - sailon");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatlocation(87, 53));
+                () -> setboatlocation(87, 47));
         assertSAILON(decision);
     }
 
@@ -136,8 +135,8 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
     public void test13() throws IOException {
         System.out.println("sail to rh corner - gybe onto Starboard - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
-                () -> setboatlocation(88.1, 51.9));
-        assertTURN(decision, -135, true);
+                () -> setboatlocation(88.1, 48.1));
+        assertTURN(decision, 135, true);
     }
 
     @Test
@@ -145,10 +144,6 @@ public class GybingDownwindSailingStrategy_PortTack_Test extends SailingStrategy
         System.out.println("sail beyond rh corner - gybe onto starboard - turn");
         Decision decision = makeDecision("/gybedownwind-porttack.json",
                 () -> setboatlocation(90, 50));
-        assertTURN(decision, -135, true);
+        assertTURN(decision, 135, true);
     }
-    // TODO - all tests are based on port mark roundings - 12-14 both _ and A should be repeated on starboard
-    // TODO - need to add tests for mean wind direction at alternative angle 
-    // TODO - need to add tests for case when wind angles move across discontinuity (ie ANGLE180)
-    // TODO - need to add channel decision tests
 }
