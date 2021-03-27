@@ -1,5 +1,6 @@
 {
-    "TITLE": {
+    "type": "sketch-v2",
+    "meta": {
         "title": "offwindtooffwind-starboardtack-portrounding"
     },
     "DISPLAY": {
@@ -12,41 +13,39 @@
         "north": 100,
         "south": 0
     },
-    "WIND": [
-        {
-            "name": "northly",
-            "type": "testflow",
-            "speed": 4,
-            "from": 0,
-            "mean": 0
-        }
-    ],
-    "MARKS": [
-        {
-            "name": "mark1",
-            "location": [80, 50],
-            "colour": "yellow"
-        },
-        {
-            "name": "mark2",
-            "location": [80, 20],
-            "colour": "yellow"
-        }
-    ],
-    "COURSE": {
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
         "start": [50, 50],
         "legs": [
             ["mark1", "starboard"],
             ["mark2", "starboard"]
         ]
     },
-    "BOATS": [
+    "marks": [{
+            "name": "mark1",
+            "location": [80, 50],
+            "colour": "yellow"
+        },
         {
+            "name": "mark2",
+            "location": [80, 80],
+            "colour": "yellow"
+        }],
+    "boats": [{
             "name": "Red",
             "type": "laser2",
             "location": [40, 50],
-            "heading": 90,
+            "heading": 0,
             "colour": "red"
-        }
-    ]
+        }]
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class OffwindtoOffwindStarboardRoundingStrategyTest extends SailingStrate
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setboatlocation(77, 53));
+                () -> setboatlocation(77, 47));
         assertSAILON(decision);
     }
 
@@ -33,7 +33,7 @@ public class OffwindtoOffwindStarboardRoundingStrategyTest extends SailingStrate
     public void layline2() throws IOException {
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setboatlocation(79, 53));
+                () -> setboatlocation(79, 47));
         assertSAILON(decision);
     }
 
@@ -41,24 +41,24 @@ public class OffwindtoOffwindStarboardRoundingStrategyTest extends SailingStrate
     public void layline3() throws IOException {
         System.out.println("layline 3");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setboatlocation(80, 53));
-        assertMARKROUNDING(decision, 180, true);
+                () -> setboatlocation(80, 47));
+        assertMARKROUNDING(decision, 90, true);
     }
 
     @Test
     public void layline4() throws IOException {
         System.out.println("layline 4");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setboatlocation(80.1, 52.9));
-        assertMARKROUNDING(decision, 180, true);
+                () -> setboatlocation(80.1, 47.1));
+        assertMARKROUNDING(decision, 90, true);
     }
 
     @Test
     public void layline5() throws IOException {
         System.out.println("layline 5");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatlocation(79, 53));
+                () -> setwindflow(4, 315),
+                () -> setboatlocation(79, 47));
         assertSAILON(decision);
     }
 
@@ -66,8 +66,8 @@ public class OffwindtoOffwindStarboardRoundingStrategyTest extends SailingStrate
     public void layline6() throws IOException {
         System.out.println("layline 6");
         Decision decision = makeDecision("/offwindtooffwind-porttack-starboardrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatlocation(80, 53));
-        assertMARKROUNDING(decision, 180, true);
+                () -> setwindflow(4, 315),
+                () -> setboatlocation(80, 47));
+        assertMARKROUNDING(decision, 90, true);
     }
 }
