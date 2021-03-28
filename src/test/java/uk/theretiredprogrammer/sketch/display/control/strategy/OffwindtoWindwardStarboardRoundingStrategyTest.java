@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrat
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setboatlocation(53, 12));
+                () -> setboatlocation(53, 88));
         assertSAILON(decision);
     }
 
@@ -33,7 +33,7 @@ public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrat
     public void layline2() throws IOException {
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setboatlocation(53, 11));
+                () -> setboatlocation(53, 89));
         assertSAILON(decision);
     }
 
@@ -41,24 +41,24 @@ public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrat
     public void layline3() throws IOException {
         System.out.println("layline 3");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setboatlocation(53, 10));
-        assertTURN(decision, -90, true);
+                () -> setboatlocation(53, 90));
+        assertTURN(decision, 180, true);
     }
 
     @Test
     public void layline4() throws IOException {
         System.out.println("layline 4");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setboatlocation(52.5, 9.5));
-        assertTURN(decision, -90, true);
+                () -> setboatlocation(52.5, 90.5));
+        assertTURN(decision, 180, true);
     }
 
     @Test
     public void layline5() throws IOException {
         System.out.println("layline 5");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatlocation(53, 11));
+                () -> setwindflow(4, 315),
+                () -> setboatlocation(53, 89));
         assertSAILON(decision);
     }
 
@@ -66,9 +66,9 @@ public class OffwindtoWindwardStarboardRoundingStrategyTest extends SailingStrat
     public void layline6() throws IOException {
         System.out.println("layline 6");
         Decision decision = makeDecision("/offwindtowindward-starboardrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatdirection(-135),
-                () -> setboatlocation(52, 8));
-        assertTURN(decision, -45, true);
+                () -> setwindflow(4, 315),
+                () -> setboatdirection(135),
+                () -> setboatlocation(52, 92));
+        assertTURN(decision, 225, true);
     }
 }

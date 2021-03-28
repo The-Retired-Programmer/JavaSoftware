@@ -3,15 +3,10 @@
     "meta": {
         "title": "offwindtooffwind-starboardtack-portrounding"
     },
-    "DISPLAY": {
+    "display": {
         "zoom": 10,
-        "speedup": 5
-    },
-    "SAILING AREA": {
-        "west": 0,
-        "east": 100,
-        "north": 100,
-        "south": 0
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
     "windshifts": {
         "showflow": true,

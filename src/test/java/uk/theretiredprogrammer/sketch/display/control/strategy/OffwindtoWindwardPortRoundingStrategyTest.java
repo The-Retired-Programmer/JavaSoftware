@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,51 +28,50 @@ public class OffwindtoWindwardPortRoundingStrategyTest extends SailingStrategyTe
     public void layline1() throws IOException {
         System.out.println("layline 1");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setboatlocation(47, 12));
-        this.assertSailing(decision, -180 + DELTAANGLE, 180);
+                () -> setboatlocation(47, 88));
+        this.assertSailing(decision, 90 - DELTAANGLE, 90);
     }
 
     @Test
     public void layline2() throws IOException {
         System.out.println("layline 2");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setboatlocation(47, 11));
-        this.assertSailing(decision, -180 + DELTAANGLE, 180);
+                () -> setboatlocation(47, 89));
+        this.assertSailing(decision, 90 -  DELTAANGLE, 180);
     }
 
     @Test
     public void layline3() throws IOException {
         System.out.println("layline 3");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setboatlocation(47, 10));
-        assertTURN(decision, 90, false);
+                () -> setboatlocation(47, 90));
+        assertTURN(decision, 0 , false);
     }
 
     @Test
     public void layline4() throws IOException {
         System.out.println("layline 4");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setboatlocation(47.5, 9.5));
-        assertTURN(decision, 90, false);
+                () -> setboatlocation(47.5, 90.5));
+        assertTURN(decision, 0, false);
     }
 
     @Test
     public void layline5() throws IOException {
         System.out.println("layline 5");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatlocation(50, 13));
-        Angle target = new Angle(-135);
-        this.assertSailing(decision, -135, -135 + DELTAANGLE);
+                () -> setwindflow(4, 315),
+                () -> setboatlocation(50, 87));
+        this.assertSailing(decision, 135, 135 + DELTAANGLE);
     }
 
     @Test
     public void layline6() throws IOException {
         System.out.println("layline 6");
         Decision decision = makeDecision("/offwindtowindward-portrounding.json",
-                () -> setwindflow(4, 45),
-                () -> setboatdirection(-135),
-                () -> setboatlocation(48, 12));
-        assertTURN(decision, 135, false);
+                () -> setwindflow(4, 315),
+                () -> setboatdirection(135),
+                () -> setboatlocation(48, 88));
+        assertTURN(decision, 45, false);
     }
 }
