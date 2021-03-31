@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,26 +26,26 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
     public void testGetComplexFlow() throws IOException {
         System.out.println("getComplexFlow");
         initialiseFlow("/complexwindflow.json");
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 0), new SpeedVector(4, 0));
-        assertFlowAt(new Location(0, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(50, 50), new SpeedVector(4, 0));
-        assertFlowAt(new Location(10, 80), new SpeedVector(4, 0));
-        assertMeanFlowAngle(0);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(TOPRIGHT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMRIGHT, new SpeedVector(4, 270));
+        assertFlowAt(new Location(50, 50), new SpeedVector(4, 270));
+        assertFlowAt(new Location(10, 80), new SpeedVector(4, 270));
+        assertMeanFlowAngle(270);
     }
 
     @Test
     public void testGetComplexFlow2() throws IOException {
         System.out.println("getComplexFlow2");
         initialiseFlow("/complexwindflow2.json");
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 0), new SpeedVector(2, 0));
-        assertFlowAt(new Location(0, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 100), new SpeedVector(2, 0));
-        assertFlowAt(new Location(50, 50), new SpeedVector(3, 0));
-        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 0));
-        assertMeanFlowAngle(0);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(TOPRIGHT, new SpeedVector(2, 270));
+        assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMRIGHT, new SpeedVector(2, 270));
+        assertFlowAt(new Location(50, 50), new SpeedVector(3, 270));
+        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 270));
+        assertMeanFlowAngle(270);
     }
 
     @Test
@@ -53,13 +53,13 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow3");
         initialiseFlow("/complexwindflow3.json");
         //
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 0), new SpeedVector(4, 45));
-        assertFlowAt(new Location(0, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 100), new SpeedVector(4, 45));
-        assertFlowAt(new Location(50, 50), new SpeedVector(4, 22.5));
-        assertFlowAt(new Location(10, 80), new SpeedVector(4, 4.1663085));
-        assertMeanFlowAngle(22.5);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(TOPRIGHT, new SpeedVector(4, 315));
+        assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMRIGHT, new SpeedVector(4, 315));
+        assertFlowAt(new Location(50, 50), new SpeedVector(4, 292.5));
+        assertFlowAt(new Location(10, 80), new SpeedVector(4, 274.1663085));
+        assertMeanFlowAngle(292.5);
     }
 
     @Test
@@ -67,13 +67,13 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow4");
         initialiseFlow("/complexwindflow4.json");
         //
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 0), new SpeedVector(2, 45));
-        assertFlowAt(new Location(0, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 100), new SpeedVector(2, 45));
-        assertFlowAt(new Location(50, 50), new SpeedVector(3, 22.5));
-        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 4.1663085));
-        assertMeanFlowAngle(22.5);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(TOPRIGHT, new SpeedVector(2, 315));
+        assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMRIGHT, new SpeedVector(2, 315));
+        assertFlowAt(new Location(50, 50), new SpeedVector(3, 292.5));
+        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 274.1663085));
+        assertMeanFlowAngle(292.5);
     }
 
     @Test
@@ -81,12 +81,12 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         System.out.println("getComplexFlow5");
         initialiseFlow("/complexwindflow5.json");
         //
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 0), new SpeedVector(4, 0));
-        assertFlowAt(new Location(0, 100), new SpeedVector(4, 0));
-        assertFlowAt(new Location(100, 100), new SpeedVector(4, 45));
-        assertFlowAt(new Location(50, 50), new SpeedVector(4, 11.25));
-        assertFlowAt(new Location(10, 80), new SpeedVector(4, 3.4683275));
-        assertMeanFlowAngle(11.1957483);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(TOPRIGHT, new SpeedVector(4, 315));
+        assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
+        assertFlowAt(BOTTOMRIGHT, new SpeedVector(4, 270));
+        assertFlowAt(new Location(50, 50), new SpeedVector(4, 281.25)); // 281.5
+        assertFlowAt(new Location(10, 20), new SpeedVector(4, 273.3333994)); // 270.9 ?
+        assertMeanFlowAngle(281.1957483);
     }
 }

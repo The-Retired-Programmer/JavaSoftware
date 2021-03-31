@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ public class ManualFlowComponentTest extends FlowComponentTest {
     @Test
     public void testGetManualFlow() throws IOException {
         System.out.println("getManualFlow");
-        initialiseFlow("/testwindflow.json");
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertMeanFlowAngle(-30);
+        initialiseFlow("/manualwindflow.json");
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertMeanFlowAngle(240);
     }
 }

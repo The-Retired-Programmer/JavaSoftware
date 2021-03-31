@@ -1,7 +1,7 @@
 {
     "type": "sketch-v2",
     "meta": {
-        "title": "constantwindflow"
+        "title": "testwindflow"
     },
     "display": {
         "zoom": 10,
@@ -14,8 +14,9 @@
         "showflowcolour": "red"
     },
     "wind": [{
-            "name": "northly",
-            "type": "constantflow",
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 240,
             "flow": [4.0, 270.0]
         }],
     "course": {

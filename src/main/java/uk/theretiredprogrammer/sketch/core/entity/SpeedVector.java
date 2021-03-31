@@ -171,10 +171,10 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
                 extrapolateAngle(other.getAngle(), fraction));
     }
 
-    public SpeedVector extrapolate(SpeedVector nw, SpeedVector ne, SpeedVector se, Location fractions) {
-        SpeedVector w = this.extrapolate(nw, fractions.getY());
-        SpeedVector e = se.extrapolate(ne, fractions.getY());
-        return w.extrapolate(e, fractions.getX());
+    public SpeedVector extrapolate(SpeedVector topright, SpeedVector bottomright, SpeedVector bottomleft, Location fractions) {
+        SpeedVector top = this.extrapolate(topright, fractions.getX());
+        SpeedVector bottom = bottomleft.extrapolate(bottomright, fractions.getX());
+        return top.extrapolate(bottom, fractions.getY());
     }
     
     @Override

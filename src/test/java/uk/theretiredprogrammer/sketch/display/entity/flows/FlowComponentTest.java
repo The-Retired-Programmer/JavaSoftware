@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,10 @@ import uk.theretiredprogrammer.sketch.display.control.DisplayController;
 
 public abstract class FlowComponentTest {
 
+    final static Location TOPLEFT = new Location();
+    final static Location TOPRIGHT = new Location(100, 0);
+    final static Location BOTTOMLEFT = new Location(0, 100);
+    final static Location BOTTOMRIGHT = new Location(100, 100);
     final static double DELTA = 0.0000001;
     private DisplayController controller;
 

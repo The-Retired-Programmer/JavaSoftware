@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class ConstantFlowComponentTest extends FlowComponentTest {
     public void testGetConstantFlow() throws IOException {
         System.out.println("getConstantFlow");
         initialiseFlow("/constantwindflow.json");
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertMeanFlowAngle(0);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertMeanFlowAngle(270);
     }
 }

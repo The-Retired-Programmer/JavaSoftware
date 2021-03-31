@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,15 @@ public class FlowComponentSetTest extends FlowComponentTest {
     public void testFlowElementSet() throws IOException {
         System.out.println("FlowElementSet");
         initialiseFlow("/windflowset.json");
-        assertFlowAtOrigin(new SpeedVector(4, 0));
-        assertFlowAt(new Location(50, 50), new SpeedVector(8, 10));
-        assertFlowAt(new Location(90, 65), new SpeedVector(8, 10));
-        assertFlowAt(new Location(50, 65), new SpeedVector(8, 10));
-        assertFlowAt(new Location(90, 50), new SpeedVector(8, 10));
-        assertFlowAt(new Location(60, 40), new SpeedVector(12, -15));
-        assertFlowAt(new Location(80, 40), new SpeedVector(12, -15));
-        assertFlowAt(new Location(60, 60), new SpeedVector(12, -15));
-        assertFlowAt(new Location(80, 60), new SpeedVector(12, -15));
-        assertMeanFlowAngle(-0.2270468);
+        assertFlowAtOrigin(new SpeedVector(4, 270));
+        assertFlowAt(new Location(50, 50), new SpeedVector(8, 280));
+        assertFlowAt(new Location(90, 65), new SpeedVector(8, 280));
+        assertFlowAt(new Location(50, 65), new SpeedVector(8, 280));
+        assertFlowAt(new Location(90, 50), new SpeedVector(8, 280));
+        assertFlowAt(new Location(60, 40), new SpeedVector(12, 255));
+        assertFlowAt(new Location(80, 40), new SpeedVector(12, 255));
+        assertFlowAt(new Location(60, 60), new SpeedVector(12, 255));
+        assertFlowAt(new Location(80, 60), new SpeedVector(12, 255));
+        assertMeanFlowAngle(270.0 - 0.2270468);
     }
 }

@@ -1,64 +1,58 @@
 {
-    "TITLE": {
+    "type": "sketch-v2",
+    "meta": {
         "title": "constantwindflow"
     },
-    "DISPLAY": {
+    "display": {
         "zoom": 10,
-        "speedup": 5
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
     },
-    "SAILING AREA": {
-        "west": 0,
-        "east": 100,
-        "north": 100,
-        "south": 0
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
     },
-    "WIND": [
+    "wind": [
         {
             "name": "northly",
             "type": "constantflow",
-            "speed": 4,
-            "from": 0
+            "flow": [4.0, 270.0]
         },
         {
             "name": "north+10",
             "type": "constantflow",
             "zlevel": 1,
-            "speed": 8,
-            "from": 10,
-            "location": [50, 50],
-            "width": 40,
-            "height": 15
+            "flow": [8.0, 280.0],
+            "area": [50, 50, 40.0, 15.0]
         },
         {
             "name": "north-15",
             "type": "constantflow",
             "zlevel": 2,
-            "speed": 12,
-            "from": -15,
-            "location": [60, 40],
-            "width": 20,
-            "height": 20
+            "flow": [12.0, 255.0],
+            "area": [60, 40, 20.0, 20.0]
         }
     ],
-    "MARKS": [
-        {
-            "name": "mark1",
-            "location": [50, 90],
-            "colour": "yellow"
-        }
-    ],
-    "COURSE": {
-        "start": [50, 10],
+    "course": {
+        "start": [50, 90],
         "legs": [
             ["mark1", "port"]
         ]
     },
-    "BOATS": [
+    "marks": [
+        {
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        }
+    ],
+    "boats": [
         {
             "name": "Red",
             "type": "laser2",
-            "location": [50, 10],
-            "heading": -45,
+            "location": [50, 90],
+            "heading": 225,
             "colour": "red"
         }
     ]
