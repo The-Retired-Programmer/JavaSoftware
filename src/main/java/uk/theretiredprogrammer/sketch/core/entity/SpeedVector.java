@@ -146,7 +146,7 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
     public Angle degreesDiff(Angle p) {
         return degreesproperty.degreesDiff(p);
     }
-    
+
     public Angle degreesDiff(double p) {
         return degreesproperty.degreesDiff(p);
     }
@@ -156,10 +156,9 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
     }
 
     private Angle extrapolateAngle(Angle other, double fraction) {
-        return new SpeedVector(1, getAngle())
+        return getAngle()
                 .mult(1.0 - fraction)
-                .plus(new SpeedVector(1, other).mult(fraction))
-                .getAngle();
+                .plus(other.mult(fraction));
     }
 
     private double extrapolateSpeed(double other, double fraction) {
@@ -176,9 +175,9 @@ public class SpeedVector implements ModelProperty<SpeedVector> {
         SpeedVector bottom = bottomleft.extrapolate(bottomright, fractions.getX());
         return top.extrapolate(bottom, fractions.getY());
     }
-    
+
     @Override
     public String toString() {
-        return speedproperty.get() + "kts @" + degreesproperty.get()+ "˚";
+        return speedproperty.get() + "kts @" + degreesproperty.get() + "˚";
     }
 }

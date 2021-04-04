@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ public class Area implements ModelProperty<Area> {
 
     public static final Area AREAZERO = new Area(new Location(0, 0), 0, 0);
 
-    private final Location bottomleft = new Location();
+    private final Location topleft = new Location();
     private final SimpleDoubleProperty width = new SimpleDoubleProperty();
     private final SimpleDoubleProperty height = new SimpleDoubleProperty();
 
@@ -36,8 +36,8 @@ public class Area implements ModelProperty<Area> {
         set(area);
     }
 
-    public Area(Location bottomleft, double width, double height) {
-        set(bottomleft, width, height);
+    public Area(Location topleft, double width, double height) {
+        set(topleft, width, height);
     }
 
     public Area(double x, double y, double width, double height) {
@@ -45,11 +45,11 @@ public class Area implements ModelProperty<Area> {
     }
 
     public final void set(Area area) {
-        set(area.bottomleft, area.getWidth(), area.getHeight());
+        set(area.topleft, area.getWidth(), area.getHeight());
     }
 
-    public final void set(Location bottomleft, double width, double height) {
-        this.bottomleft.set(bottomleft);
+    public final void set(Location topleft, double width, double height) {
+        this.topleft.set(topleft);
         this.width.set(width);
         this.height.set(height);
     }
@@ -59,7 +59,7 @@ public class Area implements ModelProperty<Area> {
     }
 
     public Location getLocationProperty() {
-        return bottomleft;
+        return topleft;
     }
 
     public double getWidth() {
@@ -80,7 +80,7 @@ public class Area implements ModelProperty<Area> {
 
     @Override
     public void setOnChange(Runnable onchange) {
-        bottomleft.setOnChange(onchange);
+        topleft.setOnChange(onchange);
         width.addListener((o, oldval, newval) -> onchange.run());
         height.addListener((o, oldval, newval) -> onchange.run());
     }
@@ -111,14 +111,14 @@ public class Area implements ModelProperty<Area> {
     }
 
     public boolean isWithinArea(Location location) {
-        return location.getX() >= bottomleft.getX() && location.getX() <= bottomleft.getX() + width.get()
-                && location.getY() >= bottomleft.getY() && location.getY() <= bottomleft.getY() + height.get();
+        return location.getX() >= topleft.getX() && location.getX() <= topleft.getX() + width.get()
+                && location.getY() >= topleft.getY() && location.getY() <= topleft.getY() + height.get();
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + bottomleft.hashCode();
+        hash = 67 * hash + topleft.hashCode();
         hash = 67 * hash + (int) (Double.doubleToLongBits(width.get()) ^ (Double.doubleToLongBits(width.get()) >>> 32));
         hash = 67 * hash + (int) (Double.doubleToLongBits(height.get()) ^ (Double.doubleToLongBits(height.get()) >>> 32));
         return hash;
@@ -136,7 +136,7 @@ public class Area implements ModelProperty<Area> {
             return false;
         }
         final Area other = (Area) obj;
-        if (!this.bottomleft.equals(other.bottomleft)) {
+        if (!this.topleft.equals(other.topleft)) {
             return false;
         }
         if (Double.doubleToLongBits(this.width.get()) != Double.doubleToLongBits(other.width.get())) {

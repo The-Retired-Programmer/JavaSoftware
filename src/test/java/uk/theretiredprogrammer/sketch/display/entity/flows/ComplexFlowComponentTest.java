@@ -58,7 +58,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
         assertFlowAt(BOTTOMRIGHT, new SpeedVector(4, 315));
         assertFlowAt(new Location(50, 50), new SpeedVector(4, 292.5));
-        assertFlowAt(new Location(10, 80), new SpeedVector(4, 274.1663085));
+        assertFlowAt(new Location(10, 80), new SpeedVector(4, 274.5));
         assertMeanFlowAngle(292.5);
     }
 
@@ -72,7 +72,7 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
         assertFlowAt(BOTTOMRIGHT, new SpeedVector(2, 315));
         assertFlowAt(new Location(50, 50), new SpeedVector(3, 292.5));
-        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 274.1663085));
+        assertFlowAt(new Location(10, 80), new SpeedVector(3.8, 274.5));
         assertMeanFlowAngle(292.5);
     }
 
@@ -85,8 +85,10 @@ public class ComplexFlowComponentTest extends FlowComponentTest {
         assertFlowAt(TOPRIGHT, new SpeedVector(4, 315));
         assertFlowAt(BOTTOMLEFT, new SpeedVector(4, 270));
         assertFlowAt(BOTTOMRIGHT, new SpeedVector(4, 270));
-        assertFlowAt(new Location(50, 50), new SpeedVector(4, 281.25)); // 281.5
-        assertFlowAt(new Location(10, 20), new SpeedVector(4, 273.3333994)); // 270.9 ?
-        assertMeanFlowAngle(281.1957483);
+        assertFlowAt(new Location(50, 0), new SpeedVector(4, 292.5));
+        assertFlowAt(new Location(50, 100), new SpeedVector(4, 270));
+        assertFlowAt(new Location(50, 50), new SpeedVector(4, 281.25));
+        assertFlowAt(new Location(10, 20), new SpeedVector(4, 273.6));
+        assertMeanFlowAngle(281.25);
     }
 }

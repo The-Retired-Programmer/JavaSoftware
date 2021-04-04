@@ -35,7 +35,7 @@ public abstract class FlowComponentTest {
     }
 
     void assertFlowAtOrigin(SpeedVector expected) throws IOException {
-        assertFlowAt(new Location(), expected);
+        assertFlowAt(TOPLEFT, expected);
     }
 
     void assertFlowAt(Location at, SpeedVector expected) throws IOException {

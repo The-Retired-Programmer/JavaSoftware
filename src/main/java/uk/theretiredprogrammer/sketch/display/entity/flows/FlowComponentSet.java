@@ -93,16 +93,15 @@ public class FlowComponentSet extends ModelList<FlowComponent> {
     }
 
     private Angle meanAngle(SpeedVector[][] array) {
-        double x = 0;
-        double y = 0;
+        double sum = 0;
+        int count = 0;
         for (SpeedVector[] column : array) {
             for (SpeedVector cell : column) {
-                double r = cell.getAngle().getRadians();
-                x += Math.sin(r);
-                y += Math.cos(r);
+                sum+=cell.getAngle().get();
+                count+=1;
             }
         }
-        return new Angle(Math.toDegrees(Math.atan2(x, y)));
+        return new Angle(sum/count);
     }
 
     SpeedVector getFlowwithoutswing(Location pos) {

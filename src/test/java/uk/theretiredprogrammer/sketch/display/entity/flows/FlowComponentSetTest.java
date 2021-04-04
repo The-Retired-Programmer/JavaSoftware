@@ -35,6 +35,6 @@ public class FlowComponentSetTest extends FlowComponentTest {
         assertFlowAt(new Location(80, 40), new SpeedVector(12, 255));
         assertFlowAt(new Location(60, 60), new SpeedVector(12, 255));
         assertFlowAt(new Location(80, 60), new SpeedVector(12, 255));
-        assertMeanFlowAngle(270.0 - 0.2270468);
+        assertMeanFlowAngle(269.768160);
     }
 }
