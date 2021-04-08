@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ public class UpgraderFactory {
             }
             case 1 -> {
                 return new Upgrader1();
+            }
+            case 2 -> {
+                return new Upgrader2();
             }
             default ->
                 throw new IllegalStateFailure("UpgraderFactory - no upgrader available: " + version + " to " + Integer.toString(version + 1));

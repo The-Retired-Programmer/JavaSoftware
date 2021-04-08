@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class Gradient implements ModelProperty<Gradient> {
 
     static {
         typenames = FXCollections.observableArrayList();
-        typenames.addAll("north", "south", "east", "west");
+        typenames.addAll("top", "bottom", "right", "left");
     }
 
     public static ObservableList<String> getTypenames() {
@@ -52,7 +52,7 @@ public class Gradient implements ModelProperty<Gradient> {
     private final ObservableList<Dble> speeds = FXCollections.observableArrayList();
 
     public Gradient() {
-        setType("north");
+        setType("top");
     }
 
     public Gradient(String type) {
@@ -166,17 +166,17 @@ public class Gradient implements ModelProperty<Gradient> {
 
     public double getMeanFlowDirection() throws IOException {
         switch (type.get()) {
-            case "north" -> {
-                return 0;
+            case "top" -> {
+                return 270;
             }
-            case "south" -> {
-                return 180;
-            }
-            case "east" -> {
+            case "bottom" -> {
                 return 90;
             }
-            case "west" -> {
-                return -90;
+            case "right" -> {
+                return 0;
+            }
+            case "left" -> {
+                return 180;
             }
             default ->
                 throw new IOException("Illegal gradient direction");

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020-2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,15 @@ public abstract class Upgrader {
     public abstract JsonObject upgrade(JsonObject oldversion);
 
     JsonObject copyobj(JsonObject oldroot, String oldname, JsonObject newroot, JsonPointer insertpoint) {
-        JsonObject copyobj = oldroot.getJsonObject(oldname);
-        return copyobj != null ? insertpoint.add(newroot, copyobj) : newroot;
+        return addobj( oldroot.getJsonObject(oldname), newroot, insertpoint);
+    }
+    
+    JsonObject addobj(JsonObject newobj, JsonObject newroot, JsonPointer insertpoint) {
+        return newobj == null ? newroot : insertpoint.add(newroot, newobj);
     }
 
     JsonObject copyarray(JsonObject oldroot, String oldname, JsonObject newroot, JsonPointer insertpoint) {
-        JsonArray copyarray = oldroot.getJsonArray(oldname);
-        return copyarray != null ? insertpoint.add(newroot, copyarray) : newroot;
+        return addarray(oldroot.getJsonArray(oldname), newroot, insertpoint);
     }
 
     JsonObject addarray(JsonArray newarray, JsonObject newroot, JsonPointer insertpoint) {

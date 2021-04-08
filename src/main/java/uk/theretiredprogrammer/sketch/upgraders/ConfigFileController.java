@@ -27,7 +27,7 @@ import uk.theretiredprogrammer.sketch.core.control.ParseFailure;
 
 public class ConfigFileController {
 
-    private final static int CURRENTVERSION = 2;
+    private final static int CURRENTVERSION = 3;
     private JsonObject parsedjson;
     int fromversion = 0;
 
