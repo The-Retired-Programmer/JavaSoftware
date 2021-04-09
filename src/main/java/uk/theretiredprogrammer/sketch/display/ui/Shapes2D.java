@@ -106,34 +106,34 @@ public class Shapes2D {
             length = 17 / zoom;
             width = 7 / zoom;
         }
-        Angle relative = direction.degreesDiff(winddirection);
+        Angle relative = winddirection.degreesDiff(direction);
         boolean onStarboard = relative.lt(0);
         Angle absrelative = relative.fold();
         Angle sailRotation = absrelative.lteq(45) ? new Angle(0) : absrelative.sub(45).mult(2.0 / 3);
         sailRotation = sailRotation.oppositeif(!onStarboard);
         Translate positiontranslate = new Translate(location.getX(), location.getY());
-        Rotate directionrotation = new Rotate(-direction.get());
+        Rotate directionrotation = new Rotate(direction.get());
         Rotate sailreachrotation = new Rotate(sailRotation.get());
         //
         MoveTo move = new MoveTo();
-        move.setY(-length * 0.5);
-        move.setX(width * 0.45); //go to transom quarter
+        move.setX(-length * 0.5);
+        move.setY(width * 0.45); //go to transom quarter
         //
         CubicCurveTo curve1 = new CubicCurveTo();
-        curve1.setControlY1(-length * 0.2);
-        curve1.setControlX1(width * 0.55);
-        curve1.setControlY2(length * 0.2);
-        curve1.setControlX2(width * 0.3);
-        curve1.setY(length * 0.5);
-        curve1.setX(0);
+        curve1.setControlX1(-length * 0.2);
+        curve1.setControlY1(width * 0.55);
+        curve1.setControlX2(length * 0.2);
+        curve1.setControlY2(width * 0.3);
+        curve1.setX(length * 0.5);
+        curve1.setY(0);
         //
         CubicCurveTo curve2 = new CubicCurveTo();
-        curve2.setControlY1(length * 0.2);
-        curve2.setControlX1(-width * 0.3);
-        curve2.setControlY2(-length * 0.2);
-        curve2.setControlX2(-width * 0.55);
-        curve2.setY(-length * 0.5);
-        curve2.setX(-width * 0.45);
+        curve2.setControlX1(length * 0.2);
+        curve2.setControlY1(-width * 0.3);
+        curve2.setControlX2(-length * 0.2);
+        curve2.setControlY2(-width * 0.55);
+        curve2.setX(-length * 0.5);
+        curve2.setY(-width * 0.45);
 //
         Path boat = new Path();
         boat.getElements().addAll(move, curve1, curve2, new ClosePath());
@@ -142,24 +142,24 @@ public class Shapes2D {
         boat.getTransforms().addAll(positiontranslate, directionrotation);
         //
         MoveTo movesail = new MoveTo();
-        movesail.setX(0.0);
-        movesail.setY(0.00);
+        movesail.setY(0.0);
+        movesail.setX(0.00);
         //
         CubicCurveTo sailcurve = new CubicCurveTo();
-        if (!onStarboard) {
-            sailcurve.setControlY1(-length * 0.2);
-            sailcurve.setControlX1(-width * 0.4);
-            sailcurve.setControlY2(-length * 0.4);
-            sailcurve.setControlX2(-width * 0.4);
-            sailcurve.setY(-length * 0.7);
-            sailcurve.setX(-width * 0.4);
+        if (onStarboard) {
+            sailcurve.setControlX1(-length * 0.2);
+            sailcurve.setControlY1(-width * 0.4);
+            sailcurve.setControlX2(-length * 0.4);
+            sailcurve.setControlY2(-width * 0.4);
+            sailcurve.setX(-length * 0.7);
+            sailcurve.setY(-width * 0.4);
         } else {
-            sailcurve.setControlY1(-length * 0.2);
-            sailcurve.setControlX1(width * 0.4);
-            sailcurve.setControlY2(-length * 0.4);
-            sailcurve.setControlX2(width * 0.4);
-            sailcurve.setY(-length * 0.7);
-            sailcurve.setX(width * 0.4);
+            sailcurve.setControlX1(-length * 0.2);
+            sailcurve.setControlY1(width * 0.4);
+            sailcurve.setControlX2(-length * 0.4);
+            sailcurve.setControlY2(width * 0.4);
+            sailcurve.setX(-length * 0.7);
+            sailcurve.setY(width * 0.4);
         }
         Path sail = new Path();
         sail.getElements().addAll(movesail, sailcurve);

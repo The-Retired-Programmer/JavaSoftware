@@ -48,8 +48,6 @@ public class DisplayPane extends Group {
     private double zoom;
     private Shapes2D shapebuilder;
     private Scale mainscale;
-    private Translate maintranslate;
-    private Rotate mainrotate;
 
     public DisplayPane(DisplayController controller) {
         this.controller = controller;
@@ -59,10 +57,8 @@ public class DisplayPane extends Group {
     public final void refreshParameters() {
         SketchModel sketchproperty = controller.getModel();
         this.zoom = sketchproperty.getDisplay().getZoom();
-        mainrotate = new Rotate(180, X_AXIS);
         mainscale = new Scale(zoom, zoom);
         Area displayarea = sketchproperty.getDisplayArea();
-        maintranslate = new Translate(-displayarea.getLocationProperty().getX(), -displayarea.getHeight() - displayarea.getLocationProperty().getY());
         shapebuilder = new Shapes2D(zoom);
         repaint();
     }
@@ -90,9 +86,7 @@ public class DisplayPane extends Group {
                                         UI.contextMenuitem("Add boat", (ev, contextmenu) -> addBoat(ev, contextmenu))
                                 )
                         ),
-                        maintranslate,
-                        mainscale,
-                        mainrotate
+                        mainscale
                 )
         );
     }
@@ -141,9 +135,7 @@ public class DisplayPane extends Group {
                     getChildren().addAll(
                             Wrap.globalTransform(
                                     shapebuilder.displayWindGraphic(here, controller.getModel().getWindFlow().getFlow(here), 10, controller.getModel().getWindFlow().getShiftsproperty().getShowflowcolour()),
-                                    maintranslate,
-                                    mainscale,
-                                    mainrotate
+                                    mainscale
                             )
                     );
                     y += showwindflowinterval;
@@ -203,9 +195,7 @@ public class DisplayPane extends Group {
         getChildren().addAll(
                 Wrap.globalTransform(
                         shapebuilder.drawmark(mark.getLocation(), SIZE, mark.getColour()),
-                        maintranslate,
-                        mainscale,
-                        mainrotate
+                        mainscale
                 )
         );
     }
@@ -216,9 +206,7 @@ public class DisplayPane extends Group {
             getChildren().addAll(
                     Wrap.globalTransform(
                             shapebuilder.drawwindwardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
-                            maintranslate,
-                            mainscale,
-                            mainrotate
+                            mainscale
                     )
             );
         }
@@ -226,9 +214,7 @@ public class DisplayPane extends Group {
             getChildren().addAll(
                     Wrap.globalTransform(
                             shapebuilder.drawleewardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
-                            maintranslate,
-                            mainscale,
-                            mainrotate
+                            mainscale
                     )
             );
         }
@@ -240,9 +226,7 @@ public class DisplayPane extends Group {
             getChildren().addAll(
                     Wrap.globalTransform(
                             shapebuilder.drawwindwardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
-                            maintranslate,
-                            mainscale,
-                            mainrotate
+                            mainscale
                     )
             );
         }
@@ -250,9 +234,7 @@ public class DisplayPane extends Group {
             getChildren().addAll(
                     Wrap.globalTransform(
                             shapebuilder.drawleewardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
-                            maintranslate,
-                            mainscale,
-                            mainrotate
+                            mainscale
                     )
             );
         }
@@ -277,9 +259,7 @@ public class DisplayPane extends Group {
                                 ),
                                 Cursor.CROSSHAIR
                         ),
-                        maintranslate,
-                        mainscale,
-                        mainrotate
+                        mainscale
                 )
         );
     }
