@@ -22,7 +22,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
@@ -55,16 +54,15 @@ public class SteerableCameraTest extends Application {
     //
     private SteerableCamera steerablecamera;
     //
-    private Slider sizeslider;
-    private Slider rotationslider;
-    private Slider xlocationslider;
-    private Slider ylocationslider;
-    private Slider heightrotationslider;
-    private Slider heightscaleslider;
+    private Slider angleslider;
+    private Slider xpointtoslider;
+    private Slider ypointtoslider;
+    private Slider zpointtoslider;
+    private Slider elevationslider;
+    private Slider distanceslider;
     private Slider fieldofviewslider;
-    private CheckBox verticalfieldofviewswitch;
 
-//    @Test
+    @Test
     public void Camera3D() {
         System.out.println("SteerableCamera test");
         launch(new String[]{});
@@ -74,20 +72,16 @@ public class SteerableCameraTest extends Application {
     public void start(Stage stage) {
         createUIcontrols();
         HBox hcontrols = new HBox(10,
-                new Label("Rotation"), rotationslider,
-                new Label("Size"), sizeslider,
-                new Label("X"), xlocationslider,
-                new Label("Field of View"), fieldofviewslider,
-                new Label("Vertical Field of View"), verticalfieldofviewswitch
+                new VBox(5, new Label("Point to X"), xpointtoslider),
+                new VBox(5, new Label("Point to Y"), ypointtoslider),
+                new VBox(5, new Label("Point to Z"), zpointtoslider),
+                new VBox(5, new Label("Angle"), angleslider),
+                new VBox(5, new Label("Elevation"), elevationslider),
+                new VBox(5, new Label("Distance"), distanceslider),
+                new VBox(5, new Label("Field of View"), fieldofviewslider)
         );
         BorderPane borderpane = new BorderPane();
         borderpane.setBottom(hcontrols);
-        VBox vcontrols = new VBox(10,
-                new Label("Y"), ylocationslider,
-                new Label("Height Rotation"), heightrotationslider,
-                new Label("Height Scale"), heightscaleslider
-        );
-        borderpane.setRight(vcontrols);
         Dimensions3D dimensions = new Dimensions3D(
                 new HullDimensions3DBuilder().build(),
                 new SparDimensions3DBuilder().build());
@@ -105,17 +99,15 @@ public class SteerableCameraTest extends Application {
                 createmark(new PhongMaterial(ORANGE), 5, DISPLAYSIZE / 2, DISPLAYSIZE - BORDER),
                 boat,
                 new AmbientLight(WHITE),
-                steerablecamera = new SteerableCamera()
+                steerablecamera = new SteerableCamera(DISPLAYSIZE * 2)
         );
         SubScene subscene = new SubScene(centrenode, DISPLAYSIZE, DISPLAYSIZE, true, SceneAntialiasing.BALANCED);
         subscene.setCamera(steerablecamera.getCamera());
-        steerablecamera.bindBidirectionaltoCameraViewRotation(rotationslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraViewScale(sizeslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraViewLocation(xlocationslider.valueProperty(), ylocationslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraHeightRotation(heightrotationslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraHeightScale(heightscaleslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraFieldOfView(fieldofviewslider.valueProperty());
-        steerablecamera.bindBidirectionaltoCameraVerticalFieldofView(verticalfieldofviewswitch.selectedProperty());
+        steerablecamera.setAngle(angleslider.valueProperty());
+        steerablecamera.setPointTo(xpointtoslider.valueProperty(), ypointtoslider.valueProperty(), zpointtoslider.valueProperty());
+        steerablecamera.setElevation(elevationslider.valueProperty());
+        steerablecamera.setDistance(distanceslider.valueProperty());
+        steerablecamera.setFieldOfView(fieldofviewslider.valueProperty());
 
         borderpane.setCenter(subscene);
         Scene scene = new Scene(borderpane);
@@ -144,27 +136,16 @@ public class SteerableCameraTest extends Application {
     }
 
     private void createUIcontrols() {
-        sizeslider = createHslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
-        rotationslider = createHslider(-180, 180, 10, 30, 0);
-        xlocationslider = createHslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
-        ylocationslider = createVslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
-        heightrotationslider = createVslider(0, 90, 10, 30, 0);
-        heightscaleslider = createVslider(0, 1, 0.1, 0.2, 1);
-        fieldofviewslider = createHslider(0, 180, 10, 30, 90);
-        verticalfieldofviewswitch = createcheckbox(true);
+        angleslider = createslider(-180, 180, 10, 30, 0);
+        xpointtoslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
+        ypointtoslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
+        zpointtoslider = createslider(-1000, 0, 100, 250, 0);
+        elevationslider = createslider(0, 90, 10, 30, 90);
+        distanceslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
+        fieldofviewslider = createslider(0, 180, 10, 30, 120);
     }
 
-    private Slider createHslider(double min, double max, double tickunit, double majortickunit, double initialvalue) {
-        Slider slider = new Slider(min, max, initialvalue);
-        slider.setShowTickMarks(true);
-        slider.setShowTickLabels(true);
-        slider.setMajorTickUnit(majortickunit);
-        slider.setBlockIncrement(tickunit);
-        slider.setSnapToTicks(true);
-        return slider;
-    }
-
-    private Slider createVslider(double min, double max, double tickunit, double majortickunit, double initialvalue) {
+    private Slider createslider(double min, double max, double tickunit, double majortickunit, double initialvalue) {
         Slider slider = new Slider(min, max, initialvalue);
         slider.setOrientation(VERTICAL);
         slider.setShowTickMarks(true);
@@ -173,11 +154,5 @@ public class SteerableCameraTest extends Application {
         slider.setBlockIncrement(tickunit);
         slider.setSnapToTicks(true);
         return slider;
-    }
-
-    private CheckBox createcheckbox(boolean initialvalue) {
-        CheckBox cbox = new CheckBox();
-        cbox.setSelected(initialvalue);
-        return cbox;
     }
 }

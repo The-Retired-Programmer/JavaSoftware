@@ -47,20 +47,20 @@ public class Display3DPane extends SubScene {
         super(new Display3DGroup(controller), width, height, true, BALANCED);
         Area displayarea = controller.getModel().getDisplay().getDisplayarea();
         double arearadius = Math.max(displayarea.getWidth(), displayarea.getHeight()) / 2;
-        setCamerazoom(arearadius);
-        setCameraviewlocation(origin.getX()+width/2, origin.getY()+height/2);
-        SteerableCamera steerablecamera = new SteerableCamera();
-        AmbientLight lighting = new AmbientLight(Color.WHITE);
-        Group group = (Group) getRoot();
-        group.getChildren().addAll(lighting, steerablecamera);
+//        setCamerazoom(arearadius);
+//        setCameraviewlocation(origin.getX()+width/2, origin.getY()+height/2);
+//        SteerableCamera steerablecamera = new SteerableCamera();
+//        AmbientLight lighting = new AmbientLight(Color.WHITE);
+//        Group group = (Group) getRoot();
+//        group.getChildren().addAll(lighting, steerablecamera);
+//        //
+//        steerablecamera.bindtoCameraViewRotation(camerarotation);
+//        steerablecamera.bindtoCameraViewScale(camerazoom);
+//        steerablecamera.bindtoCameraViewLocation(cameraxlocation, cameraylocation);
+//        steerablecamera.bindtoCameraHeightRotation(cameraverticalrotation);
+//        steerablecamera.bindtoCameraFieldOfView(camerafieldofview);
         //
-        steerablecamera.bindtoCameraViewRotation(camerarotation);
-        steerablecamera.bindtoCameraViewScale(camerazoom);
-        steerablecamera.bindtoCameraViewLocation(cameraxlocation, cameraylocation);
-        steerablecamera.bindtoCameraHeightRotation(cameraverticalrotation);
-        steerablecamera.bindtoCameraFieldOfView(camerafieldofview);
-        //
-        setCamera(steerablecamera.getCamera());
+//        setCamera(steerablecamera.getCamera());
     }
     
     public void setRotatecameraview(double newvalue){
