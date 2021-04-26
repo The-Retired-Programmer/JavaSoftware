@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display3D.ui;
 
+import javafx.scene.control.Slider;
 import javafx.scene.text.Text;
 import uk.theretiredprogrammer.sketch.core.ui.AbstractWindow;
 import uk.theretiredprogrammer.sketch.core.ui.UI;
@@ -49,6 +50,9 @@ public class Display3DWindow extends AbstractWindow<Display3DController> {
                 UI.toolbarButton("table.png", "Show Properties", ev -> controller.showPropertiesWindow()),
                 UI.toolbarButton("script.png", "Show Decision Log", ev -> controller.showLogWindow()),
                 timetext = new Text("      ")
+        );
+        addToHControlArea(
+                new Slider()
         );
         setContent(pane, SCROLLABLE);
         build();

@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.sketch.core.ui;
 
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Camera;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -27,6 +26,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
@@ -45,13 +45,14 @@ public abstract class AbstractWindow<C extends AbstractController> {
     private final MenuBar menubar = new MenuBar();
     private final ToolBar toolbar = new ToolBar();
     private final Text statusbar = new Text("");
+    private final HBox hcontrols = new HBox();
+    private final VBox vcontrols = new VBox();
     private String title;
     private Node contentnode;
     private Rectangle2D windowsize;
     private boolean scrollable = false;
     private C controller;
     private final ContextMenu contextmenu = new ContextMenu();
-    private Camera camera;
 
     public AbstractWindow(Class clazz, Stage stage, C controller) {
         this.clazz = clazz;
@@ -147,6 +148,14 @@ public abstract class AbstractWindow<C extends AbstractController> {
         toolbar.getItems().addAll(nodes);
     }
 
+    public final void addToHControlArea(Node... nodes) {
+        hcontrols.getChildren().addAll(nodes);
+    }
+
+    public final void addToVControlArea(Node... nodes) {
+        vcontrols.getChildren().addAll(nodes);
+    }
+
     public final void addtoContextMenuIfScrollable(MenuItem... menuitems) {
         contextmenu.getItems().addAll(menuitems);
     }
@@ -165,21 +174,15 @@ public abstract class AbstractWindow<C extends AbstractController> {
         this.scrollable = scrollable;
     }
 
-    public final void setCamera(Camera camera) {
-        this.camera = camera;
-    }
-
     public final void build() {
         BorderPane borderpane = new BorderPane();
         borderpane.setTop(new VBox(menubar, toolbar));
         Node centrenode = scrollable ? createScrollableNode(contentnode) : contentnode;
         borderpane.setCenter(centrenode);
-        borderpane.setBottom(statusbar);
+        borderpane.setBottom(new VBox(hcontrols, statusbar));
+        borderpane.setRight(vcontrols);
         Scene scene = new Scene(borderpane);
         SketchPreferences.applyWindowSizePreferences(stage, clazz, windowsize);
-        if (camera != null) {
-            scene.setCamera(camera);
-        }
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);

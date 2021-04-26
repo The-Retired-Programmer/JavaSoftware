@@ -20,7 +20,6 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
-import javafx.scene.transform.Rotate;
 
 public class BoatHull3D extends MeshView {
 
@@ -32,17 +31,17 @@ public class BoatHull3D extends MeshView {
         mesh.getTexCoords().addAll(0, 0);
         // all hull points
         for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
-            float y = -dimensions.getSectionlocations()[section];
+            float x = -dimensions.getSectionlocations()[section];
             for (int point = 0; point < dimensions.getSectiondimensions()[section].length / 2; point++) {
-                float x = dimensions.getSectiondimensions()[section][point * 2];
-                float z = -dimensions.getSectiondimensions()[section][point * 2 + 1];
-                mesh.getPoints().addAll(-x, y, z);
+                float y = dimensions.getSectiondimensions()[section][point * 2];
+                float z = dimensions.getSectiondimensions()[section][point * 2 + 1];
+                mesh.getPoints().addAll(x, -y, z);
                 mesh.getPoints().addAll(x, y, z);
             }
         }
         int deckclindex = mesh.getPoints().size() / 3;
         for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
-            mesh.getPoints().addAll(0f, -dimensions.getSectionlocations()[section], -dimensions.getDeckclheights()[section]);
+            mesh.getPoints().addAll(-dimensions.getSectionlocations()[section], 0f, dimensions.getDeckclheights()[section]);
         }
         // build hull mesh
         for (int surface = 0; surface < dimensions.getNumsurfaces(); surface++) {

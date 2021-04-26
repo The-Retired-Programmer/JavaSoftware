@@ -41,14 +41,14 @@ public class Boat3DTest extends Application {
     private final float HEIGHT = 1000;
     private Boat3D boat;
     private Rotate camerarotate;
-    private final DoubleProperty cameraangle = new SimpleDoubleProperty(225f);
+    private final DoubleProperty cameraangle = new SimpleDoubleProperty(45f);
     private final Dimensions3D dimensions = new Dimensions3D(
             new HullDimensions3DBuilder().build(),
             new SparDimensions3DBuilder().build());
     private final BoatCoordinates coordinates = new BoatCoordinates();
 
     @Test
-    public void displayBoatRig3D() {
+    public void displayBoat3D() {
         System.out.println("draw 3D Boat");
         launch(new String[]{});
     }
@@ -77,7 +77,11 @@ public class Boat3DTest extends Application {
         Sphere mark = new Sphere(0.3);
         mark.setDrawMode(DrawMode.FILL);
         mark.setMaterial(markmaterial);
-        Group waterg = new Group(water, boat, mark);
+        Sphere mark2 = new Sphere(0.2);
+        mark2.setDrawMode(DrawMode.FILL);
+        mark2.setMaterial(markmaterial);
+        mark2.getTransforms().addAll(new Translate(0f, 0f, -5f));
+        Group waterg = new Group(water, boat, mark, mark2);
         Scene scene = new Scene(waterg, WIDTH, HEIGHT, true);
         scene.setCamera(camera);
         initMouseControl(boat, scene, stage);
@@ -117,7 +121,7 @@ public class Boat3DTest extends Application {
     private void move(double delta) {
         double radians = Math.toRadians(coordinates.getAngleProperty().get());
         coordinates.setPosition(
-                coordinates.getXProperty().get() + delta * Math.sin(radians),
-                coordinates.getYProperty().get() + delta * Math.cos(radians));
+                coordinates.getXProperty().get() + delta * Math.cos(radians),
+                coordinates.getYProperty().get() + delta * Math.sin(radians));
     }
 }

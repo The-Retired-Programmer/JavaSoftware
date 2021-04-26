@@ -19,10 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.transform.Rotate;
-import static javafx.scene.transform.Rotate.X_AXIS;
 import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
@@ -55,10 +52,8 @@ public class DisplayPane extends Group {
     }
 
     public final void refreshParameters() {
-        SketchModel sketchproperty = controller.getModel();
-        this.zoom = sketchproperty.getDisplay().getZoom();
+        this.zoom = controller.getModel().getDisplay().getZoom();
         mainscale = new Scale(zoom, zoom);
-        Area displayarea = sketchproperty.getDisplayArea();
         shapebuilder = new Shapes2D(zoom);
         repaint();
     }

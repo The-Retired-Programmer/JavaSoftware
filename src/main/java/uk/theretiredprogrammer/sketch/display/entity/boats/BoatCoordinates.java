@@ -43,23 +43,23 @@ public class BoatCoordinates {
         winddirection = null;
         setBoomangle();
     }
+    
+    public BoatCoordinates() {
+        this(new Location(0, 0), new Angle(0), new Angle(0));
+    }
 
     private void setBoomangle() {
         Angle wdirection = windflow == null ? winddirection : windflow.getFlow(position).getAngle();
-        double relative = boatangle.degreesDiff(wdirection).get();
+        double relative = wdirection.degreesDiff(boatangle).get();
         boolean onStarboard = relative > 180;
         double sailRotation;
         if (onStarboard) {
             sailRotation = relative > 320 ? 0 : (360 - relative) / 2;
 
         } else {
-            sailRotation = relative < 40 ? 0 : relative / 2;
+            sailRotation = relative < 40 ? 0 : -relative / 2;
         }
         boomangle.set(sailRotation);
-    }
-
-    public BoatCoordinates() {
-        this(new Location(0, 0), new Angle(0), new Angle(0));
     }
 
     public void setPosition(double x, double y) {

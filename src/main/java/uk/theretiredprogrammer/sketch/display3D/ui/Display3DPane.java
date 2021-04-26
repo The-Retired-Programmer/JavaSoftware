@@ -17,325 +17,70 @@ package uk.theretiredprogrammer.sketch.display3D.ui;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.ActionEvent;
-import javafx.scene.Camera;
-import uk.theretiredprogrammer.sketch.display.ui.*;
-import javafx.scene.Cursor;
+import javafx.scene.AmbientLight;
 import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.control.ContextMenu;
+import static javafx.scene.SceneAntialiasing.BALANCED;
+import javafx.scene.SubScene;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Rotate;
-import static javafx.scene.transform.Rotate.X_AXIS;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
 import uk.theretiredprogrammer.sketch.core.entity.Area;
-import uk.theretiredprogrammer.sketch.display.entity.boats.Boat;
 import uk.theretiredprogrammer.sketch.core.entity.Location;
-import uk.theretiredprogrammer.sketch.core.entity.Angle;
-import uk.theretiredprogrammer.sketch.core.entity.SpeedVector;
-import uk.theretiredprogrammer.sketch.core.ui.UI;
 import uk.theretiredprogrammer.sketch.display.control.Display3DController;
-import uk.theretiredprogrammer.sketch.display.entity.course.Decision;
-import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.PORT;
-import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.STARBOARD;
-import uk.theretiredprogrammer.sketch.display.entity.base.SketchModel;
-import uk.theretiredprogrammer.sketch.display.entity.boats.BoatFactory;
-import uk.theretiredprogrammer.sketch.display.entity.course.CurrentLeg;
-import static uk.theretiredprogrammer.sketch.display.entity.course.Decision.Importance.MAJOR;
-import uk.theretiredprogrammer.sketch.display.entity.course.Mark;
 
-public class Display3DPane extends Group {
-
-    private final Display3DController controller;
-    private final double zoom;
-    private Rotate camerarotate;
-    private final DoubleProperty cameraangle = new SimpleDoubleProperty(220f);
+public class Display3DPane extends SubScene {
+    
+    private DoubleProperty camerarotation = new SimpleDoubleProperty(0);
+    private DoubleProperty camerazoom = new SimpleDoubleProperty(1);
+    private DoubleProperty cameraxlocation = new SimpleDoubleProperty(0); 
+    private DoubleProperty cameraylocation = new SimpleDoubleProperty(0);
+    private DoubleProperty cameraverticalrotation = new SimpleDoubleProperty(45);
+    private DoubleProperty camerafieldofview = new SimpleDoubleProperty(90);
 
     public Display3DPane(Display3DController controller) {
-        this.controller = controller;
-        SketchModel sketchproperty = controller.getModel();
-        this.zoom = sketchproperty.getDisplay().getZoom();
-        Area displayarea = sketchproperty.getDisplayArea();
-        this.getTransforms().addAll(
-                new Scale(zoom, zoom, zoom),
-                new Rotate(180, X_AXIS),
-                new Translate(
-                        -displayarea.getLocationProperty().getX(),
-                        -displayarea.getHeight() - displayarea.getLocationProperty().getY()
-                )
-        );
-        this.addCamera();
-        displaydraw();
-        marksdraw();
-//        windflowdraw();
-        //waterflow.draw();
-//        laylinesdraw();
-//        laddersdraw();
-        boatsdraw();
+        this(controller, controller.getModel().getDisplayArea());
     }
 
-    private void addCamera() {
-        Camera camera = new PerspectiveCamera(true);
-        //camera.setNearClip(10f);
-        //camera.setFarClip(100f);
-        camera.getTransforms().addAll(
-                camerarotate = new Rotate(180f, Rotate.X_AXIS),
-                new Translate(0f, 0f, -30f)
-        );
-        //camerarotate.angleProperty().bind(cameraangle);
-        getChildren().addAll(camera);
+    private Display3DPane(Display3DController controller, Area displayarea) {
+        this(controller, displayarea.getLocationProperty()  ,displayarea.getWidth(), displayarea.getHeight());
     }
 
-    private void displaydraw() {
-        Area displayarea = controller.getModel().getDisplayArea();
-        Area sailingarea = controller.getModel().getDisplay().getSailingarea();
-        getChildren().addAll(
-                Wrap.displayContextMenu(
-                        drawfieldofplay(displayarea, sailingarea),
-                        UI.displayContextMenu(
-                                UI.contextMenuitem("Add Mark", (ev, contextmenu) -> addMark(ev, contextmenu)),
-                                UI.contextMenuitem("Add boat", (ev, contextmenu) -> addBoat(ev, contextmenu))
-                        )
-                )
-        );
+    private Display3DPane(Display3DController controller, Location origin, double width, double height) {
+        super(new Display3DGroup(controller), width, height, true, BALANCED);
+        Area displayarea = controller.getModel().getDisplay().getDisplayarea();
+        double arearadius = Math.max(displayarea.getWidth(), displayarea.getHeight()) / 2;
+        setCamerazoom(arearadius);
+        setCameraviewlocation(origin.getX()+width/2, origin.getY()+height/2);
+        SteerableCamera steerablecamera = new SteerableCamera();
+        AmbientLight lighting = new AmbientLight(Color.WHITE);
+        Group group = (Group) getRoot();
+        group.getChildren().addAll(lighting, steerablecamera);
+        //
+        steerablecamera.bindtoCameraViewRotation(camerarotation);
+        steerablecamera.bindtoCameraViewScale(camerazoom);
+        steerablecamera.bindtoCameraViewLocation(cameraxlocation, cameraylocation);
+        steerablecamera.bindtoCameraHeightRotation(cameraverticalrotation);
+        steerablecamera.bindtoCameraFieldOfView(camerafieldofview);
+        //
+        setCamera(steerablecamera.getCamera());
     }
-
-    public Box[] drawfieldofplay(Area canvasarea, Area sailingarea) {
-        return new Box[]{
-            drawsurface(canvasarea, Color.OLIVEDRAB),
-            drawsurface(sailingarea, Color.LIGHTSEAGREEN)
-        };
+    
+    public void setRotatecameraview(double newvalue){
+        camerarotation.set(newvalue);
     }
-
-    private Box drawsurface(Area area, Color colour) {
-        Box water = new Box(area.getWidth(), area.getHeight(), 0.001);
-        water.getTransforms().add(
-                new Translate(area.getLocationProperty().getX() + area.getWidth() / 2,
-                        area.getLocationProperty().getY() + area.getHeight() / 2)
-        );
-        PhongMaterial watermaterial = new PhongMaterial(colour);
-        water.setDrawMode(DrawMode.FILL);
-        water.setMaterial(watermaterial);
-        return water;
+    
+    public void setCamerazoom(double newvalue){
+        camerazoom.set(newvalue);
     }
-
-    private void addMark(ActionEvent ev, ContextMenu contextmenu) {
-//        if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
-//            double x = displaycontextmenu.getDisplayX();
-//            double y = displaycontextmenu.getDisplayY();
-//            Mark newmark = new Mark(new Location(x, y));
-//            if (PropertyMapDialog.showAndWait("Configure New Mark", new PropertyMapPane(newmark, "Mark"))) {
-//                // insert new property into sketchproperty
-//                controller.getModel().getMarks().add(newmark);
-//            }
-//        }
+    
+    public void setCameraviewlocation(double newxvalue, double newyvalue){
+        cameraxlocation.set(newxvalue);
+        cameraylocation.set(newyvalue);
     }
-
-    private void addBoat(ActionEvent ev, ContextMenu contextmenu) {
-//        if (contextmenu instanceof DisplayContextMenu displaycontextmenu) {
-//            double x = displaycontextmenu.getDisplayX();
-//            double y = displaycontextmenu.getDisplayY();
-//            SketchModel model = controller.getModel();
-//            Boat newboat = BoatFactory.createBoat("laser2", new Location(x, y),
-//                    new CurrentLeg(model.getCourse()),
-//                    model.getWindFlow(),
-//                    model.getWaterFlow());
-//            if (PropertyMapDialog.showAndWait("Configure New Boat", new PropertyMapPane(newboat, "Boat"))) {
-//                controller.getModel().getBoats().add(newboat);
-//            }
-//        }
+    
+    public void setCameraverticalrotation(double newvalue){
+        cameraverticalrotation.set(newvalue);
     }
-
-//    private void windflowdraw() {
-//        Area area = controller.getModel().getDisplayArea();
-//        Location sw = area.getLocationProperty();
-//        double westedge = sw.getX();
-//        double eastedge = westedge + area.getWidth();
-//        double southedge = sw.getY();
-//        double northedge = southedge + area.getHeight();
-//        if (controller.getModel().getWindFlow().getShiftsproperty().isShowflow()) {
-//            double showwindflowinterval = controller.getModel().getWindFlow().getShiftsproperty().getShowflowinterval();
-//            double x = westedge + showwindflowinterval;
-//            while (x < eastedge) {
-//                double y = southedge + showwindflowinterval;
-//                while (y < northedge) {
-//                    Location here = new Location(x, y);
-//                    getChildren().addAll(
-//                            Wrap.globalTransform(
-//                                    shapebuilder.displayWindGraphic(here, controller.getModel().getWindFlow().getFlow(here), 10, controller.getModel().getWindFlow().getShiftsproperty().getShowflowcolour()),
-//                                    maintranslate,
-//                                    mainscale
-//                            )
-//                    );
-//                    y += showwindflowinterval;
-//                }
-//                x += showwindflowinterval;
-//            }
-//        }
-//    }
-//    private void displayWindGraphic(SketchWindow canvas, double zoom, double x, double y) throws IOException {
-//        GeneralPath p = new GeneralPath();
-//        p.moveTo(0, 15);
-//        p.lineTo(0, -15);
-//        p.moveTo(4, 7);
-//        p.lineTo(0, 15);
-//        p.lineTo(-4, 7);
-//        //
-//        AffineTransform xform = gc.getTransform();
-//        gc.translate(x, y);
-//        gc.scale(1 / pixelsPerMetre, -1 / pixelsPerMetre);
-//        SpeedVector flow = getFlow(new Location(x, y));
-//        gc.rotate(flow.getAngle().getRadians());
-//        gc.setColor(showflowcolor);
-//        gc.setStroke(new BasicStroke(1));
-//        gc.draw(p);
-//        //
-//        gc.setFont(new Font("Sans Serif", Font.PLAIN, 10));
-//        NumberFormat nf = NumberFormat.getInstance();
-//        nf.setMaximumFractionDigits(1);
-//        nf.setMinimumFractionDigits(1);
-//        String windspeedText = nf.format(flow.getSpeed());
-//        if (flow.getAngle().isPositive()) {
-//            gc.translate(-2, 4);
-//            gc.rotate(-Math.PI / 2);
-//        } else {
-//            gc.translate(+2, -15);
-//            gc.rotate(Math.PI / 2);
-//        }
-//        gc.drawString(windspeedText, 0, 0);
-//        gc.setTransform(xform);
-//    }
-    private void marksdraw() {
-        controller.getModel().getMarks().stream().forEach(mark -> markdraw(mark));
-    }
-//    private void laylinesdraw() {
-//        controller.getModel().getMarks().stream().forEach(mark -> laylinesdraw(mark));
-//    }
-//
-//    private void laddersdraw() {
-//        controller.getModel().getMarks().stream().forEach(mark -> ladderdraw(mark));
-//    }
-    private static final double SIZE = 1; // set up as 1 metre diameter object
-
-    private void markdraw(Mark mark) {
-        Sphere mk = new Sphere(SIZE);
-        mk.getTransforms().add(
-                new Translate(mark.getLocation().getX(), mark.getLocation().getY())
-        );
-        getChildren().add(mk);
-    }
-//    private void laylinesdraw(Mark mark) {
-//        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getAngle();
-//        if (mark.isWindwardlaylines()) {
-//            getChildren().addAll(
-//                    Wrap.globalTransform(
-//                            shapebuilder.drawwindwardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
-//                            maintranslate,
-//                            mainscale
-//                    )
-//            );
-//        }
-//        if (mark.isDownwindlaylines()) {
-//            getChildren().addAll(
-//                    Wrap.globalTransform(
-//                            shapebuilder.drawleewardlaylines(mark.getLocation(), windAngle, mark.getLaylinelength(), mark.getLaylinecolour()),
-//                            maintranslate,
-//                            mainscale
-//                    )
-//            );
-//        }
-//    }
-//    private void ladderdraw(Mark mark) {
-//        Angle windAngle = controller.getModel().getWindFlow().getFlow(mark.getLocation()).getAngle();
-//        if (mark.isWindwardlaylines()) {
-//            getChildren().addAll(
-//                    Wrap.globalTransform(
-//                            shapebuilder.drawwindwardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
-//                            maintranslate,
-//                            mainscale
-//                    )
-//            );
-//        }
-//        if (mark.isDownwindlaylines()) {
-//            getChildren().addAll(
-//                    Wrap.globalTransform(
-//                            shapebuilder.drawleewardladder(mark.getLocation(), windAngle, mark.getLadderspacing(), mark.getLaylinecolour(), mark.getLaddersteps()),
-//                            maintranslate,
-//                            mainscale
-//                    )
-//            );
-//        }
-//    }
-
-    private void boatsdraw() {
-        controller.getModel().getBoats().stream().forEach(boat -> boatdraw(boat));
-    }
-
-    private void boatdraw(Boat boat) {
-        getChildren().addAll(
-                Wrap.contextMenu(
-                        boat.getBoat3D(),
-                        UI.contextMenu(
-                                UI.menuitem("tack", ev -> tack(boat)),
-                                UI.menuitem("gybe", ev -> gybe(boat)),
-                                UI.menuitem("duplicate on opposite tack", ev -> duplicatetack(boat)),
-                                UI.menuitem("duplicate on opposite gybe", ev -> duplicategybe(boat))
-                        ),
-                        Cursor.CROSSHAIR
-                )
-        );
-    }
-
-    private void tack(Boat boat) {
-        CurrentLeg leg = boat.getCurrentLeg();
-        Location position = boat.getLocation();
-        SpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
-        Angle delta = wind.degreesDiff(boat.getDirection());
-        if (delta.gt(0)) {
-            // anti clockwise to starboard tack
-            Angle target = boat.getStarboardCloseHauledCourse(wind.getAngle());
-            Decision decision = leg.getDecision();
-            decision.setTURN(target, PORT, MAJOR, "Tack to Starboard - forced by user");
-        } else {
-            // clockwise to port tack
-            Angle target = boat.getPortCloseHauledCourse(wind.getAngle());
-            Decision decision = leg.getDecision();
-            decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Port - forced by user");
-        }
-    }
-
-    private void gybe(Boat boat) {
-        CurrentLeg leg = boat.getCurrentLeg();
-        Location position = boat.getLocation();
-        SpeedVector wind = controller.getModel().getWindFlow().getFlow(position);
-        Angle delta = wind.degreesDiff(boat.getDirection());
-        if (delta.gt(0)) {
-            // clockwise to starboard gybe
-            Angle target = boat.getStarboardReachingCourse(wind.getAngle());
-            Decision decision = leg.getDecision();
-            decision.setTURN(target, STARBOARD, MAJOR, "Gybe to Starboard - forced by user");
-        } else {
-            // anticlockwise to port gybe
-            Angle target = boat.getPortReachingCourse(wind.getAngle());
-            Decision decision = leg.getDecision();
-            decision.setTURN(target, PORT, MAJOR, "Gybe to Port - forced by user");
-        }
-    }
-
-    private void duplicatetack(Boat boat) {
-        Boat newboat = BoatFactory.cloneBoat(boat.getNamed() + "-1", boat);
-        controller.getModel().getBoats().add(newboat);
-        tack(newboat);
-    }
-
-    private void duplicategybe(Boat boat) {
-        Boat newboat = BoatFactory.cloneBoat(boat.getNamed() + "-1", boat);
-        controller.getModel().getBoats().add(newboat);
-        gybe(newboat);
+    
+     public void setCamerafieldofview(double newvalue){
+        camerafieldofview.set(newvalue);
     }
 }
