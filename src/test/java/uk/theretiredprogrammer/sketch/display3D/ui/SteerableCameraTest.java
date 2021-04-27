@@ -62,7 +62,7 @@ public class SteerableCameraTest extends Application {
     private Slider distanceslider;
     private Slider fieldofviewslider;
 
-    @Test
+//    @Test
     public void Camera3D() {
         System.out.println("SteerableCamera test");
         launch(new String[]{});

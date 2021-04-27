@@ -47,7 +47,7 @@ public class Boat3DTest extends Application {
             new SparDimensions3DBuilder().build());
     private final BoatCoordinates coordinates = new BoatCoordinates();
 
-    @Test
+//    @Test
     public void displayBoat3D() {
         System.out.println("draw 3D Boat");
         launch(new String[]{});
