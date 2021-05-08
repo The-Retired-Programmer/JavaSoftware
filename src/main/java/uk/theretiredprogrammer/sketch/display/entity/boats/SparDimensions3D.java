@@ -22,9 +22,11 @@ public class SparDimensions3D {
     private final float diameter;
     private final float mastHeight;
     private final float bowtoMast;
-    
-    public SparDimensions3D(float bowtoMast,float mastHeight,float diameter,float gooseNeckHeight,float boomLength) {
+    private final float mastheightatdecklevel;
+
+    public SparDimensions3D(float bowtoMast, float mastheightatdecklevel, float mastHeight, float diameter, float gooseNeckHeight, float boomLength) {
         this.bowtoMast = bowtoMast;
+        this.mastheightatdecklevel = mastheightatdecklevel;
         this.mastHeight = mastHeight;
         this.diameter = diameter;
         this.gooseNeckHeight = gooseNeckHeight;
@@ -33,6 +35,10 @@ public class SparDimensions3D {
 
     public float getBowtoMast() {
         return bowtoMast;
+    }
+
+    public float getMastHeightatDeckLevel() {
+        return mastheightatdecklevel;
     }
 
     public float getMastHeight() {

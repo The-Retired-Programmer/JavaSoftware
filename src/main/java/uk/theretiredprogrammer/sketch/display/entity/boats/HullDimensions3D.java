@@ -17,37 +17,41 @@ package uk.theretiredprogrammer.sketch.display.entity.boats;
 
 public class HullDimensions3D {
 
-    private final int numsurfaces;
-    private final float[] sectionlocations;
-    private final float[][] sectiondimensions;
-    private final float[] deckclheights;
-    private final boolean hardchines;
+    public final boolean hashardchines;
+    public final HullSection3D[] sections;
+    private final Colour hullcolour;
+    private final Colour deckcolour;
+    private boolean useportstarboardcolours = false;
     
-    public HullDimensions3D(int numsurfaces, float[] sectionlocations, float[][] sectiondimensions, float[] deckclheights, boolean hardchines) {
-        this.numsurfaces = numsurfaces;
-        this.sectionlocations = sectionlocations;
-        this.sectiondimensions = sectiondimensions;
-        this.deckclheights = deckclheights;
-        this.hardchines = hardchines;
+    
+    public HullDimensions3D(boolean hashardchines, Colour hullcolour, Colour deckcolour, HullSection3D... sections) {
+        this.sections = sections;
+        this.hashardchines = hashardchines;
+        this.hullcolour = hullcolour;
+        this.deckcolour = deckcolour;
     }
-
-    public int getNumsurfaces() {
-        return numsurfaces;
+    
+    public void setUsePortStarboardColours(boolean setting) {
+        this.useportstarboardcolours = setting;
     }
-
-    public float[] getSectionlocations() {
-        return sectionlocations;
+    
+    public Colour getTransomColour() {
+        return hullcolour;
     }
-
-    public float[][] getSectiondimensions() {
-        return sectiondimensions;
+    
+    public Colour getPortHullColour() {
+        return useportstarboardcolours? Colour.RED : hullcolour;
     }
-
-    public float[] getDeckclheights() {
-        return deckclheights;
+    
+     public Colour getStarboardHullColour() {
+        return useportstarboardcolours? Colour.GREEN : hullcolour;
     }
-
-    public boolean isHardchines() {
-        return hardchines;
+     
+    public Colour getPortDeckColour() {
+        return useportstarboardcolours? Colour.RED : deckcolour;
+    }
+    
+     public Colour getStarboardDeckColour() {
+        return useportstarboardcolours? Colour.GREEN : deckcolour;
     }
 }

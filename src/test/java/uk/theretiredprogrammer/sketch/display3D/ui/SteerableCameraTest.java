@@ -27,18 +27,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import static javafx.scene.paint.Color.BLACK;
-import static javafx.scene.paint.Color.GREEN;
-import static javafx.scene.paint.Color.ORANGE;
-import static javafx.scene.paint.Color.RED;
-import static javafx.scene.paint.Color.STEELBLUE;
 import static javafx.scene.paint.Color.WHITE;
-import static javafx.scene.paint.Color.YELLOW;
-import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.Sphere;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.sketch.display.entity.boats.Boat3D;
@@ -49,11 +38,7 @@ import uk.theretiredprogrammer.sketch.display.entity.boats.SparDimensions3DBuild
 
 public class SteerableCameraTest extends Application {
 
-    private final float DISPLAYSIZE = 600;
-    private final float BORDER = 25;
-    //
     private SteerableCamera steerablecamera;
-    //
     private Slider angleslider;
     private Slider xpointtoslider;
     private Slider ypointtoslider;
@@ -62,7 +47,7 @@ public class SteerableCameraTest extends Application {
     private Slider distanceslider;
     private Slider fieldofviewslider;
 
-//    @Test
+    @Test
     public void Camera3D() {
         System.out.println("SteerableCamera test");
         launch(new String[]{});
@@ -86,22 +71,12 @@ public class SteerableCameraTest extends Application {
                 new HullDimensions3DBuilder().build(),
                 new SparDimensions3DBuilder().build());
         BoatCoordinates coordinates = new BoatCoordinates();
-        coordinates.setPosition(DISPLAYSIZE / 2, DISPLAYSIZE / 4);
-        Boat3D boat = new Boat3D(dimensions, coordinates);
-        boat.getTransforms().addAll(new Scale(25, 25, 25));
-        //
         Group centrenode = new Group(
-                createwater(),
-                createmark(new PhongMaterial(YELLOW), 5, DISPLAYSIZE / 2, DISPLAYSIZE / 2),
-                createmark(new PhongMaterial(RED), 5, BORDER, DISPLAYSIZE / 2),
-                createmark(new PhongMaterial(GREEN), 5, DISPLAYSIZE - BORDER, DISPLAYSIZE / 2),
-                createmark(new PhongMaterial(BLACK), 5, DISPLAYSIZE / 2, BORDER),
-                createmark(new PhongMaterial(ORANGE), 5, DISPLAYSIZE / 2, DISPLAYSIZE - BORDER),
-                boat,
+                new Boat3D(dimensions, coordinates),
                 new AmbientLight(WHITE),
-                steerablecamera = new SteerableCamera(DISPLAYSIZE * 2)
+                steerablecamera = new SteerableCamera(100)
         );
-        SubScene subscene = new SubScene(centrenode, DISPLAYSIZE, DISPLAYSIZE, true, SceneAntialiasing.BALANCED);
+        SubScene subscene = new SubScene(centrenode, 600, 600, true, SceneAntialiasing.BALANCED);
         subscene.setCamera(steerablecamera.getCamera());
         steerablecamera.setAngle(angleslider.valueProperty());
         steerablecamera.setPointTo(xpointtoslider.valueProperty(), ypointtoslider.valueProperty(), zpointtoslider.valueProperty());
@@ -110,38 +85,19 @@ public class SteerableCameraTest extends Application {
         steerablecamera.setFieldOfView(fieldofviewslider.valueProperty());
 
         borderpane.setCenter(subscene);
-        Scene scene = new Scene(borderpane);
+        Scene scene = new Scene(borderpane, 1000, 1000);
         stage.setTitle("Testing STEERABLECAMERA");
         stage.setScene(scene);
         stage.show();
     }
-
-    private Box createwater() {
-        Box water = new Box(DISPLAYSIZE, DISPLAYSIZE, 0.001);
-        PhongMaterial watermaterial = new PhongMaterial(STEELBLUE);
-        water.setDrawMode(DrawMode.FILL);
-        water.setMaterial(watermaterial);
-        water.setTranslateX(DISPLAYSIZE / 2);
-        water.setTranslateY(DISPLAYSIZE / 2);
-        return water;
-    }
-
-    private Sphere createmark(PhongMaterial markmaterial, double size, double xpos, double ypos) {
-        Sphere mark = new Sphere(size);
-        mark.setDrawMode(DrawMode.FILL);
-        mark.setMaterial(markmaterial);
-        mark.setTranslateX(xpos);
-        mark.setTranslateY(ypos);
-        return mark;
-    }
-
+    
     private void createUIcontrols() {
         angleslider = createslider(-180, 180, 10, 30, 0);
-        xpointtoslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
-        ypointtoslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
-        zpointtoslider = createslider(-1000, 0, 100, 250, 0);
+        xpointtoslider = createslider(-20, 20, 1, 5, 0);
+        ypointtoslider = createslider(-20, 20, 1, 5, 0);
+        zpointtoslider = createslider(-20, 0, 1, 5, 0);
         elevationslider = createslider(0, 90, 10, 30, 90);
-        distanceslider = createslider(0, 1000, 100, 250, DISPLAYSIZE / 2);
+        distanceslider = createslider(0, 40, 1, 5, 20);
         fieldofviewslider = createslider(0, 180, 10, 30, 120);
     }
 

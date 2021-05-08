@@ -19,6 +19,7 @@ public class SparDimensions3DBuilder {
 
     // default as SOLO
     private float boomLength = 2.693f;
+    private float mastheightatdecklevel = 0.366f;
     private float gooseNeckHeight = 0.902f;
     private float diameter = 0.050f;
     private float mastHeight = 5.932f;
@@ -43,6 +44,11 @@ public class SparDimensions3DBuilder {
         this.mastHeight = mastHeight;
         return this;
     }
+    
+    public SparDimensions3DBuilder settMastHeightatDeckLevel(float mastheightatdecklevel) {
+        this.mastheightatdecklevel = mastheightatdecklevel;
+        return this;
+    }
 
     public SparDimensions3DBuilder setBowtoMast(float bowtoMast) {
         this.bowtoMast = bowtoMast;
@@ -50,6 +56,6 @@ public class SparDimensions3DBuilder {
     }
 
     public SparDimensions3D build() {
-        return new SparDimensions3D(bowtoMast, mastHeight, diameter, gooseNeckHeight, boomLength);
+        return new SparDimensions3D(bowtoMast, mastheightatdecklevel, mastHeight, diameter, gooseNeckHeight, boomLength);
     }
 }

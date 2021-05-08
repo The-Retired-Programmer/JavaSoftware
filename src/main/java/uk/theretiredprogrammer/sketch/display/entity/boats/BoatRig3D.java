@@ -30,13 +30,13 @@ public class BoatRig3D extends Group {
 
     public BoatRig3D(SparDimensions3D dimensions, DoubleProperty boomangle) {
 
-        Cylinder mast = new Cylinder(dimensions.getDiameter() / 2, dimensions.getMastHeight());
+        Cylinder mast = new Cylinder(dimensions.getDiameter() / 2, dimensions.getMastHeight() - dimensions.getMastHeightatDeckLevel());
         PhongMaterial rigmaterial = new PhongMaterial(SILVER);
         mast.setDrawMode(DrawMode.FILL);
         mast.setMaterial(rigmaterial);
         mast.getTransforms().addAll(
                 new Rotate(-90, Rotate.X_AXIS),
-                new Translate(0f, dimensions.getMastHeight() / 2, 0f)
+                new Translate(0f, (dimensions.getMastHeight() + dimensions.getMastHeightatDeckLevel())/2, 0f)
         );
         //
         Cylinder boom = new Cylinder(dimensions.getDiameter() / 2, dimensions.getBoomLength());
@@ -53,5 +53,4 @@ public class BoatRig3D extends Group {
         );
         boomrotate.angleProperty().bind(boomangle);
     }
-
 }

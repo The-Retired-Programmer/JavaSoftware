@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
@@ -24,79 +24,148 @@ import javafx.scene.shape.TriangleMesh;
 public class BoatHull3D extends MeshView {
 
     public BoatHull3D(HullDimensions3D dimensions) {
-
-        // now build the mesh
         TriangleMesh mesh = new TriangleMesh();
-        var facesmoothinggroups = mesh.getFaceSmoothingGroups();
-        mesh.getTexCoords().addAll(0, 0);
-        // all hull points
-        for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
-            float x = -dimensions.getSectionlocations()[section];
-            for (int point = 0; point < dimensions.getSectiondimensions()[section].length / 2; point++) {
-                float y = dimensions.getSectiondimensions()[section][point * 2];
-                float z = dimensions.getSectiondimensions()[section][point * 2 + 1];
-                mesh.getPoints().addAll(x, -y, z);
-                mesh.getPoints().addAll(x, y, z);
-            }
-        }
-        int deckclindex = mesh.getPoints().size() / 3;
-        for (int section = 0; section < dimensions.getSectionlocations().length; section++) {
-            mesh.getPoints().addAll(-dimensions.getSectionlocations()[section], 0f, dimensions.getDeckclheights()[section]);
-        }
-        // build hull mesh
-        for (int surface = 0; surface < dimensions.getNumsurfaces(); surface++) {
-            for (int section = 0; section < dimensions.getSectionlocations().length - 1; section++) {
-                // port
-                int lowerforward = section * (dimensions.getNumsurfaces() + 1) * 2 + surface * 2;
-                int upperforward = lowerforward + 2;
-                int lowerbackward = lowerforward + (dimensions.getNumsurfaces() + 1) * 2;
-                int upperbackwards = lowerbackward + 2;
-                mesh.getFaces().addAll(
-                        //port
-                        lowerforward, 0, lowerbackward, 0, upperforward, 0,
-                        upperforward, 0, lowerbackward, 0, upperbackwards, 0,
-                        //starboard
-                        lowerforward + 1, 0, upperforward + 1, 0, lowerbackward + 1, 0,
-                        upperforward + 1, 0, upperbackwards + 1, 0, lowerbackward + 1, 0
-                );
-                int pgroup = dimensions.isHardchines() ? 4 << (surface * 2) : 4;
-                int sgroup = dimensions.isHardchines() ? 8 << (surface * 2) : 8;
-                facesmoothinggroups.addAll(pgroup, pgroup, sgroup, sgroup);
-            }
-            // add the face smoothing groups (one port and one startboard
-        }
-        // build transom mesh
-        int lastsection = dimensions.getSectionlocations().length - 1;
-        for (int surface = 0; surface < dimensions.getNumsurfaces(); surface++) {
-            int lower = lastsection * (dimensions.getNumsurfaces() + 1) * 2 + surface * 2;
-            int upper = lower + 2;
-            mesh.getFaces().addAll(
-                    //port
-                    upper, 0, lower, 0, deckclindex + lastsection, 0,
-                    //starboard
-                    lower + 1, 0, upper + 1, 0, deckclindex + lastsection, 0
-            );
-            facesmoothinggroups.addAll(2, 2);
-        }
-        // build deck mesh
-        for (int section = 0; section < dimensions.getSectionlocations().length - 1; section++) {
-            int outerforward = (section + 1) * (dimensions.getNumsurfaces() + 1) * 2 - 2;
-            int innerforward = deckclindex + section;
-            int outerbackward = outerforward + (dimensions.getNumsurfaces() + 1) * 2;
-            int innerbackward = innerforward + 1;
-            mesh.getFaces().addAll(
-                    //port
-                    outerforward, 0, outerbackward, 0, innerbackward, 0,
-                    outerforward, 0, innerbackward, 0, innerforward, 0,
-                    //starboard
-                    outerforward + 1, 0, innerbackward, 0, outerbackward + 1, 0,
-                    outerforward + 1, 0, innerforward, 0, innerbackward, 0
-            );
-            facesmoothinggroups.addAll(1, 1, 1, 1);
-        }
-        PhongMaterial material = new PhongMaterial(Color.LIGHTGRAY);
+        createColourReferences(mesh);
+        int numberofPlanks = dimensions.sections[0].sectionpoints.length;
+        boolean hasHardchines = dimensions.hashardchines;
+        HullSection3D[] sections = dimensions.sections;
+        int startpoint = createBowPoints(numberofPlanks, sections[0], mesh);
+        int portindex = createPorthullMesh(dimensions.getPortHullColour(), dimensions.getPortDeckColour(), startpoint, numberofPlanks, hasHardchines, sections, mesh);
+        int starboardindex = createStarboardhullMesh(dimensions.getStarboardHullColour(), dimensions.getStarboardDeckColour(), startpoint, numberofPlanks, hasHardchines, sections, mesh);
+        createTransomHullMesh(dimensions.getTransomColour(), numberofPlanks, portindex, starboardindex, mesh);
+        PhongMaterial material = new PhongMaterial();
+        material.setDiffuseMap(new Image(getClass().getResourceAsStream("colours.png")));
         setMesh(mesh);
         setDrawMode(DrawMode.FILL);
         setMaterial(material);
     }
+
+    private void createColourReferences(TriangleMesh mesh) {
+        for (var colour : Colour.values()) {
+            mesh.getTexCoords().addAll(colour.getTexCoords());
+        }
+    }
+
+    private int createBowPoints(int numberofplanks, HullSection3D bowsection, TriangleMesh mesh) {
+        var meshpoints = mesh.getPoints();
+        int startpoint = meshpoints.size() / 3;
+        meshpoints.addAll(-bowsection.distancefrombow, 0, -bowsection.depthatkeel);
+        meshpoints.addAll(-bowsection.distancefrombow, 0, -bowsection.depthatdeckcentreline);
+        for (int ptindex = 0; ptindex < numberofplanks; ptindex++) {
+            Point point = bowsection.sectionpoints[ptindex];
+            meshpoints.addAll(-bowsection.distancefrombow, 0, -point.height);
+        }
+        return startpoint;
+    }
+
+    private int createPorthullMesh(Colour hullcolour, Colour deckcolour, int startpoint, int numberofplanks, boolean hasHardchines, HullSection3D[] sections, TriangleMesh mesh) {
+        int hulltexcoord = hullcolour.ordinal();
+        int decktexcoord = deckcolour.ordinal();
+        var meshpoints = mesh.getPoints();
+        var meshfaces = mesh.getFaces();
+        var meshsmoothinggroups = mesh.getFaceSmoothingGroups();
+        int leading = startpoint;
+        int trailing;
+        int smoothinggroup;
+        for (int sectionindex = 1; sectionindex < sections.length; sectionindex++) {
+            HullSection3D section = sections[sectionindex];
+            int pl;
+            int pt;
+            int pnl = 0;
+            int pnt = 0;
+            trailing = meshpoints.size() / 3;
+            meshpoints.addAll(-section.distancefrombow, 0, -section.depthatkeel);
+            meshpoints.addAll(-section.distancefrombow, 0, -section.depthatdeckcentreline);
+            pl = leading;
+            pt = trailing;
+            for (int ptindex = 0; ptindex < numberofplanks; ptindex++) {
+                Point point = section.sectionpoints[ptindex];
+                meshpoints.addAll(-section.distancefrombow, -point.width, -point.height);
+                smoothinggroup = hasHardchines ? 4 << (ptindex * 2) : 4;
+                pnl = leading + 2 + ptindex;
+                pnt = trailing + 2 + ptindex;
+                meshfaces.addAll(
+                        pl, hulltexcoord, pt, hulltexcoord, pnt, hulltexcoord,
+                        pl, hulltexcoord, pnt, hulltexcoord, pnl, hulltexcoord
+                );
+                meshsmoothinggroups.addAll(smoothinggroup, smoothinggroup);
+                pl = pnl;
+                pt = pnt;
+            }
+            // deck
+            meshfaces.addAll(
+                    pnl, decktexcoord, pnt, decktexcoord, trailing + 1, decktexcoord,
+                    pnl, decktexcoord, trailing + 1, decktexcoord, leading + 1, decktexcoord
+            );
+            mesh.getFaceSmoothingGroups().addAll(1, 1);
+            leading = trailing;
+        }
+        return leading;
+    }
+
+    private int createStarboardhullMesh(Colour hullcolour, Colour deckcolour, int startpoint, int numberofplanks, boolean hasHardchines, HullSection3D[] sections, TriangleMesh mesh) {
+        int hulltexcoord = hullcolour.ordinal();
+        int decktexcoord = deckcolour.ordinal();
+        var meshpoints = mesh.getPoints();
+        var meshfaces = mesh.getFaces();
+        var meshsmoothinggroups = mesh.getFaceSmoothingGroups();
+        int leading = startpoint;
+        int trailing;
+        int smoothinggroup;
+        for (int sectionindex = 1; sectionindex < sections.length; sectionindex++) {
+            HullSection3D section = sections[sectionindex];
+            int pl;
+            int pt;
+            int pnl;
+            int pnt;
+            trailing = meshpoints.size() / 3;
+            meshpoints.addAll(-section.distancefrombow, 0, -section.depthatkeel);
+            meshpoints.addAll(-section.distancefrombow, 0, -section.depthatdeckcentreline);
+            pl = leading;
+            pt = trailing;
+            for (int ptindex = 0; ptindex < numberofplanks; ptindex++) {
+                Point point = section.sectionpoints[ptindex];
+                meshpoints.addAll(-section.distancefrombow, point.width, -point.height);
+                smoothinggroup = hasHardchines ? 8 << (ptindex * 2) : 8;
+                pnl = leading + 2 + ptindex;
+                pnt = trailing + 2 + ptindex;
+                meshfaces.addAll(
+                        pl, hulltexcoord, pnl, hulltexcoord, pnt, hulltexcoord,
+                        pl, hulltexcoord, pnt, hulltexcoord, pt, hulltexcoord
+                );
+                meshsmoothinggroups.addAll(smoothinggroup, smoothinggroup);
+                pl = pnl;
+                pt = pnt;
+            }
+            // deck
+            meshfaces.addAll(
+                    pt, decktexcoord, pl, decktexcoord, trailing + 1, decktexcoord,
+                    trailing + 1, decktexcoord, pl, decktexcoord, leading + 1, decktexcoord
+            );
+            meshsmoothinggroups.addAll(1, 1);
+            leading = trailing;
+        }
+        return leading;
+    }
+
+    private void createTransomHullMesh(Colour colour, int numberofplanks, int portindex, int starboardindex, TriangleMesh mesh) {
+        int texcoord = colour.ordinal();
+        int pl = portindex;
+        int pd = portindex + 1;
+        for (int ptindex = 0; ptindex < numberofplanks; ptindex++) {
+            int ph = portindex + 2 + ptindex;
+            mesh.getFaces().addAll(pl, texcoord, pd, texcoord, ph, texcoord);
+            mesh.getFaceSmoothingGroups().addAll(2);
+            pl = ph;
+        }
+        pl = starboardindex;
+        pd = starboardindex + 1;
+        for (int ptindex = 0; ptindex < numberofplanks; ptindex++) {
+            int ph = starboardindex + 2 + ptindex;
+            mesh.getFaces().addAll(pd, texcoord, pl, texcoord, ph, texcoord);
+            mesh.getFaceSmoothingGroups().addAll(2);
+            pl = ph;
+        }
+    }
+
 }
