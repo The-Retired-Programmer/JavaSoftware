@@ -56,6 +56,6 @@ public class SparDimensions3DBuilder {
     }
 
     public SparDimensions3D build() {
-        return new SparDimensions3D(bowtoMast, mastheightatdecklevel, mastHeight, diameter, gooseNeckHeight, boomLength);
+        return new SparDimensions3D(Colour.SILVER, bowtoMast, mastheightatdecklevel, mastHeight, diameter, gooseNeckHeight, boomLength);
     }
 }

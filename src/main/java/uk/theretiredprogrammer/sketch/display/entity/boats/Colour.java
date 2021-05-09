@@ -15,29 +15,39 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import javafx.scene.paint.Color;
+
 public enum Colour {
-    BLACK (0.05f, 0.25f),
-    BLUE(0.15f, 0.25f),
-    BROWN(0.25f, 0.25f),
-    CYAN(0.35f, 0.25f),
-    GREEN(0.45f, 0.25f),
-    MAGENTA(0.55f, 0.25f),
-    ORANGE(0.65f, 0.25f),
-    PURPLE(0.75f, 0.25f),
-    RED(0.85f, 0.25f),
-    YELLOW(0.95f, 0.25f),
+    BLACK (0.05f, 0.25f, Color.BLACK),
+    BLUE(0.15f, 0.25f, Color.BLUE),
+    BROWN(0.25f, 0.25f, Color.BROWN),
+    CYAN(0.35f, 0.25f, Color.CYAN),
+    GREEN(0.45f, 0.25f, Color.GREEN),
+    MAGENTA(0.55f, 0.25f, Color.MAGENTA),
+    ORANGE(0.65f, 0.25f, Color.ORANGE),
+    PURPLE(0.75f, 0.25f, Color.PURPLE),
+    RED(0.85f, 0.25f, Color.RED),
+    YELLOW(0.95f, 0.25f, Color.YELLOW),
     //
-    WHITE(0.05f, 0.75f);
+    WHITE(0.05f, 0.75f, Color.WHITE),
+    SILVER(0.15f, 0.75f, Color.SILVER),
+    GOLD(0.25f, 0.75f, Color.GOLD);
     
     private final float yloc;
     private final float xloc;
+    private final Color color;
     
-    Colour(float yloc, float xloc){
+    Colour(float yloc, float xloc, Color color){
         this.yloc = yloc;
         this.xloc = xloc;
+        this.color = color;
     }
     
     float[] getTexCoords() {
         return new float[]{xloc, yloc};
+    }
+    
+    Color getFXColour() {
+        return color;
     }
 }

@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.sketch.display.entity.boats;
 
+import javafx.scene.paint.Color;
+
 public class SparDimensions3D {
 
     private final float boomLength;
@@ -23,14 +25,20 @@ public class SparDimensions3D {
     private final float mastHeight;
     private final float bowtoMast;
     private final float mastheightatdecklevel;
+    private final Colour sparcolour;
 
-    public SparDimensions3D(float bowtoMast, float mastheightatdecklevel, float mastHeight, float diameter, float gooseNeckHeight, float boomLength) {
+    public SparDimensions3D(Colour sparcolour, float bowtoMast, float mastheightatdecklevel, float mastHeight, float diameter, float gooseNeckHeight, float boomLength) {
+        this.sparcolour = sparcolour;
         this.bowtoMast = bowtoMast;
         this.mastheightatdecklevel = mastheightatdecklevel;
         this.mastHeight = mastHeight;
         this.diameter = diameter;
         this.gooseNeckHeight = gooseNeckHeight;
         this.boomLength = boomLength;
+    }
+    
+    public Color getSparcolour() {
+        return sparcolour.getFXColour();
     }
 
     public float getBowtoMast() {
