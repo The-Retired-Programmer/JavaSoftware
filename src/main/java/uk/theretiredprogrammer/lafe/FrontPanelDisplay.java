@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.theretiredprogrammer.lafe;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import javafx.scene.Group;
+import javafx.scene.text.Text;
 
-public class App extends Application {
+public class FrontPanelDisplay extends Group {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FrontPanelController(stage));
+    public FrontPanelDisplay() {
+        this.getChildren().addAll(
+                new Text("THIS IS THE DISPLAY AREA - PROBABLY A CANVAS??")
+        );
     }
 }

@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.theretiredprogrammer.lafe;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 
-public class App extends Application {
+public class FrontPanelConfiguration extends HBox {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FrontPanelController(stage));
+    public FrontPanelConfiguration() {
+        this.getChildren().addAll(
+                new Text("Config1"),
+                new Text("Config2"),
+                new Button("Config3")
+        );
     }
 }

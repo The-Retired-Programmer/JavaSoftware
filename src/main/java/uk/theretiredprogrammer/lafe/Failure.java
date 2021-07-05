@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.theretiredprogrammer.lafe;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+public class Failure extends RuntimeException {
 
-public class App extends Application {
-
-    public static void main(String[] args) {
-        launch(args);
+    public Failure(String message) {
+        super(message);
     }
 
-    @Override
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FrontPanelController(stage));
+    public Failure(Exception ex) {
+        super(ex);
+    }
+
+    public Failure(String message, Exception ex) {
+        super(message, ex);
     }
 }

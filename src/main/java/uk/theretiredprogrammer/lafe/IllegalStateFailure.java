@@ -13,21 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package uk.theretiredprogrammer.lafe;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
+public class IllegalStateFailure extends RuntimeException {
 
-public class App extends Application {
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
-    public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FrontPanelController(stage));
+    public IllegalStateFailure(String message) {
+        super(message);
     }
 }
