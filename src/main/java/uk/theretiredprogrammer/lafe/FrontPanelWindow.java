@@ -29,14 +29,12 @@ public class FrontPanelWindow {
     private final Stage stage;
     private Rectangle2D windowsize;
     private final FrontPanelDisplay displaypane;
-    private final ProbeCommands probecommands;
 
     public FrontPanelWindow(Stage stage, FrontPanelController controller, ProbeConfiguration config, ProbeCommands probecommands) {
         this.clazz = FrontPanelWindow.class;
         this.stage = stage;
-        this.probecommands = probecommands;
         //
-        displaypane = new FrontPanelDisplay(controller);
+        displaypane = new FrontPanelDisplay(controller,config);
         setDefaultWindowWidth(400);
         BorderPane borderpane = new BorderPane();
         ScrollPane pane = new ScrollPane(displaypane);

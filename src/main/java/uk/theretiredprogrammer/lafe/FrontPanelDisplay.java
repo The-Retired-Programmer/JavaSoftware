@@ -17,50 +17,90 @@ package uk.theretiredprogrammer.lafe;
 
 import java.util.List;
 import java.util.Map;
-import javafx.scene.Group;
-import javafx.scene.text.Text;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import static javafx.scene.paint.Color.RED;
 
-public class FrontPanelDisplay extends Group {
+public class FrontPanelDisplay extends Canvas {
 
     private final FrontPanelController controller;
-    private final Text segmenttextarea;
+    private final ProbeConfiguration config;
 
-    public FrontPanelDisplay(FrontPanelController controller) {
+    public FrontPanelDisplay(FrontPanelController controller, ProbeConfiguration config) {
+        super(500.0, 500.0);
         this.controller = controller;
-        this.getChildren().addAll(
-                segmenttextarea = new Text()
-        );
+        this.config = config;
     }
 
     public void refresh() {
         Map<Integer, List<String>> samples = controller.getSamples();
-        samples.entrySet().stream().forEach((entry) -> drawSample(entry.getKey(), entry.getValue()));
+        int numbersamples = samples.size();
+        expectedsamplesize = config.samplesize.get();
+        // calculate layout
+        int margin = 20;
+        int height = 500;
+        int maxsampleheight = 220;
+        int calcsampleheight = (height - margin) / numbersamples;
+        if (calcsampleheight > maxsampleheight) {
+            calcsampleheight = maxsampleheight;
+        }
+        hscale = 5;
+        int width = expectedsamplesize * hscale + 2 * margin;
+        // set the required dimensions for the canvas and clear it
+        this.clear();
+        setWidth(width);
+        setHeight(height);
+        int count = 0;
+        for (var es : samples.entrySet()) {
+            int topofsample = calcsampleheight * count + margin;
+            drawSample(es.getKey(), es.getValue(), margin, topofsample, topofsample + calcsampleheight - margin);
+        }
     }
 
-    private void drawSample(int pin, List<String> sample) {
-        sample.stream().forEach(s -> drawSamplesegment(s));
+    private void clear() {
+        getGraphicsContext2D().clearRect(0, 0, getWidth(), getHeight());
     }
 
-    private void drawSamplesegment(String samplesegment) {
-        segmenttextarea.setText(rle2display(samplesegment));
+    // sample drawing variables
+    private int hstart;
+    private int hscale;
+    private int highpos;
+    private int lowpos;
+    private int expectedsamplesize;
+    private double[] xpos;
+    private double[] ypos;
+    private int insertat;
+
+    private void drawSample(int pin, List<String> sample, int hstart, int highpos, int lowpos) {
+        xpos = new double[expectedsamplesize];
+        ypos = new double[expectedsamplesize];
+        insertat = 0;
+        this.hstart = hstart;
+        this.highpos = highpos;
+        this.lowpos = lowpos;
+        sample.forEach(segment -> buildSamplesegment(segment));
+        GraphicsContext gc = getGraphicsContext2D();
+        gc.setStroke(RED);
+        gc.setLineWidth(2.0);
+        gc.strokePolyline(xpos, ypos, insertat);
     }
 
-    private String rle2display(String s) {
-        StringBuilder sb = new StringBuilder();
-        for (int cptr = 0; cptr < s.length(); cptr++) {
-            switch (s.charAt(cptr)) {
-                case 'H' ->
-                    sb.append('-');
-                case 'L' ->
-                    sb.append('_');
+    private void buildSamplesegment(String samplesegment) {
+        for (int cptr = 0; cptr < samplesegment.length(); cptr++) {
+            switch (samplesegment.charAt(cptr)) {
+                case 'H' -> {
+                    insertHigh();
+                }
+                case 'L' -> {
+                    insertLow();
+                }
                 default ->
-                    cptr = decoderle(cptr, s, sb);
+                    cptr = decoderle(cptr, samplesegment);
             }
         }
-        return sb.toString();
     }
 
-    private int decoderle(int cptr, String s, StringBuilder sb) {
+    private int decoderle(int cptr, String s) {
         char c = s.charAt(cptr);
         int count = 0;
         while ('0' <= c && c <= '9') {
@@ -69,12 +109,36 @@ public class FrontPanelDisplay extends Group {
         }
         switch (c) {
             case 'H' ->
-                sb.append("-".repeat(count));
+                insertHigh(count);
             case 'L' ->
-                sb.append("_".repeat(count));
+                insertLow(count);
             default ->
                 throw new Failure("Badly encoded RLE data: " + c);
         }
         return cptr;
+    }
+
+    private void insertHigh() {
+        insertHigh(1);
+    }
+
+    private void insertHigh(int width) {
+        insert(highpos, width);
+    }
+
+    private void insertLow() {
+        insertLow(1);
+    }
+
+    private void insertLow(int width) {
+        insert(lowpos, width);
+    }
+
+    private void insert(int vpos, int width) {
+        xpos[insertat] = hstart;
+        ypos[insertat++] = vpos;
+        hstart += hscale * width;
+        xpos[insertat] = hstart;
+        ypos[insertat++] = vpos;
     }
 }
