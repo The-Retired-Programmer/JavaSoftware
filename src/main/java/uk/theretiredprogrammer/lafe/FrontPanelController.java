@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2021 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,106 +15,36 @@
  */
 package uk.theretiredprogrammer.lafe;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class FrontPanelController {
 
+    private final FrontPanelWindow window;
+    private final USBSerialDevice usbdevice;
+    private Map<Integer, List<String>> samples;
+
     public FrontPanelController(Stage stage) {
-        setWindow(new FrontPanelWindow(this, stage));
+        ProbeConfiguration config = new ProbeConfiguration();
+        usbdevice = new USBSerialDevice();
+        ProbeCommands probecommands = new ProbeCommands(config, usbdevice);
+        window = new FrontPanelWindow(stage, this, config, probecommands);
     }
 
-    protected enum ExternalCloseAction {
-        CLOSE, HIDE, IGNORE
+    public final void close() throws IOException {
+        usbdevice.close();
+        window.close();
     }
 
-    protected enum ClosingMode {
-        PROGRAMMATICALLY, EXTERNALLY, HIDEONLY
+    public void setData(Map<Integer, List<String>> samples) {
+        // received samples to display - handoff to display window needed
+        this.samples = samples;
+        window.refreshDisplay();
     }
 
-    private ClosingMode closingmode = ClosingMode.HIDEONLY;
-    private ExternalCloseAction externalcloseaction;
-    private FrontPanelWindow window;
-
-    protected final void setWindow(FrontPanelWindow window, ExternalCloseAction externalcloseaction) {
-        this.window = window;
-        this.externalcloseaction = externalcloseaction;
-    }
-
-    protected final void setWindow(FrontPanelWindow window) {
-        this.window = window;
-        this.externalcloseaction = ExternalCloseAction.CLOSE;
-    }
-
-    protected final FrontPanelWindow getWindow() {
-        return window;
-    }
-
-    public final void close() {
-        closingmode = ClosingMode.PROGRAMMATICALLY;
-        whenWindowIsClosingProgrammatically();
-        whenWindowIsClosing();
-        getWindow().close();
-    }
-
-    public final void windowHasExternalCloseRequest(WindowEvent e) {
-        switch (externalcloseaction) {
-            case CLOSE -> {
-                closingmode = ClosingMode.EXTERNALLY;
-                whenWindowIsClosingExternally();
-                whenWindowIsClosing();
-            }
-            case HIDE -> {
-                closingmode = ClosingMode.HIDEONLY;
-            }
-            case IGNORE ->
-                e.consume();
-        }
-    }
-
-    public final void windowIsHiding(WindowEvent e) {
-        getWindow().saveWindowSizePreferences();
-        whenWindowIsHiding();
-    }
-
-    public final void windowIsHidden(WindowEvent e) {
-        switch (closingmode) {
-            case PROGRAMMATICALLY -> {
-                whenWindowIsClosedProgrammatically();
-                whenWindowIsClosed();
-                setWindow(null);
-            }
-            case EXTERNALLY -> {
-                whenWindowIsClosedExternally();
-                whenWindowIsClosed();
-                setWindow(null);
-            }
-            case HIDEONLY ->
-                whenWindowIsHiddenOnly();
-        }
-    }
-
-    protected void whenWindowIsClosing() {
-    }
-
-    protected void whenWindowIsClosingProgrammatically() {
-    }
-
-    protected void whenWindowIsClosingExternally() {
-    }
-
-    protected void whenWindowIsHiding() {
-    }
-
-    protected void whenWindowIsHiddenOnly() {
-    }
-
-    protected void whenWindowIsClosed() {
-    }
-
-    protected void whenWindowIsClosedProgrammatically() {
-    }
-
-    protected void whenWindowIsClosedExternally() {
+    public Map<Integer, List<String>> getSamples() {
+        return samples;
     }
 }

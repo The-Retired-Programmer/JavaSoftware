@@ -27,41 +27,44 @@ public class FrontPanelWindow {
 
     private final Class clazz;
     private final Stage stage;
-    private final FrontPanelController controller;
     private Rectangle2D windowsize;
+    private final FrontPanelDisplay displaypane;
+    private final ProbeCommands probecommands;
 
-    public FrontPanelWindow(FrontPanelController controller, Stage stage) {
+    public FrontPanelWindow(Stage stage, FrontPanelController controller, ProbeConfiguration config, ProbeCommands probecommands) {
         this.clazz = FrontPanelWindow.class;
         this.stage = stage;
-        this.controller = controller;
+        this.probecommands = probecommands;
         //
+        displaypane = new FrontPanelDisplay(controller);
         setDefaultWindowWidth(400);
         BorderPane borderpane = new BorderPane();
-        ScrollPane pane = new ScrollPane(new FrontPanelDisplay());
+        ScrollPane pane = new ScrollPane(displaypane);
         //pane.setContextMenu(contextmenu);
         borderpane.setCenter(pane);
-        borderpane.setBottom(new FrontPanelConfiguration());
-        borderpane.setLeft(new FrontPanelControls());
+        borderpane.setBottom(new FrontPanelConfiguration(config));
+        borderpane.setLeft(new FrontPanelControls(controller, probecommands));
         Scene scene = new Scene(borderpane);
         LafePreferences.applyWindowSizePreferences(stage, clazz, windowsize);
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Logic Analyser");
-        stage.setOnCloseRequest(e -> new ExecuteAndCatch(() -> controller.windowHasExternalCloseRequest(e)));
-        stage.setOnHiding(e -> new ExecuteAndCatch(() -> controller.windowIsHiding(e)));
-        stage.setOnHidden(e -> new ExecuteAndCatch(() -> controller.windowIsHidden(e)));
+        stage.setOnHiding(e -> new ExecuteAndCatch(() -> saveWindowSizePreferences()));
         stage.show();
     }
 
     public void close() {
         stage.close();
     }
-    
-    public final void resetWindows() {
+
+    public void refreshDisplay() {
+        displaypane.refresh();
+    }
+
+    public void reset() {
         LafePreferences.clearWindowSizePreferences(clazz);
         LafePreferences.applyWindowSizePreferences(stage, clazz, windowsize);
     }
-    
 
     private void setDefaultWindowWidth(double width) {
         Rectangle2D screenbounds = Screen.getPrimary().getVisualBounds();
@@ -77,8 +80,7 @@ public class FrontPanelWindow {
         );
     }
 
-    public void saveWindowSizePreferences() {
+    private void saveWindowSizePreferences() {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
     }
-
 }
