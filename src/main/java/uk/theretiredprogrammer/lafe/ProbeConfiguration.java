@@ -41,6 +41,7 @@ public class ProbeConfiguration {
     public final ObjectProperty<Trigger> et_level = new SimpleObjectProperty<Trigger>(LOW);
     public final ObjectProperty<SampleEndMode> sampleendmode = new SimpleObjectProperty<SampleEndMode>(BUFFERFULL);
     public final IntegerProperty samplesize = new SimpleIntegerProperty(300);
+    public String probetype = "Unknown";
 
     public String getprobecommand(String command) {
         return MessageFormat.format("{0}-{1,number,integer}-{2,number,integer}-"

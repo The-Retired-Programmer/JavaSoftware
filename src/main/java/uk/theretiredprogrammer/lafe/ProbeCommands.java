@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ProbeCommands {
@@ -50,15 +51,26 @@ public class ProbeCommands {
 
     private final USBSerialDevice device;
     private final ProbeConfiguration config;
+    private Consumer<String> messagewriter;
 
     public ProbeCommands(ProbeConfiguration config, USBSerialDevice device) {
         this.device = device;
         this.config = config;
     }
 
+    public void setstatusmessagewriter(Consumer<String> messagewriter) {
+        this.messagewriter = messagewriter;
+    }
+
     public boolean ping() throws IOException {
         sendcommand("p");
-        return handleResponse((s) -> onlyYNExpected(s));
+        return handleResponse((s) -> probetypeExpected(s));
+    }
+
+    private boolean probetypeExpected(String response) {
+        config.probetype = response;
+        displaymessage(response);
+        return true;
     }
 
     public boolean getState() throws IOException {
@@ -125,15 +137,21 @@ public class ProbeCommands {
         try {
             while (true) {
                 String response = device.readln();
-                System.out.println("R: " + response);
-                if (response.startsWith("Y")) {
-                    return true;
-                }
-                if (response.startsWith("N")) {
-                    return false;
-                }
-                if (!responselinehandler.apply(response)) {
-                    return false;
+                if (response.startsWith("**DEBUG:")) {
+                    displaymessage(response);
+                } else {
+                    System.out.println("R: " + response);
+                    if (response.startsWith("Y")) {
+                        displaymessage(response, 2);
+                        return true;
+                    }
+                    if (response.startsWith("N")) {
+                        displaymessage(response, 2);
+                        return false;
+                    }
+                    if (!responselinehandler.apply(response)) {
+                        return false;
+                    }
                 }
             }
         } catch (IOException ex) { // treat IOException as a N response
@@ -141,4 +159,18 @@ public class ProbeCommands {
         }
     }
 
+    private void displaymessage(String message) {
+        if (!message.isBlank()) {
+            messagewriter.accept(message);
+        }
+    }
+
+    private void displaymessage(String message, int startindex) {
+        if (message.length() > startindex) {
+            message = message.substring(startindex);
+            if (!message.isBlank()) {
+                messagewriter.accept(message);
+            }
+        }
+    }
 }

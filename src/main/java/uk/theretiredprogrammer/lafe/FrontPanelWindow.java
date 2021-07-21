@@ -19,6 +19,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -29,6 +30,8 @@ public class FrontPanelWindow {
     private final Stage stage;
     private Rectangle2D windowsize;
     private final FrontPanelDisplay displaypane;
+    private final Text messagenode;
+    private final FrontPanelControls frontpanelcontrols;
 
     public FrontPanelWindow(Stage stage, FrontPanelController controller, ProbeConfiguration config, ProbeCommands probecommands) {
         this.clazz = FrontPanelWindow.class;
@@ -41,7 +44,8 @@ public class FrontPanelWindow {
         //pane.setContextMenu(contextmenu);
         borderpane.setCenter(pane);
         borderpane.setBottom(new FrontPanelConfiguration(config));
-        borderpane.setLeft(new FrontPanelControls(controller, probecommands));
+        borderpane.setLeft(frontpanelcontrols= new FrontPanelControls(controller, probecommands));
+        borderpane.setTop(messagenode = new Text());
         Scene scene = new Scene(borderpane);
         LafePreferences.applyWindowSizePreferences(stage, clazz, windowsize);
         stage.setScene(scene);
@@ -57,6 +61,14 @@ public class FrontPanelWindow {
 
     public void refreshDisplay() {
         displaypane.refresh();
+    }
+    
+    public void writestatusmessage(String message) {
+        messagenode.setText(message);
+    }
+    
+    public final void checkifprobeconnected(FrontPanelController controller, ProbeCommands probecommands) {
+        frontpanelcontrols.checkifprobeconnected(controller, probecommands);
     }
 
     public void reset() {

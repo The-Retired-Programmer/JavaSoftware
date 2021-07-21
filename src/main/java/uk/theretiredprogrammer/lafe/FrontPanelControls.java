@@ -35,14 +35,14 @@ public class FrontPanelControls extends VBox {
 
     private ProbeState state;
 
-    private Lamp connectedlamp;
+    private final Lamp connectedlamp;
 
     public FrontPanelControls(FrontPanelController controller, ProbeCommands probecommands) {
-        super(10);
+            this.getChildren().add(connectedlamp = new Lamp("Probe connected", RED));
+    }
+    
+    public void checkifprobeconnected(FrontPanelController controller, ProbeCommands probecommands) {
         try {
-            this.getChildren().addAll(
-                    connectedlamp = new Lamp("Probe connected", RED)
-            );
             if (probecommands.ping()) {
                 connectedlamp.changeColour(GREEN);
             }
