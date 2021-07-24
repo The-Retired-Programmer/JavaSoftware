@@ -44,11 +44,11 @@ public class ProbeConfiguration {
     public String probetype = "Unknown";
 
     public String getprobecommand(String command) {
-        return MessageFormat.format("{0}-{1,number,integer}-{2,number,integer}-"
+        return MessageFormat.format("{0}-{1,number,#}-{2,number,#}-"
                 + "{3,number,#}-"
-                + "{4,number,integer}-{5,number,integer}-{6,number,integer}-"
-                + "{7,number,integer}-{8,number,integer}-{9,number,integer}-"
-                + "{10,number,integer}-{11,number,integer}",
+                + "{4,number,#}-{5,number,#}-{6,number,#}-"
+                + "{7,number,#}-{8,number,#}-{9,number,#}-"
+                + "{10,number,#}-{11,number,#}",
                 command, firstpin.get(), pins.get(),
                 speedcalculation(),
                 st_enabled.get() ? 1 : 0, st_pin.get(), st_level.get().ordinal(),
