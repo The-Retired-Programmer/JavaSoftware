@@ -106,13 +106,16 @@ public class ProbeCommands {
         sendcommand("d");
         return handleResponse((s) -> sampleExpected(s, samples));
     }
+    
+    private int currentpinsample = 0;
 
     private boolean sampleExpected(String responseline, Map<Integer, List<String>> samples) {
-        // assume single pin response
-        if (samples.get(0) == null) {
-            samples.put(0, new ArrayList<>());
+        if (responseline.startsWith("#")) {
+            currentpinsample = Integer.parseUnsignedInt(responseline.substring(2));
+            samples.put(currentpinsample, new ArrayList());
+        } else {
+            samples.get(currentpinsample).add(responseline);
         }
-        samples.get(0).add(responseline);
         return true;
     }
 

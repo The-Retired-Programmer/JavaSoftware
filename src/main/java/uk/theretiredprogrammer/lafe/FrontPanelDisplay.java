@@ -52,7 +52,7 @@ public class FrontPanelDisplay extends Canvas {
         setHeight(height);
         int count = 0;
         for (var es : samples.entrySet()) {
-            int topofsample = calcsampleheight * count + margin;
+            int topofsample = calcsampleheight * count++ + margin;
             drawSample(es.getKey(), es.getValue(), margin, topofsample, topofsample + calcsampleheight - margin);
         }
     }
