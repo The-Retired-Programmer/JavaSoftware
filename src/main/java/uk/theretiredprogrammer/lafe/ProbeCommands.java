@@ -46,7 +46,7 @@ public class ProbeCommands {
                 return state;
             }
         }
-        throw new IllegalStateFailure("Unknow probestate numericvalue during lookup: " + numericvalue);
+        throw new IllegalStateFailure("Unknow probestate numeric value during lookup: " + numericvalue);
     }
 
     private final USBSerialDevice device;
