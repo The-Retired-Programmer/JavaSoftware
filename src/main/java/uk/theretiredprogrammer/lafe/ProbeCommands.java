@@ -25,7 +25,7 @@ import java.util.function.Function;
 public class ProbeCommands {
 
     public enum ProbeState {
-        STATE_IDLE(0), STATE_SAMPLING(1), STATE_SAMPLING_DONE(2);
+        STATE_IDLE(0), STATE_SAMPLING(1), STATE_STOPPING_SAMPLING(2), STATE_SAMPLING_DONE(3);
 
         private final int numericvalue;
 

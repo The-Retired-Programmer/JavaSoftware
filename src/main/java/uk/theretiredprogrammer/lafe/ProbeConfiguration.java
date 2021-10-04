@@ -104,10 +104,11 @@ public class ProbeConfiguration {
     public enum SampleEndMode {
         MANUAL("Manual"),
         BUFFERFULL("Buffer Full"),
-        EVENTATBUFFERSTART("Event at Buffer Start"),
-        EVENTATBUFFEREND("Event at Buffer End"),
-        EVENTATBUFFERMIDPOINT("Event at Buffer Midpoint");
-
+        EVENTINWINDOW1("Event in Window 1"),
+        EVENTINWINDOW2("Event in Window 2"),
+        EVENTINWINDOW3("Event in Window 3"),
+        EVENTINWINDOW4("Event in Window 4");
+    
         private final String fordisplay;
 
         SampleEndMode(String fordisplay) {
