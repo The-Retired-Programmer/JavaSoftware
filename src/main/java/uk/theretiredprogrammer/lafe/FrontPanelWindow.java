@@ -67,8 +67,8 @@ public class FrontPanelWindow {
         messagenode.setText(message);
     }
     
-    public final void checkifprobeconnected(FrontPanelController controller, ProbeCommands probecommands) {
-        frontpanelcontrols.checkifprobeconnected(controller, probecommands);
+    public final void checkifprobeconnected() {
+        messagenode.setText(frontpanelcontrols.checkifprobeconnected()? "Probe Connected": "Probe connection failed");
     }
 
     public void reset() {

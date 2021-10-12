@@ -33,9 +33,9 @@ public class FrontPanelController {
         ProbeCommands probecommands = new ProbeCommands(config, usbdevice);
         window = new FrontPanelWindow(stage, this, config, probecommands);
         probecommands.setstatusmessagewriter((message) -> window.writestatusmessage(message));
-        window.checkifprobeconnected(this, probecommands);
+        window.checkifprobeconnected();
     }
-
+    
     public final void close() throws IOException {
         usbdevice.close();
         window.close();

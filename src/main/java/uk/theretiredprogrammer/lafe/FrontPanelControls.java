@@ -36,12 +36,30 @@ public class FrontPanelControls extends VBox {
     private ProbeState state;
 
     private final Lamp connectedlamp;
+    private final ProbeCommands probecommands;
+    private final FrontPanelController controller;
 
     public FrontPanelControls(FrontPanelController controller, ProbeCommands probecommands) {
-            this.getChildren().add(connectedlamp = new Lamp("Probe connected", RED));
+        this.controller = controller;
+        this.probecommands = probecommands;
+        this.getChildren().add(connectedlamp = new Lamp("Probe connected", RED));
+    }
+
+    public boolean checkifprobeconnected() {
+//        try {
+//            CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> doconnectedcheck());
+//            while (!completableFuture.isDone()) {
+//                Platform.runLater( () -> probecommands.displaymessage("Waiting to connect to probe"));
+//            }
+//            Platform.runLater( () -> probecommands.displaymessage(""));
+//            return completableFuture.get();
+//        } catch (InterruptedException | ExecutionException ex) {
+//            return false;
+//        }
+        return doconnectedcheck();
     }
     
-    public void checkifprobeconnected(FrontPanelController controller, ProbeCommands probecommands) {
+    private boolean doconnectedcheck() {
         try {
             if (probecommands.ping()) {
                 connectedlamp.changeColour(GREEN);
@@ -53,10 +71,19 @@ public class FrontPanelControls extends VBox {
                     new Lamp("Probe Sampling", RED),
                     new StopGoButton(controller, probecommands)
             );
+            return true;
         } catch (IOException ex) {
-            // error in sending command
+            return false;
         }
     }
+        //
+//        
+        //
+//        int number = 20;
+//        Thread newThread = new Thread(() -> {
+//            System.out.println("Factorial of " + number + " is: " + factorial(number));
+//        });
+//        newThread.start();
 
     public class Lamp extends Group {
 
@@ -99,6 +126,9 @@ public class FrontPanelControls extends VBox {
                 case STATE_SAMPLING -> {
                     return "Stop Sampling";
                 }
+                case STATE_STOPPING_SAMPLING -> {
+                    return "Stopping  in Progress";
+                }
                 case STATE_SAMPLING_DONE -> {
                     return "Get Sample";
                 }
@@ -110,7 +140,7 @@ public class FrontPanelControls extends VBox {
         public void buttonpressed(Event ev) {
             switch (state) {
                 case STATE_IDLE:
-                    try {
+                try {
                     // start sampling
                     probecommands.start();
                 } catch (IOException ex) {
@@ -119,7 +149,7 @@ public class FrontPanelControls extends VBox {
                 }
                 break;
                 case STATE_SAMPLING:
-                    try {
+                try {
                     // stop sampling request
                     probecommands.stop();
                 } catch (IOException ex) {
@@ -127,6 +157,9 @@ public class FrontPanelControls extends VBox {
                     return;
                 }
                 break;
+                case STATE_STOPPING_SAMPLING:
+
+                    break;
                 case STATE_SAMPLING_DONE:
                     Map<Integer, List<String>> samples = new HashMap<>();
                     try {

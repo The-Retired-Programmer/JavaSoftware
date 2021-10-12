@@ -24,6 +24,11 @@ import java.util.function.Function;
 
 public class ProbeCommands {
 
+    public ProbeCommands(ProbeConfiguration config, USBSerialDevice device) {
+        this.device = device;
+        this.config = config;
+    }
+
     public enum ProbeState {
         STATE_IDLE(0), STATE_SAMPLING(1), STATE_STOPPING_SAMPLING(2), STATE_SAMPLING_DONE(3);
 
@@ -53,18 +58,12 @@ public class ProbeCommands {
     private final ProbeConfiguration config;
     private Consumer<String> messagewriter;
 
-    public ProbeCommands(ProbeConfiguration config, USBSerialDevice device) {
-        this.device = device;
-        this.config = config;
-    }
-
     public void setstatusmessagewriter(Consumer<String> messagewriter) {
         this.messagewriter = messagewriter;
     }
 
     public boolean ping() throws IOException {
-        sendcommand("p");
-        return handleResponse((s) -> probetypeExpected(s));
+        return sendCommandAndHandleResponse("p", (s) -> probetypeExpected(s));
     }
 
     private boolean probetypeExpected(String response) {
@@ -74,8 +73,7 @@ public class ProbeCommands {
     }
 
     public boolean getState() throws IOException {
-        sendcommand("?");
-        return handleResponse((s) -> statusExpected(s));
+        return sendCommandAndHandleResponse("?", (s) -> statusExpected(s));
     }
 
     public ProbeState getLastStateResponse() {
@@ -89,8 +87,7 @@ public class ProbeCommands {
     }
 
     public boolean start() throws IOException {
-        sendcommand(config.getprobecommand("g"));
-        return handleResponse((s) -> onlyYNExpected(s));
+        return sendCommandAndHandleResponse(config.getprobecommand("g"), (s) -> onlyYNExpected(s));
     }
 
     private boolean onlyYNExpected(String response) {
@@ -98,15 +95,13 @@ public class ProbeCommands {
     }
 
     public boolean stop() throws IOException {
-        sendcommand("s");
-        return handleResponse((s) -> onlyYNExpected(s));
+        return sendCommandAndHandleResponse("s", (s) -> onlyYNExpected(s));
     }
 
     public boolean data(Map<Integer, List<String>> samples) throws IOException {
-        sendcommand("d");
-        return handleResponse((s) -> sampleExpected(s, samples));
+        return sendCommandAndHandleResponse("d", (s) -> sampleExpected(s, samples));
     }
-    
+
     private int currentpinsample = 0;
 
     private boolean sampleExpected(String responseline, Map<Integer, List<String>> samples) {
@@ -117,6 +112,11 @@ public class ProbeCommands {
             samples.get(currentpinsample).add(responseline);
         }
         return true;
+    }
+
+    private synchronized boolean sendCommandAndHandleResponse(String s, Function<String, Boolean> responselinehandler) throws IOException {
+        sendcommand(s);
+        return handleResponse(responselinehandler);
     }
 
     private void sendcommand(String s) throws IOException {
@@ -162,7 +162,7 @@ public class ProbeCommands {
         }
     }
 
-    private void displaymessage(String message) {
+    public void displaymessage(String message) {
         if (!message.isBlank()) {
             messagewriter.accept(message);
         }
