@@ -26,7 +26,6 @@ public class FrontPanelController {
     private final USBSerialDevice usbdevice;
     private Map<Integer, List<String>> samples;
 
-    @SuppressWarnings("LeakingThisInConstructor")
     public FrontPanelController(Stage stage) {
         ProbeConfiguration config = new ProbeConfiguration();
         usbdevice = new USBSerialDevice();

@@ -51,7 +51,7 @@ public class FrontPanelWindow {
         stage.setScene(scene);
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Logic Analyser");
-        stage.setOnHiding(e -> new ExecuteAndCatch(() -> saveWindowSizePreferences()));
+        stage.setOnHiding(e -> ExecuteAndCatch.run(() -> saveWindowSizePreferences()));
         stage.show();
     }
 

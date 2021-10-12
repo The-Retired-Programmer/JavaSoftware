@@ -133,7 +133,7 @@ public class FrontPanelControls extends VBox {
                     return "Get Sample";
                 }
                 default ->
-                    throw new IllegalStateFailure("illegal state");
+                    throw new IllegalProgramStateFailure("illegal state");
             }
         }
 

@@ -26,8 +26,7 @@ public class App extends Application {
     }
 
     @Override
-    @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void start(Stage stage) {
-        new ExecuteAndCatch(() -> new FrontPanelController(stage));
+        ExecuteAndCatch.run(() -> new FrontPanelController(stage)); 
     }
 }

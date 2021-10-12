@@ -17,7 +17,6 @@ package uk.theretiredprogrammer.lafe;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -25,49 +24,25 @@ import javafx.scene.control.Dialog;
 
 public class ExecuteAndCatch {
 
-    private Consumer<Exception> illegalstatefailurereporting = (ex) -> catchDialog("Program Failure", ex);
-    private Consumer<Exception> otherexceptionsreporting = (ex) -> catchDialog("Program Failure", ex);
-    private Runnable exceptionHandler = () -> {};
-
     public static void runLater(Runnable work) {
-        Platform.runLater(() -> new ExecuteAndCatch(work));
+        Platform.runLater(() -> runworker(work));
+    }
+    
+    public static void run(Runnable work) {
+        runworker(work);
     }
 
-    public ExecuteAndCatch() {
-    }
-
-    public ExecuteAndCatch(Runnable work) {
-        run(work);
-    }
-
-    public ExecuteAndCatch reportOnIllegalStateFailure(Consumer<Exception> illegalstatefailurereporting) {
-        this.illegalstatefailurereporting = illegalstatefailurereporting;
-        return this;
-    }
-
-    public ExecuteAndCatch reportOnOtherExceptions(Consumer<Exception> otherexceptionsreporting) {
-        this.otherexceptionsreporting = otherexceptionsreporting;
-        return this;
-    }
-
-    public ExecuteAndCatch setExceptionHandler(Runnable exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
-        return this;
-    }
-
-    public final void run(Runnable work) {
+    private static void runworker(Runnable work) {
         try {
             work.run();
-        } catch (IllegalStateFailure ex) {
-            exceptionHandler.run();
-            Platform.runLater(() -> illegalstatefailurereporting.accept(ex));
+        } catch (IllegalProgramStateFailure ex) {
+            catchDialog("Illegal Program State Failure", ex);
         } catch (Exception ex) {
-            exceptionHandler.run();
-            Platform.runLater(() -> otherexceptionsreporting.accept(ex));
+            catchDialog("Program Failure", ex);
         }
     }
 
-    public void catchDialog(String title, Exception ex) {
+    private static void catchDialog(String title, Exception ex) {
         StringWriter writer = new StringWriter();
         PrintWriter pwriter = new PrintWriter(writer);
         ex.printStackTrace(pwriter);

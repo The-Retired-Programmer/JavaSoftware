@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.lafe;
 
-public class IllegalStateFailure extends RuntimeException {
+public class IllegalProgramStateFailure extends RuntimeException {
 
-    public IllegalStateFailure(String message) {
+    public IllegalProgramStateFailure(String message) {
         super(message);
     }
 }
