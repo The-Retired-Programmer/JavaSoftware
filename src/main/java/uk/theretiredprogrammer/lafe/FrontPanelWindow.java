@@ -15,18 +15,23 @@
  */
 package uk.theretiredprogrammer.lafe;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -36,12 +41,17 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import static javafx.scene.paint.Color.DARKGREY;
+import static javafx.scene.paint.Color.GREEN;
 import static javafx.scene.paint.Color.RED;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.NumberStringConverter;
+import static uk.theretiredprogrammer.lafe.ProbeCommands.ProbeState.STATE_IDLE;
 
 public class FrontPanelWindow {
 
@@ -49,11 +59,16 @@ public class FrontPanelWindow {
     private final Stage stage;
     private Rectangle2D windowsize;
     private Text messagenode;
-    private FrontPanelControls frontpanelcontrols;
+    private ProbeCommands probecommands;
+    private ProbeConfiguration config;
+    private FrontPanelController controller;
 
     public FrontPanelWindow(Stage stage, FrontPanelController controller) {
         this.clazz = FrontPanelWindow.class;
         this.stage = stage;
+        this.controller = controller;
+        this.probecommands = controller.getProbeCommands();
+        this.config = controller.getProbeConfiguration();
         setDefaultWindowWidth(400);
         LafePreferences.applyWindowSizePreferences(stage, clazz, windowsize);
         stage.setScene(buildScene(controller));
@@ -66,9 +81,9 @@ public class FrontPanelWindow {
     private Scene buildScene(FrontPanelController controller) {
         BorderPane borderpane = new BorderPane();
         //pane.setContextMenu(contextmenu);
-        borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay(controller)));
-        borderpane.setBottom(buildConfiguration(controller.getProbeConfiguration()));
-        borderpane.setLeft(frontpanelcontrols= new FrontPanelControls(controller));
+        borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay()));
+        borderpane.setBottom(buildConfiguration());
+        borderpane.setLeft(buildControls());
         borderpane.setTop(messagenode = new Text());
         return new Scene(borderpane);
     }
@@ -82,7 +97,7 @@ public class FrontPanelWindow {
     }
     
     public final void checkifprobeconnected() {
-        messagenode.setText(frontpanelcontrols.checkifprobeconnected()? "Probe Connected": "Probe connection failed");
+        messagenode.setText(isprobeconnected()? "Probe Connected": "Probe connection failed");
     }
 
     public void reset() {
@@ -110,11 +125,157 @@ public class FrontPanelWindow {
     
     // -------------------------------------------------------------------------
     //
+    // controls panel
+    //
+    // -------------------------------------------------------------------------
+    
+    private ProbeCommands.ProbeState state = STATE_IDLE;
+    private Lamp connectedlamp;
+
+    public VBox buildControls() {
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(
+                connectedlamp = new Lamp("Probe connected", RED),
+                    new Lamp("Probe Sampling", RED),
+                    new StopGoButton()
+        );
+        return vbox;
+    }
+
+    private boolean isprobeconnected() {
+//        try {
+//            CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> doconnectedcheck());
+//            while (!completableFuture.isDone()) {
+//                Platform.runLater( () -> probecommands.displaymessage("Waiting to connect to probe"));
+//            }
+//            Platform.runLater( () -> probecommands.displaymessage(""));
+//            return completableFuture.get();
+//        } catch (InterruptedException | ExecutionException ex) {
+//            return false;
+//        }
+        return doconnectedcheck();
+    }
+    
+    private boolean doconnectedcheck() {
+        try {
+            if (probecommands.ping()) {
+                connectedlamp.changeColour(GREEN);
+            }
+            if (probecommands.getState()) {
+                state = probecommands.getLastStateResponse();
+            }
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+        //
+//        
+        //
+//        int number = 20;
+//        Thread newThread = new Thread(() -> {
+//            System.out.println("Factorial of " + number + " is: " + factorial(number));
+//        });
+//        newThread.start();
+
+    public class Lamp extends Group {
+
+        private final Circle colourlens;
+
+        public Lamp(String label, Color colour) {
+            colourlens = new Circle(40, 20, 10, colour);
+            this.getChildren().addAll(
+                    new Circle(40, 20, 15, DARKGREY),
+                    colourlens,
+                    new Text(label)
+            );
+        }
+
+        public void changeColour(Color newcolour) {
+            colourlens.setFill(newcolour);
+        }
+    }
+
+    public class StopGoButton extends Group {
+
+        private final Button button;
+
+        public StopGoButton() {
+            button = new Button(getButtonText());
+            button.relocate(0, 20);
+            this.getChildren().add(button);
+            button.setOnAction((ev) -> buttonpressed(ev));
+        }
+
+        private String getButtonText() {
+            switch (state) {
+                case STATE_IDLE -> {
+                    return "Start Sampling";
+                }
+                case STATE_SAMPLING -> {
+                    return "Stop Sampling";
+                }
+                case STATE_STOPPING_SAMPLING -> {
+                    return "Stopping  in Progress";
+                }
+                case STATE_SAMPLING_DONE -> {
+                    return "Get Sample";
+                }
+                default ->
+                    throw new IllegalProgramStateFailure("illegal state");
+            }
+        }
+
+        public void buttonpressed(Event ev) {
+            switch (state) {
+                case STATE_IDLE:
+                try {
+                    // start sampling
+                    probecommands.start();
+                } catch (IOException ex) {
+                    // failure to start
+                    return;
+                }
+                break;
+                case STATE_SAMPLING:
+                try {
+                    // stop sampling request
+                    probecommands.stop();
+                } catch (IOException ex) {
+                    // failure to stop
+                    return;
+                }
+                break;
+                case STATE_STOPPING_SAMPLING:
+
+                    break;
+                case STATE_SAMPLING_DONE:
+                    Map<Integer, List<String>> samples = new HashMap<>();
+                    try {
+                        probecommands.data(samples);
+                    } catch (IOException ex) {
+                        throw new Failure(ex);
+                    }
+                    controller.setData(samples);
+            }
+            try {
+                if (probecommands.getState()) {
+                    state = probecommands.getLastStateResponse();
+                }
+            } catch (IOException ex) {
+                throw new Failure(ex);
+            }
+            button.setText(getButtonText());
+        }
+    }
+    
+    // -------------------------------------------------------------------------
+    //
     //    the configuration panel
     //
     // -------------------------------------------------------------------------
 
-    private HBox buildConfiguration(ProbeConfiguration config) {
+    private HBox buildConfiguration() {
         HBox hbox = new HBox(10);
         hbox.getChildren().addAll(
                 labelledNode("Sample Source", combineFields(
@@ -203,14 +364,9 @@ public class FrontPanelWindow {
     // -------------------------------------------------------------------------
     
     private Canvas sampledisplaycanvas;
-    private FrontPanelController controller;
-    private ProbeConfiguration config;
 
-    public Canvas buildEmptySampleDisplay(FrontPanelController controller) {
-        sampledisplaycanvas = new Canvas(500.0, 500.0);
-        this.controller = controller;
-        this.config = controller.getProbeConfiguration();
-        return sampledisplaycanvas;
+    private Canvas buildEmptySampleDisplay() {
+        return sampledisplaycanvas = new Canvas(500.0, 500.0);
     }
 
     public void refreshSampleDislay() {
