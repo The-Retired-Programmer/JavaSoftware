@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.lafe;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -23,6 +25,8 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -32,6 +36,7 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import static javafx.scene.paint.Color.RED;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -43,7 +48,6 @@ public class FrontPanelWindow {
     private final Class clazz;
     private final Stage stage;
     private Rectangle2D windowsize;
-    private FrontPanelDisplay displaypane;
     private Text messagenode;
     private FrontPanelControls frontpanelcontrols;
 
@@ -62,7 +66,7 @@ public class FrontPanelWindow {
     private Scene buildScene(FrontPanelController controller) {
         BorderPane borderpane = new BorderPane();
         //pane.setContextMenu(contextmenu);
-        borderpane.setCenter(new ScrollPane(displaypane = new FrontPanelDisplay(controller)));
+        borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay(controller)));
         borderpane.setBottom(buildConfiguration(controller.getProbeConfiguration()));
         borderpane.setLeft(frontpanelcontrols= new FrontPanelControls(controller));
         borderpane.setTop(messagenode = new Text());
@@ -73,10 +77,6 @@ public class FrontPanelWindow {
         stage.close();
     }
 
-    public void refreshDisplay() {
-        displaypane.refresh();
-    }
-    
     public void writestatusmessage(String message) {
         messagenode.setText(message);
     }
@@ -108,9 +108,12 @@ public class FrontPanelWindow {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
     }
     
-    
+    // -------------------------------------------------------------------------
+    //
     //    the configuration panel
-    
+    //
+    // -------------------------------------------------------------------------
+
     private HBox buildConfiguration(ProbeConfiguration config) {
         HBox hbox = new HBox(10);
         hbox.getChildren().addAll(
@@ -191,5 +194,129 @@ public class FrontPanelWindow {
         booleanfield.setSelected(value.get());
         booleanfield.selectedProperty().bindBidirectional(value);
         return booleanfield;
+    }
+    
+    // -------------------------------------------------------------------------
+    //
+    //  the sample display canvas
+    //
+    // -------------------------------------------------------------------------
+    
+    private Canvas sampledisplaycanvas;
+    private FrontPanelController controller;
+    private ProbeConfiguration config;
+
+    public Canvas buildEmptySampleDisplay(FrontPanelController controller) {
+        sampledisplaycanvas = new Canvas(500.0, 500.0);
+        this.controller = controller;
+        this.config = controller.getProbeConfiguration();
+        return sampledisplaycanvas;
+    }
+
+    public void refreshSampleDislay() {
+        Map<Integer, List<String>> samples = controller.getSamples();
+        int numbersamples = samples.size();
+        expectedsamplesize = config.samplesize.get();
+        // calculate layout
+        int margin = 20;
+        int height = 500;
+        int maxsampleheight = 220;
+        int calcsampleheight = (height - margin) / numbersamples;
+        if (calcsampleheight > maxsampleheight) {
+            calcsampleheight = maxsampleheight;
+        }
+        hscale = 5;
+        int width = expectedsamplesize * hscale + 2 * margin;
+        // set the required dimensions for the canvas and clear it
+        sampledisplaycanvas.setWidth(width);
+        sampledisplaycanvas.setHeight(height);
+        sampledisplaycanvas.getGraphicsContext2D().clearRect(0, 0, sampledisplaycanvas.getWidth(), sampledisplaycanvas.getHeight());
+        int count = 0;
+        for (var es : samples.entrySet()) {
+            int topofsample = calcsampleheight * count++ + margin;
+            drawSample(es.getKey(), es.getValue(), margin, topofsample, topofsample + calcsampleheight - margin);
+        }
+    }
+
+    // sample drawing variables
+    
+    private int hstart;
+    private int hscale;
+    private int highpos;
+    private int lowpos;
+    private int expectedsamplesize;
+    private double[] xpos;
+    private double[] ypos;
+    private int insertat;
+
+    private void drawSample(int pin, List<String> sample, int hstart, int highpos, int lowpos) {
+        xpos = new double[expectedsamplesize];
+        ypos = new double[expectedsamplesize];
+        insertat = 0;
+        this.hstart = hstart;
+        this.highpos = highpos;
+        this.lowpos = lowpos;
+        sample.forEach(segment -> buildSamplesegment(segment));
+        GraphicsContext gc = sampledisplaycanvas.getGraphicsContext2D();
+        gc.setStroke(RED);
+        gc.setLineWidth(2.0);
+        gc.strokePolyline(xpos, ypos, insertat);
+    }
+
+    private void buildSamplesegment(String samplesegment) {
+        for (int cptr = 0; cptr < samplesegment.length(); cptr++) {
+            switch (samplesegment.charAt(cptr)) {
+                case 'H' -> {
+                    insertHigh();
+                }
+                case 'L' -> {
+                    insertLow();
+                }
+                default ->
+                    cptr = decoderle(cptr, samplesegment);
+            }
+        }
+    }
+
+    private int decoderle(int cptr, String s) {
+        char c = s.charAt(cptr);
+        int count = 0;
+        while ('0' <= c && c <= '9') {
+            count = count * 10 + (int) (c - '0');
+            c = s.charAt(++cptr);
+        }
+        switch (c) {
+            case 'H' ->
+                insertHigh(count);
+            case 'L' ->
+                insertLow(count);
+            default ->
+                throw new Failure("Badly encoded RLE data: " + c);
+        }
+        return cptr;
+    }
+
+    private void insertHigh() {
+        insertHigh(1);
+    }
+
+    private void insertHigh(int width) {
+        insert(highpos, width);
+    }
+
+    private void insertLow() {
+        insertLow(1);
+    }
+
+    private void insertLow(int width) {
+        insert(lowpos, width);
+    }
+
+    private void insert(int vpos, int width) {
+        xpos[insertat] = hstart;
+        ypos[insertat++] = vpos;
+        hstart += hscale * width;
+        xpos[insertat] = hstart;
+        ypos[insertat++] = vpos;
     }
 }

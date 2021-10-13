@@ -56,7 +56,7 @@ public class FrontPanelController {
     public void setData(Map<Integer, List<String>> samples) {
         // received samples to display - handoff to display window needed
         this.samples = samples;
-        window.refreshDisplay();
+        window.refreshSampleDislay();
     }
 
     public Map<Integer, List<String>> getSamples() {
