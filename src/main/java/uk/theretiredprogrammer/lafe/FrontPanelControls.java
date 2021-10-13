@@ -39,9 +39,9 @@ public class FrontPanelControls extends VBox {
     private final ProbeCommands probecommands;
     private final FrontPanelController controller;
 
-    public FrontPanelControls(FrontPanelController controller, ProbeCommands probecommands) {
+    public FrontPanelControls(FrontPanelController controller) {
         this.controller = controller;
-        this.probecommands = probecommands;
+        this.probecommands = controller.getProbeCommands();
         this.getChildren().add(connectedlamp = new Lamp("Probe connected", RED));
     }
 

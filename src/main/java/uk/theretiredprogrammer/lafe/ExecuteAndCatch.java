@@ -31,7 +31,7 @@ public class ExecuteAndCatch {
     public static void run(Runnable work) {
         runworker(work);
     }
-
+    
     private static void runworker(Runnable work) {
         try {
             work.run();

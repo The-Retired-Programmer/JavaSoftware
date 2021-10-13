@@ -27,6 +27,12 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        ExecuteAndCatch.run(() -> new FrontPanelController(stage)); 
+        ExecuteAndCatch.run(() -> startworker(stage)); 
+    }
+    
+    private void startworker(Stage stage) {
+        FrontPanelController controller = new FrontPanelController();
+        FrontPanelWindow window = new FrontPanelWindow(stage, controller);
+        controller.open(window);
     }
 }

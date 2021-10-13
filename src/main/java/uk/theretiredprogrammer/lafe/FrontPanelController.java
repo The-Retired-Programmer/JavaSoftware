@@ -18,19 +18,24 @@ package uk.theretiredprogrammer.lafe;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import javafx.stage.Stage;
 
 public class FrontPanelController {
 
-    private final FrontPanelWindow window;
-    private final USBSerialDevice usbdevice;
+    private USBSerialDevice usbdevice;
+    private ProbeCommands probecommands;
     private Map<Integer, List<String>> samples;
+    private FrontPanelWindow window;
+    private ProbeConfiguration config;
 
-    public FrontPanelController(Stage stage) {
-        ProbeConfiguration config = new ProbeConfiguration();
+    public FrontPanelController() {
+        config = new ProbeConfiguration();
         usbdevice = new USBSerialDevice();
-        ProbeCommands probecommands = new ProbeCommands(config, usbdevice);
-        window = new FrontPanelWindow(stage, this, config, probecommands);
+        probecommands = new ProbeCommands(config, usbdevice);
+    }
+    
+    public final void open(FrontPanelWindow window) {
+        this.window = window;
+        // in wrong place
         probecommands.setstatusmessagewriter((message) -> window.writestatusmessage(message));
         window.checkifprobeconnected();
     }
@@ -38,6 +43,14 @@ public class FrontPanelController {
     public final void close() throws IOException {
         usbdevice.close();
         window.close();
+    }
+    
+    public final ProbeConfiguration getProbeConfiguration() {
+        return config;
+    }
+
+    public final ProbeCommands getProbeCommands() {
+        return probecommands;
     }
 
     public void setData(Map<Integer, List<String>> samples) {

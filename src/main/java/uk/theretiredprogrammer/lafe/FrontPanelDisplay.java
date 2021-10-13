@@ -26,10 +26,10 @@ public class FrontPanelDisplay extends Canvas {
     private final FrontPanelController controller;
     private final ProbeConfiguration config;
 
-    public FrontPanelDisplay(FrontPanelController controller, ProbeConfiguration config) {
+    public FrontPanelDisplay(FrontPanelController controller) {
         super(500.0, 500.0);
         this.controller = controller;
-        this.config = config;
+        this.config = controller.getProbeConfiguration();
     }
 
     public void refresh() {
