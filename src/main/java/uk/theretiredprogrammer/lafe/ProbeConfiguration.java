@@ -23,24 +23,25 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import static uk.theretiredprogrammer.lafe.ProbeConfiguration.HzUnits.HZ;
-import static uk.theretiredprogrammer.lafe.ProbeConfiguration.SampleEndMode.BUFFERFULL;
-import static uk.theretiredprogrammer.lafe.ProbeConfiguration.Trigger.LOW;
+import static uk.theretiredprogrammer.lafe.ProbeConfiguration.SampleEndMode.MANUAL;
+import static uk.theretiredprogrammer.lafe.ProbeConfiguration.Trigger.FALLING;
+import static uk.theretiredprogrammer.lafe.ProbeConfiguration.Trigger.RISING;
 
 public class ProbeConfiguration {
 
-    public final IntegerProperty firstpin = new SimpleIntegerProperty(16);
+    public final IntegerProperty firstpin = new SimpleIntegerProperty(15);
     public final IntegerProperty pins = new SimpleIntegerProperty(1);
     public final IntegerProperty speed = new SimpleIntegerProperty(9600);
     public final ObjectProperty<HzUnits> speedunit = new SimpleObjectProperty<HzUnits>(HZ);
     public final IntegerProperty speedmultiplier = new SimpleIntegerProperty(2);
-    public final BooleanProperty st_enabled = new SimpleBooleanProperty(false);
-    public final IntegerProperty st_pin = new SimpleIntegerProperty(16);
-    public final ObjectProperty<Trigger> st_level = new SimpleObjectProperty<Trigger>(LOW);
+    public final BooleanProperty st_enabled = new SimpleBooleanProperty(true);
+    public final IntegerProperty st_pin = new SimpleIntegerProperty(15);
+    public final ObjectProperty<Trigger> st_level = new SimpleObjectProperty<Trigger>(FALLING);
     public final BooleanProperty et_enabled = new SimpleBooleanProperty(false);
-    public final IntegerProperty et_pin = new SimpleIntegerProperty(16);
-    public final ObjectProperty<Trigger> et_level = new SimpleObjectProperty<Trigger>(LOW);
-    public final ObjectProperty<SampleEndMode> sampleendmode = new SimpleObjectProperty<SampleEndMode>(BUFFERFULL);
-    public final IntegerProperty samplesize = new SimpleIntegerProperty(300);
+    public final IntegerProperty et_pin = new SimpleIntegerProperty(15);
+    public final ObjectProperty<Trigger> et_level = new SimpleObjectProperty<Trigger>(RISING);
+    public final ObjectProperty<SampleEndMode> sampleendmode = new SimpleObjectProperty<SampleEndMode>(MANUAL);
+    public final IntegerProperty samplesize = new SimpleIntegerProperty(1280);
     public String probetype = "Unknown";
 
     public String getprobecommand(String command) {

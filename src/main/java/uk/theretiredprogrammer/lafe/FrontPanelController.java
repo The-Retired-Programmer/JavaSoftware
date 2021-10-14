@@ -17,15 +17,18 @@ package uk.theretiredprogrammer.lafe;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import javafx.event.Event;
+import static javafx.scene.paint.Color.GREEN;
+import static uk.theretiredprogrammer.lafe.FrontPanelController.ProbeState.STATE_IDLE;
 
 public class FrontPanelController {
 
     private final USBSerialDevice usbdevice;
-    private Map<Integer, List<String>> samples;
     private FrontPanelWindow window;
     private final ProbeConfiguration config;
     private Consumer<String> messagewriter;
@@ -34,33 +37,68 @@ public class FrontPanelController {
         config = new ProbeConfiguration();
         usbdevice = new USBSerialDevice();
     }
-    
+
     public final void open(FrontPanelWindow window) {
         this.window = window;
-        // in wrong place
         setstatusmessagewriter((message) -> window.writestatusmessage(message));
-        window.checkifprobeconnected();
+        window.writestatusmessage(isprobeconnected() ? "Probe Connected" : "Probe connection failed");
     }
     
+    private void setstatusmessagewriter(Consumer<String> messagewriter) {
+        this.messagewriter = messagewriter;
+    }
+    
+    
+    private void displaymessage(String message) {
+        if (!message.isBlank()) {
+            messagewriter.accept(message);
+        }
+    }
+
+    private void displaymessage(String message, int startindex) {
+        if (message.length() > startindex) {
+            message = message.substring(startindex);
+            if (!message.isBlank()) {
+                messagewriter.accept(message);
+            }
+        }
+    }
+
+    private boolean isprobeconnected() {
+//        try {
+//            CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> doconnectedcheck());
+//            while (!completableFuture.isDone()) {
+//                Platform.runLater( () -> probecommands.displaymessage("Waiting to connect to probe"));
+//            }
+//            Platform.runLater( () -> probecommands.displaymessage(""));
+//            return completableFuture.get();
+//        } catch (InterruptedException | ExecutionException ex) {
+//            return false;
+//        }
+        return doconnectedcheck();
+    }
+
+    private boolean doconnectedcheck() {
+        try {
+            if (ping()) {
+                window.setConnectedLampColour(GREEN);
+            }
+            getState();
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
     public final void close() throws IOException {
         usbdevice.close();
         window.close();
     }
-    
+
     public final ProbeConfiguration getProbeConfiguration() {
         return config;
     }
 
-    public void setData(Map<Integer, List<String>> samples) {
-        // received samples to display - handoff to display window needed
-        this.samples = samples;
-        window.refreshSampleDislay();
-    }
-
-    public Map<Integer, List<String>> getSamples() {
-        return samples;
-    }
-    
     // -------------------------------------------------------------------------
     //
     //  Probe commands
@@ -81,7 +119,7 @@ public class FrontPanelController {
         }
     }
 
-    private ProbeState laststateresponse;
+    private ProbeState state = STATE_IDLE;
 
     static ProbeState getProbeState(int numericvalue) {
         for (ProbeState state : ProbeState.values()) {
@@ -92,8 +130,62 @@ public class FrontPanelController {
         throw new IllegalProgramStateFailure("Unknow probestate numeric value during lookup: " + numericvalue);
     }
 
-    public void setstatusmessagewriter(Consumer<String> messagewriter) {
-        this.messagewriter = messagewriter;
+    public String getButtonText() {
+        switch (state) {
+            case STATE_IDLE -> {
+                return "Start Sampling";
+            }
+            case STATE_SAMPLING -> {
+                return "Stop Sampling";
+            }
+            case STATE_STOPPING_SAMPLING -> {
+                return "Stopping  in Progress";
+            }
+            case STATE_SAMPLING_DONE -> {
+                return "Get Sample";
+            }
+            default ->
+                throw new IllegalProgramStateFailure("illegal state");
+        }
+    }
+
+    public void buttonpressedaction(Event ev) {
+        switch (state) {
+            case STATE_IDLE -> {
+                try {
+                    // start sampling
+                    start();
+                } catch (IOException ex) {
+                    // failure to start
+                    return;
+                }
+            }
+            case STATE_SAMPLING -> {
+                try {
+                    // stop sampling request
+                    stop();
+                } catch (IOException ex) {
+                    // failure to stop
+                    return;
+                }
+            }
+            case STATE_STOPPING_SAMPLING -> {
+            }
+            case STATE_SAMPLING_DONE -> {
+                try {
+                    data();
+                } catch (IOException ex) {
+                    throw new Failure(ex);
+                }
+                window.refreshSampleDisplay(samples);
+            }
+        }
+        try {
+            getState();
+        } catch (IOException ex) {
+            throw new Failure(ex);
+        }
+        window.setStopGoButtonText(getButtonText());
     }
 
     public boolean ping() throws IOException {
@@ -110,13 +202,9 @@ public class FrontPanelController {
         return sendCommandAndHandleResponse("?", (s) -> statusExpected(s));
     }
 
-    public ProbeState getLastStateResponse() {
-        return laststateresponse;
-    }
-
     private boolean statusExpected(String responseline) {
         int response = Integer.parseInt(responseline);
-        laststateresponse = getProbeState(response);
+        state = getProbeState(response);
         return true;
     }
 
@@ -132,13 +220,15 @@ public class FrontPanelController {
         return sendCommandAndHandleResponse("s", (s) -> onlyYNExpected(s));
     }
 
-    public boolean data(Map<Integer, List<String>> samples) throws IOException {
-        return sendCommandAndHandleResponse("d", (s) -> sampleExpected(s, samples));
+    public boolean data() throws IOException {
+        samples.clear();
+        return sendCommandAndHandleResponse("d", (s) -> sampleExpected(s));
     }
 
     private int currentpinsample = 0;
+    private final Map<Integer, List<String>> samples = new LinkedHashMap<>();
 
-    private boolean sampleExpected(String responseline, Map<Integer, List<String>> samples) {
+    private boolean sampleExpected(String responseline) {
         if (responseline.startsWith("#")) {
             currentpinsample = Integer.parseUnsignedInt(responseline.substring(2));
             samples.put(currentpinsample, new ArrayList());
@@ -193,21 +283,6 @@ public class FrontPanelController {
             }
         } catch (IOException ex) { // treat IOException as a N response
             return false;
-        }
-    }
-
-    public void displaymessage(String message) {
-        if (!message.isBlank()) {
-            messagewriter.accept(message);
-        }
-    }
-
-    private void displaymessage(String message, int startindex) {
-        if (message.length() > startindex) {
-            message = message.substring(startindex);
-            if (!message.isBlank()) {
-                messagewriter.accept(message);
-            }
         }
     }
 }

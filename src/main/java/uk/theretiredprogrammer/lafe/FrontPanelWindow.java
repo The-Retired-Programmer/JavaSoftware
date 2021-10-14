@@ -15,15 +15,12 @@
  */
 package uk.theretiredprogrammer.lafe;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -43,7 +40,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.DARKGREY;
-import static javafx.scene.paint.Color.GREEN;
 import static javafx.scene.paint.Color.RED;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -51,8 +47,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.NumberStringConverter;
-import uk.theretiredprogrammer.lafe.FrontPanelController.ProbeState;
-import static uk.theretiredprogrammer.lafe.FrontPanelController.ProbeState.STATE_IDLE;
 
 public class FrontPanelWindow {
 
@@ -95,10 +89,6 @@ public class FrontPanelWindow {
         messagenode.setText(message);
     }
 
-    public final void checkifprobeconnected() {
-        messagenode.setText(isprobeconnected() ? "Probe Connected" : "Probe connection failed");
-    }
-
     public void reset() {
         LafePreferences.clearWindowSizePreferences(clazz);
         LafePreferences.applyWindowSizePreferences(stage, clazz, windowsize);
@@ -127,54 +117,26 @@ public class FrontPanelWindow {
     // controls panel
     //
     // -------------------------------------------------------------------------
-    private ProbeState state = STATE_IDLE;
     private Lamp connectedlamp;
+    private StopGoButton stopgobutton;
 
     public VBox buildControls() {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(
                 connectedlamp = new Lamp("Probe connected", RED),
                 new Lamp("Probe Sampling", RED),
-                new StopGoButton()
+                stopgobutton = new StopGoButton()
         );
         return vbox;
     }
 
-    private boolean isprobeconnected() {
-//        try {
-//            CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> doconnectedcheck());
-//            while (!completableFuture.isDone()) {
-//                Platform.runLater( () -> probecommands.displaymessage("Waiting to connect to probe"));
-//            }
-//            Platform.runLater( () -> probecommands.displaymessage(""));
-//            return completableFuture.get();
-//        } catch (InterruptedException | ExecutionException ex) {
-//            return false;
-//        }
-        return doconnectedcheck();
+    public void setStopGoButtonText(String text) {
+        stopgobutton.setButtonText(text);
     }
 
-    private boolean doconnectedcheck() {
-        try {
-            if (controller.ping()) {
-                connectedlamp.changeColour(GREEN);
-            }
-            if (controller.getState()) {
-                state = controller.getLastStateResponse();
-            }
-            return true;
-        } catch (IOException ex) {
-            return false;
-        }
+    public void setConnectedLampColour(Color colour) {
+        connectedlamp.changeColour(colour);
     }
-    //
-//        
-    //
-//        int number = 20;
-//        Thread newThread = new Thread(() -> {
-//            System.out.println("Factorial of " + number + " is: " + factorial(number));
-//        });
-//        newThread.start();
 
     public class Lamp extends Group {
 
@@ -199,71 +161,14 @@ public class FrontPanelWindow {
         private final Button button;
 
         public StopGoButton() {
-            button = new Button(getButtonText());
+            button = new Button(controller.getButtonText());
             button.relocate(0, 20);
             this.getChildren().add(button);
-            button.setOnAction((ev) -> buttonpressed(ev));
+            button.setOnAction((ev) -> controller.buttonpressedaction(ev));
         }
 
-        private String getButtonText() {
-            switch (state) {
-                case STATE_IDLE -> {
-                    return "Start Sampling";
-                }
-                case STATE_SAMPLING -> {
-                    return "Stop Sampling";
-                }
-                case STATE_STOPPING_SAMPLING -> {
-                    return "Stopping  in Progress";
-                }
-                case STATE_SAMPLING_DONE -> {
-                    return "Get Sample";
-                }
-                default ->
-                    throw new IllegalProgramStateFailure("illegal state");
-            }
-        }
-
-        public void buttonpressed(Event ev) {
-            switch (state) {
-                case STATE_IDLE -> {
-                    try {
-                        // start sampling
-                        controller.start();
-                    } catch (IOException ex) {
-                        // failure to start
-                        return;
-                    }
-                }
-                case STATE_SAMPLING -> {
-                    try {
-                        // stop sampling request
-                        controller.stop();
-                    } catch (IOException ex) {
-                        // failure to stop
-                        return;
-                    }
-                }
-                case STATE_STOPPING_SAMPLING -> {
-                }
-                case STATE_SAMPLING_DONE -> {
-                    Map<Integer, List<String>> samples = new HashMap<>();
-                    try {
-                        controller.data(samples);
-                    } catch (IOException ex) {
-                        throw new Failure(ex);
-                    }
-                    controller.setData(samples);
-                }
-            }
-            try {
-                if (controller.getState()) {
-                    state = controller.getLastStateResponse();
-                }
-            } catch (IOException ex) {
-                throw new Failure(ex);
-            }
-            button.setText(getButtonText());
+        public void setButtonText(String text) {
+            button.setText(text);
         }
     }
 
@@ -365,8 +270,7 @@ public class FrontPanelWindow {
         return sampledisplaycanvas = new Canvas(500.0, 500.0);
     }
 
-    public void refreshSampleDislay() {
-        Map<Integer, List<String>> samples = controller.getSamples();
+    public void refreshSampleDisplay(Map<Integer, List<String>> samples) {
         int numbersamples = samples.size();
         expectedsamplesize = config.samplesize.get();
         // calculate layout
