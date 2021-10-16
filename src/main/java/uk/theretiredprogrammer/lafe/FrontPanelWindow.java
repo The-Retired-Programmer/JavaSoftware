@@ -40,6 +40,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.DARKGREY;
+import static javafx.scene.paint.Color.GREEN;
 import static javafx.scene.paint.Color.RED;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
@@ -53,7 +54,6 @@ public class FrontPanelWindow {
     private final Class clazz;
     private final Stage stage;
     private Rectangle2D windowsize;
-    private Text messagenode;
     private final ProbeConfiguration config;
     private final FrontPanelController controller;
 
@@ -73,20 +73,15 @@ public class FrontPanelWindow {
 
     private Scene buildScene() {
         BorderPane borderpane = new BorderPane();
-        //pane.setContextMenu(contextmenu);
         borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay()));
         borderpane.setBottom(buildConfiguration());
         borderpane.setLeft(buildControls());
-        borderpane.setTop(messagenode = new Text());
+        borderpane.setTop(buildStatusField());
         return new Scene(borderpane);
     }
 
     public void close() {
         stage.close();
-    }
-
-    public void writestatusmessage(String message) {
-        messagenode.setText(message);
     }
 
     public void reset() {
@@ -111,7 +106,34 @@ public class FrontPanelWindow {
     private void saveWindowSizePreferences() {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
     }
+    
+    // -------------------------------------------------------------------------
+    //
+    //  status message field
+    //
+    // -------------------------------------------------------------------------
+    
+    private Text statusnode;
+    
+    private Text buildStatusField() {
+        return statusnode = new Text();
+    }
+    
+    public void displayStatus(String message) {
+        if (!message.isBlank()) {
+            statusnode.setText(message);
+        }
+    }
 
+    public void displayStatus(String message, int startindex) {
+        if (message.length() > startindex) {
+            message = message.substring(startindex);
+            if (!message.isBlank()) {
+                statusnode.setText(message);
+            }
+        }
+    }
+    
     // -------------------------------------------------------------------------
     //
     // controls panel
@@ -123,8 +145,8 @@ public class FrontPanelWindow {
     public VBox buildControls() {
         VBox vbox = new VBox();
         vbox.getChildren().addAll(
-                connectedlamp = new Lamp("Probe connected", RED),
-                new Lamp("Probe Sampling", RED),
+                connectedlamp = new Lamp("Connected", RED),
+                new Lamp("Sampling", RED),
                 stopgobutton = new StopGoButton()
         );
         return vbox;
@@ -134,8 +156,8 @@ public class FrontPanelWindow {
         stopgobutton.setButtonText(text);
     }
 
-    public void setConnectedLampColour(Color colour) {
-        connectedlamp.changeColour(colour);
+    public void setConnected(boolean isconnected) {
+        connectedlamp.changeColour(isconnected?GREEN:RED);
     }
 
     public class Lamp extends Group {
@@ -161,7 +183,7 @@ public class FrontPanelWindow {
         private final Button button;
 
         public StopGoButton() {
-            button = new Button(controller.getButtonText());
+            button = new Button("Stop-Go");
             button.relocate(0, 20);
             this.getChildren().add(button);
             button.setOnAction((ev) -> controller.buttonpressedaction(ev));
@@ -267,6 +289,7 @@ public class FrontPanelWindow {
     private Canvas sampledisplaycanvas;
 
     private Canvas buildEmptySampleDisplay() {
+        //pane.setContextMenu(contextmenu);
         return sampledisplaycanvas = new Canvas(500.0, 500.0);
     }
 
