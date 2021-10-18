@@ -28,7 +28,7 @@ public class USBSerialDevice implements Closeable {
     private final SerialPort comPort;
     private final OutputStream out;
     private final InputStream in;
-    private FrontPanelWindow window;
+    private Window window;
 
     public USBSerialDevice() {
         comPort = SerialPort.getCommPort("/dev/tty.usbmodem14201");
@@ -38,15 +38,20 @@ public class USBSerialDevice implements Closeable {
         in = comPort.getInputStream();
     }
     
-    public void open(FrontPanelWindow window) {
+    public void open(Window window) {
         this.window = window;
     }
 
     @Override
-    public void close() throws IOException {
-        in.close();
-        out.close();
-        comPort.closePort();
+    public void close() {
+        try {
+            in.close();
+            out.close();
+            comPort.closePort();
+        } catch (IOException ex) {
+            throw new Failure("Failure during USBSerialDevice.close()", ex);
+            
+        }
     }
 
     public void writeln(String s) throws IOException {

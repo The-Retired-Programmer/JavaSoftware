@@ -15,12 +15,19 @@
  */
 package uk.theretiredprogrammer.lafe;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -38,27 +45,29 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import static javafx.scene.paint.Color.DARKGREY;
 import static javafx.scene.paint.Color.GREEN;
+import static javafx.scene.paint.Color.ORANGE;
 import static javafx.scene.paint.Color.RED;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.NumberStringConverter;
+import uk.theretiredprogrammer.lafe.ProbeStateWatchDog.ProbeState;
 
-public class FrontPanelWindow {
+public class Window {
 
     private final Class clazz;
     private final Stage stage;
     private Rectangle2D windowsize;
     private final ProbeConfiguration config;
-    private final FrontPanelController controller;
+    private final Controller controller;
 
-    public FrontPanelWindow(Stage stage, FrontPanelController controller) {
-        this.clazz = FrontPanelWindow.class;
+    public Window(Stage stage, Controller controller) {
+        this.clazz = Window.class;
         this.stage = stage;
         this.controller = controller;
         this.config = controller.getProbeConfiguration();
@@ -68,6 +77,7 @@ public class FrontPanelWindow {
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Logic Analyser");
         stage.setOnHiding(e -> ExecuteAndCatch.run(() -> saveWindowSizePreferences()));
+        stage.setOnHidden(e -> ExecuteAndCatch.run( () -> controller.close()));
         stage.show();
     }
 
@@ -76,7 +86,7 @@ public class FrontPanelWindow {
         borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay()));
         borderpane.setBottom(buildConfiguration());
         borderpane.setLeft(buildControls());
-        borderpane.setTop(buildStatusField());
+        borderpane.setTop(buildStatus());
         return new Scene(borderpane);
     }
 
@@ -106,19 +116,49 @@ public class FrontPanelWindow {
     private void saveWindowSizePreferences() {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
     }
-    
+
     // -------------------------------------------------------------------------
     //
     //  status message field
     //
     // -------------------------------------------------------------------------
-    
     private Text statusnode;
     
-    private Text buildStatusField() {
-        return statusnode = new Text();
+    private final ObjectProperty<Paint> connectedProperty = new SimpleObjectProperty<>(RED);
+    private final ObjectProperty<Paint> samplingProperty = new SimpleObjectProperty<>(RED);
+    private final StringProperty samplingstatustext = new SimpleStringProperty("??");
+
+    private HBox buildStatus() {
+        HBox hbox = new HBox(10);
+        hbox.getChildren().addAll(
+                new Lamp("Connected", connectedProperty),
+                new Lamp("Sampling", samplingProperty),
+                new SamplingStatus(samplingstatustext), 
+                statusnode = new Text()
+        );
+        return hbox;
+    }
+
+    public void setConnected(boolean isconnected) {
+       connectedProperty.set(isconnected ? GREEN : RED);
     }
     
+    public void probeStateChanged(ProbeState newstate) {
+        samplingstatustext.set(newstate.toString());
+        switch (newstate) {
+            case STATE_SAMPLING:
+                 samplingProperty.set(GREEN);
+                break;
+            case STATE_STOPPING_SAMPLING:
+            case STATE_SAMPLING_DONE:
+                samplingProperty.set(ORANGE);
+                break;
+            case STATE_IDLE:
+            default:
+                samplingProperty.set(RED);
+        }
+    }
+
     public void displayStatus(String message) {
         if (!message.isBlank()) {
             statusnode.setText(message);
@@ -134,63 +174,62 @@ public class FrontPanelWindow {
         }
     }
     
-    // -------------------------------------------------------------------------
-    //
-    // controls panel
-    //
-    // -------------------------------------------------------------------------
-    private Lamp connectedlamp;
-    private StopGoButton stopgobutton;
-
-    public VBox buildControls() {
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(
-                connectedlamp = new Lamp("Connected", RED),
-                new Lamp("Sampling", RED),
-                stopgobutton = new StopGoButton()
-        );
-        return vbox;
-    }
-
-    public void setStopGoButtonText(String text) {
-        stopgobutton.setButtonText(text);
-    }
-
-    public void setConnected(boolean isconnected) {
-        connectedlamp.changeColour(isconnected?GREEN:RED);
+    public class SamplingStatus extends Text {
+        
+        public SamplingStatus(StringProperty bind2statustext) {
+            this.textProperty().bind(bind2statustext);
+        }
     }
 
     public class Lamp extends Group {
 
         private final Circle colourlens;
 
-        public Lamp(String label, Color colour) {
-            colourlens = new Circle(40, 20, 10, colour);
+        public Lamp(String label, ObjectProperty<Paint> bind2Colour) {
+            colourlens = new Circle(40, 20, 10);
+            colourlens.fillProperty().bind(bind2Colour);
             this.getChildren().addAll(
                     new Circle(40, 20, 15, DARKGREY),
                     colourlens,
                     new Text(label)
             );
         }
+    }
 
-        public void changeColour(Color newcolour) {
-            colourlens.setFill(newcolour);
+    // -------------------------------------------------------------------------
+    //
+    // controls panel
+    //
+    // -------------------------------------------------------------------------
+
+    public VBox buildControls() {
+        VBox vbox = new VBox(10);
+        vbox.getChildren().addAll(
+            new ControlButton("Start Sampling", (ev) -> onStartSamplingRequest(ev)),
+            new ControlButton("End Sampling", (ev) -> onStopSamplingRequest(ev))
+        );
+        return vbox;
+    }
+    
+    public void onStartSamplingRequest(Event ev) {
+        try {
+            controller.start();
+        } catch (IOException ex) {
+        }
+    }
+    
+    public void onStopSamplingRequest(Event ev) {
+        try {
+            controller.stop();
+        } catch (IOException ex) {
         }
     }
 
-    public class StopGoButton extends Group {
+    public class ControlButton extends Button {
 
-        private final Button button;
-
-        public StopGoButton() {
-            button = new Button("Stop-Go");
-            button.relocate(0, 20);
-            this.getChildren().add(button);
-            button.setOnAction((ev) -> controller.buttonpressedaction(ev));
-        }
-
-        public void setButtonText(String text) {
-            button.setText(text);
+        public ControlButton(String caption, EventHandler<ActionEvent> buttonPressedAction) {
+            super(caption);
+            this.setOnAction(buttonPressedAction);        
         }
     }
 

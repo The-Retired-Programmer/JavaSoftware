@@ -20,24 +20,22 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.application.Platform;
-import javafx.event.Event;
 import uk.theretiredprogrammer.lafe.ProbeStateWatchDog.ProbeState;
 
-public class FrontPanelController {
+public class Controller {
 
     private final USBSerialDevice usbdevice;
     private final ProbeStateWatchDog probestatewatchdog;
-    private FrontPanelWindow window;
+    private Window window;
     private final ProbeConfiguration config;
 
-    public FrontPanelController() {
+    public Controller() {
         config = new ProbeConfiguration();
         usbdevice = new USBSerialDevice();
         probestatewatchdog = new ProbeStateWatchDog(this, usbdevice);
     }
 
-    public final void open(FrontPanelWindow window) {
+    public final void open(Window window) {
         this.window = window;
         usbdevice.open(window);
         window.setConnected(isprobeconnected());
@@ -52,14 +50,19 @@ public class FrontPanelController {
         }
     }
 
-    public final void close() throws IOException {
+    @SuppressWarnings("ConvertToTryWithResources")
+    public final void close() {
         probestatewatchdog.stop();
         usbdevice.close();
-        window.close();
+        //window.close();
     }
 
     public final ProbeConfiguration getProbeConfiguration() {
         return config;
+    }
+    
+    public void probeStateChanged(ProbeState newstate) {
+        window.probeStateChanged(newstate);
     }
 
     // -------------------------------------------------------------------------
@@ -68,66 +71,6 @@ public class FrontPanelController {
     //
     // -------------------------------------------------------------------------
     
-    public void changedProbeState(ProbeState oldstate, ProbeState newstate) {
-        Platform.runLater(() -> changedstate(newstate));
-    }
-    
-    private void changedstate(ProbeState newstate){
-        window.setStopGoButtonText(getButtonText(newstate));
-    } 
-    
-    public String getButtonText(ProbeState state) {
-        switch (state) {
-            case STATE_IDLE -> {
-                return "Start Sampling";
-            }
-            case STATE_SAMPLING -> {
-                return "Stop Sampling";
-            }
-            case STATE_STOPPING_SAMPLING -> {
-                return "Stopping  in Progress";
-            }
-            case STATE_SAMPLING_DONE -> {
-                return "Get Sample";
-            }
-            default ->
-                throw new IllegalProgramStateFailure("illegal state");
-        }
-    }
-
-    public void buttonpressedaction(Event ev) {
-        switch (probestatewatchdog.getProbeState()) {
-            case STATE_IDLE -> {
-                try {
-                    // start sampling
-                    start();
-                } catch (IOException ex) {
-                    // failure to start
-                    return;
-                }
-            }
-            case STATE_SAMPLING -> {
-                try {
-                    // stop sampling request
-                    stop();
-                } catch (IOException ex) {
-                    // failure to stop
-                    return;
-                }
-            }
-            case STATE_STOPPING_SAMPLING -> {
-            }
-            case STATE_SAMPLING_DONE -> {
-                try {
-                    data();
-                } catch (IOException ex) {
-                    throw new Failure(ex);
-                }
-                window.refreshSampleDisplay(samples);
-            }
-        }
-    }
-
     public boolean ping() throws IOException {
         return usbdevice.sendCommandAndHandleResponse("p", (s) -> probetypeExpected(s));
     }
@@ -152,7 +95,9 @@ public class FrontPanelController {
 
     public boolean data() throws IOException {
         samples.clear();
-        return usbdevice.sendCommandAndHandleResponse("d", (s) -> sampleExpected(s));
+        boolean res = usbdevice.sendCommandAndHandleResponse("d", (s) -> sampleExpected(s));
+        window.refreshSampleDisplay(samples);
+        return res;
     }
 
     private int currentpinsample = 0;

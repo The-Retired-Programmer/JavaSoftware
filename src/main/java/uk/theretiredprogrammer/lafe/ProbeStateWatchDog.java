@@ -20,6 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
+import static uk.theretiredprogrammer.lafe.ProbeStateWatchDog.ProbeState.STATE_SAMPLING_DONE;
 
 //
 //  background function which polls the probe for its state
@@ -30,9 +32,9 @@ public class ProbeStateWatchDog implements Runnable {
     private final USBSerialDevice usbdevice;
     private ScheduledExecutorService service;
     private ScheduledFuture<?>  watchdogHandle;
-    private final FrontPanelController controller;
+    private final Controller controller;
     
-    public ProbeStateWatchDog(FrontPanelController controller, USBSerialDevice usbdevice) {
+    public ProbeStateWatchDog(Controller controller, USBSerialDevice usbdevice) {
         this.controller = controller;
         this.usbdevice = usbdevice;
     }
@@ -59,16 +61,24 @@ public class ProbeStateWatchDog implements Runnable {
     private ProbeState state = ProbeState.STATE_IDLE;
     
     public enum ProbeState {
-        STATE_IDLE(0), STATE_SAMPLING(1), STATE_STOPPING_SAMPLING(2), STATE_SAMPLING_DONE(3);
+        STATE_IDLE(0, "Waiting to Sample"), STATE_SAMPLING(1, "Sampling"),
+        STATE_STOPPING_SAMPLING(2, "Stopping - completing Sampling"), STATE_SAMPLING_DONE(3, "Sampling Completed");
 
         private final int numericvalue;
+        private final String stringvalue;
 
-        ProbeState(int numericvalue) {
+        ProbeState(int numericvalue, String stringvalue) {
             this.numericvalue = numericvalue;
+            this.stringvalue = stringvalue;
         }
 
         public int numericvalue() {
             return this.numericvalue;
+        }
+        
+        @Override
+        public String toString() {
+            return stringvalue;
         }
     }
 
@@ -89,9 +99,24 @@ public class ProbeStateWatchDog implements Runnable {
         int response = Integer.parseInt(responseline);
         ProbeState newstate = probeStateFromValue(response);
         if (newstate != state){
-            controller.changedProbeState(state, newstate);
+            changedProbeState(state, newstate);
         }
         state = newstate;
         return true;
+    }
+    
+    private void changedProbeState(ProbeState oldstate, ProbeState newstate) {
+        Platform.runLater(() -> controller.probeStateChanged(newstate));
+        if (newstate == STATE_SAMPLING_DONE) {
+            Platform.runLater(() -> getAndDisplaySampleData());
+        }
+    }
+    
+    private void getAndDisplaySampleData() {
+        try {
+            controller.data();
+        } catch (IOException ex) {
+            throw new Failure(ex);
+        }
     }
 }

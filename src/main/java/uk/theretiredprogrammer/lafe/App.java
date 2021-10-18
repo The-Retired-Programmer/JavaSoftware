@@ -31,8 +31,8 @@ public class App extends Application {
     }
     
     private void startworker(Stage stage) {
-        FrontPanelController controller = new FrontPanelController();
-        FrontPanelWindow window = new FrontPanelWindow(stage, controller);
+        Controller controller = new Controller();
+        Window window = new Window(stage, controller);
         controller.open(window);
     }
 }
