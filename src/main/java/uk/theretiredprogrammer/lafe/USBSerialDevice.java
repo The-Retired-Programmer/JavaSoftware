@@ -20,26 +20,39 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import javafx.application.Platform;
 
 public class USBSerialDevice implements Closeable {
 
-    private final SerialPort comPort;
-    private final OutputStream out;
-    private final InputStream in;
+    private SerialPort commPort = null;
+    private OutputStream out;
+    private InputStream in;
     private Window window;
 
     public USBSerialDevice() {
-        comPort = SerialPort.getCommPort("/dev/tty.usbmodem14201");
-        comPort.openPort();
-        comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-        out = comPort.getOutputStream();
-        in = comPort.getInputStream();
     }
-    
+
     public void open(Window window) {
         this.window = window;
+        List<String> picoPorts = new ArrayList<>();
+        while (commPort == null) {
+            var commPorts = SerialPort.getCommPorts();
+            picoPorts.clear();
+            for (SerialPort port : commPorts) {
+                if (port.getDescriptivePortName().equals("Pico (Dial-In)")) {
+                    picoPorts.add("/dev/" + port.getSystemPortName());
+                }
+            }
+            String selected = window.selectCommPort(picoPorts);
+            commPort = selected == null ? null : SerialPort.getCommPort(selected);
+        }
+        commPort.openPort();
+        commPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+        out = commPort.getOutputStream();
+        in = commPort.getInputStream();
     }
 
     @Override
@@ -47,10 +60,10 @@ public class USBSerialDevice implements Closeable {
         try {
             in.close();
             out.close();
-            comPort.closePort();
+            commPort.closePort();
         } catch (IOException ex) {
             throw new Failure("Failure during USBSerialDevice.close()", ex);
-            
+
         }
     }
 
@@ -74,9 +87,8 @@ public class USBSerialDevice implements Closeable {
         }
         return response;
     }
-    
+
     // higher level probe specific command poll/response functions
-    
     public synchronized boolean sendCommandAndHandleResponse(String s, Function<String, Boolean> responselinehandler) {
         sendcommand(s);
         return handleResponse(responselinehandler);
@@ -124,12 +136,12 @@ public class USBSerialDevice implements Closeable {
             return false;
         }
     }
-    
-    private void displayStatus(String message){
-        Platform.runLater(()-> window.displayStatus(message));
+
+    private void displayStatus(String message) {
+        Platform.runLater(() -> window.displayStatus(message));
     }
 
-    private void displayStatus(String message, int startindex){
-        Platform.runLater(()-> window.displayStatus(message, startindex));
+    private void displayStatus(String message, int startindex) {
+        Platform.runLater(() -> window.displayStatus(message, startindex));
     }
 }

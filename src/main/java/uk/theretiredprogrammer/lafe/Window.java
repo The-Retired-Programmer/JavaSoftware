@@ -15,9 +15,12 @@
  */
 package uk.theretiredprogrammer.lafe;
 
+import com.fazecast.jSerialComm.SerialPort;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -36,8 +39,12 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -115,6 +122,44 @@ public class Window {
 
     private void saveWindowSizePreferences() {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
+    }
+    
+    // -------------------------------------------------------------------------
+    //
+    //  CommPort selection dialog
+    //
+    // -------------------------------------------------------------------------
+    
+    public String selectCommPort(List<String> commPorts) {
+        if (commPorts.size()== 1) {
+            return commPorts.get(0);
+        }
+        if (commPorts.isEmpty()) {
+            return buildAndShowNoPicoProbeDialog();
+        } else {
+            return buildAndShowManyPicoProbeDialog(commPorts);
+        }
+    }
+    
+    private String buildAndShowNoPicoProbeDialog() {
+        ButtonType doneButtonType = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
+        Dialog<String> dialog = new Dialog<>();
+        dialog.getDialogPane().getButtonTypes().add(doneButtonType);
+        dialog.setTitle("Missing Probe");
+        dialog.setContentText("Cannot find a PICO Probe connected to this machine\n\nPlease connect one and then press the Done button\n\n");
+        dialog.getDialogPane().setMinWidth(500);
+        dialog.setResizable(false);
+        dialog.showAndWait();
+        return null; // after connecting device then asked to try again
+    }
+    
+    private String buildAndShowManyPicoProbeDialog(List<String> commPorts) {
+        ChoiceDialog<String> dialog = new ChoiceDialog<>(null, commPorts);
+        dialog.setTitle("Multiple Probes Available");
+        dialog.setHeaderText("More than one PICO probe appear to be connected to this machine\nPlease select one and then press the OK button\n");
+        dialog.setGraphic(null);
+        Optional<String> selected = dialog.showAndWait();
+        return selected.orElse(null);
     }
 
     // -------------------------------------------------------------------------
