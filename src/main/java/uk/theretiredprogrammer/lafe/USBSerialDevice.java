@@ -22,23 +22,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 
 public class USBSerialDevice implements Closeable {
 
-    private SerialPort commPort = null;
-    private OutputStream out;
-    private InputStream in;
-    private Window window;
-
-    public USBSerialDevice() {
-    }
-
-    public void open(Window window) {
-        this.window = window;
+    public static USBSerialDevice selectCommPort(Consumer<String> displaystatus) {
         List<String> picoPorts = new ArrayList<>();
-        while (commPort == null) {
+        String selected = null;
+        while (selected == null) {
             var commPorts = SerialPort.getCommPorts();
             picoPorts.clear();
             for (SerialPort port : commPorts) {
@@ -46,9 +41,43 @@ public class USBSerialDevice implements Closeable {
                     picoPorts.add("/dev/" + port.getSystemPortName());
                 }
             }
-            String selected = window.selectCommPort(picoPorts);
-            commPort = selected == null ? null : SerialPort.getCommPort(selected);
+            if (picoPorts.size() == 1) {
+                selected = picoPorts.get(0);
+            } else if (picoPorts.isEmpty()) {
+                selected = Window.buildAndShowNoPicoProbeDialog();
+            } else {
+                selected = Window.buildAndShowManyPicoProbeDialog(picoPorts, (p) -> setLocate(p, displaystatus), (d) -> clearLocate(d, displaystatus));
+            }
         }
+        USBSerialDevice usbdevice = setLocate(selected, displaystatus);
+        return usbdevice;
+    }
+
+    private static USBSerialDevice setLocate(String path, Consumer<String> displaystatus) {
+        USBSerialDevice usbdevice = new USBSerialDevice(path, displaystatus);
+        usbdevice.sendCommandAndHandleResponse("f-1", (s) -> false);
+        return usbdevice;
+    }
+
+    private static void clearLocate(USBSerialDevice usbdevice, Consumer<String> displaystatus) {
+        usbdevice.sendCommandAndHandleResponse("f-0", (s) -> false);
+        usbdevice.close();
+    }
+
+    private SerialPort commPort;
+    private OutputStream out;
+    private InputStream in;
+    private final Consumer<String> displaystatus;
+    private final String path;
+
+    public USBSerialDevice(String path, Consumer<String> displaystatus) {
+        this.displaystatus = displaystatus;
+        this.path = path;
+        open();
+    }
+    
+    public final void open() {
+        this.commPort = SerialPort.getCommPort(path);
         commPort.openPort();
         commPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
         out = commPort.getOutputStream();
@@ -64,6 +93,14 @@ public class USBSerialDevice implements Closeable {
         } catch (IOException ex) {
             throw new Failure("Failure during USBSerialDevice.close()", ex);
 
+        }
+    }
+
+    public void write(char c) {
+        try {
+            out.write(c);
+        } catch (IOException ex) {
+            throw new Failure("write(" + c + ") failed ", ex);
         }
     }
 
@@ -137,11 +174,13 @@ public class USBSerialDevice implements Closeable {
         }
     }
 
-    private void displayStatus(String message) {
-        Platform.runLater(() -> window.displayStatus(message));
+    private void displayStatus(String message, int startindex) {
+        if (message.length() > startindex) {
+            displayStatus(message.substring(startindex));
+        }
     }
 
-    private void displayStatus(String message, int startindex) {
-        Platform.runLater(() -> window.displayStatus(message, startindex));
+    private void displayStatus(String message) {
+        Platform.runLater(() -> displaystatus.accept(message));
     }
 }

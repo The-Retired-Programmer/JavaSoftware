@@ -20,26 +20,26 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.control.Alert;
 import uk.theretiredprogrammer.lafe.ProbeStateWatchDog.ProbeState;
 
 public class Controller {
 
-    private final USBSerialDevice usbdevice;
-    private final ProbeStateWatchDog probestatewatchdog;
+    private USBSerialDevice usbdevice;
+    private ProbeStateWatchDog probestatewatchdog;
     private Window window;
     private final ProbeConfiguration config;
 
     public Controller() {
         config = new ProbeConfiguration();
-        usbdevice = new USBSerialDevice();
-        probestatewatchdog = new ProbeStateWatchDog(this, usbdevice);
     }
 
     public final void open(Window window) {
         this.window = window;
-        usbdevice.open(window);
-        window.setConnected(isprobeconnected());
+        usbdevice = USBSerialDevice.selectCommPort((s) -> window.displayStatus(s));
+        probestatewatchdog = new ProbeStateWatchDog(this, usbdevice);
         probestatewatchdog.start();
+        window.setConnected(isprobeconnected());
     }
 
     private boolean isprobeconnected() {
@@ -54,13 +54,13 @@ public class Controller {
     public final void close() {
         probestatewatchdog.stop();
         usbdevice.close();
-        //window.close();
+        window.close();
     }
 
     public final ProbeConfiguration getProbeConfiguration() {
         return config;
     }
-    
+
     public void probeStateChanged(ProbeState newstate) {
         window.probeStateChanged(newstate);
     }
@@ -70,7 +70,6 @@ public class Controller {
     //  Probe commands
     //
     // -------------------------------------------------------------------------
-    
     public boolean ping() throws IOException {
         return usbdevice.sendCommandAndHandleResponse("p", (s) -> probetypeExpected(s));
     }
@@ -111,5 +110,20 @@ public class Controller {
             samples.get(currentpinsample).add(responseline);
         }
         return true;
+    }
+    
+    public void resetProbe() {
+        System.out.println("RESETING");
+        probestatewatchdog.stop();
+        usbdevice.write('!');
+        usbdevice.close();
+        try {
+            Thread.sleep(3000); // lets start with a 3 secs wait
+        } catch (InterruptedException ex) {
+            // ingnore 
+        }
+        System.out.println("RESET");
+        usbdevice.open();
+        probestatewatchdog.start();
     }
 }

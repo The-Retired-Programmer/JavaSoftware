@@ -15,12 +15,11 @@
  */
 package uk.theretiredprogrammer.lafe;
 
-import com.fazecast.jSerialComm.SerialPort;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -84,7 +83,7 @@ public class Window {
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Logic Analyser");
         stage.setOnHiding(e -> ExecuteAndCatch.run(() -> saveWindowSizePreferences()));
-        stage.setOnHidden(e -> ExecuteAndCatch.run( () -> controller.close()));
+ //       stage.setOnHidden(e -> ExecuteAndCatch.run(() -> controller.close()));
         stage.show();
     }
 
@@ -123,25 +122,13 @@ public class Window {
     private void saveWindowSizePreferences() {
         LafePreferences.saveWindowSizePreferences(stage, clazz);
     }
-    
+
     // -------------------------------------------------------------------------
     //
-    //  CommPort selection dialog
+    //  CommPort selection dialogs
     //
     // -------------------------------------------------------------------------
-    
-    public String selectCommPort(List<String> commPorts) {
-        if (commPorts.size()== 1) {
-            return commPorts.get(0);
-        }
-        if (commPorts.isEmpty()) {
-            return buildAndShowNoPicoProbeDialog();
-        } else {
-            return buildAndShowManyPicoProbeDialog(commPorts);
-        }
-    }
-    
-    private String buildAndShowNoPicoProbeDialog() {
+    public static String buildAndShowNoPicoProbeDialog() {
         ButtonType doneButtonType = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
         Dialog<String> dialog = new Dialog<>();
         dialog.getDialogPane().getButtonTypes().add(doneButtonType);
@@ -152,8 +139,8 @@ public class Window {
         dialog.showAndWait();
         return null; // after connecting device then asked to try again
     }
-    
-    private String buildAndShowManyPicoProbeDialog(List<String> commPorts) {
+
+    public static String buildAndShowManyPicoProbeDialog(List<String> commPorts, Consumer<String> setLocate, Consumer<USBSerialDevice> clearLocate) {
         ChoiceDialog<String> dialog = new ChoiceDialog<>(null, commPorts);
         dialog.setTitle("Multiple Probes Available");
         dialog.setHeaderText("More than one PICO probe appear to be connected to this machine\nPlease select one and then press the OK button\n");
@@ -168,7 +155,7 @@ public class Window {
     //
     // -------------------------------------------------------------------------
     private Text statusnode;
-    
+
     private final ObjectProperty<Paint> connectedProperty = new SimpleObjectProperty<>(RED);
     private final ObjectProperty<Paint> samplingProperty = new SimpleObjectProperty<>(RED);
     private final StringProperty samplingstatustext = new SimpleStringProperty("??");
@@ -178,21 +165,21 @@ public class Window {
         hbox.getChildren().addAll(
                 new Lamp("Connected", connectedProperty),
                 new Lamp("Sampling", samplingProperty),
-                new SamplingStatus(samplingstatustext), 
+                new SamplingStatus(samplingstatustext),
                 statusnode = new Text()
         );
         return hbox;
     }
 
     public void setConnected(boolean isconnected) {
-       connectedProperty.set(isconnected ? GREEN : RED);
+        connectedProperty.set(isconnected ? GREEN : RED);
     }
-    
+
     public void probeStateChanged(ProbeState newstate) {
         samplingstatustext.set(newstate.toString());
         switch (newstate) {
             case STATE_SAMPLING:
-                 samplingProperty.set(GREEN);
+                samplingProperty.set(GREEN);
                 break;
             case STATE_STOPPING_SAMPLING:
             case STATE_SAMPLING_DONE:
@@ -210,17 +197,8 @@ public class Window {
         }
     }
 
-    public void displayStatus(String message, int startindex) {
-        if (message.length() > startindex) {
-            message = message.substring(startindex);
-            if (!message.isBlank()) {
-                statusnode.setText(message);
-            }
-        }
-    }
-    
     public class SamplingStatus extends Text {
-        
+
         public SamplingStatus(StringProperty bind2statustext) {
             this.textProperty().bind(bind2statustext);
         }
@@ -246,23 +224,23 @@ public class Window {
     // controls panel
     //
     // -------------------------------------------------------------------------
-
     public VBox buildControls() {
         VBox vbox = new VBox(10);
         vbox.getChildren().addAll(
-            new ControlButton("Start Sampling", (ev) -> onStartSamplingRequest(ev)),
-            new ControlButton("End Sampling", (ev) -> onStopSamplingRequest(ev))
+                new ControlButton("Start Sampling", (ev) -> onStartSamplingRequest(ev)),
+                new ControlButton("End Sampling", (ev) -> onStopSamplingRequest(ev)),
+                new ControlButton("Reset Probe", (ev) -> onResetProbeRequest(ev))
         );
         return vbox;
     }
-    
+
     public void onStartSamplingRequest(Event ev) {
         try {
             controller.start();
         } catch (IOException ex) {
         }
     }
-    
+
     public void onStopSamplingRequest(Event ev) {
         try {
             controller.stop();
@@ -270,11 +248,15 @@ public class Window {
         }
     }
 
+    public void onResetProbeRequest(Event ev) {
+        controller.resetProbe();
+    }
+
     public class ControlButton extends Button {
 
         public ControlButton(String caption, EventHandler<ActionEvent> buttonPressedAction) {
             super(caption);
-            this.setOnAction(buttonPressedAction);        
+            this.setOnAction(buttonPressedAction);
         }
     }
 

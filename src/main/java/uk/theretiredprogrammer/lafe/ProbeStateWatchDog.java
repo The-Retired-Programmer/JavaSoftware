@@ -47,6 +47,7 @@ public class ProbeStateWatchDog implements Runnable {
     public void stop() {
         Runnable canceller = () -> watchdogHandle.cancel(false);
         service.schedule(canceller, 0, TimeUnit.SECONDS);
+        service.shutdown();
     }
    
     @Override
