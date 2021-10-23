@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.control.Alert;
 import uk.theretiredprogrammer.lafe.ProbeStateWatchDog.ProbeState;
 
 public class Controller {
@@ -125,5 +124,9 @@ public class Controller {
         System.out.println("RESET");
         usbdevice.open();
         probestatewatchdog.start();
+    }
+    
+    public boolean squareWaveGenerator(boolean on) {
+        return usbdevice.sendCommandAndHandleResponse(config.getSquareWaveCommand("w", on), (s) -> onlyYNExpected(s));
     }
 }

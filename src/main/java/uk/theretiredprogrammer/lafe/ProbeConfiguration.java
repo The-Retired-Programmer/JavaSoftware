@@ -43,6 +43,11 @@ public class ProbeConfiguration {
     public final ObjectProperty<SampleEndMode> sampleendmode = new SimpleObjectProperty<SampleEndMode>(MANUAL);
     public final IntegerProperty samplesize = new SimpleIntegerProperty(1280);
     public String probetype = "Unknown";
+    
+    public final IntegerProperty sqw_firstpin = new SimpleIntegerProperty(19);
+    public final IntegerProperty sqw_speed = new SimpleIntegerProperty(1);
+    public final ObjectProperty<HzUnits> sqw_speedunit = new SimpleObjectProperty<HzUnits>(HZ);
+    
 
     public String getprobecommand(String command) {
         return MessageFormat.format("{0}-{1,number,#}-{2,number,#}-"
@@ -59,6 +64,17 @@ public class ProbeConfiguration {
 
     private int speedcalculation() {
         return speed.get() * speedmultiplier.get() * speedunit.get().getMultiplier();
+    }
+    
+    public String getSquareWaveCommand(String command, boolean on) {
+        return MessageFormat.format("{0}-{1,number,#}-"
+                + "{2,number,#}-{3,number,#}",
+                command, on ? 1: 0,
+                sqw_firstpin.get(), sqw_speedcalculation());
+    }
+    
+    private int sqw_speedcalculation() {
+        return sqw_speed.get() * sqw_speedunit.get().getMultiplier();
     }
 
     public enum HzUnits {

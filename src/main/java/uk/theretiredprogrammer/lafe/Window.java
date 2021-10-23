@@ -83,7 +83,6 @@ public class Window {
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle("Logic Analyser");
         stage.setOnHiding(e -> ExecuteAndCatch.run(() -> saveWindowSizePreferences()));
- //       stage.setOnHidden(e -> ExecuteAndCatch.run(() -> controller.close()));
         stage.show();
     }
 
@@ -229,7 +228,9 @@ public class Window {
         vbox.getChildren().addAll(
                 new ControlButton("Start Sampling", (ev) -> onStartSamplingRequest(ev)),
                 new ControlButton("End Sampling", (ev) -> onStopSamplingRequest(ev)),
-                new ControlButton("Reset Probe", (ev) -> onResetProbeRequest(ev))
+                new ControlButton("Reset Probe", (ev) -> onResetProbeRequest(ev)),
+                new ControlButton("Start Probe Waveform Generator", (ev) -> onStartSQW(ev)),
+                new ControlButton("Stop Probe Waveform Generator", (ev) -> onStopSQW(ev))
         );
         return vbox;
     }
@@ -250,6 +251,14 @@ public class Window {
 
     public void onResetProbeRequest(Event ev) {
         controller.resetProbe();
+    }
+    
+    public void onStartSQW(Event ev) {
+        controller.squareWaveGenerator(true);
+    }
+
+     public void onStopSQW(Event ev) {
+        controller.squareWaveGenerator(false);
     }
 
     public class ControlButton extends Button {
@@ -306,14 +315,14 @@ public class Window {
     private TextField integerField(IntegerProperty property, int size) {
         TextField intfield = new TextField();
         intfield.setPrefColumnCount(size);
-        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0.0, integerFilter);
+        TextFormatter<Number> textformatter = new TextFormatter<>(new NumberStringConverter(), 0, integerFilter);
         intfield.setTextFormatter(textformatter);
         textformatter.valueProperty().bindBidirectional(property);
         return intfield;
     }
 
     static UnaryOperator<TextFormatter.Change> integerFilter = change -> {
-        if (change.getControlNewText().matches("-?([0-9]*)?")) {
+        if (change.getControlNewText().matches("-?([0-9|,]*)?")) {
             return change;
         }
         return null;
