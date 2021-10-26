@@ -30,13 +30,13 @@ import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -48,7 +48,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import static javafx.scene.paint.Color.DARKGREY;
@@ -89,9 +91,9 @@ public class Window {
     private Scene buildScene() {
         BorderPane borderpane = new BorderPane();
         borderpane.setCenter(new ScrollPane(buildEmptySampleDisplay()));
-        borderpane.setBottom(buildConfiguration());
-        borderpane.setLeft(buildControls());
-        borderpane.setTop(buildStatus());
+        borderpane.setRight(buildConfiguration());
+        borderpane.setTop(buildControls());
+        borderpane.setBottom(buildStatus());
         return new Scene(borderpane);
     }
 
@@ -150,24 +152,35 @@ public class Window {
 
     // -------------------------------------------------------------------------
     //
-    //  status message field
+    //  status area
     //
     // -------------------------------------------------------------------------
     private Text statusnode;
 
     private final ObjectProperty<Paint> connectedProperty = new SimpleObjectProperty<>(RED);
     private final ObjectProperty<Paint> samplingProperty = new SimpleObjectProperty<>(RED);
-    private final StringProperty samplingstatustext = new SimpleStringProperty("??");
+    private final StringProperty samplingstatustext = new SimpleStringProperty("Unknown");
+    private final StringProperty connectedprobetext = new SimpleStringProperty("No Probe connected");
 
-    private HBox buildStatus() {
-        HBox hbox = new HBox(10);
-        hbox.getChildren().addAll(
-                new Lamp("Connected", connectedProperty),
-                new Lamp("Sampling", samplingProperty),
+    private Node buildStatus() {
+        return new VBox(10,
+                buildSamplingStatus(),
+                buildStatusReporting()
+        );
+    }
+
+    private Node buildSamplingStatus() {
+        return new HBox(10,
+                new Lamp(connectedProperty),
+                new ConnectedProbe(connectedprobetext),
+                new Lamp(samplingProperty),
                 new SamplingStatus(samplingstatustext),
                 statusnode = new Text()
         );
-        return hbox;
+    }
+
+    private Node buildStatusReporting() {
+        return statusnode = new Text();
     }
 
     public void setConnected(boolean isconnected) {
@@ -203,17 +216,25 @@ public class Window {
         }
     }
 
+    public class ConnectedProbe extends Text {
+
+        public ConnectedProbe(StringProperty bind2connectedprobetext) {
+            this.textProperty().bind(bind2connectedprobetext);
+        }
+    }
+
+    public void displayConnectedProbe(String probetype) {
+        connectedprobetext.set(probetype);
+    }
+
     public class Lamp extends Group {
 
-        private final Circle colourlens;
-
-        public Lamp(String label, ObjectProperty<Paint> bind2Colour) {
-            colourlens = new Circle(40, 20, 10);
+        public Lamp(ObjectProperty<Paint> bind2Colour) {
+            Circle colourlens = new Circle(40, 20, 10);
             colourlens.fillProperty().bind(bind2Colour);
             this.getChildren().addAll(
                     new Circle(40, 20, 15, DARKGREY),
-                    colourlens,
-                    new Text(label)
+                    colourlens
             );
         }
     }
@@ -223,16 +244,14 @@ public class Window {
     // controls panel
     //
     // -------------------------------------------------------------------------
-    public VBox buildControls() {
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(
+    public Node buildControls() {
+        return new HBox(10,
                 new ControlButton("Start Sampling", (ev) -> onStartSamplingRequest(ev)),
                 new ControlButton("End Sampling", (ev) -> onStopSamplingRequest(ev)),
                 new ControlButton("Reset Probe", (ev) -> onResetProbeRequest(ev)),
                 new ControlButton("Start Probe Waveform Generator", (ev) -> onStartSQW(ev)),
                 new ControlButton("Stop Probe Waveform Generator", (ev) -> onStopSQW(ev))
         );
-        return vbox;
     }
 
     public void onStartSamplingRequest(Event ev) {
@@ -252,12 +271,12 @@ public class Window {
     public void onResetProbeRequest(Event ev) {
         controller.resetProbe();
     }
-    
+
     public void onStartSQW(Event ev) {
         controller.squareWaveGenerator(true);
     }
 
-     public void onStopSQW(Event ev) {
+    public void onStopSQW(Event ev) {
         controller.squareWaveGenerator(false);
     }
 
@@ -274,42 +293,60 @@ public class Window {
     //    the configuration panel
     //
     // -------------------------------------------------------------------------
-    private HBox buildConfiguration() {
-        HBox hbox = new HBox(10);
-        hbox.getChildren().addAll(
-                labelledNode("Sample Source", combineFields(
-                        labelledNode("First Pin", integerField(config.firstpin, 3)),
-                        labelledNode("Pins", integerField(config.pins, 3)))),
-                labelledNode("Sampling Speed", combineFields(
-                        labelledNode("speed", integerField(config.speed, 10)),
-                        labelledNode("units", hzunitsSelectionField(config.speedunit)),
-                        labelledNode("multiplier", integerField(config.speedmultiplier, 3)))),
-                labelledNode("Start Trigger", combineFields(
-                        labelledNode("Enable", checkboxField(config.st_enabled)),
-                        labelledNode("Pin", integerField(config.st_pin, 3)),
-                        labelledNode("Pin Level", triggerSelectionField(config.st_level)))),
-                labelledNode("Sample Size (bits)", integerField(config.samplesize, 7)),
-                labelledNode("Sample End Mode", sampleendmodeSelectionField(config.sampleendmode)),
-                labelledNode("Event Trigger", combineFields(
-                        labelledNode("Enable", checkboxField(config.et_enabled)),
-                        labelledNode("Pin", integerField(config.et_pin, 3)),
-                        labelledNode("Pin Level", triggerSelectionField(config.et_level))))
+    private Node buildConfiguration() {
+        return new Accordion(
+                new TitledPane("WaveForm Generator Configuration", buildWaveFormGeneratorForm()),
+                new TitledPane("Sampling Configuration", buildSamplingConfigurationForm())
         );
-        return hbox;
     }
 
-    private VBox labelledNode(String label, Node node) {
-        VBox display = new VBox(2);
-        display.setAlignment(Pos.CENTER);
-        display.getChildren().addAll(new Label(label), node);
-        return display;
+    private int row;
+
+    private Node buildSamplingConfigurationForm() {
+        GridPane pane = new GridPane();
+        row = 0;
+        insertSubtitle(pane, "Sample Source");
+        insertField(pane, "First Pin", integerField(config.firstpin, 3));
+        insertField(pane, "Pins", integerField(config.pins, 3));
+        //
+        insertSubtitle(pane, "Sampling Speed");
+        insertField(pane, "speed", integerField(config.speed, 10));
+        insertField(pane, "units", hzunitsSelectionField(config.speedunit));
+        insertField(pane, "multiplier", integerField(config.speedmultiplier, 3));
+        //
+        insertSubtitle(pane, "Start Trigger");
+        insertField(pane, "Enable", checkboxField(config.st_enabled));
+        insertField(pane, "Pin", integerField(config.st_pin, 3));
+        insertField(pane, "Pin Level", triggerSelectionField(config.st_level));
+        //
+        insertSubtitle(pane, "Event Trigger");
+        insertField(pane, "Enable", checkboxField(config.et_enabled));
+        insertField(pane, "Pin", integerField(config.et_pin, 3));
+        insertField(pane, "Pin Level", triggerSelectionField(config.et_level));
+        //
+        insertSubtitle(pane, "Sampling Mode");
+        insertField(pane, "Sample Size (bits)", integerField(config.samplesize, 7));
+        insertField(pane, "Sample End Mode", sampleendmodeSelectionField(config.sampleendmode));
+        return new ScrollPane(pane);
     }
 
-    private Node combineFields(Node... fields) {
-        HBox display = new HBox(0);
-        display.setAlignment(Pos.CENTER);
-        display.getChildren().addAll(fields);
-        return display;
+    private Node buildWaveFormGeneratorForm() {
+        GridPane pane = new GridPane();
+        row = 0;
+        insertField(pane, "First Pin", integerField(config.sqw_firstpin, 3));
+        //
+        insertField(pane, "Speed", integerField(config.sqw_speed, 10));
+        insertField(pane, "Units", hzunitsSelectionField(config.sqw_speedunit));
+        return new ScrollPane(pane);
+    }
+
+    private void insertSubtitle(GridPane pane, String subtitle) {
+        pane.add(new Label(subtitle), 0, row++, 1, 1);
+    }
+
+    private void insertField(GridPane pane, String label, Node field) {
+        pane.add(new Label(label), 0, row, 1, 1);
+        pane.add(field, 1, row++, 1, 1);
     }
 
     private TextField integerField(IntegerProperty property, int size) {

@@ -75,7 +75,7 @@ public class Controller {
 
     private boolean probetypeExpected(String response) {
         config.probetype = response;
-        window.displayStatus(response);
+        window.displayConnectedProbe(response);
         return true;
     }
 
