@@ -74,8 +74,9 @@ public class Controller {
     }
 
     private boolean probetypeExpected(String response) {
-        config.probetype = response;
-        window.displayConnectedProbe(response);
+        String[] parts = response.split(",");
+        config.probetype.set(parts[0]);
+        config.probeversion.set(parts[1]);
         return true;
     }
 

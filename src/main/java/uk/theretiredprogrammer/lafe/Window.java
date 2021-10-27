@@ -160,7 +160,6 @@ public class Window {
     private final ObjectProperty<Paint> connectedProperty = new SimpleObjectProperty<>(RED);
     private final ObjectProperty<Paint> samplingProperty = new SimpleObjectProperty<>(RED);
     private final StringProperty samplingstatustext = new SimpleStringProperty("Unknown");
-    private final StringProperty connectedprobetext = new SimpleStringProperty("No Probe connected");
 
     private Node buildStatus() {
         return new VBox(10,
@@ -172,7 +171,9 @@ public class Window {
     private Node buildSamplingStatus() {
         return new HBox(10,
                 new Lamp(connectedProperty),
-                new ConnectedProbe(connectedprobetext),
+                new ConnectedProbeType(config),
+                new Label("version:"),
+                new ConnectedProbeVersion(config),
                 new Lamp(samplingProperty),
                 new SamplingStatus(samplingstatustext),
                 statusnode = new Text()
@@ -216,15 +217,18 @@ public class Window {
         }
     }
 
-    public class ConnectedProbe extends Text {
+    public class ConnectedProbeType extends Text {
 
-        public ConnectedProbe(StringProperty bind2connectedprobetext) {
-            this.textProperty().bind(bind2connectedprobetext);
+        public ConnectedProbeType(ProbeConfiguration config) {
+            this.textProperty().bind(config.probetype);
         }
     }
+    
+    public class ConnectedProbeVersion extends Text {
 
-    public void displayConnectedProbe(String probetype) {
-        connectedprobetext.set(probetype);
+        public ConnectedProbeVersion(ProbeConfiguration config) {
+            this.textProperty().bind(config.probeversion);
+        }
     }
 
     public class Lamp extends Group {

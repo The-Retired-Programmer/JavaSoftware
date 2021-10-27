@@ -22,6 +22,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import static uk.theretiredprogrammer.lafe.ProbeConfiguration.HzUnits.HZ;
 import static uk.theretiredprogrammer.lafe.ProbeConfiguration.SampleEndMode.MANUAL;
 import static uk.theretiredprogrammer.lafe.ProbeConfiguration.Trigger.FALLING;
@@ -42,7 +44,8 @@ public class ProbeConfiguration {
     public final ObjectProperty<Trigger> et_level = new SimpleObjectProperty<Trigger>(RISING);
     public final ObjectProperty<SampleEndMode> sampleendmode = new SimpleObjectProperty<SampleEndMode>(MANUAL);
     public final IntegerProperty samplesize = new SimpleIntegerProperty(1280);
-    public String probetype = "Unknown";
+    public final StringProperty probetype = new SimpleStringProperty("Unknown");
+    public final StringProperty probeversion = new SimpleStringProperty("???");
     
     public final IntegerProperty sqw_firstpin = new SimpleIntegerProperty(19);
     public final IntegerProperty sqw_speed = new SimpleIntegerProperty(1);
