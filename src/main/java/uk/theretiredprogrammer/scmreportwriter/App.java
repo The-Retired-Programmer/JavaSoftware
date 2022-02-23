@@ -18,10 +18,13 @@ package uk.theretiredprogrammer.scmreportwriter;
 public class App {
 
     public static void main(String args[]) {
-//        try {
-//            
-//        } catch (IOException ex) {
-//            System.err.println(ex.getMessage());
-//        }
+        try {
+            EntryReport report = new EntryReport();
+            report.checkAdultEntryReport();
+            report.createAdultEntryReport();
+            report.createU18EntryReport();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
     }
 }
