@@ -22,13 +22,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 // provide a data model which contains an individual csv file exported from SCM
 //
-public class DataSourceCSV extends ArrayList<Map<String, String>> {
+public class DataSourceCSV extends DataSource {
 
     public DataSourceCSV(File f) throws IOException {
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
@@ -39,11 +37,11 @@ public class DataSourceCSV extends ArrayList<Map<String, String>> {
         }
     }
 
-    private Map<String, String> createRecord(List<String> keys, List<String> values, String line) throws IOException {
+    private DataSourceRecord createRecord(List<String> keys, List<String> values, String line) throws IOException {
         if (keys.size() != values.size()) {
             throw new IOException("Badly formatted CSV (columns count inconsistent): " + line);
         }
-        Map<String, String> record = new HashMap<>();
+        DataSourceRecord record = new DataSourceRecord();
         for (String key : keys) {
             record.put(key, values.remove(0));
         }
