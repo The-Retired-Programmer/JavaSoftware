@@ -249,6 +249,4 @@ public class Lexer {
         "(", ")", "$",
         ",", ";", "\n"
     };
-    
-    public static final int OPCOUNT = 15;
 }

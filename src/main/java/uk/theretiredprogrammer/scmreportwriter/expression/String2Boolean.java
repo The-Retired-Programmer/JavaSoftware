@@ -27,6 +27,6 @@ public class String2Boolean implements Expression<Boolean> {
 
     @Override
     public Boolean evaluate(DataSourceRecord datarecord) {
-        return node.evaluate(datarecord).equalsIgnoreCase("Yes");
+        return node.evaluate(datarecord).equalsIgnoreCase("Yes") || node.evaluate(datarecord).equalsIgnoreCase("True") ;
     }
 }

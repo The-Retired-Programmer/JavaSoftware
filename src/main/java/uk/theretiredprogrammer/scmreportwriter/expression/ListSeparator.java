@@ -17,17 +17,22 @@ package uk.theretiredprogrammer.scmreportwriter.expression;
 
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class DataRecordField implements Expression<String> {
-
-    private final Expression<String> fieldnameexpression;
-
-    public DataRecordField(Expression<String> fieldname) {
-        this.fieldnameexpression = fieldname;
+public class ListSeparator implements Expression {
+    
+    private final Expression expressionnode;
+    private final Expression nextexpressionnode;
+    
+    public ListSeparator(Expression expressionnode, Expression nextexpressionnode) {
+        this.expressionnode = expressionnode;
+        this.nextexpressionnode = nextexpressionnode;
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
-        return datarecord.get(fieldnameexpression.evaluate(datarecord));
+    public Object evaluate(DataSourceRecord datarecord) {
+        return expressionnode.evaluate(datarecord);
     }
     
+    public Expression getNextExpression() {
+        return nextexpressionnode;
+    }
 }

@@ -29,9 +29,16 @@ public class S_Token<T> {
         //
         STRING2BOOLEAN, BOOLEAN2STRING, BOOLEAN, STRING
     }
+    
+    public static boolean isOperatorToken(S_Token token) {
+        return token.getOperator().ordinal() < OPCOUNT;
+    }
+    
+    private static final int OPCOUNT = 17;
 
-    public final T literal;
-    public final Tokentype operator;
+
+    private final T literal;
+    private final Tokentype operator;
 
     public S_Token(Tokentype operator) {
         this(operator, null);
@@ -42,6 +49,24 @@ public class S_Token<T> {
         this.literal = literalvalue;
     }
 
+    public Tokentype getOperator() {
+        return operator;
+    }
+
+    public T getOperand() {
+        return literal;
+    }
+
+    public char getOperandType() throws ParserException {
+        if (literal instanceof String) {
+            return 's';
+        }
+        if (literal instanceof Boolean) {
+            return 'b';
+        }
+        throw new ParserException("Unknown data type for literal data");
+    }
+    
     @Override
     public int hashCode() {
         int hash = 5;
@@ -67,6 +92,5 @@ public class S_Token<T> {
         }
         return this.operator == other.operator;
     }
-    
-    
+
 }
