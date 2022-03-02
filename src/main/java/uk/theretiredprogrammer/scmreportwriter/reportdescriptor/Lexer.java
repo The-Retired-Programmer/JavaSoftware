@@ -219,6 +219,15 @@ public class Lexer {
         if (literal.equals("FALSE")) {
             return new S_Token<>(Tokentype.BOOLEAN, false);
         }
+        if (literal.equals("DATA")) {
+            return new S_Token(Tokentype.DATACMD);
+        }
+        if (literal.equals("FILTER")) {
+            return new S_Token(Tokentype.FILTERCMD);
+        }
+        if (literal.equals("FIELDS")) {
+            return new S_Token(Tokentype.FIELDSCMD);
+        }
         return new S_Token<>(Tokentype.STRING, literal);
     }
 

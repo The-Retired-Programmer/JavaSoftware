@@ -23,18 +23,18 @@ public class S_Token<T> {
         NOT, CONCATONATE, AND, OR,
         EQUALS, EQUALSIGNORECASE, NOTEQUALS, NOTEQUALSIGNORECASE,
         BRA, KET, FIELDOP,
-        LISTSEPARATOR, LISTTERMINATOR, END,
+        LISTSEPARATOR, LISTTERMINATOR, END, START,
         //
-        START,
-        //
-        STRING2BOOLEAN, BOOLEAN2STRING, BOOLEAN, STRING
+        STRING2BOOLEAN, BOOLEAN2STRING, DATACMD, FILTERCMD, FIELDSCMD,
+        
+        BOOLEAN, STRING
     }
     
     public static boolean isOperatorToken(S_Token token) {
         return token.getOperator().ordinal() < OPCOUNT;
     }
     
-    private static final int OPCOUNT = 17;
+    private static final int OPCOUNT = 20;
 
 
     private final T literal;

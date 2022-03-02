@@ -232,6 +232,36 @@ public class LexerTest {
         );
     }
     
+    @Test
+    public void testLex11() throws Exception {
+        System.out.println("lex - data cmd");
+        lextest("   DATA  ",
+            new S_Token(Tokentype.START),
+            new S_Token(Tokentype.DATACMD),
+            new S_Token(Tokentype.END)
+        );
+    }
+    
+    @Test
+    public void testLex12() throws Exception {
+        System.out.println("lex - filter cmd");
+        lextest("   FILTER  ",
+            new S_Token(Tokentype.START),
+            new S_Token(Tokentype.FILTERCMD),
+            new S_Token(Tokentype.END)
+        );
+    }
+    
+     @Test
+    public void testLex13() throws Exception {
+        System.out.println("lex - fields cmd");
+        lextest("   FIELDS  ",
+            new S_Token(Tokentype.START),
+            new S_Token(Tokentype.FIELDSCMD),
+            new S_Token(Tokentype.END)
+        );
+    }
+    
     private void lextest(String input, S_Token... results) throws LexerException {
         Lexer instance = new Lexer();
         List<S_Token> lexresult = instance.lex(input.lines());
