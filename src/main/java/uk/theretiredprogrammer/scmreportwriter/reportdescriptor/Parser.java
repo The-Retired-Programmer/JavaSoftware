@@ -21,10 +21,13 @@ import java.util.List;
 import uk.theretiredprogrammer.scmreportwriter.expression.And;
 import uk.theretiredprogrammer.scmreportwriter.expression.Boolean2String;
 import uk.theretiredprogrammer.scmreportwriter.expression.Concatonate;
+import uk.theretiredprogrammer.scmreportwriter.expression.DataCommand;
 import uk.theretiredprogrammer.scmreportwriter.expression.DataRecordField;
 import uk.theretiredprogrammer.scmreportwriter.expression.Equals;
 import uk.theretiredprogrammer.scmreportwriter.expression.EqualsIgnoreCase;
 import uk.theretiredprogrammer.scmreportwriter.expression.Expression;
+import uk.theretiredprogrammer.scmreportwriter.expression.FieldsCommand;
+import uk.theretiredprogrammer.scmreportwriter.expression.FilterCommand;
 import uk.theretiredprogrammer.scmreportwriter.expression.ListSeparator;
 import uk.theretiredprogrammer.scmreportwriter.expression.Literal;
 import uk.theretiredprogrammer.scmreportwriter.expression.Not;
@@ -33,7 +36,6 @@ import uk.theretiredprogrammer.scmreportwriter.expression.NotEqualsIgnoreCase;
 import uk.theretiredprogrammer.scmreportwriter.expression.Or;
 import uk.theretiredprogrammer.scmreportwriter.expression.String2Boolean;
 import uk.theretiredprogrammer.scmreportwriter.reportdescriptor.S_Token.Tokentype;
-
 
 public class Parser {
 
@@ -54,21 +56,25 @@ public class Parser {
         if (operator == Tokentype.START) {
             leftHandle(operator);
         } else {
-            switch (getPrecidence(parsestack.peek().operator, operator)){
-                case LEFTH -> leftHandle(operator);
-                case RIGHTH -> rightHandle(operator);
-                case EQUALH -> equalHandle(operator);
-                case ERRORH -> throw new ParserException("Bad Syntax");
+            switch (getPrecidence(parsestack.peek().operator, operator)) {
+                case LEFTH ->
+                    leftHandle(operator);
+                case RIGHTH ->
+                    rightHandle(operator);
+                case EQUALH ->
+                    equalHandle(operator);
+                case ERRORH ->
+                    throw new ParserException("Bad Syntax");
             }
         }
     }
 
-    private void addOperand(S_Token token) throws ParserException{
+    private void addOperand(S_Token token) throws ParserException {
         switch (token.getOperandType()) {
             case 's' ->
-                parsestack.peek().addOperand(new Literal<>((String)token.getOperand()));
+                parsestack.peek().addOperand(new Literal<>((String) token.getOperand()));
             case 'b' ->
-                parsestack.peek().addOperand(new Literal<>((Boolean)token.getOperand()));
+                parsestack.peek().addOperand(new Literal<>((Boolean) token.getOperand()));
             default ->
                 throw new ParserException("unknown Operand datatype");
         }
@@ -108,15 +114,17 @@ public class Parser {
     private void equalHandle(Tokentype tt) {
         parsestack.push(new ParseStackValue(tt));
     }
-    
-    private enum Precidence { LEFTH, EQUALH, RIGHTH, ERRORH };
-    
+
+    private enum Precidence {
+        LEFTH, EQUALH, RIGHTH, ERRORH
+    };
+
     private Precidence getPrecidence(Tokentype loperator, Tokentype roperator) {
         return precidencetable[loperator.ordinal()][roperator.ordinal()];
     }
-    
-    private final Precidence[][] precidencetable = new Precidence[][] {
-        {   // not
+
+    private final Precidence[][] precidencetable = new Precidence[][]{
+        { // not
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -124,9 +132,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // concatonate
+        { // concatonate
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -134,9 +144,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // and
+        { // and
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -144,9 +156,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // or
+        { // or
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -154,9 +168,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // equals
+        { // equals
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -164,9 +180,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // equalsignorecase
+        { // equalsignorecase
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -174,9 +192,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // notequals
+        { // notequals
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -184,9 +204,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // notequalsignorecase
+        { // notequalsignorecase
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -194,9 +216,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // bra
+        { // bra
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -204,9 +228,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.EQUALH, Precidence.LEFTH, Precidence.ERRORH, Precidence.ERRORH,
             // end, start, string2boolean, boolean2string
-            Precidence.ERRORH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // ket
+        { // ket
             // not, concatonate, and, or,
             Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -214,9 +240,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.ERRORH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.RIGHTH, Precidence.RIGHTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // fieldop
+        { // fieldop
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -224,9 +252,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // listseparator
+        { // listseparator
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -234,9 +264,11 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH
         },
-        {   // listterminator
+        { // listterminator
             // not, concatonate, and, or,
             Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -244,19 +276,59 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH
         },
-        {   // end
-           // not, concatonate, and, or,
+        { // end
+            // not, concatonate, and, or,
             Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
             Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
             // end, start, string2boolean, boolean2string
-            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
         },
-        {   // start
+        { // start
+            // not, concatonate, and, or,
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // equals, equalsignorecase, notequals, notequalsignorecase,
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // bra, ket, fieldop, listseparator,listterminator,
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // end, start, string2boolean, boolean2string
+            Precidence.LEFTH, Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH
+        },
+        { // string2boolean
+            // not, concatonate, and, or,
+            Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // equals, equalsignorecase, notequals, notequalsignorecase,
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // bra, ket, fieldop, listseparator,listterminator,
+            Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // end, start, string2boolean, boolean2string
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
+        },
+        { // boolean2string
+            // not, concatonate, and, or,
+            Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // equals, equalsignorecase, notequals, notequalsignorecase,
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // bra, ket, fieldop, listseparator,listterminator,
+            Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            // end, start, string2boolean, boolean2string
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.ERRORH, Precidence.ERRORH, Precidence.ERRORH
+        },
+        { // data cmd
             // not, concatonate, and, or,
             Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
@@ -264,52 +336,84 @@ public class Parser {
             // bra, ket, fieldop, listseparator,listterminator,
             Precidence.LEFTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // end, start, string2boolean, boolean2string
-            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH
         },
-        {   // string2boolean
+        { // filter cmd
             // not, concatonate, and, or,
-            Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
-            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // bra, ket, fieldop, listseparator,listterminator,
-            Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH
         },
-        {   // boolean2string
+        { // fieldscmd
             // not, concatonate, and, or,
-            Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // equals, equalsignorecase, notequals, notequalsignorecase,
-            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // bra, ket, fieldop, listseparator,listterminator,
-            Precidence.LEFTH, Precidence.RIGHTH, Precidence.LEFTH, Precidence.RIGHTH, Precidence.RIGHTH,
+            Precidence.LEFTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH, Precidence.LEFTH,
             // end, start, string2boolean, boolean2string
-            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH
-        },
+            Precidence.RIGHTH, Precidence.ERRORH, Precidence.LEFTH, Precidence.LEFTH,
+            // datacmd, filtercmd, fieldscmd
+            Precidence.RIGHTH, Precidence.RIGHTH, Precidence.RIGHTH
+        }
     };
 
     private Expression getExpression(Tokentype operator, Expression left, Expression right) throws ParserException {
         return switch (operator.ordinal()) {
-            case 0 -> new Not(right); // NOT
-            case 1 -> new Concatonate(left,right); // CONCATONATE
-            case 2 -> new And(left, right); // AND
-            case 3 -> new Or(left, right); // OR
-            case 4 -> new Equals(left, right); // EQUALS
-            case 5 -> new EqualsIgnoreCase(left, right); // EQUALSIGNORECASE
-            case 6 -> new NotEquals(left, right); // NOTEQUALS
-            case 7 -> new NotEqualsIgnoreCase(left, right); // NOTEQUALSIGNORECASE
-            case 8 -> right; // BRA
-            case 9 -> right; // KET
-            case 10 -> new DataRecordField(right); // FIELDOP
-            case 11 -> new ListSeparator(left,right);  // LISTSEPARATOR
-            case 12 -> new ListSeparator(left,right); // LISTTERMINATOR
-            case 13 -> throw new ParserException("attempting to create an END object on syntax tree"); // END
-            case 14 -> throw new ParserException("attempting to create a START object on syntax tree"); // START
-            case 15 -> new String2Boolean(right); //STRING2BOOLEAN
-            case 16 -> new Boolean2String(right); //BOOLEAN2STRING
-            case 17 -> throw new ParserException("attempting to create a BOOLEAN OPERAND on syntax tree"); //BOOLEAn operand
-            case 18 -> throw new ParserException("attempting to create a STRING OPERAND on syntax tree"); //STRING (operands)
-            default -> throw new ParserException("attempting to create a unknown object on syntax tree"); // ???? operator
+            case 0 ->
+                new Not(right); // NOT
+            case 1 ->
+                new Concatonate(left, right); // CONCATONATE
+            case 2 ->
+                new And(left, right); // AND
+            case 3 ->
+                new Or(left, right); // OR
+            case 4 ->
+                new Equals(left, right); // EQUALS
+            case 5 ->
+                new EqualsIgnoreCase(left, right); // EQUALSIGNORECASE
+            case 6 ->
+                new NotEquals(left, right); // NOTEQUALS
+            case 7 ->
+                new NotEqualsIgnoreCase(left, right); // NOTEQUALSIGNORECASE
+            case 8 ->
+                right; // BRA
+            case 9 ->
+                right; // KET
+            case 10 ->
+                new DataRecordField(right); // FIELDOP
+            case 11 ->
+                new ListSeparator(left, right);  // LISTSEPARATOR
+            case 12 ->
+                new ListSeparator(left, right); // LISTTERMINATOR
+            case 13 ->
+                throw new ParserException("attempting to create an END object on syntax tree"); // END
+            case 14 ->
+                throw new ParserException("attempting to create a START object on syntax tree"); // START
+            case 15 ->
+                new String2Boolean(right); //STRING2BOOLEAN
+            case 16 ->
+                new Boolean2String(right); //BOOLEAN2STRING
+            case 17 ->
+                new DataCommand((ListSeparator)left); // DATACMD
+            case 18 ->
+                new FilterCommand((ListSeparator)right, (FilterCommand)left); // FILTERCMD
+            case 19 ->
+                new FieldsCommand((ListSeparator)right); // FIELDSCMD
+            case 20 ->
+                throw new ParserException("attempting to create a BOOLEAN OPERAND on syntax tree"); //BOOLEAn operand
+            case 21 ->
+                throw new ParserException("attempting to create a STRING OPERAND on syntax tree"); //STRING (operands)
+            default ->
+                throw new ParserException("attempting to create a unknown object on syntax tree"); // ???? operator
         };
     }
 
