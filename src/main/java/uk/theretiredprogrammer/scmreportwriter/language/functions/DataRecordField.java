@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
+import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
+import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
-public class DataRecordField implements Expression<String> {
+public class DataRecordField extends StringExpression {
+    
+    public static void reduce(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+        operatorstack.pop();
+        operandstack.push(new DataRecordField(DataTypes.stringExpression(operandstack.pop())));
+    }
 
-    private final Expression<String> fieldnameexpression;
+    private final StringExpression fieldnameexpression;
 
-    public DataRecordField(Expression<String> fieldname) {
+    public DataRecordField(StringExpression fieldname) {
+        super("Data field extraction");
         this.fieldnameexpression = fieldname;
     }
 

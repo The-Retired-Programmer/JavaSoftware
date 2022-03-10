@@ -13,20 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class String2Boolean implements Expression<Boolean> {
+public class StringLiteral extends StringExpression {
 
-    private final Expression<String> node;
-
-    public String2Boolean(Expression<String> node) {
-        this.node = node;
+    public StringLiteral(String literal) {
+        super(literal);
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return node.evaluate(datarecord).equalsIgnoreCase("Yes") || node.evaluate(datarecord).equalsIgnoreCase("True") ;
+    public String evaluate(DataSourceRecord datarecord) {
+        return toString();
     }
 }

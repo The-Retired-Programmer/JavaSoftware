@@ -15,22 +15,29 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.reportdescriptor;
 
+import uk.theretiredprogrammer.scmreportwriter.SCM_Language;
+import uk.theretiredprogrammer.scmreportwriter.language.S_Token;
+import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
+import uk.theretiredprogrammer.scmreportwriter.language.Lexer;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.scmreportwriter.reportdescriptor.S_Token.Tokentype;
+import uk.theretiredprogrammer.scmreportwriter.language.Language;
 
 public class LexerTest {
     
+    private final Language language;
+
     public LexerTest() {
+        language = new SCM_Language();
     }
-    
+
     @BeforeAll
     public static void setUpClass() {
     }
-    
+
     @BeforeEach
     public void setUp() {
     }
@@ -38,236 +45,228 @@ public class LexerTest {
     @Test
     public void testLex1() throws Exception {
         System.out.println("lex - empty");
-        lextest("",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.END)
-        );
+        lextest("");
     }
-    
+
     @Test
     public void testLex2() throws Exception {
         System.out.println("lex - text");
         lextest("   ABCDEF  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING, "ABCDEF"),
-            new S_Token(Tokentype.END)
+                "ABCDEF"
         );
     }
-    
+
     @Test
     public void testLex3() throws Exception {
         System.out.println("lex - delimitedtext");
         lextest("   {ABCDEF}  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING, "ABCDEF"),
-            new S_Token(Tokentype.END)
+                "ABCDEF"
         );
     }
-    
+
     @Test
     public void testLex4() throws Exception {
         System.out.println("lex - delimitedtext2");
         lextest("   {A B C D.E.F..}  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING, "A B C D.E.F.."),
-            new S_Token(Tokentype.END)
+                "A B C D.E.F.."
         );
     }
-    
+
     @Test
     public void testLex5() throws Exception {
         System.out.println("lex - boolean true");
         lextest("   TRUE  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.BOOLEAN, true),
-            new S_Token(Tokentype.END)
+                "true"
         );
     }
-    
+
     @Test
     public void testLex6() throws Exception {
         System.out.println("lex - boolean false");
         lextest("   {FALSE}  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.BOOLEAN, false),
-            new S_Token(Tokentype.END)
+                "false"
         );
     }
-    
+
     @Test
     public void testLex7() throws Exception {
         System.out.println("lex - operators");
-        lextest("{boolean} {string} ¬ + && || == =~ != !~ ( ) $ , ;",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING2BOOLEAN),
-            new S_Token(Tokentype.BOOLEAN2STRING),
-            new S_Token(Tokentype.NOT),
-            new S_Token(Tokentype.CONCATONATE),
-            new S_Token(Tokentype.AND),
-            new S_Token(Tokentype.OR),
-            new S_Token(Tokentype.EQUALS),
-            new S_Token(Tokentype.EQUALSIGNORECASE),
-            new S_Token(Tokentype.NOTEQUALS),
-            new S_Token(Tokentype.NOTEQUALSIGNORECASE),
-            new S_Token(Tokentype.BRA),
-            new S_Token(Tokentype.KET),
-            new S_Token(Tokentype.FIELDOP),
-            new S_Token(Tokentype.LISTSEPARATOR),
-            new S_Token(Tokentype.LISTTERMINATOR),
-            new S_Token(Tokentype.END)
+        lextest("{boolean} {string} ! + && || == =~ != !=~ ( ) $ , ",
+                "Boolean cast",
+                "String cast",
+                "!",
+                "+",
+                "&&",
+                "||",
+                "==",
+                "=~",
+                "!=",
+                "!=~",
+                "(",
+                ")",
+                "$",
+                ","
         );
     }
-    
+
     @Test
     public void testLex8() throws Exception {
         System.out.println("lex - operators packed");
-        lextest("{boolean}{string}¬+&&||===~!=!~()$,;",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING2BOOLEAN),
-            new S_Token(Tokentype.BOOLEAN2STRING),
-            new S_Token(Tokentype.NOT),
-            new S_Token(Tokentype.CONCATONATE),
-            new S_Token(Tokentype.AND),
-            new S_Token(Tokentype.OR),
-            new S_Token(Tokentype.EQUALS),
-            new S_Token(Tokentype.EQUALSIGNORECASE),
-            new S_Token(Tokentype.NOTEQUALS),
-            new S_Token(Tokentype.NOTEQUALSIGNORECASE),
-            new S_Token(Tokentype.BRA),
-            new S_Token(Tokentype.KET),
-            new S_Token(Tokentype.FIELDOP),
-            new S_Token(Tokentype.LISTSEPARATOR),
-            new S_Token(Tokentype.LISTTERMINATOR),
-            new S_Token(Tokentype.END)
+        lextest("{boolean}{string}!+&&||===~!=!=~()$,",
+                "Boolean cast",
+                "String cast",
+                "!",
+                "+",
+                "&&",
+                "||",
+                "==",
+                "=~",
+                "!=",
+                "!=~",
+                "(",
+                ")",
+                "$",
+                ","
         );
     }
-    
+
     @Test
     public void testLex9() throws Exception {
         System.out.println("lex - operators and literals");
-        lextest("{boolean} s {string} b ¬ b s + s b && b b || b s == s s =~ s s != s s !~ s (s) $a x , x ; ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING2BOOLEAN),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.BOOLEAN2STRING),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.NOT),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.CONCATONATE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.AND),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.OR),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.EQUALS),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.EQUALSIGNORECASE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.NOTEQUALS),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.NOTEQUALSIGNORECASE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.BRA),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.KET),
-            new S_Token(Tokentype.FIELDOP),
-            new S_Token(Tokentype.STRING, "a"),
-            new S_Token(Tokentype.STRING, "x"),
-            new S_Token(Tokentype.LISTSEPARATOR),
-            new S_Token(Tokentype.STRING, "x"),
-            new S_Token(Tokentype.LISTTERMINATOR),
-            new S_Token(Tokentype.END)
+        lextest("{boolean} s {string} b ! b s + s b && b b || b s == s s =~ s s != s s !=~ s (s) $a x , x  ",
+                "Boolean cast",
+                "s",
+                "String cast",
+                "b",
+                "!",
+                "b",
+                "s",
+                "+",
+                "s",
+                "b",
+                "&&",
+                "b",
+                "b",
+                "||",
+                "b",
+                "s",
+                "==",
+                "s",
+                "s",
+                "=~",
+                "s",
+                "s",
+                "!=",
+                "s",
+                "s",
+                "!=~",
+                "s",
+                "(",
+                "s",
+                ")",
+                "$",
+                "a",
+                "x",
+                ",",
+                "x"
         );
     }
-    
-     @Test
+
+    @Test
     public void testLex10() throws Exception {
         System.out.println("lex - operators and literals packed");
-        lextest("{boolean}s {string}b¬b s+s b&&b b||b s==s s=~s s!=s s!~s(s)$a x,x;",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.STRING2BOOLEAN),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.BOOLEAN2STRING),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.NOT),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.CONCATONATE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.AND),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.OR),
-            new S_Token(Tokentype.STRING, "b"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.EQUALS),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.EQUALSIGNORECASE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.NOTEQUALS),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.NOTEQUALSIGNORECASE),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.BRA),
-            new S_Token(Tokentype.STRING, "s"),
-            new S_Token(Tokentype.KET),
-            new S_Token(Tokentype.FIELDOP),
-            new S_Token(Tokentype.STRING, "a"),
-            new S_Token(Tokentype.STRING, "x"),
-            new S_Token(Tokentype.LISTSEPARATOR),
-            new S_Token(Tokentype.STRING, "x"),
-            new S_Token(Tokentype.LISTTERMINATOR),
-            new S_Token(Tokentype.END)
+        lextest("{boolean}s {string}b!b s+s b&&b b||b s==s s=~s s!=s s!=~s(s)$a x,x",
+                "Boolean cast",
+                "s",
+                "String cast",
+                "b",
+                "!",
+                "b",
+                "s",
+                "+",
+                "s",
+                "b",
+                "&&",
+                "b",
+                "b",
+                "||",
+                "b",
+                "s",
+                "==",
+                "s",
+                "s",
+                "=~",
+                "s",
+                "s",
+                "!=",
+                "s",
+                "s",
+                "!=~",
+                "s",
+                "(",
+                "s",
+                ")",
+                "$",
+                "a",
+                "x",
+                ",",
+                "x"
         );
     }
-    
+
     @Test
     public void testLex11() throws Exception {
         System.out.println("lex - data cmd");
         lextest("   DATA  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.DATACMD),
-            new S_Token(Tokentype.END)
+                "DATA"
         );
     }
-    
+
     @Test
     public void testLex12() throws Exception {
         System.out.println("lex - filter cmd");
         lextest("   FILTER  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.FILTERCMD),
-            new S_Token(Tokentype.END)
+                "FILTER"
+        );
+    }
+
+    @Test
+    public void testLex13() throws Exception {
+        System.out.println("lex - fields cmd");
+        lextest("   FIELDS  ",
+                "FIELDS"
+        );
+    }
+    
+    @Test
+    public void testLex14() throws Exception {
+        System.out.println("lex - FILTER and datarecordfield");
+        lextest("FILTER ${abc}",
+                "FILTER",
+                "$",
+                "abc"
         );
     }
     
      @Test
-    public void testLex13() throws Exception {
-        System.out.println("lex - fields cmd");
-        lextest("   FIELDS  ",
-            new S_Token(Tokentype.START),
-            new S_Token(Tokentype.FIELDSCMD),
-            new S_Token(Tokentype.END)
+    public void testLex15() throws Exception {
+        System.out.println("lex - FILTER and property");
+        lextest("FILTER abc:def+hij",
+                "FILTER",
+                "abc",
+                ":",
+                "def",
+                "+",
+                "hij"
         );
     }
     
-    private void lextest(String input, S_Token... results) throws LexerException {
-        Lexer instance = new Lexer();
+    private void lextest(String input, String... results) throws LexerException {
+        Lexer instance = new Lexer(language);
         List<S_Token> lexresult = instance.lex(input.lines());
-        assertEquals(results.length,lexresult.size());
-        for (int i = 0; i< results.length; i++) {
-            assertEquals(results[i],lexresult.get(i));
+        assertEquals(results.length, lexresult.size());
+        for (int i = 0; i < results.length; i++) {
+            assertEquals(results[i], lexresult.get(i).toString());
         }
     }
 }

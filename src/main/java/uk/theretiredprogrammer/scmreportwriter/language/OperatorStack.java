@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import java.util.ArrayDeque;
 
-public class Boolean2String implements Expression<String> {
-
-    private final Expression<Boolean> node;
-
-    public Boolean2String(Expression<Boolean> node) {
-        this.node = node;
-    }
-
-    @Override
-    public String evaluate(DataSourceRecord datarecord) {
-        return node.evaluate(datarecord) ? "Yes" : "No";
-    }
+public class OperatorStack extends ArrayDeque<Operator> {
 }

@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import uk.theretiredprogrammer.scmreportwriter.reportdescriptor.ReportDescriptor;
 import java.util.List;
 import java.util.stream.Collectors;
 

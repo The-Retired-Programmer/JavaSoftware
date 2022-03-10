@@ -13,12 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public interface Expression<V> {
+public class ExpressionMap extends HashMap<String,Operand> implements Operand {
     
-    public V evaluate(DataSourceRecord datarecord);
-  
+    @Override
+    public Map<String,Object> evaluate(DataSourceRecord datarecord) {
+        Map<String,Object> result = new HashMap<>();
+        for (Entry<String,Operand> e: entrySet()) {
+            result.put(e.getKey(), e.getValue().evaluate(datarecord));
+        }
+        return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "Expression Map";
+    }
 }

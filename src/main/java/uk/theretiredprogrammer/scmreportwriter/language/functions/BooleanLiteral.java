@@ -13,13 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.reportdescriptor;
+package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import java.io.IOException;
+import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
+import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class ParserException extends IOException {
+public class BooleanLiteral extends BooleanExpression {
 
-    public ParserException(String message) {
-        super(message);
+    private final Boolean literal;
+    
+    public BooleanLiteral(Boolean literal) {
+        super(literal.toString());
+        this.literal = literal;
+    }
+
+    @Override
+    public Boolean evaluate(DataSourceRecord datarecord) {
+        return literal;
     }
 }

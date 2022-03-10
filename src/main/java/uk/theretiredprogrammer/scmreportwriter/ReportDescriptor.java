@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.reportdescriptor;
+package uk.theretiredprogrammer.scmreportwriter;
 
 import uk.theretiredprogrammer.scmreportwriter.DataSource;
 import uk.theretiredprogrammer.scmreportwriter.DataSources;
 import uk.theretiredprogrammer.scmreportwriter.Fields;
-import uk.theretiredprogrammer.scmreportwriter.expression.Expression;
+import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 
 public class ReportDescriptor {
 
     private final DataSources datasources;
-    private final Expression<Boolean> filter;
+    private final BooleanExpression filter;
     private final Fields fields;
 
-    public ReportDescriptor(DataSources datasources, Expression<Boolean> filter, Fields fields) {
+    public ReportDescriptor(DataSources datasources, BooleanExpression filter, Fields fields) {
         this.datasources = datasources;
         this.filter = filter;
         this.fields = fields;
@@ -36,7 +36,7 @@ public class ReportDescriptor {
         return datasources.get(key);
     }
 
-    public Expression<Boolean> getFilter() {
+    public BooleanExpression getFilter() {
         return filter;
     }
 

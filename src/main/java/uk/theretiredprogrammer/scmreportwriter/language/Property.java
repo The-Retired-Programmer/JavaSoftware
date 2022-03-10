@@ -13,30 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class FilterCommand implements Expression {
+public class Property implements Operand {
     
-    private final ListSeparator node;
-    private final FilterCommand next;
+    public static void reduce(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+        operatorstack.pop();
+        Operand rhs = operandstack.pop();
+        operandstack.push(new Property(DataTypes.literalString(operandstack.pop()), rhs));
+    }
+
+    private final String name;
+    private final Operand expression;
+
+    public Property(String name, Operand expression) {
+        this.name = name;
+        this.expression = expression;
+    }
+
+    public String getName() {
+        return name;
+    }
     
-    public FilterCommand(ListSeparator node, FilterCommand next) {
-        this.node = node;
-        this.next = next;
+    public Operand getExpression() {
+        return expression;
     }
 
     @Override
     public Object evaluate(DataSourceRecord datarecord) {
-        return node.evaluate(datarecord); // best we can do at the moment
+        return expression.evaluate(datarecord);
     }
     
-    public ListSeparator getExpressionlist() {
-        return node;
-    }
-    
-    public FilterCommand getNext() {
-        return next;
+    @Override
+    public String toString() {
+        return name;
     }
 }

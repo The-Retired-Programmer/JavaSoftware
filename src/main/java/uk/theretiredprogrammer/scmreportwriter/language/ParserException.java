@@ -13,24 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import java.io.IOException;
 
-public class DataCommand implements Expression {
-    
-    private final ListSeparator node;
-    
-    public DataCommand(ListSeparator node) {
-        this.node = node;
-    }
+public class ParserException extends IOException {
 
-    @Override
-    public Object evaluate(DataSourceRecord datarecord) {
-        return node.evaluate(datarecord); // best we can do at the moment
-    }
-    
-    public ListSeparator getExpressionlist() {
-        return node;
+    public ParserException(String message) {
+        super(message);
     }
 }

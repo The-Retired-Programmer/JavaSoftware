@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+public abstract class StringExpression implements Operand<String> {
 
-public class Equals<T> implements Expression<Boolean>{
+    private final String name;
     
-    private final Expression<T> leftnode;
-    private final Expression<T> rightnode;
-    
-    public Equals(Expression<T> leftnode, Expression<T> rightnode) {
-        this.leftnode = leftnode;
-        this.rightnode = rightnode;
+    public StringExpression(String name) {
+        this.name =  name;
     }
-
+    
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return leftnode.evaluate(datarecord).equals(rightnode.evaluate(datarecord));
+    public String toString() {
+        return name;
     }
 }

@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class NotEquals<T> implements Expression<Boolean>{
-    
-    private final Expression<T> leftnode;
-    private final Expression<T> rightnode;
-    
-    public NotEquals(Expression<T> leftnode, Expression<T> rightnode) {
-        this.leftnode = leftnode;
-        this.rightnode = rightnode;
-    }
+public class ExpressionList extends ArrayList<Operand> implements Operand {
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return !(leftnode.evaluate(datarecord).equals(rightnode.evaluate(datarecord)));
+    public List evaluate(DataSourceRecord datarecord) {
+        return this.stream().map((item)-> item.evaluate(datarecord)).collect(Collectors.toList());
+    }
+    
+    @Override
+    public String toString() {
+        return "Expression List";
     }
 }

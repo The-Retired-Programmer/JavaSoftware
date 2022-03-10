@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class NotEqualsIgnoreCase implements Expression<Boolean>{
+public abstract class BooleanExpression implements Operand<Boolean> {
     
-    private final Expression<String> leftnode;
-    private final Expression<String> rightnode;
+   private final String name;
     
-    public NotEqualsIgnoreCase(Expression<String> leftnode, Expression<String> rightnode) {
-        this.leftnode = leftnode;
-        this.rightnode = rightnode;
+    public BooleanExpression(String name) {
+        this.name =  name;
     }
-
+    
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return !(leftnode.evaluate(datarecord).equalsIgnoreCase(rightnode.evaluate(datarecord)));
+    public String toString() {
+        return name;
     }
 }

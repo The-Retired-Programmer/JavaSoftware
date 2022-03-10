@@ -15,14 +15,14 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import uk.theretiredprogrammer.scmreportwriter.expression.Expression;
+import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 
 public class Field {
 
-    private final Expression<String> heading;
-    private final Expression<String> value;
+    private final StringExpression heading;
+    private final StringExpression value;
     
-    public Field(Expression<String> heading,Expression<String> value) {
+    public Field(StringExpression heading,StringExpression value) {
         this.heading = heading;
         this.value = value;
     }

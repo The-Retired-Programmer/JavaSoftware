@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import java.io.IOException;
 
-public class Literal<T> implements Expression<T> {
+public class LexerException extends IOException {
 
-    private final T literal;
-    
-    public Literal(T literal) {
-        this.literal = literal;
-    }
-
-    @Override
-    public T evaluate(DataSourceRecord datarecord) {
-        return literal;
+    public LexerException(String message) {
+        super(message);
     }
 }

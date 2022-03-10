@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Richard Linsdale (richard at theretiredprogrammer.uk).
+ * Copyright 2022 pi.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
-
-public class Not implements Expression<Boolean> {
-
-    private final Expression<Boolean> node;
-
-    public Not(Expression<Boolean> node) {
-        this.node = node;
-    }
-
-    @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return !node.evaluate(datarecord);
-    }
+@FunctionalInterface
+public interface Reduction {
+   void accept(OperatorStack operatorstack, OperandStack operandstack) throws ParserException;
 }

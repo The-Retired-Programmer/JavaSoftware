@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
-public class And implements Expression<Boolean>{
-    
-    private final Expression<Boolean> leftnode;
-    private final Expression<Boolean> rightnode;
-    
-    public And(Expression<Boolean> leftnode, Expression<Boolean> rightnode) {
-        this.leftnode = leftnode;
-        this.rightnode = rightnode;
-    }
+public interface S_Token {
 
-    @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return leftnode.evaluate(datarecord) && rightnode.evaluate(datarecord);
-    }
 }

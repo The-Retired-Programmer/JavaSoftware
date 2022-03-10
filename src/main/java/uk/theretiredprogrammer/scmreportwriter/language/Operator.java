@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.expression;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.language.Language.PrecedenceGroup;
 
-public class Concatonate implements Expression<String>{
-    
-    private final Expression<String> leftnode;
-    private final Expression<String> rightnode;
-    
-    public Concatonate(Expression<String> leftnode, Expression<String> rightnode) {
-        this.leftnode = leftnode;
-        this.rightnode = rightnode;
+public class Operator implements S_Token {
+
+    public final PrecedenceGroup operatorgroup;
+    public final Reduction reduction;
+    public final String name;
+
+    public Operator(String name, PrecedenceGroup operatorgroup, Reduction reduction) {
+        this.name = name;
+        this.operatorgroup = operatorgroup;
+        this.reduction = reduction;
     }
-
+    
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
-        return leftnode.evaluate(datarecord)+rightnode.evaluate(datarecord);
+    public String toString() {
+        return name;
     }
 }
