@@ -22,6 +22,20 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionList extends ArrayList<Operand> implements Operand {
 
+    public static void reduce(int count, OperandStack operandstack) throws ParserException {
+        ExpressionList elist = new ExpressionList();
+        while (count > 0) {
+            Operand operand = operandstack.pop();
+            if (operand instanceof Property) {
+                throw new ParserException("Property is not allowed in ExpressionList context");
+            } else {
+                elist.add(0, operand);
+                count--;
+            }
+        }
+        operandstack.push(elist);
+    }
+    
     @Override
     public List evaluate(DataSourceRecord datarecord) {
         return this.stream().map((item)-> item.evaluate(datarecord)).collect(Collectors.toList());

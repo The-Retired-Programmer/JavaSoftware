@@ -22,6 +22,20 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionMap extends HashMap<String,Operand> implements Operand {
     
+    public static void reduce(int count, OperandStack operandstack) throws ParserException {
+        ExpressionMap emap = new ExpressionMap();
+        while (count > 0) {
+            Operand operand = operandstack.pop();
+            if (operand instanceof Property property) {
+                emap.put(property.getName(), property.getExpression());
+                count--;
+            } else {
+                throw new ParserException("Expression is not allowed in ExpressionMap context");
+            }
+        }
+        operandstack.push(emap);
+    }
+    
     @Override
     public Map<String,Object> evaluate(DataSourceRecord datarecord) {
         Map<String,Object> result = new HashMap<>();

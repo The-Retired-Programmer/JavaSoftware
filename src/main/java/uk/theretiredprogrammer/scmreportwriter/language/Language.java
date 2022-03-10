@@ -125,41 +125,20 @@ public abstract class Language {
     }
 
     public void reduceKET(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
-        Operator operator;
-        int count = -1;
-        do {
+        Operator operator = operatorstack.pop(); // this will be ")"
+        if (operatorstack.peek().name.equals("(")) {
+            operatorstack.pop();
+            return;
+        }
+        int count = 0;
+        while (getPrecedence(operatorstack.peek(), operator) == Precedence.EQUAL) {
             operator = operatorstack.pop();
             count++;
-        } while (getPrecedence(operatorstack.peek(), operator) == Precedence.EQUAL);
-
+        }
         if (operandstack.peek() instanceof Property) {
-            if (count > 1) {
-                ExpressionMap emap = new ExpressionMap();
-                while (count > 0) {
-                    Operand operand = operandstack.pop();
-                    if (operand instanceof Property property) {
-                        emap.put(property.getName(), property.getExpression());
-                        count--;
-                    } else {
-                        throw new ParserException("Expression is not allowed in this context");
-                    }
-                }
-                operandstack.push(emap);
-            }
+            ExpressionMap.reduce(count, operandstack);
         } else {
-            if (count > 1) {
-                ExpressionList elist = new ExpressionList();
-                while (count > 0) {
-                    Operand operand = operandstack.pop();
-                    if (operand instanceof Property) {
-                        throw new ParserException("Property is not allowed in this context");
-                    } else {
-                        elist.add(0, operand);
-                        count--;
-                    }
-                }
-                operandstack.push(elist);
-            }
+            ExpressionList.reduce(count, operandstack);
         }
     }
 }
