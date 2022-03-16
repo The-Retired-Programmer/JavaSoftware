@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.oldstuff;
 
-import java.io.File;
+import uk.theretiredprogrammer.scmreportwriter.DataSourceCSV;
 import java.io.IOException;
 
 public class EntryReport {
     
-    private final DataSourceCSV entryexport;
+    private DataSourceCSV entryexport;
 
     public EntryReport() throws IOException {
-        entryexport = new DataSourceCSV(new File("/home/pi/Downloads/club-dinghy-racing-2022-bookings20220222 (1).csv"));
+        //entryexport = new DataSourceCSV(new File("/home/pi/Downloads/club-dinghy-racing-2022-bookings20220222 (1).csv"));
     }
     
     public void createAdultEntryReport() {

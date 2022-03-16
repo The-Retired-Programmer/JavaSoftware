@@ -15,52 +15,57 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import java.util.List;
 import uk.theretiredprogrammer.scmreportwriter.language.Language.Precedence;
 
 public class Parser {
 
     private final Language language;
+    private final LanguageSource source;
     
-    public Parser(Language language) {
+    public Parser(LanguageSource source, Language language) {
         this.language = language;
+        this.source = source;
     }
 
     private final OperatorStack operatorstack = new OperatorStack();
     private final OperandStack operandstack = new OperandStack();
 
 
-    public Operand parse(List<S_Token> tokens) throws ParserException {
-        operatorstack.push(language.OPERATOR_START);
-        for (S_Token token : tokens) {
-            if (token instanceof Operator operator) {
-                addOperator(operator);
-            } else {
-                if (token instanceof Operand operand) {
-                    operandstack.push(operand);
+    public Operand parse() throws ParserException {
+        try {
+            operatorstack.push(language.OPERATOR_START);
+            for (S_Token token : source.getS_Tokens()) {
+                if (token instanceof Operator operator) {
+                    addOperator(operator);
                 } else {
-                    throw new ParserException("Parser PANIC - unknown token type - not Operator or Operand");
+                    if (token instanceof Operand operand) {
+                        operandstack.push(operand);
+                    } else {
+                        throw new InternalParserException(token, "Parser PANIC - unknown token type - not Operator or Operand");
+                    }
                 }
             }
+            addOperator(language.OPERATOR_END);
+            return operandstack.pop();
+        } catch (InternalParserException ex) {
+            throw source.newParserException(ex);
         }
-        addOperator(language.OPERATOR_END);
-        return operandstack.pop();
     }
 
-    private void addOperator(Operator operator) throws ParserException {
+    private void addOperator(Operator operator) throws InternalParserException {
         switch (language.getPrecedence(operatorstack.peek(), operator)) {
             case SHIFT ->
                 operatorstack.push(operator);
             case REDUCE -> {
                 while (language.getPrecedence(operatorstack.peek(), operator) == Precedence.REDUCE) {
-                    operatorstack.peek().reduction.accept(operatorstack, operandstack);
+                    operatorstack.peek().reduction.accept(language, operatorstack, operandstack);
                 }
                 operatorstack.push(operator);
             }
             case EQUAL ->
                 operatorstack.push(operator);
             case ERROR ->
-                throw new ParserException("Bad Syntax");
+                throw new InternalParserException(operator, "Bad Syntax");
         }
     }
 }

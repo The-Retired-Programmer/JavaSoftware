@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+public class SyntaxTreeItem {
 
-public class Fields extends ArrayList<Field> {
-    
-    public List<String> getHeaders(DataSourceRecord record) {
-        return this.stream().map((field)-> field.getHeading(record)).collect(Collectors.toList());
+        public final String tokenstring;
+        public final S_Token token;
+        
+        public SyntaxTreeItem(String tokenstring, S_Token token){
+            this.tokenstring = tokenstring;
+            this.token = token;
+        }
     }
-    
-    public List<String> getValues(DataSourceRecord record) {
-        return this.stream().map((field)-> field.getValue(record)).collect(Collectors.toList());
-    }
-}

@@ -19,16 +19,17 @@ import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
+import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class NotEquals extends BooleanExpression{
     
-    public static void reduce(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
-        StringExpression rhs = DataTypes.stringExpression(operandstack.pop());
-        operandstack.push(new NotEquals(DataTypes.stringExpression(operandstack.pop()), rhs));
+        StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
+        operandstack.push(new NotEquals(DataTypes.isStringExpression(operandstack.pop()), rhs));
     }
 
     private final StringExpression lhs;

@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import java.util.HashMap;
+public class InternalParserException extends Exception {
 
-public class DataSources extends HashMap<String,DataSource> {
+    private final S_Token token;
+
+    public InternalParserException(S_Token token, String message) {
+        super(message);
+        this.token = token;
+    }
     
+    public S_Token getToken() {
+        return token;
+    }
 }

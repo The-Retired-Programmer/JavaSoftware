@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.language;
+package uk.theretiredprogrammer.scmreportwriter.oldstuff;
 
-public class ParserException extends Exception {
+import uk.theretiredprogrammer.scmreportwriter.DataSource;
+import java.util.HashMap;
 
-    public ParserException(String message) {
-        super(message);
-    }
+public class DataSources extends HashMap<String,DataSource> {
+    
 }

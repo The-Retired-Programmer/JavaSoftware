@@ -15,9 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import java.io.IOException;
-
-public class LexerException extends IOException {
+public class LexerException extends Exception {
 
     public LexerException(String message) {
         super(message);

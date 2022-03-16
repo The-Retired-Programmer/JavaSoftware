@@ -22,18 +22,51 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionMap extends HashMap<String,Operand> implements Operand {
     
-    public static void reduce(int count, OperandStack operandstack) throws ParserException {
+    private int location;
+    private int length;
+    
+    @Override
+    public void setLocation(int charoffset, int length) {
+        location = charoffset;
+        this.length = length;
+    }
+    
+    @Override
+    public int getLocation() {
+        return location;
+    }
+    
+    @Override
+    public int getLength() {
+        return length;
+    }
+    
+    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on '{' operator");
+    }
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         ExpressionMap emap = new ExpressionMap();
-        while (count > 0) {
-            Operand operand = operandstack.pop();
-            if (operand instanceof Property property) {
-                emap.put(property.getName(), property.getExpression());
-                count--;
-            } else {
-                throw new ParserException("Expression is not allowed in ExpressionMap context");
-            }
+        operatorstack.pop(); // this will be "}"
+       while (operatorstack.peek().toString().equals(",")) {
+            addProperty2Map(operatorstack, operandstack, emap);
+        }
+        if (operatorstack.peek().toString().equals("{")) {
+            addProperty2Map(operatorstack, operandstack, emap);
+        } else {
+            throw new InternalParserException(operandstack.peek(), "'{' expected when generating a ExpressionMap");
         }
         operandstack.push(emap);
+    }
+
+    private static void addProperty2Map(OperatorStack operatorstack, OperandStack operandstack, ExpressionMap emap) throws InternalParserException {
+        Operand operand = operandstack.pop();
+        if (operand instanceof Property property) {
+            emap.put(property.getName(), property.getExpression());
+        } else {
+            throw new InternalParserException(operand, "Expression is not allowed in ExpressionMap context");
+        }
+        operatorstack.pop();
     }
     
     @Override

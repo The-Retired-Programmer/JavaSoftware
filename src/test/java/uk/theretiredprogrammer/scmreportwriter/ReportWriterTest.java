@@ -16,28 +16,25 @@
 package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.File;
-//import uk.theretiredprogrammer.scmreportwriter.oldstuff.EntryReport;
+import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
-public class App {
+public class ReportWriterTest {
 
-    public static void main(String args[]) {
+    public ReportWriterTest() {
+    }
 
-        //        try {
-//            EntryReport report = new EntryReport();
-//            report.checkAdultEntryReport();
-//            report.createAdultEntryReport();
-//            report.createU18EntryReport();
-//        } catch (Exception ex) {
-//            System.err.println(ex.getMessage());
-//        }
-        System.out.println("REPORT WRITER");
+    @Test
+    public void testAppfunctionality() throws IOException {
+        System.out.println("App functionality");
         try {
             ReportWriter reportwriter = new ReportWriter(new File("/home/pi/GithubProjects/SCM-ReportWriter/definition2.scm"));
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
         } catch (Exception ex) {
-            ex.printStackTrace(System.out);
+            ex.printStackTrace();
+            fail("exception caught");
         }
-        System.out.println("DONE");
     }
 }

@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.language;
+package uk.theretiredprogrammer.scmreportwriter.oldstuff;
 
+import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 
-public interface S_Token {
-    
-    public void setLocation(int charoffset, int length);
-    
-    public int getLocation();
-    
-    public int getLength();
+public class Field {
 
+    private final StringExpression heading;
+    private final StringExpression value;
+    
+    public Field(StringExpression heading,StringExpression value) {
+        this.heading = heading;
+        this.value = value;
+    }
+    
+    public String getHeading(DataSourceRecord record) {
+        return heading.evaluate(record);
+    }
+    
+    public String getValue(DataSourceRecord record) {
+        return value.evaluate(record);
+    }
 }

@@ -19,9 +19,27 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 public abstract class BooleanExpression implements Operand<Boolean> {
     
    private final String name;
+   private int location;
+    private int length;
     
     public BooleanExpression(String name) {
         this.name =  name;
+    }
+    
+    @Override
+    public void setLocation(int charoffset, int length) {
+        location = charoffset;
+        this.length = length;
+    }
+    
+    @Override
+    public int getLocation() {
+        return location;
+    }
+    
+    @Override
+    public int getLength() {
+        return length;
     }
     
     @Override

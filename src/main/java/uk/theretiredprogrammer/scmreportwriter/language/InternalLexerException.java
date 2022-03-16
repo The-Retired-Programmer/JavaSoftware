@@ -15,13 +15,22 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-public class AST {
+public class InternalLexerException extends Exception {
 
-        public final String tokenstring;
-        public final S_Token token;
-        
-        public AST(String tokenstring, S_Token token){
-            this.tokenstring = tokenstring;
-            this.token = token;
-        }
+    private final int location;
+    private final int length;
+
+    public InternalLexerException(int location, int length, String message) {
+        super(message);
+        this.location = location;
+        this.length = length;
     }
+    
+    public int getLocation() {
+        return location;
+    }
+    
+    public int getLength() {
+        return length;
+    }
+}

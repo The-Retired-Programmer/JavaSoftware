@@ -15,18 +15,77 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
+import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
+import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
+import uk.theretiredprogrammer.scmreportwriter.language.Operand;
+import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportWriter {
-    
-    public void create(ReportDescriptor reportdescriptor) {
-        DataSource datasource = reportdescriptor.getDataSource("first");
-        List<DataSourceRecord> filteredsource = datasource.stream().filter((datarecord)->reportdescriptor.getFilter().evaluate(datarecord)).collect(Collectors.toList());
-        System.out.println(String.join(", ", reportdescriptor.getFields().getHeaders(filteredsource.get(0))));
-        for (DataSourceRecord record : filteredsource){
-            System.out.println(String.join(", ", reportdescriptor.getFields().getValues(record)));
+
+    private final ReportDefinition definition;
+    private final Map<String, DataSource> datasources = new HashMap<>();
+
+    public ReportWriter(File file) throws IOException, LexerException, ParserException, ReportWriterException {
+        definition = new ReportDefinition();
+        try {
+            definition.buildReportDefinition(file);
+        } catch (InternalReportWriterException ex) {
+            throw definition.getLanguageSource().newReportWriterException(ex);
         }
     }
-    
+
+    public void loadDataFiles() throws IOException, ReportWriterException {
+        try {
+            ExpressionMap datadefs = definition.getDatadefinitions();
+            for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
+                ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
+                datasources.put(nameandparameters.getKey(), new DataSourceCSV(parameters));
+            }
+        } catch (InternalReportWriterException ex) {
+            throw definition.getLanguageSource().newReportWriterException(ex);
+        }
+    }
+
+    public void createAllReports() throws ReportWriterException {
+        for (String reportname : definition.getAllReportNames()) {
+            createReport(reportname);
+        }
+    }
+
+    public void createReport(String reportname) throws ReportWriterException {
+        try {
+            ExpressionMap map = definition.getReportdefinitions(reportname);
+            DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
+            ExpressionList headers = DataTypes.isExpressionList(map, "headers");
+            BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
+            ExpressionList fields = DataTypes.isExpressionList(map, "fields");
+            // create report output
+            DataSourceRecord firstrecord = primaryds.get(0);
+            outputCSVline(headers, firstrecord);
+            for (DataSourceRecord datarecord : primaryds) {
+                if (filter.evaluate(datarecord)) {
+                    outputCSVline(fields, datarecord);
+                }
+            }
+        } catch (InternalReportWriterException ex) {
+            throw definition.getLanguageSource().newReportWriterException(ex);
+        }
+    }
+
+    private void outputCSVline(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalReportWriterException {
+        String[] fields = new String[fieldexpressions.size()];
+        for (int i = 0; i < fieldexpressions.size(); i++) {
+            fields[i] = DataTypes.isStringExpression(fieldexpressions, i).evaluate(datarecord);
+        }
+        System.out.println("\"" + String.join("\",\"", fields) + "\"");
+    }
 }

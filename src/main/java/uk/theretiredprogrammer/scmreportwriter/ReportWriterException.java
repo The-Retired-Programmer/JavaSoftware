@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.language;
+package uk.theretiredprogrammer.scmreportwriter;
 
-public class ParserException extends Exception {
+import java.io.IOException;
 
-    public ParserException(String message) {
+public class ReportWriterException extends IOException {
+
+    public ReportWriterException(String message) {
         super(message);
     }
 }

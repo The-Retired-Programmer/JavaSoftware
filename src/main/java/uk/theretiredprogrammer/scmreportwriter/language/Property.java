@@ -19,20 +19,38 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class Property implements Operand {
     
-    public static void reduce(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
         Operand rhs = operandstack.pop();
-        operandstack.push(new Property(DataTypes.literalString(operandstack.pop()), rhs));
+        operandstack.push(new Property(DataTypes.isStringLiteral(operandstack.pop()), rhs));
     }
 
     private final String name;
     private final Operand expression;
+    private int location;
+    private int length;
 
     public Property(String name, Operand expression) {
         this.name = name;
         this.expression = expression;
     }
+    
+    @Override
+    public void setLocation(int charoffset, int length) {
+        location = charoffset;
+        this.length = length;
+    }
+    
+    @Override
+    public int getLocation() {
+        return location;
+    }
 
+    @Override
+    public int getLength() {
+        return length;
+    }
+    
     public String getName() {
         return name;
     }

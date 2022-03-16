@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.oldstuff;
 
-import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
+import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class Field {
-
-    private final StringExpression heading;
-    private final StringExpression value;
+public class Fields extends ArrayList<Field> {
     
-    public Field(StringExpression heading,StringExpression value) {
-        this.heading = heading;
-        this.value = value;
+    public List<String> getHeaders(DataSourceRecord record) {
+        return this.stream().map((field)-> field.getHeading(record)).collect(Collectors.toList());
     }
     
-    public String getHeading(DataSourceRecord record) {
-        return heading.evaluate(record);
-    }
-    
-    public String getValue(DataSourceRecord record) {
-        return value.evaluate(record);
+    public List<String> getValues(DataSourceRecord record) {
+        return this.stream().map((field)-> field.getValue(record)).collect(Collectors.toList());
     }
 }

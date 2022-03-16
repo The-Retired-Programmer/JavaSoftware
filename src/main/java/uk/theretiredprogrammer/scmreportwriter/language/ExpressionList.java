@@ -22,25 +22,59 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionList extends ArrayList<Operand> implements Operand {
 
-    public static void reduce(int count, OperandStack operandstack) throws ParserException {
+    private int location;
+    private int length;
+
+    @Override
+    public void setLocation(int charoffset, int length) {
+        location = charoffset;
+        this.length = length;
+    }
+
+    @Override
+    public int getLocation() {
+        return location;
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on '[' operator");
+    }
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         ExpressionList elist = new ExpressionList();
-        while (count > 0) {
-            Operand operand = operandstack.pop();
-            if (operand instanceof Property) {
-                throw new ParserException("Property is not allowed in ExpressionList context");
-            } else {
-                elist.add(0, operand);
-                count--;
-            }
+        operatorstack.pop(); // this will be "]"
+        while (operatorstack.peek().toString().equals(",")) {
+            addExpression2List(operatorstack, operandstack, elist);
+            
+        }
+        if (operatorstack.peek().toString().equals("[")) {
+            addExpression2List(operatorstack, operandstack, elist);
+        } else {
+             throw new InternalParserException(operandstack.peek(), "'[' expected when generating a ExpressionList");
         }
         operandstack.push(elist);
     }
-    
+
+    private static void addExpression2List(OperatorStack operatorstack, OperandStack operandstack, ExpressionList elist) throws InternalParserException {
+        Operand operand = operandstack.pop();
+        if (operand instanceof Property) {
+            throw new InternalParserException(operand, "Property is not allowed in ExpressionList context");
+        } else {
+            elist.add(0, operand);
+        }
+        operatorstack.pop();
+    }
+
     @Override
     public List evaluate(DataSourceRecord datarecord) {
-        return this.stream().map((item)-> item.evaluate(datarecord)).collect(Collectors.toList());
+        return this.stream().map((item) -> item.evaluate(datarecord)).collect(Collectors.toList());
     }
-    
+
     @Override
     public String toString() {
         return "Expression List";

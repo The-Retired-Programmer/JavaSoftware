@@ -15,9 +15,16 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-public class ParserException extends Exception {
+public class InternalReportWriterException extends Exception {
 
-    public ParserException(String message) {
+    private final S_Token token;
+
+    public InternalReportWriterException(S_Token token, String message) {
         super(message);
+        this.token = token;
+    }
+    
+    public S_Token getToken() {
+        return token;
     }
 }

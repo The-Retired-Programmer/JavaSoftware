@@ -23,12 +23,19 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
 // provide a data model which contains an individual csv file exported from SCM
 //
 public class DataSourceCSV extends DataSource {
 
-    public DataSourceCSV(File f) throws IOException {
+    public DataSourceCSV(ExpressionMap parameters) throws IOException, InternalReportWriterException {
+        String path = DataTypes.isStringLiteral(parameters,"path");
+        File f = new File(path);
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
             List<String> columnKeys = createTokenList(brdr.lines().findFirst().orElseThrow());
             for (String line : brdr.lines().toList()) {

@@ -19,15 +19,16 @@ import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
+import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class String2Boolean extends BooleanExpression {
     
-    public static void reduce(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
-        operandstack.push(new String2Boolean(DataTypes.stringExpression(operandstack.pop())));
+        operandstack.push(new String2Boolean(DataTypes.isStringExpression(operandstack.pop())));
     }
 
     private final StringExpression expression;

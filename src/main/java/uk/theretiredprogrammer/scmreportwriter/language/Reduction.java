@@ -17,5 +17,5 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 
 @FunctionalInterface
 public interface Reduction {
-   void accept(OperatorStack operatorstack, OperandStack operandstack) throws ParserException;
+   void accept(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException;
 }

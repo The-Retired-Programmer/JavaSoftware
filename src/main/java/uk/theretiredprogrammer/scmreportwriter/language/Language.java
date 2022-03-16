@@ -19,17 +19,17 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
 
 public abstract class Language {
 
-    private AST[] operators;
+    private SyntaxTreeItem[] operators;
 
-    private AST[] symbols;
+    private SyntaxTreeItem[] symbols;
 
     private Precedence[][] precedencetable;
 
-    public void setASTSymbols(AST[] symbols) {
+    public void setSyntaxTreeSymbols(SyntaxTreeItem[] symbols) {
         this.symbols = symbols;
     }
 
-    public void setASTOperators(AST[] operators) {
+    public void setSyntaxTreeOperators(SyntaxTreeItem[] operators) {
         this.operators = operators;
     }
 
@@ -39,30 +39,30 @@ public abstract class Language {
 
     // Lexer support
     public enum CharType {
-        WHITESPACE, TEXT, SYMBOL, TEXTSTARTDELIMITER, TEXTENDDELIMITER
+        WHITESPACE, TEXT, SYMBOL, TEXTDELIMITER, EOF
     };
 
-    public static CharType charType(char c) {
+    public CharType charType(char c) {
         if (Character.isLetter(c) || Character.isDigit(c)) {
             return CharType.TEXT;
         }
-        if (c == '{') {
-            return CharType.TEXTSTARTDELIMITER;
-        }
-        if (c == '}') {
-            return CharType.TEXTENDDELIMITER;
+        if (c == '"') {
+            return CharType.TEXTDELIMITER;
         }
         if (Character.isWhitespace(c)) {
             return CharType.WHITESPACE;
+        }
+        if (c == Character.MIN_VALUE) {
+            return CharType.EOF;
         }
         return CharType.SYMBOL;
     }
 
     private Operator extractedoperator;
 
-    public String extractOperator(String input) throws LexerException {
+    public String extractOperator(String input) {
         extractedoperator = null;
-        for (AST terminal : operators) {
+        for (SyntaxTreeItem terminal : operators) {
             if (terminal.token instanceof Operator operator) {
                 if (input.startsWith(terminal.tokenstring)) {
                     extractedoperator = operator;
@@ -70,7 +70,7 @@ public abstract class Language {
                 }
             }
         }
-        throw new LexerException("Illegal Operator: " + input);
+        return null;
     }
 
     public Operator getExtractedOperator() {
@@ -78,7 +78,7 @@ public abstract class Language {
     }
 
     public S_Token getToken(String tokenstring) {
-        for (AST symbol : symbols) {
+        for (SyntaxTreeItem symbol : symbols) {
             if (symbol.tokenstring.equals(tokenstring)) {
                 return symbol.token;
             }
@@ -87,58 +87,98 @@ public abstract class Language {
     }
 
     public enum PrecedenceGroup {
-        START, END, COMMAND, EXPSEP,
-        BRA, KET,
-        PROPERTY, OR, AND, EQ, DIADIC, MONADIC
+        START(0), END (10), 
+        EXPBRA(40, 210, true) , EXPSEP(40, true), EXPKET(210, 40),
+        PROPERTY(100), OR(110), AND(120), EQ(130), DIADIC(140), MONADIC(150, true),
+        BRA(50, 200, true), KET(200, 50);
+        
+        private final int lprecedence;
+        private final int rprecedence;
+        private final boolean rightassociated;
+        
+        PrecedenceGroup(int precedence, boolean rightassociated) {
+            this(precedence,precedence, rightassociated);
+        }
+        
+        PrecedenceGroup(int lprecedence, int rprecedence, boolean rightassociated) {
+            this.lprecedence = lprecedence;
+            this.rprecedence = rprecedence;
+            this.rightassociated = rightassociated;
+        }
+        
+        PrecedenceGroup(int precedence) {
+            this(precedence,precedence, false);
+        }
+        
+         PrecedenceGroup(int lprecedence, int rprecedence) {
+            this(lprecedence,rprecedence, false);
+        }
+        
+        public int lprecedence() {
+            return this.lprecedence;
+        }
+        
+        public int rprecedence() {
+            return this.rprecedence;
+        }
+        
+        public boolean isrightassociated(){
+            return rightassociated;
+        }
     }
+    
+    // if precedence(lhsop) < precedence (rhsop) then SHIFT(rhsop)
+    // if precedence(lhsop) > precedence (rhsop) then {REDUCE(lhsop) ... and repeat}
+    // if precedence(lhsop) = precedence (rhsop) then if (rightassociated(lhsop) then SHIFT(rhsop) else {REDUCE(lhsop) .. and repeat}
+    // ERROR CASES are not handled at this point
 
     public enum Precedence {
         SHIFT, EQUAL, REDUCE, ERROR
     };
-
+    
     public Precedence getPrecedence(Operator loperator, Operator roperator) {
-        return precedencetable[roperator.operatorgroup.ordinal()][loperator.operatorgroup.ordinal()];
+        int lprecedence = loperator.operatorgroup.lprecedence();
+        int rprecedence = roperator.operatorgroup.rprecedence(); 
+        if (lprecedence < rprecedence) {
+            return Precedence.SHIFT; // rhsoperator
+        }
+        if (lprecedence > rprecedence) {
+            return Precedence.REDUCE; // lhsoperator .. and repeat
+        }
+        //lprecedence == rprecedence
+        return loperator.operatorgroup.isrightassociated()? Precedence.SHIFT: Precedence.REDUCE;
     }
-
+    
     public final Operator OPERATOR_START = new Operator("START", PrecedenceGroup.START, this::reduceSTART);
     public final Operator OPERATOR_END = new Operator("END", PrecedenceGroup.END, this::reduceEND);
 
-    private void reduceSTART(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
-        throw new ParserException("illegal to reduce on 'START' operator");
+    private void reduceSTART(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on 'START' operator");
     }
 
-    private void reduceEND(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
+    private void reduceEND(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         if (operatorstack.size() != 2) { // ie not end and start
-            throw new ParserException("operator stack not empty when reduction completed");
+            throw new InternalParserException(operatorstack.pop(), "Operator stack not empty when reduction completed");
         }
         if (operandstack.size() != 1) {
-            throw new ParserException("single operand expected (the program) - wrong number of operands remain");
+            throw new InternalParserException(operandstack.pop(), "Single operand expected (the program) - wrong number of operands remain");
         }
     }
 
-    public void reduceEXPRESSIONSEPARATOR(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
-        throw new ParserException("illegal to reduce on ',' operator");
+    public void reduceEXPRESSIONSEPARATOR(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on ',' operator");
     }
 
-    public void reduceBRA(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
-        throw new ParserException("illegal to reduce on '(' operator");
+    public void reduceBRA(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on '(' operator");
     }
 
-    public void reduceKET(OperatorStack operatorstack, OperandStack operandstack) throws ParserException {
-        Operator operator = operatorstack.pop(); // this will be ")"
-        if (operatorstack.peek().name.equals("(")) {
+    public void reduceKET(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+        Operator operator = operatorstack.pop(); // this will be the closing bracket
+        if (operatorstack.peek().toString() == "(") {
             operatorstack.pop();
             return;
         }
-        int count = 0;
-        while (getPrecedence(operatorstack.peek(), operator) == Precedence.EQUAL) {
-            operator = operatorstack.pop();
-            count++;
-        }
-        if (operandstack.peek() instanceof Property) {
-            ExpressionMap.reduce(count, operandstack);
-        } else {
-            ExpressionList.reduce(count, operandstack);
-        }
+        throw new InternalParserException(operatorstack.peek(), "Bad syntax - '(' ... ')' has embedded operator");
     }
 }

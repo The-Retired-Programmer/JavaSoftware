@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.oldstuff;
 
 import uk.theretiredprogrammer.scmreportwriter.DataSource;
-import uk.theretiredprogrammer.scmreportwriter.DataSources;
-import uk.theretiredprogrammer.scmreportwriter.Fields;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 
 public class ReportDescriptor {

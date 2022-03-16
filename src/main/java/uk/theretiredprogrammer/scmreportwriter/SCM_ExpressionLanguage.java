@@ -15,9 +15,9 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import uk.theretiredprogrammer.scmreportwriter.language.AST;
-import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
-import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
+import uk.theretiredprogrammer.scmreportwriter.language.SyntaxTreeItem;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.Operator;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.And;
@@ -27,7 +27,6 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.Concatonate;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.DataRecordField;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.Equals;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.EqualsIgnoreCase;
-import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.Not;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.NotEquals;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.NotEqualsIgnoreCase;
@@ -35,129 +34,122 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.Or;
 import uk.theretiredprogrammer.scmreportwriter.language.Property;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.String2Boolean;
 import uk.theretiredprogrammer.scmreportwriter.language.Language.Precedence;
-import uk.theretiredprogrammer.scmreportwriter.language.Language.PrecedenceGroup;
 
-public class SCM_Language extends Language{
+public class SCM_ExpressionLanguage extends Language{
     
-    public SCM_Language() {
-        setASTSymbols(new AST[]{
-                    new AST("boolean", new Operator("Boolean cast", PrecedenceGroup.MONADIC, String2Boolean::reduce)),
-                    new AST("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
-                    new AST("FALSE", new BooleanLiteral(false)),
-                    new AST("TRUE", new BooleanLiteral(true)),
-                    new AST("DATA", new Operator("DATA", PrecedenceGroup.COMMAND, this::reduceCOMMAND)),
-                    new AST("FILTER", new Operator("FILTER", PrecedenceGroup.COMMAND, this::reduceCOMMAND)),
-                    new AST("FIELDS", new Operator("FIELDS", PrecedenceGroup.COMMAND, this::reduceCOMMAND))
+    public SCM_ExpressionLanguage() {
+        setSyntaxTreeSymbols(new SyntaxTreeItem[]{
+                    new SyntaxTreeItem("boolean", new Operator("Boolean cast", PrecedenceGroup.MONADIC, String2Boolean::reduce)),
+                    new SyntaxTreeItem("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
+                    new SyntaxTreeItem("FALSE", new BooleanLiteral(false)),
+                    new SyntaxTreeItem("TRUE", new BooleanLiteral(true))
                 });
-        setASTOperators(new AST[]{
-                    new AST("!=~", new Operator("!=~", PrecedenceGroup.EQ, NotEqualsIgnoreCase::reduce)),
-                    new AST("&&", new Operator("&&", PrecedenceGroup.AND, And::reduce)),
-                    new AST("||", new Operator("||", PrecedenceGroup.OR, Or::reduce)),
-                    new AST("==", new Operator("==", PrecedenceGroup.EQ, Equals::reduce)),
-                    new AST("=~", new Operator("=~", PrecedenceGroup.EQ, EqualsIgnoreCase::reduce)),
-                    new AST("!=", new Operator("!=", PrecedenceGroup.EQ, NotEquals::reduce)),
-                    new AST("!", new Operator("!", PrecedenceGroup.MONADIC, Not::reduce)),
-                    new AST("+", new Operator("+", PrecedenceGroup.DIADIC, Concatonate::reduce)),
-                    new AST("(", new Operator("(", PrecedenceGroup.BRA, this::reduceBRA)),
-                    new AST(")", new Operator(")", PrecedenceGroup.KET, this::reduceKET)),
-                    new AST("$", new Operator("$", PrecedenceGroup.MONADIC, DataRecordField::reduce)),
-                    new AST(",", new Operator(",", PrecedenceGroup.EXPSEP, this::reduceEXPRESSIONSEPARATOR)),
-                    new AST(":", new Operator(":", PrecedenceGroup.PROPERTY, Property::reduce))
+        setSyntaxTreeOperators(new SyntaxTreeItem[]{
+                    new SyntaxTreeItem("!=~", new Operator("!=~", PrecedenceGroup.EQ, NotEqualsIgnoreCase::reduce)),
+                    new SyntaxTreeItem("&&", new Operator("&&", PrecedenceGroup.AND, And::reduce)),
+                    new SyntaxTreeItem("||", new Operator("||", PrecedenceGroup.OR, Or::reduce)),
+                    new SyntaxTreeItem("==", new Operator("==", PrecedenceGroup.EQ, Equals::reduce)),
+                    new SyntaxTreeItem("=~", new Operator("=~", PrecedenceGroup.EQ, EqualsIgnoreCase::reduce)),
+                    new SyntaxTreeItem("!=", new Operator("!=", PrecedenceGroup.EQ, NotEquals::reduce)),
+                    new SyntaxTreeItem("!", new Operator("!", PrecedenceGroup.MONADIC, Not::reduce)),
+                    new SyntaxTreeItem("+", new Operator("+", PrecedenceGroup.DIADIC, Concatonate::reduce)),
+                    new SyntaxTreeItem("[", new Operator("[", PrecedenceGroup.EXPBRA, ExpressionList::reduce_s)),
+                    new SyntaxTreeItem("]", new Operator("]", PrecedenceGroup.EXPKET, ExpressionList::reduce)),
+                    new SyntaxTreeItem("{", new Operator("{", PrecedenceGroup.EXPBRA, ExpressionMap::reduce_s)),
+                    new SyntaxTreeItem("}", new Operator("}", PrecedenceGroup.EXPKET, ExpressionMap::reduce)),
+                    new SyntaxTreeItem("(", new Operator("(", PrecedenceGroup.BRA, this::reduceBRA)),
+                    new SyntaxTreeItem(")", new Operator(")", PrecedenceGroup.KET, this::reduceKET)),
+                    new SyntaxTreeItem("$", new Operator("$", PrecedenceGroup.MONADIC, DataRecordField::reduce)),
+                    new SyntaxTreeItem(",", new Operator(",", PrecedenceGroup.EXPSEP, this::reduceEXPRESSIONSEPARATOR)),
+                    new SyntaxTreeItem(":", new Operator(":", PrecedenceGroup.PROPERTY, Property::reduce))
                 });
+        
 
         setPrecedenceTable(
                 new Precedence[][]{
                     { //rhs symbol START
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR,
+                        //START, END,  EXPSEP,
+                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR,
                         //BRA, KET,
                         Precedence.ERROR, Precedence.ERROR,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR
                     },
                     { //rhs symbol END
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.REDUCE, Precedence.ERROR,
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.ERROR,
                         //BRA, KET,
                         Precedence.ERROR, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
-                    { //rhs symbol COMMAND
-                        //START, END, COMMAND, EXPSEP, EXPEND,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.EQUAL, Precedence.ERROR,
-                        //BRA, KET,
-                        Precedence.ERROR, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR
-                    },
                     { //rhs symbol EXPSEP
                         //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.EQUAL, 
+                        Precedence.ERROR, Precedence.ERROR, Precedence.EQUAL, 
                         //BRA, KET,
                         Precedence.EQUAL, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol BRA
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.ERROR,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT
                     },
                     { //rhs symbol KET
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.EQUAL, 
+                        //START, END, EXPSEP,
+                        Precedence.ERROR, Precedence.ERROR,Precedence.EQUAL, 
                         //BRA, KET,
                         Precedence.EQUAL, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol PROPERTY
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.ERROR, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol OR
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol AND
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol EQ
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol DIADIC
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
                         Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE
                     },
                     { //rhs symbol MONADIC
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.SHIFT, Precedence.SHIFT, 
+                        //START, END, EXPSEP,
+                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
                         //BRA, KET,
                         Precedence.SHIFT, Precedence.REDUCE,
                         //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
@@ -166,13 +158,4 @@ public class SCM_Language extends Language{
                 });
     }
     
-    private void reduceCOMMAND(OperatorStack operatorstack, OperandStack operandstack) {
-        ExpressionMap map = new ExpressionMap();
-        Operator cmd;
-        do {
-            cmd = operatorstack.pop();
-            map.put(cmd.toString(), operandstack.pop());
-        } while (getPrecedence(operatorstack.peek(), cmd) == Precedence.EQUAL);
-        operandstack.push(map);
-    }
 }

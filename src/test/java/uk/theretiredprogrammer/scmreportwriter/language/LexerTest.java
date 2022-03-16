@@ -13,25 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.reportdescriptor;
+package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.SCM_Language;
-import uk.theretiredprogrammer.scmreportwriter.language.S_Token;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
-import uk.theretiredprogrammer.scmreportwriter.language.Lexer;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.scmreportwriter.language.Language;
+import uk.theretiredprogrammer.scmreportwriter.SCM_ExpressionLanguage;
 
 public class LexerTest {
     
     private final Language language;
 
     public LexerTest() {
-        language = new SCM_Language();
+        language = new SCM_ExpressionLanguage();
     }
 
     @BeforeAll
@@ -59,7 +55,7 @@ public class LexerTest {
     @Test
     public void testLex3() throws Exception {
         System.out.println("lex - delimitedtext");
-        lextest("   {ABCDEF}  ",
+        lextest("   \"ABCDEF\"  ",
                 "ABCDEF"
         );
     }
@@ -67,7 +63,7 @@ public class LexerTest {
     @Test
     public void testLex4() throws Exception {
         System.out.println("lex - delimitedtext2");
-        lextest("   {A B C D.E.F..}  ",
+        lextest("   \"A B C D.E.F..\"  ",
                 "A B C D.E.F.."
         );
     }
@@ -83,7 +79,7 @@ public class LexerTest {
     @Test
     public void testLex6() throws Exception {
         System.out.println("lex - boolean false");
-        lextest("   {FALSE}  ",
+        lextest("   \"FALSE\"  ",
                 "false"
         );
     }
@@ -91,7 +87,7 @@ public class LexerTest {
     @Test
     public void testLex7() throws Exception {
         System.out.println("lex - operators");
-        lextest("{boolean} {string} ! + && || == =~ != !=~ ( ) $ , ",
+        lextest("boolean string ! + && || == =~ != !=~ ( ) $ , { } [ ]",
                 "Boolean cast",
                 "String cast",
                 "!",
@@ -105,14 +101,18 @@ public class LexerTest {
                 "(",
                 ")",
                 "$",
-                ","
+                ",",
+                "{",
+                "}",
+                "[",
+                "]"
         );
     }
 
     @Test
     public void testLex8() throws Exception {
         System.out.println("lex - operators packed");
-        lextest("{boolean}{string}!+&&||===~!=!=~()$,",
+        lextest("boolean string!+&&||===~!=!=~()$,{}[]",
                 "Boolean cast",
                 "String cast",
                 "!",
@@ -126,38 +126,49 @@ public class LexerTest {
                 "(",
                 ")",
                 "$",
-                ","
+                ",",
+                "{",
+                "}",
+                "[",
+                "]"
         );
     }
 
     @Test
     public void testLex9() throws Exception {
         System.out.println("lex - operators and literals");
-        lextest("{boolean} s {string} b ! b s + s b && b b || b s == s s =~ s s != s s !=~ s (s) $a x , x  ",
+        lextest("boolean s \"string\" b ! b , s + s , b && b , b || b , s == s , s =~ s , s != s , s !=~ s (s) $a , x , x  ",
                 "Boolean cast",
                 "s",
                 "String cast",
                 "b",
                 "!",
                 "b",
+                ",",
                 "s",
                 "+",
                 "s",
+                ",",
                 "b",
                 "&&",
                 "b",
+                ",",
                 "b",
                 "||",
                 "b",
+                ",",
                 "s",
                 "==",
                 "s",
+                ",",
                 "s",
                 "=~",
                 "s",
+                ",",
                 "s",
                 "!=",
                 "s",
+                ",",
                 "s",
                 "!=~",
                 "s",
@@ -166,6 +177,7 @@ public class LexerTest {
                 ")",
                 "$",
                 "a",
+                ",",
                 "x",
                 ",",
                 "x"
@@ -175,31 +187,38 @@ public class LexerTest {
     @Test
     public void testLex10() throws Exception {
         System.out.println("lex - operators and literals packed");
-        lextest("{boolean}s {string}b!b s+s b&&b b||b s==s s=~s s!=s s!=~s(s)$a x,x",
+        lextest("\"boolean\"s\"string\"b!b,s+S,b&&b,b||b,s==s,s=~s,s!=s,s!=~s(s)$a,x,x",
                 "Boolean cast",
                 "s",
                 "String cast",
                 "b",
                 "!",
                 "b",
+                ",",
                 "s",
                 "+",
-                "s",
+                "S",
+                ",",
                 "b",
                 "&&",
                 "b",
+                ",",
                 "b",
                 "||",
                 "b",
+                ",",
                 "s",
                 "==",
                 "s",
+                ",",
                 "s",
                 "=~",
                 "s",
+                ",",
                 "s",
                 "!=",
                 "s",
+                ",",
                 "s",
                 "!=~",
                 "s",
@@ -208,6 +227,7 @@ public class LexerTest {
                 ")",
                 "$",
                 "a",
+                ",",
                 "x",
                 ",",
                 "x"
@@ -241,7 +261,7 @@ public class LexerTest {
     @Test
     public void testLex14() throws Exception {
         System.out.println("lex - FILTER and datarecordfield");
-        lextest("FILTER ${abc}",
+        lextest("FILTER $abc",
                 "FILTER",
                 "$",
                 "abc"
@@ -251,8 +271,9 @@ public class LexerTest {
      @Test
     public void testLex15() throws Exception {
         System.out.println("lex - FILTER and property");
-        lextest("FILTER abc:def+hij",
+        lextest("FILTER , abc:def+hij",
                 "FILTER",
+                ",",
                 "abc",
                 ":",
                 "def",
@@ -262,8 +283,10 @@ public class LexerTest {
     }
     
     private void lextest(String input, String... results) throws LexerException {
-        Lexer instance = new Lexer(language);
-        List<S_Token> lexresult = instance.lex(input.lines());
+        LanguageSource langsource = new LanguageSource(input.lines());
+        Lexer lexer = new Lexer(langsource, language);
+        lexer.lex();
+        List<S_Token> lexresult = langsource.getS_Tokens();
         assertEquals(results.length, lexresult.size());
         for (int i = 0; i < results.length; i++) {
             assertEquals(results[i], lexresult.get(i).toString());
