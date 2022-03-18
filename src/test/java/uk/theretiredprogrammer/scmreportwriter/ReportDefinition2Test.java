@@ -40,7 +40,7 @@ public class ReportDefinition2Test {
         DataSourceRecord datarecord = new DataSourceRecord();
         datarecord.put("Event","dummy");
         datarecord.put("Type","dummy");
-        File f = new File("/home/pi/GithubProjects/SCM-ReportWriter/definition2.scm");
+        File f = new File("/home/pi/RPTWTR/definition2.scm");
         ReportDefinition reportdefinition = new ReportDefinition();
         reportdefinition.buildReportDefinition(f);
         //

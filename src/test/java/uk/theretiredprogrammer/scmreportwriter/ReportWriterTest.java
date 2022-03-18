@@ -29,7 +29,7 @@ public class ReportWriterTest {
     public void testAppfunctionality() throws IOException {
         System.out.println("App functionality");
         try {
-            ReportWriter reportwriter = new ReportWriter(new File("/home/pi/GithubProjects/SCM-ReportWriter/definition2.scm"));
+            ReportWriter reportwriter = new ReportWriter(new File("/home/pi/RPTWTR/definition2.scm"));
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
         } catch (Exception ex) {
