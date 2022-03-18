@@ -15,29 +15,24 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.io.File;
-//import uk.theretiredprogrammer.scmreportwriter.oldstuff.EntryReport;
+import java.io.IOException;
 
 public class App {
 
     public static void main(String args[]) {
-
-        //        try {
-//            EntryReport report = new EntryReport();
-//            report.checkAdultEntryReport();
-//            report.createAdultEntryReport();
-//            report.createU18EntryReport();
-//        } catch (Exception ex) {
-//            System.err.println(ex.getMessage());
-//        }
-        System.out.println("REPORT WRITER");
+        
+        Configuration configuration = new Configuration();
         try {
-            ReportWriter reportwriter = new ReportWriter(new File("/home/pi/GithubProjects/SCM-ReportWriter/definition2.scm"));
+            configuration.loadconfiguration(args);
+        } catch (IOException ex) {
+            System.err.println("Configuration Failure: "+ ex.getLocalizedMessage());
+        }
+        try {
+            ReportWriter reportwriter = new ReportWriter(configuration.getDefinitionFile());
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
         }
-        System.out.println("DONE");
     }
 }
