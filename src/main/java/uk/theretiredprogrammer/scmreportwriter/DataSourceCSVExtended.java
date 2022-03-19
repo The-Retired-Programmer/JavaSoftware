@@ -27,20 +27,23 @@ import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
-// provide a data model which contains an individual csv file exported from SCM
-//
 public class DataSourceCSVExtended extends DataSource {
 
-    public DataSourceCSVExtended(ExpressionMap parameters) throws IOException, InternalReportWriterException {
+    public static DataSource read(ExpressionMap parameters) throws IOException, InternalReportWriterException {
+        return new DataSourceCSVExtended().load(parameters);
+    }
+    
+    public DataSource load(ExpressionMap parameters) throws IOException, InternalReportWriterException {
         String path = DataTypes.isStringLiteral(parameters, "path");
         File f = new File(path);
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
             charsource = new CharacterSource(brdr.lines().toList());
             createDataSourceRecords(charsource);
         }
+        return this;
     }
     
-    private final CharacterSource charsource;
+    private CharacterSource charsource;
     private List<String> columnKeys;
     private enum State {
         STARTOFFIELD, INQUOTEDFIELD, INUNQUOTEDFIELD, AFTERQUOTEDFIELD

@@ -40,19 +40,19 @@ public class DataSourceCSVExtendedTest {
         System.out.println("load");
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("/home/pi/Downloads/club-dinghy-racing-2022-bookings20220222 (1).csv"));
-        DataSourceCSVExtended instance = null;
+        DataSource datasource = null;
         try {
             try {
-                instance = new DataSourceCSVExtended(parameters);
+                datasource = DataSourceCSVExtended.read(parameters);
             } catch (IOException ex) {
                 fail("loading CSV failure: " + ex.getMessage());
             }
         } catch (InternalReportWriterException ex) {
             fail("Datatype failure: " + ex.getMessage());
         }
-        assertEquals(2, instance.size());
-        assertEquals("Richard Linsdale", instance.get(1).get("Made for"));
-        assertEquals("Janie Linsdale", instance.get(0).get("Made for"));
+        assertEquals(2, datasource.size());
+        assertEquals("Richard Linsdale", datasource.get(1).get("Made for"));
+        assertEquals("Janie Linsdale", datasource.get(0).get("Made for"));
     }
     
      /**
@@ -64,19 +64,19 @@ public class DataSourceCSVExtendedTest {
         System.out.println("load2");
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("/home/pi/Downloads/enquiries20220317.csv"));
-        DataSourceCSVExtended instance = null;
+        DataSource datasource = null;
         try {
             try {
-                instance = new DataSourceCSVExtended(parameters);
+                datasource = DataSourceCSVExtended.read(parameters);
             } catch (IOException ex) {
                 fail("loading CSV failure: " + ex.getMessage());
             }
         } catch (InternalReportWriterException ex) {
             fail("Datatype failure: " + ex.getMessage());
         }
-        //assertEquals(2, instance.size());
-        //assertEquals("Richard Linsdale", instance.get(1).get("Made for"));
-        //assertEquals("Janie Linsdale", instance.get(0).get("Made for"));
+        assertEquals(40, datasource.size());
+        assertEquals("Lucas Hartley", datasource.get(3).get("Subject"));
+        assertEquals("richard@rlinsdale.uk", datasource.get(5).get("Email"));
     }
 
 }
