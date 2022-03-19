@@ -84,6 +84,9 @@ public class LanguageSource {
     
     public ReportWriterException newReportWriterException(InternalReportWriterException ex) {
         return new ReportWriterException(buildLocationandMessage(ex.getLocalizedMessage(), ex.getToken().getLocation(), ex.getToken().getLength()));
+    }
+    public ReportWriterException newReportWriterException(InternalParserException ex) {
+        return new ReportWriterException(buildLocationandMessage(ex.getLocalizedMessage(), ex.getToken().getLocation(), ex.getToken().getLength()));
     } 
     
      public ParserException newParserException(InternalParserException ex) {

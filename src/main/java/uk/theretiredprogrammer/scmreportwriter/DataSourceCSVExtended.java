@@ -19,10 +19,14 @@ package uk.theretiredprogrammer.scmreportwriter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
@@ -32,7 +36,15 @@ public class DataSourceCSVExtended extends DataSource {
     public static DataSource read(ExpressionMap parameters) throws IOException, InternalReportWriterException {
         return new DataSourceCSVExtended().load(parameters);
     }
-    
+
+    public static void write(String path, List<List<String>> lines) throws IOException {
+        new DataSourceCSVExtended().store(path, lines);
+    }
+
+    public static void sysout(List<List<String>> lines) {
+        new DataSourceCSVExtended().sysoutlist(lines);
+    }
+
     public DataSource load(ExpressionMap parameters) throws IOException, InternalReportWriterException {
         String path = DataTypes.isStringLiteral(parameters, "path");
         File f = new File(path);
@@ -42,9 +54,38 @@ public class DataSourceCSVExtended extends DataSource {
         }
         return this;
     }
-    
+
+    public void sysoutlist(List<List<String>> lines) {
+        lines.stream().forEach((List<String> record) -> {
+            System.out.println(
+                    record.stream()
+                            .map(field -> mapfield(field))
+                            .collect(Collectors.joining("\",\"", "\"", "\""))
+            );
+        });
+    }
+
+    public void store(String path, List<List<String>> lines) throws IOException {
+        File f = new File(path);
+        try ( Writer wtr = new FileWriter(f);  PrintWriter pwtr = new PrintWriter(wtr)) {
+            lines.stream().forEach((List<String> record) -> {
+                pwtr.println(
+                        record.stream()
+                                .map(field -> mapfield(field))
+                                .collect(Collectors.joining("\",\"", "\"", "\""))
+                );
+            });
+        }
+    }
+
+    private String mapfield(String field) {
+        return field; // needs improvement to handle " (map to "")
+    }
+
+    // the READ section
     private CharacterSource charsource;
     private List<String> columnKeys;
+
     private enum State {
         STARTOFFIELD, INQUOTEDFIELD, INUNQUOTEDFIELD, AFTERQUOTEDFIELD
     }
@@ -61,12 +102,12 @@ public class DataSourceCSVExtended extends DataSource {
             do {
                 processNextChar(charsource);
             } while (!charsource.isEOF());
-            
+
         } catch (IOException ex) {
             throw new IOException(ex.getMessage() + charsource.getCurrentLine());
         }
     }
-    
+
     private void processlineoftokens() throws IOException {
         if (inData) {
             if (columnKeys.size() != tokenlist.size()) {
@@ -161,13 +202,13 @@ public class DataSourceCSVExtended extends DataSource {
     }
 
     private class CharacterSource {
-        
+
         private final List<String> lines;
         private int linesindex;
 
         private char[] currentline;
         private int characteroffset;
-        
+
         private boolean atEOF = false;
 
         public CharacterSource(List<String> lines) {
@@ -192,18 +233,18 @@ public class DataSourceCSVExtended extends DataSource {
             getnextline();
             return '\n';
         }
-        
+
         public char peekChar() {
             if (characteroffset < currentline.length) {
                 return currentline[characteroffset];
             }
             return '\n';
         }
-        
+
         public String getCurrentLine() {
-            return lines.get(linesindex-1);
+            return lines.get(linesindex - 1);
         }
-        
+
         public boolean isEOF() {
             return atEOF;
         }

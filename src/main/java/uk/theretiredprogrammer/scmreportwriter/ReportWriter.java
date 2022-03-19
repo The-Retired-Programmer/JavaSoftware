@@ -17,13 +17,16 @@ package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
 import uk.theretiredprogrammer.scmreportwriter.language.Operand;
@@ -55,13 +58,13 @@ public class ReportWriter {
         }
     }
 
-    public void createAllReports() throws ReportWriterException {
+    public void createAllReports() throws ReportWriterException, IOException {
         for (String reportname : definition.getAllReportNames()) {
             createReport(reportname);
         }
     }
 
-    public void createReport(String reportname) throws ReportWriterException {
+    public void createReport(String reportname) throws ReportWriterException, IOException {
         try {
             ExpressionMap map = definition.getReportdefinitions(reportname);
             DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
@@ -69,23 +72,28 @@ public class ReportWriter {
             BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
             ExpressionList fields = DataTypes.isExpressionList(map, "fields");
             // create report output
+            List<List<String>> outputlines = new ArrayList<>();
             DataSourceRecord firstrecord = primaryds.get(0);
-            outputCSVline(headers, firstrecord);
+            outputlines.add(evaluate(headers, firstrecord));
             for (DataSourceRecord datarecord : primaryds) {
                 if (filter == null || filter.evaluate(datarecord)) {
-                    outputCSVline(fields, datarecord);
+                   outputlines.add(evaluate(fields, datarecord));
                 }
             }
+            //DataSourceCSVExtended.sysout(outputlines);
+            DataSourceCSVExtended.write("/home/pi/RPTWTR/reports/"+reportname+".csv", outputlines);
         } catch (InternalReportWriterException ex) {
+            throw definition.getLanguageSource().newReportWriterException(ex);
+        } catch (InternalParserException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         }
     }
-
-    private void outputCSVline(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalReportWriterException {
-        String[] fields = new String[fieldexpressions.size()];
-        for (int i = 0; i < fieldexpressions.size(); i++) {
-            fields[i] = DataTypes.isStringExpression(fieldexpressions, i).evaluate(datarecord);
+    
+    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException {
+        List<String> fields = new ArrayList<>();
+        for (Operand operand : fieldexpressions){
+            fields.add(DataTypes.isStringExpression(operand).evaluate(datarecord));
         }
-        System.out.println("\"" + String.join("\",\"", fields) + "\"");
+        return fields;
     }
 }
