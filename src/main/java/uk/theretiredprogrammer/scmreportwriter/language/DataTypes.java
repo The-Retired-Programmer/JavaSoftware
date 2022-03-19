@@ -27,14 +27,18 @@ public class DataTypes  {
     }
     
     public static ExpressionMap isExpressionMap(ExpressionMap parent, String key) throws InternalReportWriterException {
-        if (parent.get(key) instanceof ExpressionMap map){
+        Operand operand = parent.get(key);
+        if (operand == null) return null;   
+        if (operand instanceof ExpressionMap map){
             return map;
         }
         throw new InternalReportWriterException(parent.get(key), "Requires an ExpressionMap");
     }
     
     public static ExpressionList isExpressionList(ExpressionMap parent, String key) throws InternalReportWriterException {
-        if (parent.get(key) instanceof ExpressionList list){
+        Operand operand = parent.get(key);
+        if (operand == null) return null; 
+        if (operand instanceof ExpressionList list){
             return list;
         }
         throw new InternalReportWriterException(parent.get(key), "Requires an ExpressionList");
@@ -48,7 +52,9 @@ public class DataTypes  {
     }
     
     public static BooleanExpression isBooleanExpression(ExpressionMap parent, String key) throws InternalReportWriterException {
-        if (parent.get(key) instanceof BooleanExpression bexp) {
+        Operand operand = parent.get(key);
+        if (operand == null) return null; 
+        if (operand instanceof BooleanExpression bexp) {
             return bexp;
         }
         throw new InternalReportWriterException(parent.get(key), "requires a boolean value");
@@ -62,21 +68,24 @@ public class DataTypes  {
     }
     
     public static StringExpression isStringExpression(ExpressionList parent, int index) throws InternalReportWriterException {
-        if (parent.get(index) instanceof StringExpression sexp) {
+        Operand operand = parent.get(index);
+        if (operand == null) return null; 
+        if (operand instanceof StringExpression sexp) {
             return sexp;
         }
         throw new InternalReportWriterException(parent.get(index), "Requires a String value");
     }
     
     public static StringExpression isStringExpression(ExpressionMap parent, String key) throws InternalReportWriterException {
-        if (parent.get(key) instanceof StringExpression sexp) {
+        Operand operand = parent.get(key);
+        if (operand == null) return null; 
+        if (operand instanceof StringExpression sexp) {
             return sexp;
         }
         throw new InternalReportWriterException(parent.get(key), "Requires a String value");
     }
 
     public static String isStringLiteral(Operand operand) throws InternalParserException {
-        
         if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
@@ -84,8 +93,9 @@ public class DataTypes  {
     }
     
     public static String isStringLiteral(ExpressionMap parent, String key) throws InternalReportWriterException {
-        
-        if (parent.get(key) instanceof StringLiteral slit) {
+        Operand operand = parent.get(key);
+        if (operand == null) return null; 
+        if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
         throw new InternalReportWriterException(parent.get(key), "requires a String literal value");

@@ -48,7 +48,7 @@ public class ReportWriter {
             ExpressionMap datadefs = definition.getDatadefinitions();
             for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
                 ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
-                datasources.put(nameandparameters.getKey(), new DataSourceCSV(parameters));
+                datasources.put(nameandparameters.getKey(), new DataSourceCSVExtended(parameters));
             }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
@@ -72,7 +72,7 @@ public class ReportWriter {
             DataSourceRecord firstrecord = primaryds.get(0);
             outputCSVline(headers, firstrecord);
             for (DataSourceRecord datarecord : primaryds) {
-                if (filter.evaluate(datarecord)) {
+                if (filter == null || filter.evaluate(datarecord)) {
                     outputCSVline(fields, datarecord);
                 }
             }
