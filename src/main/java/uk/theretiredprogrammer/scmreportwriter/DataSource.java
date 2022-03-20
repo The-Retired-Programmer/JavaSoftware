@@ -15,9 +15,17 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import java.io.File;
 import java.util.ArrayList;
+import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
 public abstract class DataSource extends ArrayList<DataSourceRecord> {
     
-   
+    protected File getInputFile(Configuration configuration, ExpressionMap parameters) throws InternalReportWriterException {
+       File f = new File(DataTypes.isStringLiteral(parameters, "path"));
+       if (f.isAbsolute()) return f;
+       return new File(configuration.getDownloadDir(), f.getPath());
+    }
 }

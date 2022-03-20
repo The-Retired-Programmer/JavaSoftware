@@ -15,10 +15,11 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.io.File;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
+import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportWriterTest {
 
@@ -28,11 +29,17 @@ public class ReportWriterTest {
     @Test
     public void testAppfunctionality() throws IOException {
         System.out.println("App functionality");
+        Configuration configuration = new Configuration();
         try {
-            ReportWriter reportwriter = new ReportWriter(new File("/home/pi/RPTWTR/definition2.scm"));
+            configuration.loadconfiguration(new String[] {"definition2.scm"});
+        } catch (IOException ex) {
+            fail("Configuration Failure: " + ex.getLocalizedMessage());
+        }
+        try {
+            ReportWriter reportwriter = new ReportWriter(configuration);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (Exception ex) {
+        } catch (IOException | ReportWriterException | LexerException | ParserException ex) {
             ex.printStackTrace();
             fail("exception caught");
         }

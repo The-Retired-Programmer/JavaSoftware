@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class Configuration {
-    
+
     private Properties systemproperties;
     private Properties envproperties;
     private Properties userproperties;
     private Properties argproperties;
-    
+
     private File downloaddir;
     private File workingdir;
     private File outputdir;
@@ -44,19 +44,19 @@ public class Configuration {
         outputdir = findOutputDir();
         definitionfile = findDefinitionFile();
     }
-    
-    public File findDir(String propertyname, String defaultvalue) throws IOException{
+
+    public File findDir(String propertyname, String defaultvalue) throws IOException {
         String dir = mergeProperty(propertyname);
         if (dir == null) {
             dir = defaultvalue;
         }
         File f = new File(dir);
         if (!f.isAbsolute()) {
-            f = new File(systemproperties.getProperty("user.home"),dir);
+            f = new File(systemproperties.getProperty("user.home"), dir);
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new IOException("Failed to create a new file - "+f.getCanonicalPath());
+                throw new IOException("Failed to create a new file - " + f.getCanonicalPath());
             }
         }
         if (!f.isDirectory()) {
@@ -64,7 +64,7 @@ public class Configuration {
         }
         return f;
     }
-    
+
     public File findOutputDir() throws IOException {
         String dir = mergeProperty("outputdir");
         if (dir == null) {
@@ -72,11 +72,11 @@ public class Configuration {
         }
         File f = new File(dir);
         if (!f.isAbsolute()) {
-            f = new File(getWorkingDir(),dir);
+            f = new File(getWorkingDir(), dir);
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new IOException("Failed to create a new file - "+f.getCanonicalPath());
+                throw new IOException("Failed to create a new file - " + f.getCanonicalPath());
             }
         }
         if (!f.isDirectory()) {
@@ -84,13 +84,13 @@ public class Configuration {
         }
         return f;
     }
-    
+
     public File findDefinitionFile() throws IOException {
         String file = argproperties.getProperty("definitionfile");
-        if(file == null){
+        if (file == null) {
             throw new IOException("definitionfile parameter missing");
         }
-        File f = new File(getWorkingDir(),file);
+        File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
             throw new IOException("Definition file does not evauate to a file system file");
         }
@@ -99,29 +99,29 @@ public class Configuration {
         }
         return f;
     }
-    
+
     private String mergeProperty(String key) {
         return argproperties.getProperty(key,
                 userproperties.getProperty(key,
-                envproperties.getProperty(key)));
+                        envproperties.getProperty(key)));
     }
-    
+
     public File getDownloadDir() {
         return downloaddir;
     }
-    
+
     public File getWorkingDir() {
         return workingdir;
     }
-    
+
     public File getOutputDir() {
         return outputdir;
     }
-    
+
     public File getDefinitionFile() {
         return definitionfile;
     }
-    
+
     private void dumpargs() {
         System.out.println("SYSTEM PROPERTIES");
         systemproperties.list(System.out);
@@ -162,7 +162,7 @@ public class Configuration {
         ArgConfiguration argconfig = new ArgConfiguration();
         argproperties = argconfig.parseArgs(args);
     }
-    
+
     private void saveUserConfig() throws IOException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
@@ -172,7 +172,7 @@ public class Configuration {
         if (file_config.exists()) {
             file_config.delete();
         }
-        try (FileWriter out = new FileWriter(file_config)) {
+        try ( FileWriter out = new FileWriter(file_config)) {
             userproperties.store(out, "-- ReportWriter User Configuration --");
         }
     }

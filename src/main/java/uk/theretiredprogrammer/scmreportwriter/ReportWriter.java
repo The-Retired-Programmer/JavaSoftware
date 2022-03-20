@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,11 +35,13 @@ public class ReportWriter {
 
     private final ReportDefinition definition;
     private final Map<String, DataSource> datasources = new HashMap<>();
+    private final Configuration configuration;
 
-    public ReportWriter(File file) throws IOException, LexerException, ParserException, ReportWriterException {
+    public ReportWriter(Configuration configuration) throws IOException, LexerException, ParserException, ReportWriterException {
+        this.configuration = configuration;
         definition = new ReportDefinition();
         try {
-            definition.buildReportDefinition(file);
+            definition.buildReportDefinition(configuration.getDefinitionFile());
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         }
@@ -51,7 +52,7 @@ public class ReportWriter {
             ExpressionMap datadefs = definition.getDatadefinitions();
             for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
                 ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
-                datasources.put(nameandparameters.getKey(), DataSourceCSVExtended.read(parameters));
+                datasources.put(nameandparameters.getKey(), DataSourceCSV.read(configuration, parameters));
             }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
@@ -81,7 +82,7 @@ public class ReportWriter {
                 }
             }
             //DataSourceCSVExtended.sysout(outputlines);
-            DataSourceCSVExtended.write("/home/pi/RPTWTR/reports/"+reportname+".csv", outputlines);
+            DataSourceCSV.write("/home/pi/RPTWTR/reports/"+reportname+".csv", outputlines);
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         } catch (InternalParserException ex) {

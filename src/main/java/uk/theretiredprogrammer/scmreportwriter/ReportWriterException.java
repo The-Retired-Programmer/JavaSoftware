@@ -15,9 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.io.IOException;
-
-public class ReportWriterException extends IOException {
+public class ReportWriterException extends Exception {
 
     public ReportWriterException(String message) {
         super(message);

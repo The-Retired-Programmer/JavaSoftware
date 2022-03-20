@@ -52,6 +52,7 @@ public class ArgConfiguration {
     
     
     public Properties parseArgs(String[] args) {
+        definitionfile = args[0];
         Properties p = new Properties();
         if (downloaddir != null) p.setProperty("downloaddir", downloaddir);
         if (workingdir != null) p.setProperty("workingdir", workingdir);

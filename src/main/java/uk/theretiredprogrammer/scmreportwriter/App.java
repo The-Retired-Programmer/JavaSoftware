@@ -16,23 +16,25 @@
 package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.IOException;
+import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
+import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class App {
 
     public static void main(String args[]) {
-        
+
         Configuration configuration = new Configuration();
         try {
             configuration.loadconfiguration(args);
         } catch (IOException ex) {
-            System.err.println("Configuration Failure: "+ ex.getLocalizedMessage());
+            System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
         }
         try {
-            ReportWriter reportwriter = new ReportWriter(configuration.getDefinitionFile());
+            ReportWriter reportwriter = new ReportWriter(configuration);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (Exception ex) {
-            ex.printStackTrace(System.out);
+        } catch (ReportWriterException | IOException | LexerException | ParserException ex) {
+            ex.printStackTrace(System.err);
         }
     }
 }
