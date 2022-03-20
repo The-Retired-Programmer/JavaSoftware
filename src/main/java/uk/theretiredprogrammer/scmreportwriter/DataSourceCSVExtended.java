@@ -79,7 +79,7 @@ public class DataSourceCSVExtended extends DataSource {
     }
 
     private String mapfield(String field) {
-        return field; // needs improvement to handle " (map to "")
+        return field.replace("\"","\"\"");
     }
 
     // the READ section
