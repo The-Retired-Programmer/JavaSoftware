@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,11 +34,12 @@ public class Configuration {
     private File outputdir;
     private File definitionfile;
 
-    public void loadconfiguration(String args[]) throws IOException {
+    public void loadconfiguration(String args[]) throws IOException, ConfigurationException {
         getSystemConfig();
         getUserConfig();
         parseArgs(args);
         getEnvConfig();
+        dumpargs();
         //
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
@@ -45,7 +47,7 @@ public class Configuration {
         definitionfile = findDefinitionFile();
     }
 
-    public File findDir(String propertyname, String defaultvalue) throws IOException {
+    public File findDir(String propertyname, String defaultvalue) throws ConfigurationException {
         String dir = mergeProperty(propertyname);
         if (dir == null) {
             dir = defaultvalue;
@@ -56,16 +58,16 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new IOException("Failed to create a new file - " + f.getCanonicalPath());
+                throw new ConfigurationException("Failed to create a new file - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new IOException(propertyname + " does not evauate to a file system directory");
+            throw new ConfigurationException(propertyname + " does not evauate to a file system directory");
         }
         return f;
     }
 
-    public File findOutputDir() throws IOException {
+    public File findOutputDir() throws ConfigurationException {
         String dir = mergeProperty("outputdir");
         if (dir == null) {
             return getWorkingDir();
@@ -76,26 +78,26 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new IOException("Failed to create a new file - " + f.getCanonicalPath());
+                throw new ConfigurationException("Failed to create a new directory - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new IOException("Output directory does not evauate to a file system directory");
+            throw new ConfigurationException("Output directory does not evauate to a file system directory");
         }
         return f;
     }
 
-    public File findDefinitionFile() throws IOException {
+    public File findDefinitionFile() throws ConfigurationException {
         String file = argproperties.getProperty("definitionfile");
         if (file == null) {
-            throw new IOException("definitionfile parameter missing");
+            throw new ConfigurationException("definitionfile parameter missing");
         }
         File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
-            throw new IOException("Definition file does not evauate to a file system file");
+            throw new ConfigurationException("Definition file does not evauate to a file system file");
         }
         if (!f.canRead()) {
-            throw new IOException("Definition file is not readable");
+            throw new ConfigurationException("Definition file is not readable");
         }
         return f;
     }
@@ -143,10 +145,10 @@ public class Configuration {
         //RPTWTR_dd,wd,od
     }
 
-    private void getUserConfig() throws IOException {
+    private void getUserConfig() throws ConfigurationException, FileNotFoundException, IOException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new IOException("Cannot identify user home directory");
+            throw new ConfigurationException("Cannot identify user home directory");
         }
         userproperties = new Properties();
         File file_config = new File(userhome + "/.scmreportwriter.config");
@@ -158,17 +160,17 @@ public class Configuration {
         }
     }
 
-    private void parseArgs(String args[]) throws IOException {
+    private void parseArgs(String args[]) throws ConfigurationException {
         ArgConfiguration argconfig = new ArgConfiguration();
         argproperties = argconfig.parseArgs(args);
     }
 
-    private void saveUserConfig() throws IOException {
+    private void saveUserConfig() throws ConfigurationException, IOException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new IOException("Cannot identify user home directory");
+            throw new ConfigurationException("Cannot identify user home directory");
         }
-        File file_config = new File(userhome + "/.scmreportwriter.config");
+        File file_config = new File(userhome, ".scmreportwriter.config");
         if (file_config.exists()) {
             file_config.delete();
         }

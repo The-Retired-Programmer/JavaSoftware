@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.scmreportwriter;
 import java.util.Properties;
 
 public class ArgConfiguration {
-    
+
     // command arguments:
     // --downloaddir -dd <path> ; define download directory <relative to user home or absolute> defaults to Downloads
     // --workingdir -wd <path> ; define working directory  <relative to user home or absolute> defaults to current working directory
@@ -34,30 +34,90 @@ public class ArgConfiguration {
     //  followed by filepaths
     //  reportdefinitionfile ; defines the rules for report creation <relative to working directory or absolute> if no file defined, then no report will be generated/compiled
     //
-    
     private String downloaddir = null;
-    private String workingdir = "RPTWTR";
-    private String outputdir = "reports";
-    private String definitionfile = "definition2.scm";
-    
-    private enum Command {
-        DD, WD, OD, S, C, SU
-    };
-    private final String[] dirLong = new String[] {"downloaddir", "workingdir", "outputdir"};
-    private final String[] dirShort = new String[] {"dd", "wd", "od"};
-    private final Command[] dirCommand = new Command[] {Command.DD,Command.WD,Command.OD};
-    private final String[] ctlLong = new String[] {"save", "clear", "showuserconfig"};
-    private final String[] ctlShort = new String[] {"s", "c", "su"};
-    private final Command[] ctlCommand = new Command[] {Command.S,Command.C,Command.SU};
-    
-    
-    public Properties parseArgs(String[] args) {
-        definitionfile = args[0];
+    private String workingdir = null;
+    private String outputdir = null;
+    private String definitionfile = null;
+
+    public Properties parseArgs(String[] args) throws ConfigurationException {
+        extractArgCommands(args);
         Properties p = new Properties();
-        if (downloaddir != null) p.setProperty("downloaddir", downloaddir);
-        if (workingdir != null) p.setProperty("workingdir", workingdir);
-        if (outputdir != null) p.setProperty("outputdir", outputdir);
-        if (definitionfile != null) p.setProperty("definitionfile", definitionfile); 
+        if (downloaddir != null) {
+            p.setProperty("downloaddir", downloaddir);
+        }
+        if (workingdir != null) {
+            p.setProperty("workingdir", workingdir);
+        }
+        if (outputdir != null) {
+            p.setProperty("outputdir", outputdir);
+        }
+        if (definitionfile != null) {
+            p.setProperty("definitionfile", definitionfile);
+        }
         return p;
+    }
+
+    private void extractArgCommands(String[] args) throws ConfigurationException {
+        ArgReader argrdr = new ArgReader(args);
+        while (argrdr.more()) {
+            String p1 = argrdr.next();
+            switch (p1) {
+                case "--downloaddir" ->
+                    downloaddir = argrdr.next();
+                case "--workingdir" ->
+                    workingdir = argrdr.next();
+                case "--outputdir" ->
+                    outputdir = argrdr.next();
+                case "--save" -> {
+                }
+                case "--clear" -> {
+                }
+                case "--showuserconfig" -> {
+                }
+                case "-dd" ->
+                    downloaddir = argrdr.next();
+                case "-wd" ->
+                    workingdir = argrdr.next();
+                case "-od" ->
+                    outputdir = argrdr.next();
+                case "-s" -> {
+                }
+                case "-c" -> {
+                }
+                case "-uc" -> {
+                }
+                default -> {
+                    if (argrdr.more()) {
+                        throw new ConfigurationException("Command Line: Definition file not the last arguement");
+                    }
+                    definitionfile = p1;
+                }
+            }
+        }
+        if (definitionfile == null) {
+            throw new ConfigurationException("Command Line: no Definition file");
+        }
+    }
+
+    private class ArgReader {
+
+        private final String[] args;
+        private int index;
+
+        public ArgReader(String[] args) {
+            this.args = args;
+            index = 0;
+        }
+
+        public String next() throws ConfigurationException {
+            if (index >= args.length) {
+                throw new ConfigurationException("Command Line: bad structure - missing arguements");
+            }
+            return args[index++];
+        }
+
+        public boolean more() {
+            return index < args.length;
+        }
     }
 }

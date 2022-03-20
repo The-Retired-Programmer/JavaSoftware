@@ -12,7 +12,7 @@
             <properties>
                 <exec.vmArgs></exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>definition2.scm</exec.appArgs>
+                <exec.appArgs>-wd RPTWTR -od reports2 definition2.scm</exec.appArgs>
                 <exec.mainClass>uk.theretiredprogrammer.scmreportwriter.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <exec.workingdir>/home/pi</exec.workingdir>
@@ -30,7 +30,7 @@
             <properties>
                 <exec.vmArgs>-agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.appArgs>definition2.scm</exec.appArgs>
+                <exec.appArgs>-wd RPTWTR -od reports2 definition2.scm</exec.appArgs>
                 <exec.mainClass>uk.theretiredprogrammer.scmreportwriter.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
@@ -51,7 +51,7 @@
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.mainClass>uk.theretiredprogrammer.scmreportwriter.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
-                <exec.appArgs>definition2.scm</exec.appArgs>
+                <exec.appArgs>-wd RPTWTR -od reports2 definition2.scm</exec.appArgs>
                 <exec.workingdir>/home/pi</exec.workingdir>
             </properties>
         </action>
