@@ -24,11 +24,9 @@ public class ArgConfiguration {
     // --workingdir -wd <path> ; define working directory  <relative to user home or absolute> defaults to current working directory
     // --outputdir -od <path> ; define output directory for reports <relative to working directory or absolute> defaults to working directory
     //
-    //x --noreport  -nr ; will read reportdefinition, but not run the reportwriter phase
     // --save -s; save the preceding directory parameters in user config file;
     // --clear -c; clear the user config file
-    // --showuserconfig -su ; list the user config;
-    //x --useenviroment -ue ; allow parameters to be set from user environment - using format RPTWTR_<shortform of command>
+    // --listuserconfig -l ; list the user config;
     //  
     //
     //  followed by filepaths
@@ -38,6 +36,9 @@ public class ArgConfiguration {
     private String workingdir = null;
     private String outputdir = null;
     private String definitionfile = null;
+    private boolean save = false;
+    private boolean clear = false;
+    private boolean list = false;
 
     public Properties parseArgs(String[] args) throws ConfigurationException {
         extractArgCommands(args);
@@ -54,6 +55,15 @@ public class ArgConfiguration {
         if (definitionfile != null) {
             p.setProperty("definitionfile", definitionfile);
         }
+        if (save){
+            p.setProperty("save", "save");
+        }
+        if (clear){
+            p.setProperty("clear", "clear");
+        }
+        if (list){
+            p.setProperty("list", "list");
+        }
         return p;
     }
 
@@ -68,24 +78,18 @@ public class ArgConfiguration {
                     workingdir = argrdr.next();
                 case "--outputdir" ->
                     outputdir = argrdr.next();
-                case "--save" -> {
-                }
-                case "--clear" -> {
-                }
-                case "--showuserconfig" -> {
-                }
+                case "--save" -> save = true;
+                case "--clear" -> clear = true;
+                case "--listuserconfig" -> list = true;
                 case "-dd" ->
                     downloaddir = argrdr.next();
                 case "-wd" ->
                     workingdir = argrdr.next();
                 case "-od" ->
                     outputdir = argrdr.next();
-                case "-s" -> {
-                }
-                case "-c" -> {
-                }
-                case "-uc" -> {
-                }
+                case "-s" -> save = true;
+                case "-c" -> clear = true;
+                case "-l" -> list = true;
                 default -> {
                     if (argrdr.more()) {
                         throw new ConfigurationException("Command Line: Definition file not the last arguement");

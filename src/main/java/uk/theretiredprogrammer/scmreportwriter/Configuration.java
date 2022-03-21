@@ -35,15 +35,40 @@ public class Configuration {
     private File definitionfile;
 
     public void loadconfiguration(String args[]) throws IOException, ConfigurationException {
-        getSystemConfig();
-        getUserConfig();
         parseArgs(args);
+        getSystemConfig();
+        if (argproperties.getProperty("clear", "").equals("clear")) {
+            deleteUserConfigIfExists();
+        }
+        getUserConfig();
         getEnvConfig();
         //dumpargs();
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
         outputdir = findOutputDir();
         definitionfile = findDefinitionFile();
+        if (argproperties.getProperty("list", "").equals("list")) {
+            System.out.println("\n Current Directory Parameters and Resulting Paths\n");
+            System.out.println("downloadir is " + mergeProperty("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
+            System.out.println("workingdir is " + mergeProperty("workingdir") + " expands to " + workingdir.getCanonicalPath());
+            System.out.println("outputdir is " + mergeProperty("outputdir") + " expands to " + outputdir.getCanonicalPath());
+            System.out.println();
+        }
+        if (argproperties.getProperty("save", "").equals("save")) {
+            String dd = argproperties.getProperty("downloaddir");
+            if (dd != null){
+                userproperties.setProperty("downloaddir", dd);
+            }
+            String wd = argproperties.getProperty("workingdir");
+            if (wd != null){
+                userproperties.setProperty("workingdir", wd);
+            }
+            String od = argproperties.getProperty("outputdir");
+            if (od != null){
+                userproperties.setProperty("outputdir", od);
+            }
+            saveUserConfig();
+        }
     }
 
     public File findDir(String propertyname, String defaultvalue) throws ConfigurationException {
@@ -133,7 +158,6 @@ public class Configuration {
 //        System.out.println("COMMAND LINE PROPERTIES");
 //        argproperties.list(System.out);
 //    }
-
     private void getSystemConfig() {
         systemproperties = System.getProperties();
     }
@@ -144,13 +168,15 @@ public class Configuration {
         //RPTWTR_dd,wd,od
     }
 
+    private static final String USERCONFIGFILE = ".reportwriter";
+
     private void getUserConfig() throws ConfigurationException, FileNotFoundException, IOException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
             throw new ConfigurationException("Cannot identify user home directory");
         }
         userproperties = new Properties();
-        File file_config = new File(userhome + "/.scmreportwriter.config");
+        File file_config = new File(userhome, USERCONFIGFILE);
         if (!file_config.canRead()) {
             return;
         }
@@ -165,16 +191,21 @@ public class Configuration {
     }
 
     private void saveUserConfig() throws ConfigurationException, IOException {
+        File file_config = deleteUserConfigIfExists();
+        try ( FileWriter out = new FileWriter(file_config)) {
+            userproperties.store(out, "-- ReportWriter User Configuration --");
+        }
+    }
+
+    private File deleteUserConfigIfExists() throws ConfigurationException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
             throw new ConfigurationException("Cannot identify user home directory");
         }
-        File file_config = new File(userhome, ".scmreportwriter.config");
+        File file_config = new File(userhome, USERCONFIGFILE);
         if (file_config.exists()) {
             file_config.delete();
         }
-        try ( FileWriter out = new FileWriter(file_config)) {
-            userproperties.store(out, "-- ReportWriter User Configuration --");
-        }
+        return file_config;
     }
 }
