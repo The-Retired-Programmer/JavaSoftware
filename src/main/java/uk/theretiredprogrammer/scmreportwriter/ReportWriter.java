@@ -72,7 +72,7 @@ public class ReportWriter {
             ExpressionList headers = DataTypes.isExpressionList(map, "headers");
             BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
             ExpressionList fields = DataTypes.isExpressionList(map, "fields");
-            String output = DataTypes.isStringLiteral(map, "output");
+            String to = DataTypes.isStringLiteral(map, "to");
             String title  = DataTypes.isStringLiteral(map, "title");
             // create report output
             List<List<String>> outputlines = new ArrayList<>();
@@ -83,10 +83,10 @@ public class ReportWriter {
                     outputlines.add(evaluate(fields, datarecord));
                 }
             }
-            if (output == null){
+            if (to == null){
                 DataSourceCSV.sysout(title, outputlines);
             } else {
-                DataSourceCSV.write(configuration, output, outputlines);
+                DataSourceCSV.write(configuration, to, outputlines);
             }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
