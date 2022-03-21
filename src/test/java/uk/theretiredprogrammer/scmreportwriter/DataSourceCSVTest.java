@@ -32,11 +32,11 @@ public class DataSourceCSVTest {
      */
     @Test
     @SuppressWarnings("null")
-    public void testLoad() {
+    public void testLoad() throws ConfigurationException {
         System.out.println("load");
         Configuration configuration = new Configuration();
         try {
-            configuration.loadconfiguration(new String[] {"definition2.scm"});
+            configuration.loadconfiguration(new String[] {"-wd","RPTWTR","-od","reports2","definition2.scm"});
         } catch (IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
@@ -62,11 +62,11 @@ public class DataSourceCSVTest {
      */
     @Test
     @SuppressWarnings("null")
-    public void testLoad2() {
+    public void testLoad2() throws ConfigurationException {
         System.out.println("load2");
          Configuration configuration = new Configuration();
         try {
-            configuration.loadconfiguration(new String[] {"definition2.scm"});
+            configuration.loadconfiguration(new String[] {"-wd","RPTWTR","-od","reports2","definition2.scm"});
         } catch (IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }

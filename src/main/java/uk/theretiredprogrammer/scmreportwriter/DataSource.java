@@ -22,10 +22,20 @@ import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
 public abstract class DataSource extends ArrayList<DataSourceRecord> {
-    
+
     protected File getInputFile(Configuration configuration, ExpressionMap parameters) throws InternalReportWriterException {
-       File f = new File(DataTypes.isStringLiteral(parameters, "path"));
-       if (f.isAbsolute()) return f;
-       return new File(configuration.getDownloadDir(), f.getPath());
+        File f = new File(DataTypes.isStringLiteral(parameters, "path"));
+        if (f.isAbsolute()) {
+            return f;
+        }
+        return new File(configuration.getDownloadDir(), f.getPath());
+    }
+
+    protected File getOutputFile(Configuration configuration, String path) throws ConfigurationException {
+        File f = new File(path);
+        if (f.isAbsolute()) {
+            return f;
+        }
+        return new File(configuration.findOutputDir(), path);
     }
 }

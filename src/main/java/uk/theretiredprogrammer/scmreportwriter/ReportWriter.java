@@ -59,40 +59,45 @@ public class ReportWriter {
         }
     }
 
-    public void createAllReports() throws ReportWriterException, IOException {
+    public void createAllReports() throws ReportWriterException, IOException, ConfigurationException {
         for (String reportname : definition.getAllReportNames()) {
             createReport(reportname);
         }
     }
 
-    public void createReport(String reportname) throws ReportWriterException, IOException {
+    public void createReport(String reportname) throws ReportWriterException, IOException, ConfigurationException {
         try {
             ExpressionMap map = definition.getReportdefinitions(reportname);
             DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
             ExpressionList headers = DataTypes.isExpressionList(map, "headers");
             BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
             ExpressionList fields = DataTypes.isExpressionList(map, "fields");
+            String output = DataTypes.isStringLiteral(map, "output");
+            String title  = DataTypes.isStringLiteral(map, "title");
             // create report output
             List<List<String>> outputlines = new ArrayList<>();
             DataSourceRecord firstrecord = primaryds.get(0);
             outputlines.add(evaluate(headers, firstrecord));
             for (DataSourceRecord datarecord : primaryds) {
                 if (filter == null || filter.evaluate(datarecord)) {
-                   outputlines.add(evaluate(fields, datarecord));
+                    outputlines.add(evaluate(fields, datarecord));
                 }
             }
-            //DataSourceCSVExtended.sysout(outputlines);
-            DataSourceCSV.write("/home/pi/RPTWTR/reports/"+reportname+".csv", outputlines);
+            if (output == null){
+                DataSourceCSV.sysout(title, outputlines);
+            } else {
+                DataSourceCSV.write(configuration, output, outputlines);
+            }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         } catch (InternalParserException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         }
     }
-    
+
     private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException {
         List<String> fields = new ArrayList<>();
-        for (Operand operand : fieldexpressions){
+        for (Operand operand : fieldexpressions) {
             fields.add(DataTypes.isStringExpression(operand).evaluate(datarecord));
         }
         return fields;

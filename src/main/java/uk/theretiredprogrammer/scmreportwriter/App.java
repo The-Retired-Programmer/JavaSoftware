@@ -26,14 +26,14 @@ public class App {
         Configuration configuration = new Configuration();
         try {
             configuration.loadconfiguration(args);
-        } catch (IOException ex) {
+        } catch (ConfigurationException | IOException ex) {
             System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
         }
         try {
             ReportWriter reportwriter = new ReportWriter(configuration);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (ReportWriterException | IOException | LexerException | ParserException ex) {
+        } catch (ConfigurationException | ReportWriterException | IOException | LexerException | ParserException ex) {
             ex.printStackTrace(System.err);
         }
     }

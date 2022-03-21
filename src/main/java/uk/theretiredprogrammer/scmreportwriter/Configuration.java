@@ -39,8 +39,7 @@ public class Configuration {
         getUserConfig();
         parseArgs(args);
         getEnvConfig();
-        dumpargs();
-        //
+        //dumpargs();
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
         outputdir = findOutputDir();
@@ -124,16 +123,16 @@ public class Configuration {
         return definitionfile;
     }
 
-    private void dumpargs() {
-        System.out.println("SYSTEM PROPERTIES");
-        systemproperties.list(System.out);
-        System.out.println("ENVIRONMENT PROPERTIES");
-        envproperties.list(System.out);
-        System.out.println("USER PROPERTIES");
-        userproperties.list(System.out);
-        System.out.println("COMMAND LINE PROPERTIES");
-        argproperties.list(System.out);
-    }
+//    private void dumpargs() {
+//        System.out.println("SYSTEM PROPERTIES");
+//        systemproperties.list(System.out);
+//        System.out.println("ENVIRONMENT PROPERTIES");
+//        envproperties.list(System.out);
+//        System.out.println("USER PROPERTIES");
+//        userproperties.list(System.out);
+//        System.out.println("COMMAND LINE PROPERTIES");
+//        argproperties.list(System.out);
+//    }
 
     private void getSystemConfig() {
         systemproperties = System.getProperties();

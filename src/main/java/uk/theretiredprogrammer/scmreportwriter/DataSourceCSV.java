@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
 public class DataSourceCSV extends DataSource {
@@ -36,12 +37,12 @@ public class DataSourceCSV extends DataSource {
         return new DataSourceCSV().load(configuration, parameters);
     }
 
-    public static void write(String path, List<List<String>> lines) throws IOException {
-        new DataSourceCSV().store(path, lines);
+    public static void write(Configuration configuration, String path, List<List<String>> lines) throws IOException, InternalReportWriterException, InternalParserException, ConfigurationException {
+        new DataSourceCSV().store(configuration, path, lines);
     }
 
-    public static void sysout(List<List<String>> lines) {
-        new DataSourceCSV().sysoutlist(lines);
+    public static void sysout(String title, List<List<String>> lines) {
+        new DataSourceCSV().sysoutlist(title, lines);
     }
 
     public DataSource load(Configuration configuration, ExpressionMap parameters) throws IOException, InternalReportWriterException {
@@ -53,7 +54,10 @@ public class DataSourceCSV extends DataSource {
         return this;
     }
 
-    public void sysoutlist(List<List<String>> lines) {
+    public void sysoutlist(String title, List<List<String>> lines) {
+        if (title != null) {
+            System.out.println(title);
+        }
         lines.stream().forEach((List<String> record) -> {
             System.out.println(
                     record.stream()
@@ -63,8 +67,8 @@ public class DataSourceCSV extends DataSource {
         });
     }
 
-    public void store(String path, List<List<String>> lines) throws IOException {
-        File f = new File(path);
+    public void store(Configuration configuration, String path, List<List<String>> lines) throws IOException, ConfigurationException {
+        File f = getOutputFile(configuration, path);
         try ( Writer wtr = new FileWriter(f);  PrintWriter pwtr = new PrintWriter(wtr)) {
             lines.stream().forEach((List<String> record) -> {
                 pwtr.println(
