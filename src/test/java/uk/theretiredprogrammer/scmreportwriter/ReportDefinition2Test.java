@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,15 +39,20 @@ public class ReportDefinition2Test {
         DataSourceRecord datarecord = new DataSourceRecord();
         datarecord.put("Event","dummy");
         datarecord.put("Type","dummy");
-        File f = new File("/home/pi/RPTWTR/definition2.scm");
+        Configuration configuration= null;
+        try {
+            configuration = new TestConfiguration("reportdefinition");
+        } catch (ConfigurationException | IOException ex) {
+            fail("Configuration Failure: " + ex.getLocalizedMessage());
+        }
         ReportDefinition reportdefinition = new ReportDefinition();
-        reportdefinition.buildReportDefinition(f);
+        reportdefinition.buildReportDefinition(configuration);
         //
         ExpressionMap map = reportdefinition.getDatadefinitions();
         assertEquals(2, map.size());
         if (map.get("contacts") instanceof ExpressionMap contacts) {
             assertEquals(3, contacts.size());
-            assertEquals("startswith", contacts.get("match").evaluate(datarecord));
+            assertEquals("startswith", contacts.get("match").evaluate(configuration, datarecord));
         } else {
             fail("Data - contacts is not a map");
         }
@@ -57,10 +61,10 @@ public class ReportDefinition2Test {
         if (report1 instanceof ExpressionMap rptmap) {
             if (rptmap.get("headers") instanceof ExpressionList list) {
                 assertEquals(7, list.size());
-                assertEquals("Made for", list.get(0).evaluate(datarecord));
+                assertEquals("Made for", list.get(0).evaluate(configuration, datarecord));
             }
             if (rptmap.get("filter") instanceof BooleanExpression bexp) {
-                assertEquals(false, bexp.evaluate(datarecord));
+                assertEquals(false, bexp.evaluate(configuration, datarecord));
             } else {
                 fail("report1>filter is not a boolean expression");
             }

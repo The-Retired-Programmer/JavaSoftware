@@ -38,10 +38,10 @@ public class ReportDefinition {
 
     private LanguageSource source;
 
-    public void buildReportDefinition(File deffile) throws FileNotFoundException, IOException,
+    public void buildReportDefinition(Configuration configuration) throws FileNotFoundException, IOException,
             LexerException, ParserException, InternalReportWriterException {
-        try ( BufferedReader brdr = new BufferedReader(new FileReader(deffile))) {
-            Language scmlanguage = new SCM_ExpressionLanguage();
+        try ( BufferedReader brdr = new BufferedReader(new FileReader(configuration.getDefinitionFile()))) {
+            Language scmlanguage = new SCM_ExpressionLanguage(configuration);
             source = new LanguageSource(brdr.lines());
             Lexer lexer = new Lexer(source, scmlanguage);
             Parser parser = new Parser(source, scmlanguage);

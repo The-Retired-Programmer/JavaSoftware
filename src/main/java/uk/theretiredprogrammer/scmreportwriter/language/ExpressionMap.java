@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionMap extends HashMap<String,Operand> implements Operand {
@@ -70,10 +71,10 @@ public class ExpressionMap extends HashMap<String,Operand> implements Operand {
     }
     
     @Override
-    public Map<String,Object> evaluate(DataSourceRecord datarecord) {
+    public Map<String,Object> evaluate(Configuration configuration, DataSourceRecord datarecord) {
         Map<String,Object> result = new HashMap<>();
         for (Entry<String,Operand> e: entrySet()) {
-            result.put(e.getKey(), e.getValue().evaluate(datarecord));
+            result.put(e.getKey(), e.getValue().evaluate(configuration, datarecord));
         }
         return result;
     }

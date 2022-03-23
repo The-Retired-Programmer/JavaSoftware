@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class Property implements Operand {
@@ -60,8 +61,8 @@ public class Property implements Operand {
     }
 
     @Override
-    public Object evaluate(DataSourceRecord datarecord) {
-        return expression.evaluate(datarecord);
+    public Object evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return expression.evaluate(configuration, datarecord);
     }
     
     @Override

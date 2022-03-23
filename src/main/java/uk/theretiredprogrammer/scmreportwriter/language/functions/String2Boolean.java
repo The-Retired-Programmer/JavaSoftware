@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
@@ -39,7 +40,7 @@ public class String2Boolean extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return expression.evaluate(datarecord).equalsIgnoreCase("Yes") || expression.evaluate(datarecord).equalsIgnoreCase("True") ;
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return expression.evaluate(configuration, datarecord).equalsIgnoreCase("Yes") || expression.evaluate(configuration, datarecord).equalsIgnoreCase("True") ;
     }
 }

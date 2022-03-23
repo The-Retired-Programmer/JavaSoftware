@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -23,17 +24,17 @@ import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class Or extends BooleanExpression{
-    
+public class Or extends BooleanExpression {
+
     public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
         BooleanExpression rhs = DataTypes.isBooleanExpression(operandstack.pop());
         operandstack.push(new Or(DataTypes.isBooleanExpression(operandstack.pop()), rhs));
     }
-    
+
     private final BooleanExpression lhs;
     private final BooleanExpression rhs;
-    
+
     public Or(BooleanExpression lhs, BooleanExpression rhs) {
         super("OR expression");
         this.lhs = lhs;
@@ -41,7 +42,7 @@ public class Or extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord){
-        return lhs.evaluate(datarecord) || rhs.evaluate(datarecord);
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return lhs.evaluate(configuration, datarecord) || rhs.evaluate(configuration, datarecord);
     }
 }

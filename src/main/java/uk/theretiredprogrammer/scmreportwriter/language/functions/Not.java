@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -39,7 +40,7 @@ public class Not extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return !bexp.evaluate(datarecord);
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return !bexp.evaluate(configuration, datarecord);
     }
 }

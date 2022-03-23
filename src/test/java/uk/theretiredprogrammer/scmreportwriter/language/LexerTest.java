@@ -15,19 +15,20 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.ConfigurationException;
 import uk.theretiredprogrammer.scmreportwriter.SCM_ExpressionLanguage;
+import uk.theretiredprogrammer.scmreportwriter.TestConfiguration;
 
 public class LexerTest {
     
-    private final Language language;
-
     public LexerTest() {
-        language = new SCM_ExpressionLanguage();
     }
 
     @BeforeAll
@@ -283,6 +284,13 @@ public class LexerTest {
     }
     
     private void lextest(String input, String... results) throws LexerException {
+        Configuration configuration= null;
+        try {
+            configuration = new TestConfiguration("reportdefinition");
+        } catch (ConfigurationException | IOException ex) {
+            fail("Configuration Failure: " + ex.getLocalizedMessage());
+        }
+        Language language = new SCM_ExpressionLanguage(configuration);
         LanguageSource langsource = new LanguageSource(input.lines());
         Lexer lexer = new Lexer(langsource, language);
         lexer.lex();

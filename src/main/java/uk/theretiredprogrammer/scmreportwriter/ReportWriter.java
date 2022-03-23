@@ -41,7 +41,7 @@ public class ReportWriter {
         this.configuration = configuration;
         definition = new ReportDefinition();
         try {
-            definition.buildReportDefinition(configuration.getDefinitionFile());
+            definition.buildReportDefinition(configuration);
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         }
@@ -73,17 +73,17 @@ public class ReportWriter {
             BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
             ExpressionList fields = DataTypes.isExpressionList(map, "fields");
             String to = DataTypes.isStringLiteral(map, "to");
-            String title  = DataTypes.isStringLiteral(map, "title");
+            String title = DataTypes.isStringLiteral(map, "title");
             // create report output
             List<List<String>> outputlines = new ArrayList<>();
             DataSourceRecord firstrecord = primaryds.get(0);
             outputlines.add(evaluate(headers, firstrecord));
             for (DataSourceRecord datarecord : primaryds) {
-                if (filter == null || filter.evaluate(datarecord)) {
+                if (filter == null || filter.evaluate(configuration, datarecord)) {
                     outputlines.add(evaluate(fields, datarecord));
                 }
             }
-            if (to == null){
+            if (to == null) {
                 DataSourceCSV.sysout(title, outputlines);
             } else {
                 DataSourceCSV.write(configuration, to, outputlines);
@@ -98,7 +98,7 @@ public class ReportWriter {
     private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException {
         List<String> fields = new ArrayList<>();
         for (Operand operand : fieldexpressions) {
-            fields.add(DataTypes.isStringExpression(operand).evaluate(datarecord));
+            fields.add(DataTypes.isStringExpression(operand).evaluate(configuration, datarecord));
         }
         return fields;
     }

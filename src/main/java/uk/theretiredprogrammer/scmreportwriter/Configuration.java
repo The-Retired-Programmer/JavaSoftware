@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 public class Configuration {
@@ -28,6 +29,8 @@ public class Configuration {
     private Properties envproperties;
     private Properties userproperties;
     private Properties argproperties;
+
+    private Map<String, String> envmap;
 
     private File downloaddir;
     private File workingdir;
@@ -42,29 +45,31 @@ public class Configuration {
         }
         getUserConfig();
         getEnvConfig();
-        //dumpargs();
+        if (argproperties.getProperty("debuglist", "").equals("debuglist")) {
+            dumpargs();
+        }
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
         outputdir = findOutputDir();
         definitionfile = findDefinitionFile();
         if (argproperties.getProperty("list", "").equals("list")) {
             System.out.println("\n Current Directory Parameters and Resulting Paths\n");
-            System.out.println("downloadir is " + mergeProperty("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
-            System.out.println("workingdir is " + mergeProperty("workingdir") + " expands to " + workingdir.getCanonicalPath());
-            System.out.println("outputdir is " + mergeProperty("outputdir") + " expands to " + outputdir.getCanonicalPath());
+            System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
+            System.out.println("workingdir is " + getPropertyValue("workingdir") + " expands to " + workingdir.getCanonicalPath());
+            System.out.println("outputdir is " + getPropertyValue("outputdir") + " expands to " + outputdir.getCanonicalPath());
             System.out.println();
         }
         if (argproperties.getProperty("save", "").equals("save")) {
             String dd = argproperties.getProperty("downloaddir");
-            if (dd != null){
+            if (dd != null) {
                 userproperties.setProperty("downloaddir", dd);
             }
             String wd = argproperties.getProperty("workingdir");
-            if (wd != null){
+            if (wd != null) {
                 userproperties.setProperty("workingdir", wd);
             }
             String od = argproperties.getProperty("outputdir");
-            if (od != null){
+            if (od != null) {
                 userproperties.setProperty("outputdir", od);
             }
             saveUserConfig();
@@ -72,7 +77,7 @@ public class Configuration {
     }
 
     public File findDir(String propertyname, String defaultvalue) throws ConfigurationException {
-        String dir = mergeProperty(propertyname);
+        String dir = getPropertyValue(propertyname);
         if (dir == null) {
             dir = defaultvalue;
         }
@@ -92,7 +97,7 @@ public class Configuration {
     }
 
     public File findOutputDir() throws ConfigurationException {
-        String dir = mergeProperty("outputdir");
+        String dir = getPropertyValue("outputdir");
         if (dir == null) {
             return getWorkingDir();
         }
@@ -126,10 +131,16 @@ public class Configuration {
         return f;
     }
 
-    private String mergeProperty(String key) {
-        return argproperties.getProperty(key,
-                userproperties.getProperty(key,
-                        envproperties.getProperty(key)));
+    private String getPropertyValue(String key) {
+        String value = argproperties.getProperty(key);
+        if (value != null) {
+            return value;
+        }
+        value = userproperties.getProperty(key);
+        if (value != null) {
+            return value;
+        }
+        return envproperties.getProperty(key);
     }
 
     public File getDownloadDir() {
@@ -147,25 +158,50 @@ public class Configuration {
     public File getDefinitionFile() {
         return definitionfile;
     }
+    
+    public String getSystemProperty(String key) {
+        return systemproperties.getProperty(key);
+    }
+    
+    public String getEnvironmentValue(String key) {
+        return envmap.get(key);
+    }
+    
+    public String getCommandParameter() {
+        return argproperties.getProperty("commandparameter");
+    }
 
-//    private void dumpargs() {
-//        System.out.println("SYSTEM PROPERTIES");
-//        systemproperties.list(System.out);
-//        System.out.println("ENVIRONMENT PROPERTIES");
-//        envproperties.list(System.out);
-//        System.out.println("USER PROPERTIES");
-//        userproperties.list(System.out);
-//        System.out.println("COMMAND LINE PROPERTIES");
-//        argproperties.list(System.out);
-//    }
+    private void dumpargs() {
+        System.out.println("SYSTEM PROPERTIES");
+        systemproperties.list(System.out);
+        System.out.println("ENVIRONMENT MAP");
+        envmap.entrySet().stream().forEach(e-> System.out.println(e.getKey()+"="+e.getValue()));
+        System.out.println("ENVIRONMENT PROPERTIES");
+        envproperties.list(System.out);
+        System.out.println("USER PROPERTIES");
+        userproperties.list(System.out);
+        System.out.println("COMMAND LINE PROPERTIES");
+        argproperties.list(System.out);
+    }
     private void getSystemConfig() {
         systemproperties = System.getProperties();
     }
 
     private void getEnvConfig() {
+        envmap = System.getenv();
         envproperties = new Properties();
-        //System.getenv();
-        //RPTWTR_dd,wd,od
+        String dd = envmap.get("RPTWTR_dd");
+        if (dd != null) {
+            envproperties.setProperty("downloaddir", dd);
+        }
+        String wd = envmap.get("RPTWTR_wd");
+        if (wd != null) {
+            envproperties.setProperty("workingdir", wd);
+        }
+        String od = envmap.get("RPTWTR_od");
+        if (od != null) {
+            envproperties.setProperty("outputdir", od);
+        }
     }
 
     private static final String USERCONFIGFILE = ".reportwriter";

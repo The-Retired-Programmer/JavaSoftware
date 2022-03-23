@@ -24,23 +24,22 @@ import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class DataRecordField extends StringExpression {
+public class EnvValue extends StringExpression {
     
     public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
-        operandstack.push(new DataRecordField(DataTypes.isStringExpression(operandstack.pop())));
+        operandstack.push(new EnvValue(DataTypes.isStringExpression(operandstack.pop())));
     }
 
-    private final StringExpression fieldnameexpression;
+    private final StringExpression expression;
 
-    public DataRecordField(StringExpression fieldname) {
-        super("Data field extraction");
-        this.fieldnameexpression = fieldname;
+    public EnvValue(StringExpression expression) {
+        super("Environment value");
+        this.expression = expression;
     }
 
     @Override
     public String evaluate(Configuration configuration, DataSourceRecord datarecord) {
-        return datarecord.get(fieldnameexpression.evaluate(configuration, datarecord));
+        return configuration.getEnvironmentValue(expression.evaluate(configuration, datarecord));
     }
-    
 }

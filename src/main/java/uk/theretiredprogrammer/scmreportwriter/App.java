@@ -28,13 +28,23 @@ public class App {
             configuration.loadconfiguration(args);
         } catch (ConfigurationException | IOException ex) {
             System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
+            System.exit(1);
+        }
+
+        @SuppressWarnings("UnusedAssignment")
+        ReportWriter reportwriter=null;
+        try {
+            reportwriter = new ReportWriter(configuration);
+        } catch (IOException | LexerException | ParserException | ReportWriterException ex) {
+            System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
+            System.exit(2);
         }
         try {
-            ReportWriter reportwriter = new ReportWriter(configuration);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (ConfigurationException | ReportWriterException | IOException | LexerException | ParserException ex) {
-            ex.printStackTrace(System.err);
+        } catch (ConfigurationException | ReportWriterException | IOException ex) {
+            System.err.println("Report Execution Failure: " + ex.getLocalizedMessage());
+            System.exit(3);
         }
     }
 }

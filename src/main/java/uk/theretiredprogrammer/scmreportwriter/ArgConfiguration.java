@@ -36,9 +36,11 @@ public class ArgConfiguration {
     private String workingdir = null;
     private String outputdir = null;
     private String definitionfile = null;
+    private String commandparameter = null;
     private boolean save = false;
     private boolean clear = false;
     private boolean list = false;
+    private boolean debuglist = false;
 
     public Properties parseArgs(String[] args) throws ConfigurationException {
         extractArgCommands(args);
@@ -55,6 +57,9 @@ public class ArgConfiguration {
         if (definitionfile != null) {
             p.setProperty("definitionfile", definitionfile);
         }
+        if (commandparameter != null) {
+            p.setProperty("commandparameter", commandparameter);
+        }
         if (save){
             p.setProperty("save", "save");
         }
@@ -63,6 +68,9 @@ public class ArgConfiguration {
         }
         if (list){
             p.setProperty("list", "list");
+        }
+        if (debuglist){
+            p.setProperty("debuglist", "debuglist");
         }
         return p;
     }
@@ -78,18 +86,24 @@ public class ArgConfiguration {
                     workingdir = argrdr.next();
                 case "--outputdir" ->
                     outputdir = argrdr.next();
+                case "--commandparam" ->
+                    commandparameter = argrdr.next();
                 case "--save" -> save = true;
                 case "--clear" -> clear = true;
                 case "--listuserconfig" -> list = true;
+                case "--debuglist" -> debuglist = true;
                 case "-dd" ->
                     downloaddir = argrdr.next();
                 case "-wd" ->
                     workingdir = argrdr.next();
                 case "-od" ->
                     outputdir = argrdr.next();
+                case "-cp" ->
+                    commandparameter = argrdr.next();
                 case "-s" -> save = true;
                 case "-c" -> clear = true;
                 case "-l" -> list = true;
+                case "-dl" -> debuglist = true;
                 default -> {
                     if (argrdr.more()) {
                         throw new ConfigurationException("Command Line: Definition file not the last arguement");

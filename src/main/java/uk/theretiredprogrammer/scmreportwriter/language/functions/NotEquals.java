@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
@@ -42,7 +43,7 @@ public class NotEquals extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return !(lhs.evaluate(datarecord).equals(rhs.evaluate(datarecord)));
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return !(lhs.evaluate(configuration, datarecord).equals(rhs.evaluate(configuration, datarecord)));
     }
 }

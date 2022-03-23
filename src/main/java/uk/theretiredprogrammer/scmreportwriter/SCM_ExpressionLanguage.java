@@ -33,16 +33,21 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.NotEqualsIgnor
 import uk.theretiredprogrammer.scmreportwriter.language.functions.Or;
 import uk.theretiredprogrammer.scmreportwriter.language.Property;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.String2Boolean;
-import uk.theretiredprogrammer.scmreportwriter.language.Language.Precedence;
+import uk.theretiredprogrammer.scmreportwriter.language.functions.EnvValue;
+import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
+import uk.theretiredprogrammer.scmreportwriter.language.functions.SysValue;
 
 public class SCM_ExpressionLanguage extends Language{
     
-    public SCM_ExpressionLanguage() {
+    public SCM_ExpressionLanguage(Configuration config) {
         setSyntaxTreeSymbols(new SyntaxTreeItem[]{
                     new SyntaxTreeItem("boolean", new Operator("Boolean cast", PrecedenceGroup.MONADIC, String2Boolean::reduce)),
                     new SyntaxTreeItem("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
                     new SyntaxTreeItem("FALSE", new BooleanLiteral(false)),
-                    new SyntaxTreeItem("TRUE", new BooleanLiteral(true))
+                    new SyntaxTreeItem("TRUE", new BooleanLiteral(true)),
+                    new SyntaxTreeItem("CMDPARAMETER", new StringLiteral(config.getCommandParameter())),
+                    new SyntaxTreeItem("env", new Operator("Env value", PrecedenceGroup.MONADIC, EnvValue::reduce)),
+                    new SyntaxTreeItem("sys", new Operator("System Property value", PrecedenceGroup.MONADIC, SysValue::reduce)),
                 });
         setSyntaxTreeOperators(new SyntaxTreeItem[]{
                     new SyntaxTreeItem("!=~", new Operator("!=~", PrecedenceGroup.EQ, NotEqualsIgnoreCase::reduce)),
@@ -63,99 +68,5 @@ public class SCM_ExpressionLanguage extends Language{
                     new SyntaxTreeItem(",", new Operator(",", PrecedenceGroup.EXPSEP, this::reduceEXPRESSIONSEPARATOR)),
                     new SyntaxTreeItem(":", new Operator(":", PrecedenceGroup.PROPERTY, Property::reduce))
                 });
-        
-
-        setPrecedenceTable(
-                new Precedence[][]{
-                    { //rhs symbol START
-                        //START, END,  EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR,
-                        //BRA, KET,
-                        Precedence.ERROR, Precedence.ERROR,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR, Precedence.ERROR
-                    },
-                    { //rhs symbol END
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.ERROR,
-                        //BRA, KET,
-                        Precedence.ERROR, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol EXPSEP
-                        //START, END, COMMAND, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR, Precedence.EQUAL, 
-                        //BRA, KET,
-                        Precedence.EQUAL, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol BRA
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.ERROR,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT
-                    },
-                    { //rhs symbol KET
-                        //START, END, EXPSEP,
-                        Precedence.ERROR, Precedence.ERROR,Precedence.EQUAL, 
-                        //BRA, KET,
-                        Precedence.EQUAL, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol PROPERTY
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.ERROR, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol OR
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol AND
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol EQ
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol DIADIC
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.REDUCE, Precedence.REDUCE
-                    },
-                    { //rhs symbol MONADIC
-                        //START, END, EXPSEP,
-                        Precedence.SHIFT, Precedence.ERROR, Precedence.SHIFT, 
-                        //BRA, KET,
-                        Precedence.SHIFT, Precedence.REDUCE,
-                        //PROPERTY, OR, AND, EQ, DIADIC, MONADIC,
-                        Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT, Precedence.SHIFT
-                    }
-                });
     }
-    
 }

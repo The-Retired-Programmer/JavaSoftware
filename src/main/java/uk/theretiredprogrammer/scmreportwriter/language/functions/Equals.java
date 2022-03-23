@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
@@ -24,17 +25,17 @@ import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class Equals extends BooleanExpression{
-    
+public class Equals extends BooleanExpression {
+
     public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new Equals(DataTypes.isStringExpression(operandstack.pop()), rhs));
     }
-    
+
     private final StringExpression leftnode;
     private final StringExpression rightnode;
-    
+
     public Equals(StringExpression leftnode, StringExpression rightnode) {
         super("EQUALS expression");
         this.leftnode = leftnode;
@@ -42,7 +43,7 @@ public class Equals extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return leftnode.evaluate(datarecord).equals(rightnode.evaluate(datarecord));
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return leftnode.evaluate(configuration, datarecord).equals(rightnode.evaluate(configuration, datarecord));
     }
 }

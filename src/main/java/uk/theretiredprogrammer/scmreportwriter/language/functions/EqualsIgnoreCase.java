@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
@@ -24,17 +25,17 @@ import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class EqualsIgnoreCase extends BooleanExpression{
-    
+public class EqualsIgnoreCase extends BooleanExpression {
+
     public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new EqualsIgnoreCase(DataTypes.isStringExpression(operandstack.pop()), rhs));
     }
-    
+
     private final StringExpression lhs;
     private final StringExpression rhs;
-    
+
     public EqualsIgnoreCase(StringExpression lhs, StringExpression rhs) {
         super("EQUALSIGNORECASE expression");
         this.lhs = lhs;
@@ -42,7 +43,7 @@ public class EqualsIgnoreCase extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
-        return lhs.evaluate(datarecord).equalsIgnoreCase(rhs.evaluate(datarecord));
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return lhs.evaluate(configuration, datarecord).equalsIgnoreCase(rhs.evaluate(configuration, datarecord));
     }
 }

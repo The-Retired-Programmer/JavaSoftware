@@ -32,16 +32,16 @@ public class DataSourceCSVTest {
      */
     @Test
     @SuppressWarnings("null")
-    public void testLoad() throws ConfigurationException {
+    public void testLoad() {
         System.out.println("load");
-        Configuration configuration = new Configuration();
+        Configuration configuration= null;
         try {
-            configuration.loadconfiguration(new String[] {"-wd","RPTWTR","-od","reports2","definition2.scm"});
-        } catch (IOException ex) {
+            configuration = new TestConfiguration("reportdefinition");
+        } catch (ConfigurationException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         ExpressionMap parameters = new ExpressionMap();
-        parameters.put("path", new StringLiteral("/home/pi/Downloads/club-dinghy-racing-2022-bookings20220222 (1).csv"));
+        parameters.put("path", new StringLiteral("club-dinghy-racing-2022-bookings20220222 (1).csv"));
         DataSource datasource = null;
         try {
             try {
@@ -64,10 +64,10 @@ public class DataSourceCSVTest {
     @SuppressWarnings("null")
     public void testLoad2() throws ConfigurationException {
         System.out.println("load2");
-         Configuration configuration = new Configuration();
+        Configuration configuration= null;
         try {
-            configuration.loadconfiguration(new String[] {"-wd","RPTWTR","-od","reports2","definition2.scm"});
-        } catch (IOException ex) {
+            configuration = new TestConfiguration("reportdefinition");
+        } catch (ConfigurationException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         ExpressionMap parameters = new ExpressionMap();

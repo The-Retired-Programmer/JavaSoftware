@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
@@ -39,7 +40,7 @@ public class Boolean2String extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
-        return expression.evaluate(datarecord) ? "Yes" : "No";
+    public String evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return expression.evaluate(configuration, datarecord) ? "Yes" : "No";
     }
 }

@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter.language.functions;
+package uk.theretiredprogrammer.scmreportwriter;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import java.io.IOException;
 
-public class StringLiteral extends StringExpression {
 
-    public StringLiteral(String literal) {
-        super(literal);
+public class TestConfiguration extends Configuration {
+    
+    public TestConfiguration(String reportdefinition) throws IOException, ConfigurationException {
+        this(reportdefinition,"<undefined>");
     }
-
-    @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) {
-        return toString();
+    
+    public TestConfiguration(String reportdefinition, String commandparameter) throws IOException, ConfigurationException {
+        super();
+        this.loadconfiguration(new String[] {"-wd", "TESTRPTWTR", "-od", "output", "-dd",  "TESTRPTWTR/Downloads", "-cp",  commandparameter, reportdefinition  });
     }
+    
 }

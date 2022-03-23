@@ -18,6 +18,7 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public class ExpressionList extends ArrayList<Operand> implements Operand {
@@ -71,8 +72,8 @@ public class ExpressionList extends ArrayList<Operand> implements Operand {
     }
 
     @Override
-    public List evaluate(DataSourceRecord datarecord) {
-        return this.stream().map((item) -> item.evaluate(datarecord)).collect(Collectors.toList());
+    public List evaluate(Configuration configuration, DataSourceRecord datarecord) {
+        return this.stream().map((item) -> item.evaluate(configuration, datarecord)).collect(Collectors.toList());
     }
 
     @Override

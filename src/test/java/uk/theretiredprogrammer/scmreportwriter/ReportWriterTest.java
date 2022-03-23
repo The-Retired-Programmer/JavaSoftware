@@ -27,22 +27,20 @@ public class ReportWriterTest {
     }
 
     @Test
-    @SuppressWarnings("CallToPrintStackTrace")
-    public void testAppfunctionality()  {
-        System.out.println("App functionality");
-        Configuration configuration = new Configuration();
-        try {
-            configuration.loadconfiguration(new String[] {"-wd","RPTWTR","-od","reports2","definition2.scm"});
-        } catch (ConfigurationException | IOException ex) {
-            fail("Configuration Failure: " + ex.getLocalizedMessage());
-        }
-        try {
+    public void testAppfunctionality() {
+            System.out.println("App functionality");
+            Configuration configuration= null;
+            try {
+                configuration = new TestConfiguration("reportdefinition");
+            } catch (ConfigurationException | IOException ex) {
+                fail("Configuration Failure: " + ex.getLocalizedMessage());
+            }
+        try {    
             ReportWriter reportwriter = new ReportWriter(configuration);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (ConfigurationException | IOException | ReportWriterException | LexerException | ParserException ex) {
-            ex.printStackTrace();
-            fail("exception caught");
+        } catch (IOException | LexerException | ParserException | ReportWriterException | ConfigurationException ex) {
+            fail(ex.getLocalizedMessage());
         }
     }
 }

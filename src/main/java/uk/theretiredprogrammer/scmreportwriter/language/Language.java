@@ -23,18 +23,12 @@ public abstract class Language {
 
     private SyntaxTreeItem[] symbols;
 
-    private Precedence[][] precedencetable;
-
     public void setSyntaxTreeSymbols(SyntaxTreeItem[] symbols) {
         this.symbols = symbols;
     }
 
     public void setSyntaxTreeOperators(SyntaxTreeItem[] operators) {
         this.operators = operators;
-    }
-
-    public void setPrecedenceTable(Precedence[][] precedencetable) {
-        this.precedencetable = precedencetable;
     }
 
     // Lexer support
@@ -175,7 +169,7 @@ public abstract class Language {
 
     public void reduceKET(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         Operator operator = operatorstack.pop(); // this will be the closing bracket
-        if (operatorstack.peek().toString() == "(") {
+        if (operatorstack.peek().toString().equals("(")) {
             operatorstack.pop();
             return;
         }
