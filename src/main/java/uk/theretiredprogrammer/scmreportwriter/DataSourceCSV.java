@@ -33,8 +33,8 @@ import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterExce
 
 public class DataSourceCSV extends DataSource {
 
-    public static DataSource read(Configuration configuration, ExpressionMap parameters) throws IOException, InternalReportWriterException {
-        return new DataSourceCSV().load(configuration, parameters);
+    public static DataSource read(Configuration configuration, String name, ExpressionMap parameters) throws IOException, InternalReportWriterException {
+        return new DataSourceCSV().load(configuration, name, parameters);
     }
 
     public static void write(Configuration configuration, String path, List<List<String>> lines) throws IOException, InternalReportWriterException, InternalParserException, ConfigurationException {
@@ -45,8 +45,11 @@ public class DataSourceCSV extends DataSource {
         new DataSourceCSV().sysoutlist(title, lines);
     }
 
-    public DataSource load(Configuration configuration, ExpressionMap parameters) throws IOException, InternalReportWriterException {
+    public DataSource load(Configuration configuration, String name, ExpressionMap parameters) throws IOException, InternalReportWriterException {
         File f = getInputFile(configuration, parameters);
+        if (configuration.isListing()) {
+            System.out.println("loading "+ name + " from " + f.getCanonicalPath());
+        }
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
             charsource = new CharacterSource(brdr.lines().toList());
             createDataSourceRecords(charsource);

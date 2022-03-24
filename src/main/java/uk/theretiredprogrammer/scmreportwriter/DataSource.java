@@ -16,26 +16,65 @@
 package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
+import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 
 public abstract class DataSource extends ArrayList<DataSourceRecord> {
 
-    protected File getInputFile(Configuration configuration, ExpressionMap parameters) throws InternalReportWriterException {
-        File f = new File(DataTypes.isStringLiteral(parameters, "path"));
-        if (f.isAbsolute()) {
-            return f;
+    protected File getInputFile(Configuration configuration, ExpressionMap parameters) throws InternalReportWriterException, IOException {
+        File f;
+        switch (getRequiredString(configuration, parameters, "match")) {
+            case "full" -> {
+                f = new File(getRequiredString(configuration, parameters, "path"));
+                if (f.isAbsolute()) {
+                    return f;
+                }
+                return new File(configuration.getDownloadDir(), f.getPath());
+            }
+            case "startswith" -> {
+                String startswith = getRequiredString(configuration, parameters, "path");
+                String[] files = configuration.getDownloadDir().list((file, filename) -> filename.startsWith(startswith));
+                f = getResolvedFile(configuration, files);
+            }
+            default ->
+                throw new InternalReportWriterException(parameters, "illegal parameter value for \"match\" parameter in data statement");
         }
-        return new File(configuration.getDownloadDir(), f.getPath());
+        return f.isAbsolute() ? f : new File(configuration.getDownloadDir(), f.getPath());
+    }
+
+    private File getResolvedFile(Configuration configuration, String[] files) throws IOException {
+        long mostrecenttime = 0;
+        File mostrecentfile = null;
+        for (String file : files) {
+            File f = new File(file);
+            if (!f.isAbsolute()){
+                f =  new File(configuration.getDownloadDir(), f.getPath());
+            }
+            long time = Files.getLastModifiedTime(f.toPath()).to(TimeUnit.SECONDS);
+            if (time > mostrecenttime) {
+                mostrecenttime = time;
+                mostrecentfile = f;
+            }
+        }
+        return mostrecentfile;
+    }
+
+    private String getRequiredString(Configuration configuration, ExpressionMap parameters, String key) throws InternalReportWriterException {
+        StringExpression keyparameter = DataTypes.isStringExpression(parameters, key);
+        if (keyparameter != null) {
+            return keyparameter.evaluate(configuration, new DataSourceRecord());
+        }
+        throw new InternalReportWriterException(parameters, key + " parameter missing in data statement");
     }
 
     protected File getOutputFile(Configuration configuration, String path) throws ConfigurationException {
         File f = new File(path);
-        if (f.isAbsolute()) {
-            return f;
-        }
-        return new File(configuration.findOutputDir(), path);
+        return f.isAbsolute() ? f : new File(configuration.findOutputDir(), path);
     }
 }

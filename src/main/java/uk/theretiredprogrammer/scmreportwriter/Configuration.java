@@ -57,7 +57,6 @@ public class Configuration {
             System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
             System.out.println("workingdir is " + getPropertyValue("workingdir") + " expands to " + workingdir.getCanonicalPath());
             System.out.println("outputdir is " + getPropertyValue("outputdir") + " expands to " + outputdir.getCanonicalPath());
-            System.out.println();
         }
         if (argproperties.getProperty("save", "").equals("save")) {
             String dd = argproperties.getProperty("downloaddir");
@@ -169,6 +168,10 @@ public class Configuration {
     
     public String getCommandParameter() {
         return argproperties.getProperty("commandparameter");
+    }
+    
+    public boolean isListing() {
+        return argproperties.getProperty("list", "").equals("list");
     }
 
     private void dumpargs() {

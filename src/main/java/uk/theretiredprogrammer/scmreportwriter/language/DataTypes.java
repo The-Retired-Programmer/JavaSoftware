@@ -84,7 +84,7 @@ public class DataTypes  {
         }
         throw new InternalReportWriterException(parent.get(key), "Requires a String value");
     }
-
+    
     public static String isStringLiteral(Operand operand) throws InternalParserException {
         if (operand instanceof StringLiteral slit) {
             return slit.toString();

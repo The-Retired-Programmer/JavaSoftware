@@ -34,7 +34,7 @@ public class DataSourceCSVTest {
     @SuppressWarnings("null")
     public void testLoad() {
         System.out.println("load");
-        Configuration configuration= null;
+        Configuration configuration = null;
         try {
             configuration = new TestConfiguration("reportdefinition");
         } catch (ConfigurationException | IOException ex) {
@@ -42,10 +42,11 @@ public class DataSourceCSVTest {
         }
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("club-dinghy-racing-2022-bookings20220222 (1).csv"));
+        parameters.put("match",new StringLiteral("full"));
         DataSource datasource = null;
         try {
             try {
-                datasource = DataSourceCSV.read(configuration, parameters);
+                datasource = DataSourceCSV.read(configuration, "bookings", parameters);
             } catch (IOException ex) {
                 fail("loading CSV failure: " + ex.getMessage());
             }
@@ -56,15 +57,15 @@ public class DataSourceCSVTest {
         assertEquals("Richard Linsdale", datasource.get(1).get("Made for"));
         assertEquals("Janie Linsdale", datasource.get(0).get("Made for"));
     }
-    
-     /**
+
+    /**
      * Test of load method, of class DataSourceCSVExtended.
      */
     @Test
     @SuppressWarnings("null")
     public void testLoad2() throws ConfigurationException {
         System.out.println("load2");
-        Configuration configuration= null;
+        Configuration configuration = null;
         try {
             configuration = new TestConfiguration("reportdefinition");
         } catch (ConfigurationException | IOException ex) {
@@ -72,10 +73,11 @@ public class DataSourceCSVTest {
         }
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("enquiries20220317.csv"));
+        parameters.put("match",new StringLiteral("full"));
         DataSource datasource = null;
         try {
             try {
-                datasource = DataSourceCSV.read(configuration, parameters);
+                datasource = DataSourceCSV.read(configuration, "enquiries", parameters);
             } catch (IOException ex) {
                 fail("loading CSV failure: " + ex.getMessage());
             }

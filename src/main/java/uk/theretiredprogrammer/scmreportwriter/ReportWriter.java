@@ -52,7 +52,7 @@ public class ReportWriter {
             ExpressionMap datadefs = definition.getDatadefinitions();
             for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
                 ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
-                datasources.put(nameandparameters.getKey(), DataSourceCSV.read(configuration, parameters));
+                datasources.put(nameandparameters.getKey(), DataSourceCSV.read(configuration, nameandparameters.getKey(), parameters));
             }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
