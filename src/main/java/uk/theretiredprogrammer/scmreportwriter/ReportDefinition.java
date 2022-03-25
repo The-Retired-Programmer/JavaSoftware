@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Set;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
+import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
@@ -67,13 +68,7 @@ public class ReportDefinition {
         return DataTypes.isExpressionMap(definition, "data");
     }
 
-    public ExpressionMap getReportdefinitions(String name) throws InternalReportWriterException {
-        return DataTypes.isExpressionMap(definition, name);
-    }
-
-    public Set<String> getAllReportNames() {
-        Set<String> allnames = definition.keySet();
-        allnames.remove("data");
-        return allnames;
+    public ExpressionList getReportdefinitions() throws InternalReportWriterException {
+        return DataTypes.isExpressionList(definition, "reports");
     }
 }

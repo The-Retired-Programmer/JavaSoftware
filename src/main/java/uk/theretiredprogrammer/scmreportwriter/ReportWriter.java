@@ -63,33 +63,29 @@ public class ReportWriter {
     }
 
     public void createAllReports() throws ReportWriterException, IOException, ConfigurationException {
-        for (String reportname : definition.getAllReportNames()) {
-            createReport(reportname);
-        }
-    }
-
-    public void createReport(String reportname) throws ReportWriterException, IOException, ConfigurationException {
         try {
-            ExpressionMap map = definition.getReportdefinitions(reportname);
-            DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
-            ExpressionList headers = DataTypes.isExpressionList(map, "headers");
-            BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
-            ExpressionList fields = DataTypes.isExpressionList(map, "fields");
-            String to = DataTypes.isStringLiteral(map, "to");
-            String title = DataTypes.isStringLiteral(map, "title");
-            // create report output
-            List<List<String>> outputlines = new ArrayList<>();
-            DataSourceRecord firstrecord = primaryds.get(0);
-            outputlines.add(evaluate(headers, firstrecord));
-            for (DataSourceRecord datarecord : primaryds) {
-                if (filter == null || filter.evaluate(configuration, datarecord)) {
-                    outputlines.add(evaluate(fields, datarecord));
+            for (Operand operand : definition.getReportdefinitions()) {
+                ExpressionMap map = DataTypes.isExpressionMap(operand);
+                DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
+                ExpressionList headers = DataTypes.isExpressionList(map, "headers");
+                BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
+                ExpressionList fields = DataTypes.isExpressionList(map, "fields");
+                String to = DataTypes.isStringLiteral(map, "to");
+                String title = DataTypes.isStringLiteral(map, "title");
+                // create report output
+                List<List<String>> outputlines = new ArrayList<>();
+                DataSourceRecord firstrecord = primaryds.get(0);
+                outputlines.add(evaluate(headers, firstrecord));
+                for (DataSourceRecord datarecord : primaryds) {
+                    if (filter == null || filter.evaluate(configuration, datarecord)) {
+                        outputlines.add(evaluate(fields, datarecord));
+                    }
                 }
-            }
-            if (to == null) {
-                DataSourceCSV.sysout(title, outputlines);
-            } else {
-                DataSourceCSV.write(configuration, to, outputlines);
+                if (to == null) {
+                    DataSourceCSV.sysout(title, outputlines);
+                } else {
+                    DataSourceCSV.write(configuration, to, outputlines);
+                }
             }
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);

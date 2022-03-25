@@ -59,7 +59,9 @@ public class DataSourceCSV extends DataSource {
 
     public void sysoutlist(String title, List<List<String>> lines) {
         if (title != null) {
+            System.out.println();
             System.out.println(title);
+            System.out.println();
         }
         lines.stream().forEach((List<String> record) -> {
             System.out.println(
@@ -68,6 +70,7 @@ public class DataSourceCSV extends DataSource {
                             .collect(Collectors.joining("\",\"", "\"", "\""))
             );
         });
+        System.out.println();
     }
 
     public void store(Configuration configuration, String path, List<List<String>> lines) throws IOException, ConfigurationException {
