@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Configuration {
-    
+
     private ArgConfiguration argconfiguration;
 
     private Properties systemproperties;
@@ -125,10 +125,10 @@ public class Configuration {
         }
         File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
-            throw new ConfigurationException("Definition file does not evauate to a file system file; "+file);
+            throw new ConfigurationException("Definition file does not evauate to a file system file; " + file);
         }
         if (!f.canRead()) {
-            throw new ConfigurationException("Definition file is not readable"+file);
+            throw new ConfigurationException("Definition file is not readable; " + file);
         }
         return f;
     }
@@ -160,28 +160,24 @@ public class Configuration {
     public File getDefinitionFile() {
         return definitionfile;
     }
-    
+
     public String getSystemProperty(String key) {
         return systemproperties.getProperty(key);
     }
-    
+
     public String getEnvironmentValue(String key) {
         return envmap.get(key);
     }
-    
+
     public ArgConfiguration getArgConfiguration() {
         return argconfiguration;
-    }
-    
-    public boolean isListing() {
-        return argproperties.getProperty("list", "").equals("list");
     }
 
     private void dumpargs() {
         System.out.println("SYSTEM PROPERTIES");
         systemproperties.list(System.out);
         System.out.println("ENVIRONMENT MAP");
-        envmap.entrySet().stream().forEach(e-> System.out.println(e.getKey()+"="+e.getValue()));
+        envmap.entrySet().stream().forEach(e -> System.out.println(e.getKey() + "=" + e.getValue()));
         System.out.println("ENVIRONMENT PROPERTIES");
         envproperties.list(System.out);
         System.out.println("USER PROPERTIES");
@@ -189,6 +185,7 @@ public class Configuration {
         System.out.println("COMMAND LINE PROPERTIES");
         argproperties.list(System.out);
     }
+
     private void getSystemConfig() {
         systemproperties = System.getProperties();
     }
