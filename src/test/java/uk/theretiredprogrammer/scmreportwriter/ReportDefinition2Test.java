@@ -57,19 +57,24 @@ public class ReportDefinition2Test {
             fail("Data - contacts is not a map");
         }
         //
-        Operand report1 = reportdefinition.getReportdefinitions("report1");
-        if (report1 instanceof ExpressionMap rptmap) {
-            if (rptmap.get("headers") instanceof ExpressionList list) {
-                assertEquals(7, list.size());
-                assertEquals("Made for", list.get(0).evaluate(configuration, datarecord));
-            }
-            if (rptmap.get("filter") instanceof BooleanExpression bexp) {
-                assertEquals(false, bexp.evaluate(configuration, datarecord));
+        Operand reports = reportdefinition.getReportdefinitions();
+        if (reports instanceof ExpressionList rptlist) {
+            Operand report1 = rptlist.get(0);
+            if (report1 instanceof ExpressionMap rptmap){
+                if (rptmap.get("headers") instanceof ExpressionList list) {
+                    assertEquals(7, list.size());
+                    assertEquals("Made for", list.get(0).evaluate(configuration, datarecord));
+                }
+                if (rptmap.get("filter") instanceof BooleanExpression bexp) {
+                    assertEquals(false, bexp.evaluate(configuration, datarecord));
+                } else {
+                    fail("report1>filter is not a boolean expression");
+                }
             } else {
-                fail("report1>filter is not a boolean expression");
+                fail("reports>get(0) is not a lmap");
             }
         } else {
-            fail("report1 is not a map");
+            fail("reports is not a list");
         }
     }
 }
