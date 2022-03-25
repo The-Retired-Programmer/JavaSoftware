@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
@@ -39,7 +40,7 @@ public class SysValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         return configuration.getSystemProperty(expression.evaluate(configuration, datarecord));
     }
 }

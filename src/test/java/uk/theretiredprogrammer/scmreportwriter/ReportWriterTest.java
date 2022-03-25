@@ -37,6 +37,9 @@ public class ReportWriterTest {
             }
         try {    
             ReportWriter reportwriter = new ReportWriter(configuration);
+            if (!reportwriter.buildReportDefinition()) {
+                fail("missing definition file");
+            }
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
         } catch (IOException | LexerException | ParserException | ReportWriterException | ConfigurationException ex) {

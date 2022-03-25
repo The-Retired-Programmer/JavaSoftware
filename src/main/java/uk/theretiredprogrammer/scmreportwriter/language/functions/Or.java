@@ -20,6 +20,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
+import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
@@ -42,7 +43,7 @@ public class Or extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         return lhs.evaluate(configuration, datarecord) || rhs.evaluate(configuration, datarecord);
     }
 }

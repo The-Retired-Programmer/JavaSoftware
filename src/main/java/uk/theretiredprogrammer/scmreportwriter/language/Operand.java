@@ -20,5 +20,5 @@ import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 
 public interface Operand<T> extends S_Token {
     
-     public abstract T evaluate(Configuration configuration, DataSourceRecord datarecord);
+     public abstract T evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException;
 }

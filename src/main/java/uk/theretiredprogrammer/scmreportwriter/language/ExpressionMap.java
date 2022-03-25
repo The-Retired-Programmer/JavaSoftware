@@ -71,7 +71,7 @@ public class ExpressionMap extends HashMap<String,Operand> implements Operand {
     }
     
     @Override
-    public Map<String,Object> evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public Map<String,Object> evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         Map<String,Object> result = new HashMap<>();
         for (Entry<String,Operand> e: entrySet()) {
             result.put(e.getKey(), e.getValue().evaluate(configuration, datarecord));

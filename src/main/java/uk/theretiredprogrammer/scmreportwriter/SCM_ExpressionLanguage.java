@@ -32,9 +32,9 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.NotEquals;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.NotEqualsIgnoreCase;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.Or;
 import uk.theretiredprogrammer.scmreportwriter.language.Property;
+import uk.theretiredprogrammer.scmreportwriter.language.functions.CmdParamValue;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.String2Boolean;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.EnvValue;
-import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.SysValue;
 
 public class SCM_ExpressionLanguage extends Language{
@@ -45,7 +45,7 @@ public class SCM_ExpressionLanguage extends Language{
                     new SyntaxTreeItem("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
                     new SyntaxTreeItem("FALSE", new BooleanLiteral(false)),
                     new SyntaxTreeItem("TRUE", new BooleanLiteral(true)),
-                    new SyntaxTreeItem("CMDPARAMETER", new StringLiteral(config.getCommandParameter())),
+                    new SyntaxTreeItem("parameter", new Operator("Parameter value", PrecedenceGroup.MONADIC, CmdParamValue::reduce)),
                     new SyntaxTreeItem("env", new Operator("Env value", PrecedenceGroup.MONADIC, EnvValue::reduce)),
                     new SyntaxTreeItem("sys", new Operator("System Property value", PrecedenceGroup.MONADIC, SysValue::reduce)),
                 });

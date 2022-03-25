@@ -16,6 +16,7 @@
 package uk.theretiredprogrammer.scmreportwriter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,9 +38,13 @@ public class ReportDefinition {
 
     private LanguageSource source;
 
-    public void buildReportDefinition(Configuration configuration) throws FileNotFoundException, IOException,
+    public boolean buildReportDefinition(Configuration configuration) throws FileNotFoundException, IOException,
             LexerException, ParserException, InternalReportWriterException {
-        try ( BufferedReader brdr = new BufferedReader(new FileReader(configuration.getDefinitionFile()))) {
+        File deffile = configuration.getDefinitionFile();
+        if (deffile == null) {
+            return false;
+        }
+        try ( BufferedReader brdr = new BufferedReader(new FileReader(deffile))) {
             Language scmlanguage = new SCM_ExpressionLanguage(configuration);
             source = new LanguageSource(brdr.lines());
             Lexer lexer = new Lexer(source, scmlanguage);
@@ -47,6 +52,7 @@ public class ReportDefinition {
             lexer.lex();
             definition = DataTypes.isExpressionMap(parser.parse());
         }
+        return true;
     }
 
     protected LanguageSource getLanguageSource() {

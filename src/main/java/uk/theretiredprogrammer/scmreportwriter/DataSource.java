@@ -37,10 +37,10 @@ public abstract class DataSource extends ArrayList<DataSourceRecord> {
                 }
                 return new File(configuration.getDownloadDir(), f.getPath());
             }
-            case "startswith" -> {
+            case "latest_startswith" -> {
                 String startswith = getRequiredString(configuration, parameters, "path");
                 String[] files = configuration.getDownloadDir().list((file, filename) -> filename.startsWith(startswith));
-                f = getResolvedFile(configuration, files);
+                f = getResolvedLatestFile(configuration, files);
             }
             default ->
                 throw new InternalReportWriterException(parameters, "illegal parameter value for \"match\" parameter in data statement");
@@ -48,7 +48,7 @@ public abstract class DataSource extends ArrayList<DataSourceRecord> {
         return f.isAbsolute() ? f : new File(configuration.getDownloadDir(), f.getPath());
     }
 
-    private File getResolvedFile(Configuration configuration, String[] files) throws IOException {
+    private File getResolvedLatestFile(Configuration configuration, String[] files) throws IOException {
         long mostrecenttime = 0;
         File mostrecentfile = null;
         for (String file : files) {

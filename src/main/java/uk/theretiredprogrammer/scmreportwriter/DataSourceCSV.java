@@ -47,7 +47,7 @@ public class DataSourceCSV extends DataSource {
 
     public DataSource load(Configuration configuration, String name, ExpressionMap parameters) throws IOException, InternalReportWriterException {
         File f = getInputFile(configuration, parameters);
-        if (configuration.isListing()) {
+        if (configuration.getArgConfiguration().isListCmd()) {
             System.out.println("loading "+ name + " from " + f.getCanonicalPath());
         }
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {

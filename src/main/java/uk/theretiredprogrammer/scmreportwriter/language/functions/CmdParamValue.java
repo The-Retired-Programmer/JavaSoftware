@@ -16,7 +16,6 @@
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
 import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -26,22 +25,31 @@ import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class String2Boolean extends BooleanExpression {
-    
+public class CmdParamValue extends StringExpression {
+
     public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
         operatorstack.pop();
-        operandstack.push(new String2Boolean(DataTypes.isStringExpression(operandstack.pop())));
+        operandstack.push(new CmdParamValue(DataTypes.isStringExpression(operandstack.pop())));
     }
 
     private final StringExpression expression;
 
-    public String2Boolean(StringExpression expression) {
-        super("Boolean cast");
+    public CmdParamValue(StringExpression expression) {
+        super("Command Parameter value");
         this.expression = expression;
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return expression.evaluate(configuration, datarecord).equalsIgnoreCase("Yes") || expression.evaluate(configuration, datarecord).equalsIgnoreCase("True") ;
+    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
+        String pval;
+        try {
+            pval = configuration.getArgConfiguration().getCommandParameter(Integer.parseInt(expression.evaluate(configuration, datarecord)));
+        } catch (NumberFormatException ex) {
+            throw new InternalReportWriterException(expression, "Integer expected after \"parameter\"");
+        }
+        if (pval == null) {
+            throw new InternalReportWriterException(expression, "No such parameter on command line");
+        }
+        return pval;
     }
 }

@@ -51,8 +51,8 @@ public class ReportDefinition2Test {
         ExpressionMap map = reportdefinition.getDatadefinitions();
         assertEquals(2, map.size());
         if (map.get("contacts") instanceof ExpressionMap contacts) {
-            assertEquals(3, contacts.size());
-            assertEquals("startswith", contacts.get("match").evaluate(configuration, datarecord));
+            assertEquals(2, contacts.size());
+            assertEquals("latest_startswith", contacts.get("match").evaluate(configuration, datarecord));
         } else {
             fail("Data - contacts is not a map");
         }

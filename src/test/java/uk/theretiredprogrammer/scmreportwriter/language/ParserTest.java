@@ -238,7 +238,7 @@ public class ParserTest {
         }
     }
 
-    private void checkFilter(ExpressionMap map, Boolean res, Configuration configuration, DataSourceRecord datarecord) {
+    private void checkFilter(ExpressionMap map, Boolean res, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         if (map.get("filter") instanceof BooleanExpression bexp) {
             assertEquals(res, bexp.evaluate(configuration, datarecord));
         } else {
@@ -246,7 +246,7 @@ public class ParserTest {
         }
     }
 
-    private void checkData(ExpressionMap map, String[] res, Configuration configuration, DataSourceRecord datarecord) {
+    private void checkData(ExpressionMap map, String[] res, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         if (map.get("data") instanceof ExpressionMap p) {
             if (p.get(res[0]) instanceof ExpressionMap p2) {
                 if (p2.get(res[1]) instanceof StringExpression sexp) {
@@ -263,7 +263,7 @@ public class ParserTest {
 
     }
 
-    private void checkFields(ExpressionMap map, String[] fieldsres, Configuration configuration, DataSourceRecord datarecord) {
+    private void checkFields(ExpressionMap map, String[] fieldsres, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         if (map.get("fields") instanceof ExpressionList expl) {
             assertEquals(3, expl.size());
             for (int i = 0; i < 3; i++) {
@@ -565,6 +565,6 @@ public class ParserTest {
     @Test
     public void testParse44() throws Exception {
         System.out.println("TEST44 - parse - command parameter");
-        commonTestString("CMDPARAMETER", "<undefined>");
+        commonTestString("parameter 1", "<undefined>");
     }
 }

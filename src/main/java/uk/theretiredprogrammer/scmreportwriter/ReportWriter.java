@@ -36,12 +36,15 @@ public class ReportWriter {
     private final ReportDefinition definition;
     private final Map<String, DataSource> datasources = new HashMap<>();
     private final Configuration configuration;
-
-    public ReportWriter(Configuration configuration) throws IOException, LexerException, ParserException, ReportWriterException {
+    
+    public ReportWriter(Configuration configuration) {
         this.configuration = configuration;
         definition = new ReportDefinition();
+    }
+
+    public boolean buildReportDefinition() throws IOException, LexerException, ParserException, ReportWriterException {
         try {
-            definition.buildReportDefinition(configuration);
+            return definition.buildReportDefinition(configuration);
         } catch (InternalReportWriterException ex) {
             throw definition.getLanguageSource().newReportWriterException(ex);
         }
@@ -95,7 +98,7 @@ public class ReportWriter {
         }
     }
 
-    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException {
+    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException, InternalReportWriterException {
         List<String> fields = new ArrayList<>();
         for (Operand operand : fieldexpressions) {
             fields.add(DataTypes.isStringExpression(operand).evaluate(configuration, datarecord));

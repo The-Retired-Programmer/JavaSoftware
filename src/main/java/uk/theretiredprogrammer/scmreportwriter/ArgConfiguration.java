@@ -15,6 +15,8 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class ArgConfiguration {
@@ -29,14 +31,15 @@ public class ArgConfiguration {
     // --listuserconfig -l ; list the user config;
     //  
     //
-    //  followed by filepaths
+    //  followed by 
     //  reportdefinitionfile ; defines the rules for report creation <relative to working directory or absolute> if no file defined, then no report will be generated/compiled
+    //  and upto 9 parameter strings
     //
     private String downloaddir = null;
     private String workingdir = null;
     private String outputdir = null;
     private String definitionfile = null;
-    private String commandparameter = null;
+    private final List<String> commandparameters = new ArrayList<>();
     private boolean save = false;
     private boolean clear = false;
     private boolean list = false;
@@ -54,25 +57,34 @@ public class ArgConfiguration {
         if (outputdir != null) {
             p.setProperty("outputdir", outputdir);
         }
-        if (definitionfile != null) {
-            p.setProperty("definitionfile", definitionfile);
-        }
-        if (commandparameter != null) {
-            p.setProperty("commandparameter", commandparameter);
-        }
-        if (save){
-            p.setProperty("save", "save");
-        }
-        if (clear){
-            p.setProperty("clear", "clear");
-        }
-        if (list){
-            p.setProperty("list", "list");
-        }
-        if (debuglist){
-            p.setProperty("debuglist", "debuglist");
-        }
         return p;
+    }
+    
+    public String getDefinitionFile() {
+        return definitionfile;
+    }
+    
+    public String getCommandParameter(int index) {
+        if (index < 1 || index > commandparameters.size()) {
+            return null;
+        }
+        return commandparameters.get(index-1);
+    }
+    
+    public boolean isClearCmd() {
+        return clear;
+    }
+    
+    public boolean isSaveCmd() {
+        return save;
+    }
+    
+    public boolean isListCmd() {
+        return list;
+    }
+    
+    public boolean isDebugListCmd() {
+        return debuglist;
     }
 
     private void extractArgCommands(String[] args) throws ConfigurationException {
@@ -86,8 +98,6 @@ public class ArgConfiguration {
                     workingdir = argrdr.next();
                 case "--outputdir" ->
                     outputdir = argrdr.next();
-                case "--commandparam" ->
-                    commandparameter = argrdr.next();
                 case "--save" -> save = true;
                 case "--clear" -> clear = true;
                 case "--listuserconfig" -> list = true;
@@ -98,22 +108,18 @@ public class ArgConfiguration {
                     workingdir = argrdr.next();
                 case "-od" ->
                     outputdir = argrdr.next();
-                case "-cp" ->
-                    commandparameter = argrdr.next();
                 case "-s" -> save = true;
                 case "-c" -> clear = true;
                 case "-l" -> list = true;
                 case "-dl" -> debuglist = true;
                 default -> {
-                    if (argrdr.more()) {
-                        throw new ConfigurationException("Command Line: Definition file not the last arguement");
-                    }
                     definitionfile = p1;
+                    commandparameters.clear();
+                    while (argrdr.more()) {
+                        commandparameters.add(argrdr.next());
+                    }
                 }
             }
-        }
-        if (definitionfile == null) {
-            throw new ConfigurationException("Command Line: no Definition file");
         }
     }
 

@@ -61,7 +61,7 @@ public class Property implements Operand {
     }
 
     @Override
-    public Object evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public Object evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
         return expression.evaluate(configuration, datarecord);
     }
     

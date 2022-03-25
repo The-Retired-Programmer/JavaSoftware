@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class Configuration {
+    
+    private ArgConfiguration argconfiguration;
 
     private Properties systemproperties;
     private Properties envproperties;
@@ -38,27 +40,28 @@ public class Configuration {
     private File definitionfile;
 
     public void loadconfiguration(String args[]) throws IOException, ConfigurationException {
-        parseArgs(args);
+        argconfiguration = new ArgConfiguration();
+        argproperties = argconfiguration.parseArgs(args);
         getSystemConfig();
-        if (argproperties.getProperty("clear", "").equals("clear")) {
+        if (argconfiguration.isClearCmd()) {
             deleteUserConfigIfExists();
         }
         getUserConfig();
         getEnvConfig();
-        if (argproperties.getProperty("debuglist", "").equals("debuglist")) {
+        if (argconfiguration.isDebugListCmd()) {
             dumpargs();
         }
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
         outputdir = findOutputDir();
         definitionfile = findDefinitionFile();
-        if (argproperties.getProperty("list", "").equals("list")) {
+        if (argconfiguration.isListCmd()) {
             System.out.println("\n Current Directory Parameters and Resulting Paths\n");
             System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
             System.out.println("workingdir is " + getPropertyValue("workingdir") + " expands to " + workingdir.getCanonicalPath());
             System.out.println("outputdir is " + getPropertyValue("outputdir") + " expands to " + outputdir.getCanonicalPath());
         }
-        if (argproperties.getProperty("save", "").equals("save")) {
+        if (argconfiguration.isSaveCmd()) {
             String dd = argproperties.getProperty("downloaddir");
             if (dd != null) {
                 userproperties.setProperty("downloaddir", dd);
@@ -116,16 +119,16 @@ public class Configuration {
     }
 
     public File findDefinitionFile() throws ConfigurationException {
-        String file = argproperties.getProperty("definitionfile");
+        String file = argconfiguration.getDefinitionFile();
         if (file == null) {
-            throw new ConfigurationException("definitionfile parameter missing");
+            return null;
         }
         File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
-            throw new ConfigurationException("Definition file does not evauate to a file system file");
+            throw new ConfigurationException("Definition file does not evauate to a file system file; "+file);
         }
         if (!f.canRead()) {
-            throw new ConfigurationException("Definition file is not readable");
+            throw new ConfigurationException("Definition file is not readable"+file);
         }
         return f;
     }
@@ -166,8 +169,8 @@ public class Configuration {
         return envmap.get(key);
     }
     
-    public String getCommandParameter() {
-        return argproperties.getProperty("commandparameter");
+    public ArgConfiguration getArgConfiguration() {
+        return argconfiguration;
     }
     
     public boolean isListing() {
@@ -222,11 +225,6 @@ public class Configuration {
         try ( FileReader in = new FileReader(file_config)) {
             userproperties.load(in);
         }
-    }
-
-    private void parseArgs(String args[]) throws ConfigurationException {
-        ArgConfiguration argconfig = new ArgConfiguration();
-        argproperties = argconfig.parseArgs(args);
     }
 
     private void saveUserConfig() throws ConfigurationException, IOException {

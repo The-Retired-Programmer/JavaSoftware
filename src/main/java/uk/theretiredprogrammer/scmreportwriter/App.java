@@ -35,6 +35,9 @@ public class App {
         ReportWriter reportwriter=null;
         try {
             reportwriter = new ReportWriter(configuration);
+            if (!reportwriter.buildReportDefinition() ) {
+                System.exit(0);
+            }
         } catch (IOException | LexerException | ParserException | ReportWriterException ex) {
             System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
             System.exit(2);

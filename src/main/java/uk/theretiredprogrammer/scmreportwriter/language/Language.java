@@ -37,7 +37,7 @@ public abstract class Language {
     };
 
     public CharType charType(char c) {
-        if (Character.isLetter(c) || Character.isDigit(c)) {
+        if (Character.isLetter(c) || Character.isDigit(c) || c == '_') {
             return CharType.TEXT;
         }
         if (c == '"') {

@@ -26,7 +26,7 @@ public class TestConfiguration extends Configuration {
     
     public TestConfiguration(String reportdefinition, String commandparameter) throws IOException, ConfigurationException {
         super();
-        this.loadconfiguration(new String[] {"-wd", "TESTRPTWTR", "-od", "output", "-dd",  "TESTRPTWTR/Downloads", "-cp",  commandparameter, reportdefinition  });
+        this.loadconfiguration(new String[] {"-wd", "TESTRPTWTR", "-od", "output", "-dd",  "TESTRPTWTR/Downloads", reportdefinition , commandparameter });
     }
     
 }
