@@ -15,12 +15,14 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+
 public class Lexer {
 
-    private final LanguageSource source;
+    private final DefinitionSource source;
     private final Language language;
 
-    public Lexer(LanguageSource source, Language language) {
+    public Lexer(DefinitionSource source, Language language) {
         this.source = source;
         this.language = language;
     }
@@ -29,8 +31,7 @@ public class Lexer {
         INWHITESPACE, INTEXT, INDELIMITEDTEXT, INOPERATOR
     };
 
-    public void lex() throws LexerException {
-        try {
+    public void lex() throws RPTWTRException {
             StringBuilder tokenbuilder = new StringBuilder();
             LexState lstate = LexState.INWHITESPACE;
             while (true) {
@@ -106,7 +107,7 @@ public class Lexer {
                                 lstate = LexState.INWHITESPACE;
                             }
                             case EOF -> {
-                                throw source.newInternalLexerException("Unexpected EOF when in delimited text");
+                                throw new RPTWTRException("Unexpected EOF when in delimited text");
                             }
                         }
                     }
@@ -138,19 +139,16 @@ public class Lexer {
                     }
                 }
             }
-        } catch (InternalLexerException ex) {
-            throw source.newLexerException(ex);
-        }
     }
     
     // handles concatonated operators (symbols) - matches longest first (operator table must be correctly ordered)
-    private void processSymbols(String symbolstring) throws InternalLexerException {
+    private void processSymbols(String symbolstring) throws RPTWTRException {
         if (symbolstring.isEmpty()) {
             return;
         }
         String remainingsymbols = language.extractOperator(symbolstring);
         if (remainingsymbols == null) {
-            throw source.newInternalLexerException("Illegal Operator: " + symbolstring);
+            throw new RPTWTRException("Illegal Operator: " + symbolstring);
         }
         source.add(language.getExtractedOperator());
         processSymbols(remainingsymbols);

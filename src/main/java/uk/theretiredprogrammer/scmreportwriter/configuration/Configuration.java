@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.configuration;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,8 +22,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 
 public class Configuration {
+
+    private static Configuration configuration;
+
+    public static void create(String args[]) throws IOException, RPTWTRException {
+        configuration = new Configuration();
+        configuration.loadconfiguration(args);
+    }
+
+    public static Configuration getDefault() {
+        return configuration;
+    }
 
     private ArgConfiguration argconfiguration;
 
@@ -39,7 +51,10 @@ public class Configuration {
     private File outputdir;
     private File definitionfile;
 
-    public void loadconfiguration(String args[]) throws IOException, ConfigurationException {
+    private Configuration() {
+    }
+
+    private void loadconfiguration(String args[]) throws IOException, RPTWTRException {
         argconfiguration = new ArgConfiguration();
         argproperties = argconfiguration.parseArgs(args);
         getSystemConfig();
@@ -78,7 +93,7 @@ public class Configuration {
         }
     }
 
-    public File findDir(String propertyname, String defaultvalue) throws ConfigurationException {
+    public File findDir(String propertyname, String defaultvalue) throws RPTWTRException {
         String dir = getPropertyValue(propertyname);
         if (dir == null) {
             dir = defaultvalue;
@@ -89,16 +104,16 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new ConfigurationException("Failed to create a new file - " + dir);
+                throw new RPTWTRException("Failed to create a new file - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new ConfigurationException(propertyname + " does not evauate to a file system directory");
+            throw new RPTWTRException(propertyname + " does not evauate to a file system directory");
         }
         return f;
     }
 
-    public File findOutputDir() throws ConfigurationException {
+    public File findOutputDir() throws RPTWTRException {
         String dir = getPropertyValue("outputdir");
         if (dir == null) {
             return getWorkingDir();
@@ -109,26 +124,26 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new ConfigurationException("Failed to create a new directory - " + dir);
+                throw new RPTWTRException("Failed to create a new directory - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new ConfigurationException("Output directory does not evauate to a file system directory");
+            throw new RPTWTRException("Output directory does not evauate to a file system directory");
         }
         return f;
     }
 
-    public File findDefinitionFile() throws ConfigurationException {
+    public File findDefinitionFile() throws RPTWTRException {
         String file = argconfiguration.getDefinitionFile();
         if (file == null) {
             return null;
         }
         File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
-            throw new ConfigurationException("Definition file does not evauate to a file system file; " + file);
+            throw new RPTWTRException("Definition file does not evauate to a file system file; " + file);
         }
         if (!f.canRead()) {
-            throw new ConfigurationException("Definition file is not readable; " + file);
+            throw new RPTWTRException("Definition file is not readable; " + file);
         }
         return f;
     }
@@ -209,10 +224,10 @@ public class Configuration {
 
     private static final String USERCONFIGFILE = ".reportwriter";
 
-    private void getUserConfig() throws ConfigurationException, FileNotFoundException, IOException {
+    private void getUserConfig() throws RPTWTRException, FileNotFoundException, IOException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new ConfigurationException("Cannot identify user home directory");
+            throw new RPTWTRException("Cannot identify user home directory");
         }
         userproperties = new Properties();
         File file_config = new File(userhome, USERCONFIGFILE);
@@ -224,17 +239,17 @@ public class Configuration {
         }
     }
 
-    private void saveUserConfig() throws ConfigurationException, IOException {
+    private void saveUserConfig() throws RPTWTRException, IOException {
         File file_config = deleteUserConfigIfExists();
         try ( FileWriter out = new FileWriter(file_config)) {
             userproperties.store(out, "-- ReportWriter User Configuration --");
         }
     }
 
-    private File deleteUserConfigIfExists() throws ConfigurationException {
+    private File deleteUserConfigIfExists() throws RPTWTRException {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new ConfigurationException("Cannot identify user home directory");
+            throw new RPTWTRException("Cannot identify user home directory");
         }
         File file_config = new File(userhome, USERCONFIGFILE);
         if (file_config.exists()) {

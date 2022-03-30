@@ -15,21 +15,20 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class BooleanLiteral extends BooleanExpression {
 
     private final Boolean literal;
-    
+
     public BooleanLiteral(Boolean literal) {
         super(literal.toString());
         this.literal = literal;
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public Boolean evaluate(DataSourceRecord datarecord) {
         return literal;
     }
 }

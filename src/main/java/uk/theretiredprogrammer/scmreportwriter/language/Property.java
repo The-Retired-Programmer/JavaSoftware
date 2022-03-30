@@ -15,12 +15,12 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class Property implements Operand {
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         Operand rhs = operandstack.pop();
         operandstack.push(new Property(DataTypes.isStringLiteral(operandstack.pop()), rhs));
@@ -28,43 +28,36 @@ public class Property implements Operand {
 
     private final String name;
     private final Operand expression;
-    private int location;
-    private int length;
+    private TokenSourceLocator locator;
 
     public Property(String name, Operand expression) {
         this.name = name;
         this.expression = expression;
     }
-    
+
     @Override
-    public void setLocation(int charoffset, int length) {
-        location = charoffset;
-        this.length = length;
-    }
-    
-    @Override
-    public int getLocation() {
-        return location;
+    public void setLocator(TokenSourceLocator locator) {
+        this.locator = locator;
     }
 
     @Override
-    public int getLength() {
-        return length;
+    public TokenSourceLocator getLocator() {
+        return locator;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public Operand getExpression() {
         return expression;
     }
 
     @Override
-    public Object evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return expression.evaluate(configuration, datarecord);
+    public Object evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return expression.evaluate(datarecord);
     }
-    
+
     @Override
     public String toString() {
         return name;

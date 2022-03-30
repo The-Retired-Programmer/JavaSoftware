@@ -22,31 +22,24 @@ public class Operator implements S_Token {
     public final PrecedenceGroup operatorgroup;
     public final Reduction reduction;
     public final String name;
-    private int location;
-    private int length;
+    private TokenSourceLocator locator;
 
     public Operator(String name, PrecedenceGroup operatorgroup, Reduction reduction) {
         this.name = name;
         this.operatorgroup = operatorgroup;
         this.reduction = reduction;
     }
-    
+
     @Override
-    public void setLocation(int charoffset, int length) {
-        location = charoffset;
-        this.length = length;
+    public void setLocator(TokenSourceLocator locator) {
+        this.locator = locator;
     }
-    
+
     @Override
-    public int getLocation() {
-        return location;
+    public TokenSourceLocator getLocator() {
+        return locator;
     }
-    
-    @Override
-    public int getLength() {
-        return length;
-    }
-    
+
     @Override
     public String toString() {
         return name;

@@ -18,27 +18,20 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 public abstract class StringExpression implements Operand<String> {
 
     private final String name;
-    private int location;
-    private int length;
+    private TokenSourceLocator locator;
     
     public StringExpression(String name) {
         this.name =  name;
     }
     
-     @Override
-    public void setLocation(int charoffset, int length) {
-        location = charoffset;
-        this.length = length;
+    @Override
+    public void setLocator(TokenSourceLocator locator) {
+        this.locator = locator;
     }
     
     @Override
-    public int getLocation() {
-        return location;
-    }
-    
-    @Override
-    public int getLength() {
-        return length;
+    public TokenSourceLocator getLocator() {
+        return locator;
     }
     
     @Override

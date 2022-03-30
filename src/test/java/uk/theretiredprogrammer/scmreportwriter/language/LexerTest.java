@@ -21,13 +21,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.ConfigurationException;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.SCM_ExpressionLanguage;
 import uk.theretiredprogrammer.scmreportwriter.TestConfiguration;
 
 public class LexerTest {
-    
+
     public LexerTest() {
     }
 
@@ -258,7 +257,7 @@ public class LexerTest {
                 "FIELDS"
         );
     }
-    
+
     @Test
     public void testLex14() throws Exception {
         System.out.println("lex - FILTER and datarecordfield");
@@ -268,8 +267,8 @@ public class LexerTest {
                 "abc"
         );
     }
-    
-     @Test
+
+    @Test
     public void testLex15() throws Exception {
         System.out.println("lex - FILTER and property");
         lextest("FILTER , abc:def+hij",
@@ -282,19 +281,18 @@ public class LexerTest {
                 "hij"
         );
     }
-    
-    private void lextest(String input, String... results) throws LexerException {
-        Configuration configuration= null;
+
+    private void lextest(String input, String... results) throws RPTWTRException {
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
-        LanguageSource langsource = new LanguageSource(input.lines());
-        Lexer lexer = new Lexer(langsource, language);
+        Language languagedefinition = new SCM_ExpressionLanguage();
+        DefinitionSource definitionsource = new DefinitionSource(input.lines());
+        Lexer lexer = new Lexer(definitionsource, languagedefinition);
         lexer.lex();
-        List<S_Token> lexresult = langsource.getS_Tokens();
+        List<S_Token> lexresult = definitionsource.getS_Tokens();
         assertEquals(results.length, lexresult.size());
         for (int i = 0; i < results.length; i++) {
             assertEquals(results[i], lexresult.get(i).toString());

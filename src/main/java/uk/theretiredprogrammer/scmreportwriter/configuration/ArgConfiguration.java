@@ -13,28 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 
 public class ArgConfiguration {
 
-    // command arguments:
-    // --downloaddir -dd <path> ; define download directory <relative to user home or absolute> defaults to Downloads
-    // --workingdir -wd <path> ; define working directory  <relative to user home or absolute> defaults to current working directory
-    // --outputdir -od <path> ; define output directory for reports <relative to working directory or absolute> defaults to working directory
-    //
-    // --save -s; save the preceding directory parameters in user config file;
-    // --clear -c; clear the user config file
-    // --listuserconfig -l ; list the user config;
-    //  
-    //
-    //  followed by 
-    //  reportdefinitionfile ; defines the rules for report creation <relative to working directory or absolute> if no file defined, then no report will be generated/compiled
-    //  and upto 9 parameter strings
-    //
     private String downloaddir = null;
     private String workingdir = null;
     private String outputdir = null;
@@ -45,7 +32,7 @@ public class ArgConfiguration {
     private boolean list = false;
     private boolean debuglist = false;
 
-    public Properties parseArgs(String[] args) throws ConfigurationException {
+    public Properties parseArgs(String[] args) throws RPTWTRException {
         extractArgCommands(args);
         Properties p = new Properties();
         if (downloaddir != null) {
@@ -59,35 +46,35 @@ public class ArgConfiguration {
         }
         return p;
     }
-    
+
     public String getDefinitionFile() {
         return definitionfile;
     }
-    
+
     public String getCommandParameter(int index) {
         if (index < 1 || index > commandparameters.size()) {
             return null;
         }
-        return commandparameters.get(index-1);
+        return commandparameters.get(index - 1);
     }
-    
+
     public boolean isClearCmd() {
         return clear;
     }
-    
+
     public boolean isSaveCmd() {
         return save;
     }
-    
+
     public boolean isListCmd() {
         return list;
     }
-    
+
     public boolean isDebugListCmd() {
         return debuglist;
     }
 
-    private void extractArgCommands(String[] args) throws ConfigurationException {
+    private void extractArgCommands(String[] args) throws RPTWTRException {
         ArgReader argrdr = new ArgReader(args);
         while (argrdr.more()) {
             String p1 = argrdr.next();
@@ -98,20 +85,28 @@ public class ArgConfiguration {
                     workingdir = argrdr.next();
                 case "--outputdir" ->
                     outputdir = argrdr.next();
-                case "--save" -> save = true;
-                case "--clear" -> clear = true;
-                case "--listuserconfig" -> list = true;
-                case "--debuglist" -> debuglist = true;
+                case "--save" ->
+                    save = true;
+                case "--clear" ->
+                    clear = true;
+                case "--listuserconfig" ->
+                    list = true;
+                case "--debuglist" ->
+                    debuglist = true;
                 case "-dd" ->
                     downloaddir = argrdr.next();
                 case "-wd" ->
                     workingdir = argrdr.next();
                 case "-od" ->
                     outputdir = argrdr.next();
-                case "-s" -> save = true;
-                case "-c" -> clear = true;
-                case "-l" -> list = true;
-                case "-dl" -> debuglist = true;
+                case "-s" ->
+                    save = true;
+                case "-c" ->
+                    clear = true;
+                case "-l" ->
+                    list = true;
+                case "-dl" ->
+                    debuglist = true;
                 default -> {
                     definitionfile = p1;
                     commandparameters.clear();
@@ -133,9 +128,9 @@ public class ArgConfiguration {
             index = 0;
         }
 
-        public String next() throws ConfigurationException {
+        public String next() throws RPTWTRException {
             if (index >= args.length) {
-                throw new ConfigurationException("Command Line: bad structure - missing arguements");
+                throw new RPTWTRException("Command Line: bad structure - missing arguements");
             }
             return args[index++];
         }

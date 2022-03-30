@@ -15,19 +15,18 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class CmdParamValue extends StringExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         operandstack.push(new CmdParamValue(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -40,15 +39,15 @@ public class CmdParamValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
+    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
         String pval;
         try {
-            pval = configuration.getArgConfiguration().getCommandParameter(Integer.parseInt(expression.evaluate(configuration, datarecord)));
+            pval = Configuration.getDefault().getArgConfiguration().getCommandParameter(Integer.parseInt(expression.evaluate(datarecord)));
         } catch (NumberFormatException ex) {
-            throw new InternalReportWriterException(expression, "Integer expected after \"parameter\"");
+            throw new RPTWTRException("Integer expected after \"parameter\"", expression);
         }
         if (pval == null) {
-            throw new InternalReportWriterException(expression, "No such parameter on command line");
+            throw new RPTWTRException("No such parameter on command line", expression);
         }
         return pval;
     }

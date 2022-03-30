@@ -15,14 +15,15 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language.Precedence;
 
 public class Parser {
 
     private final Language language;
-    private final LanguageSource source;
-    
-    public Parser(LanguageSource source, Language language) {
+    private final DefinitionSource source;
+
+    public Parser(DefinitionSource source, Language language) {
         this.language = language;
         this.source = source;
     }
@@ -30,29 +31,24 @@ public class Parser {
     private final OperatorStack operatorstack = new OperatorStack();
     private final OperandStack operandstack = new OperandStack();
 
-
-    public Operand parse() throws ParserException {
-        try {
-            operatorstack.push(language.OPERATOR_START);
-            for (S_Token token : source.getS_Tokens()) {
-                if (token instanceof Operator operator) {
-                    addOperator(operator);
+    public Operand parse() throws RPTWTRException {
+        operatorstack.push(language.OPERATOR_START);
+        for (S_Token token : source.getS_Tokens()) {
+            if (token instanceof Operator operator) {
+                addOperator(operator);
+            } else {
+                if (token instanceof Operand operand) {
+                    operandstack.push(operand);
                 } else {
-                    if (token instanceof Operand operand) {
-                        operandstack.push(operand);
-                    } else {
-                        throw new InternalParserException(token, "Parser PANIC - unknown token type - not Operator or Operand");
-                    }
+                    throw new RPTWTRException("Parser PANIC - unknown token type - not Operator or Operand", token);
                 }
             }
-            addOperator(language.OPERATOR_END);
-            return operandstack.pop();
-        } catch (InternalParserException ex) {
-            throw source.newParserException(ex);
         }
+        addOperator(language.OPERATOR_END);
+        return operandstack.pop();
     }
 
-    private void addOperator(Operator operator) throws InternalParserException {
+    private void addOperator(Operator operator) throws RPTWTRException {
         switch (language.getPrecedence(operatorstack.peek(), operator)) {
             case SHIFT ->
                 operatorstack.push(operator);
@@ -65,7 +61,7 @@ public class Parser {
             case EQUAL ->
                 operatorstack.push(operator);
             case ERROR ->
-                throw new InternalParserException(operator, "Bad Syntax");
+                throw new RPTWTRException("Bad Syntax", operator);
         }
     }
 }

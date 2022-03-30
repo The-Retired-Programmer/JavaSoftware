@@ -15,20 +15,18 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Boolean2String extends StringExpression {
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         operandstack.push(new Boolean2String(DataTypes.isBooleanExpression(operandstack.pop())));
     }
@@ -41,7 +39,7 @@ public class Boolean2String extends StringExpression {
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return expression.evaluate(configuration, datarecord) ? "Yes" : "No";
+    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return expression.evaluate(datarecord) ? "Yes" : "No";
     }
 }

@@ -15,20 +15,18 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class NotEquals extends BooleanExpression{
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+public class NotEquals extends BooleanExpression {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new NotEquals(DataTypes.isStringExpression(operandstack.pop()), rhs));
@@ -36,7 +34,7 @@ public class NotEquals extends BooleanExpression{
 
     private final StringExpression lhs;
     private final StringExpression rhs;
-    
+
     public NotEquals(StringExpression lhs, StringExpression rhs) {
         super("NOTEQUALS expression");
         this.lhs = lhs;
@@ -44,7 +42,7 @@ public class NotEquals extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return !(lhs.evaluate(configuration, datarecord).equals(rhs.evaluate(configuration, datarecord)));
+    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return !(lhs.evaluate(datarecord).equals(rhs.evaluate(datarecord)));
     }
 }

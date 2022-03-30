@@ -15,19 +15,17 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class DataRecordField extends StringExpression {
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         operandstack.push(new DataRecordField(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -40,8 +38,8 @@ public class DataRecordField extends StringExpression {
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return datarecord.get(fieldnameexpression.evaluate(configuration, datarecord));
+    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return datarecord.getFieldValue(fieldnameexpression.evaluate(datarecord));
     }
-    
+
 }

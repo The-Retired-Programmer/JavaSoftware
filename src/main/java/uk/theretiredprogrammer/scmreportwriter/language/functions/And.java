@@ -15,27 +15,25 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class And extends BooleanExpression{
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+public class And extends BooleanExpression {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         BooleanExpression rhs = DataTypes.isBooleanExpression(operandstack.pop());
         operandstack.push(new And(DataTypes.isBooleanExpression(operandstack.pop()), rhs));
     }
-    
+
     private final BooleanExpression lhs;
     private final BooleanExpression rhs;
-    
+
     public And(BooleanExpression lhs, BooleanExpression rhs) {
         super("AND expression");
         this.lhs = lhs;
@@ -43,7 +41,7 @@ public class And extends BooleanExpression{
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException{
-        return lhs.evaluate(configuration, datarecord) && rhs.evaluate(configuration, datarecord);
+    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return lhs.evaluate(datarecord) && rhs.evaluate(datarecord);
     }
 }

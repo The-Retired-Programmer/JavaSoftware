@@ -18,67 +18,60 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
-public class ExpressionMap extends HashMap<String,Operand> implements Operand {
-    
-    private int location;
-    private int length;
-    
+public class ExpressionMap extends HashMap<String, Operand> implements Operand {
+
+    private TokenSourceLocator locator;
+
     @Override
-    public void setLocation(int charoffset, int length) {
-        location = charoffset;
-        this.length = length;
-    }
-    
-    @Override
-    public int getLocation() {
-        return location;
-    }
-    
-    @Override
-    public int getLength() {
-        return length;
-    }
-    
-    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
-        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on '{' operator");
+    public void setLocator(TokenSourceLocator locator) {
+        this.locator = locator;
     }
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    @Override
+    public TokenSourceLocator getLocator() {
+        return locator;
+    }
+
+    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+        throw new RPTWTRException("Illegal to reduce on '{' operator", operatorstack.pop());
+    }
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         ExpressionMap emap = new ExpressionMap();
         operatorstack.pop(); // this will be "}"
-       while (operatorstack.peek().toString().equals(",")) {
+        while (operatorstack.peek().toString().equals(",")) {
             addProperty2Map(operatorstack, operandstack, emap);
         }
         if (operatorstack.peek().toString().equals("{")) {
             addProperty2Map(operatorstack, operandstack, emap);
         } else {
-            throw new InternalParserException(operandstack.peek(), "'{' expected when generating a ExpressionMap");
+            throw new RPTWTRException("'{' expected when generating a ExpressionMap", operandstack.peek());
         }
         operandstack.push(emap);
     }
 
-    private static void addProperty2Map(OperatorStack operatorstack, OperandStack operandstack, ExpressionMap emap) throws InternalParserException {
+    private static void addProperty2Map(OperatorStack operatorstack, OperandStack operandstack, ExpressionMap emap) throws RPTWTRException {
         Operand operand = operandstack.pop();
         if (operand instanceof Property property) {
             emap.put(property.getName(), property.getExpression());
         } else {
-            throw new InternalParserException(operand, "Expression is not allowed in ExpressionMap context");
+            throw new RPTWTRException("Expression is not allowed in ExpressionMap context", operand);
         }
         operatorstack.pop();
     }
-    
+
     @Override
-    public Map<String,Object> evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        Map<String,Object> result = new HashMap<>();
-        for (Entry<String,Operand> e: entrySet()) {
-            result.put(e.getKey(), e.getValue().evaluate(configuration, datarecord));
+    public Map<String, Object> evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        Map<String, Object> result = new HashMap<>();
+        for (Entry<String, Operand> e : entrySet()) {
+            result.put(e.getKey(), e.getValue().evaluate(datarecord));
         }
         return result;
     }
-    
+
     @Override
     public String toString() {
         return "Expression Map";

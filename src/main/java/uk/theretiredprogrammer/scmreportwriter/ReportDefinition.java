@@ -15,39 +15,35 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Set;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
-import uk.theretiredprogrammer.scmreportwriter.language.LanguageSource;
+import uk.theretiredprogrammer.scmreportwriter.language.DefinitionSource;
 import uk.theretiredprogrammer.scmreportwriter.language.Lexer;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
 import uk.theretiredprogrammer.scmreportwriter.language.Operand;
 import uk.theretiredprogrammer.scmreportwriter.language.Parser;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportDefinition {
 
     private ExpressionMap definition;
 
-    private LanguageSource source;
+    private DefinitionSource source;
 
-    public boolean buildReportDefinition(Configuration configuration) throws FileNotFoundException, IOException,
-            LexerException, ParserException, InternalReportWriterException {
-        File deffile = configuration.getDefinitionFile();
+    public boolean buildReportDefinition() throws FileNotFoundException, IOException, RPTWTRException {
+        File deffile = Configuration.getDefault().getDefinitionFile();
         if (deffile == null) {
             return false;
         }
         try ( BufferedReader brdr = new BufferedReader(new FileReader(deffile))) {
-            Language scmlanguage = new SCM_ExpressionLanguage(configuration);
-            source = new LanguageSource(brdr.lines());
+            Language scmlanguage = new SCM_ExpressionLanguage();
+            source = new DefinitionSource(brdr.lines());
             Lexer lexer = new Lexer(source, scmlanguage);
             Parser parser = new Parser(source, scmlanguage);
             lexer.lex();
@@ -56,7 +52,7 @@ public class ReportDefinition {
         return true;
     }
 
-    protected LanguageSource getLanguageSource() {
+    protected DefinitionSource getDefinitionSource() {
         return source;
     }
 
@@ -64,11 +60,15 @@ public class ReportDefinition {
         return definition.get(propertyname);
     }
 
-    public ExpressionMap getDatadefinitions() throws InternalReportWriterException {
+    public ExpressionMap getDatadefinitions() throws RPTWTRException {
         return DataTypes.isExpressionMap(definition, "data");
     }
 
-    public ExpressionList getReportdefinitions() throws InternalReportWriterException {
+    public ExpressionMap getGeneratedFilesdefinitions() throws RPTWTRException {
+        return DataTypes.isExpressionMap(definition, "generated_data");
+    }
+
+    public ExpressionList getReportdefinitions() throws RPTWTRException {
         return DataTypes.isExpressionList(definition, "reports");
     }
 }

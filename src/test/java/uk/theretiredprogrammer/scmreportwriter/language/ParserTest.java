@@ -20,17 +20,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.ConfigurationException;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.SCM_ExpressionLanguage;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.TestConfiguration;
 
 public class ParserTest {
 
-
     public ParserTest() {
-        
+
     }
 
     @BeforeAll
@@ -42,57 +40,54 @@ public class ParserTest {
     }
 
     private void commonTestString(String input, String expected) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
         Operand presult = parser.parse();
         if (presult instanceof StringExpression stringexp) {
-            assertEquals(expected, stringexp.evaluate(configuration, datarecord));
+            assertEquals(expected, stringexp.evaluate(datarecord));
             return;
         }
         fail("result expression is not stringexpression");
     }
 
     private void commonTestProperty(String input, String expected) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
         Operand presult = parser.parse();
         if (presult instanceof Property propertyexp) {
-            assertEquals(expected, propertyexp.evaluate(configuration, datarecord));
+            assertEquals(expected, propertyexp.evaluate(datarecord));
             return;
         }
         fail("result expression is not property");
     }
 
     private void commonTestStringMultiple(String input, String... expected) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
@@ -101,7 +96,7 @@ public class ParserTest {
             assertEquals(expected.length, expressions.size());
             for (int i = 0; i < expected.length; i++) {
                 if (expressions.get(i) instanceof StringExpression stringexp) {
-                    assertEquals(expected[i], stringexp.evaluate(configuration, datarecord));
+                    assertEquals(expected[i], stringexp.evaluate(datarecord));
                 } else {
                     fail("result expression " + i + " is not stringexpression");
                 }
@@ -112,15 +107,14 @@ public class ParserTest {
     }
 
     private void commonTestCommandMultipleStringMultiple(String input, String[] commands, String[]... expected) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
@@ -134,7 +128,7 @@ public class ParserTest {
                     assertEquals(expected[j].length, expressions.size());
                     for (int i = 0; i < expected.length; i++) {
                         if (expressions.get(i) instanceof StringExpression stringexp) {
-                            assertEquals(expected[j][i], stringexp.evaluate(configuration, datarecord));
+                            assertEquals(expected[j][i], stringexp.evaluate(datarecord));
                         } else {
                             fail("result command " + commands[j] + " expression " + i + " is not stringexpression");
                         }
@@ -147,58 +141,54 @@ public class ParserTest {
     }
 
     private void commonTestStringWithData(String input, String expected, String datakey, String datavalue) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
-        DataSourceRecord datarecord = new DataSourceRecord();
-        datarecord.put(datakey, datavalue);
-        LanguageSource source = new LanguageSource(input);
+        Language language = new SCM_ExpressionLanguage();
+        DataSourceRecord datarecord = new DataSourceRecord(datakey, datavalue);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
         Operand presult = parser.parse();
         if (presult instanceof StringExpression stringexp) {
-            assertEquals(expected, stringexp.evaluate(configuration, datarecord));
+            assertEquals(expected, stringexp.evaluate(datarecord));
             return;
         }
         fail("result expression is not stringexpression");
     }
 
     private void commonTestBoolean(String input, boolean expected) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
         Operand presult = parser.parse();
         if (presult instanceof BooleanExpression boolexp) {
-                assertEquals(expected, boolexp.evaluate(configuration, datarecord));
-                return;
-            }
+            assertEquals(expected, boolexp.evaluate(datarecord));
+            return;
+        }
         fail("result expression is not booleanexpression");
     }
-    
+
     private void commonTestMap(String input, String expectedkey, String expectedvalue) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord datarecord = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
@@ -206,7 +196,7 @@ public class ParserTest {
         if (presult instanceof ExpressionMap map) {
             assertEquals(true, map.containsKey(expectedkey));
             if (map.get(expectedkey) instanceof StringExpression string) {
-                assertEquals(expectedvalue, string.evaluate(configuration, datarecord));
+                assertEquals(expectedvalue, string.evaluate(datarecord));
                 return;
             } else {
                 fail("result expression is not expressionmap>stringexpression");
@@ -216,15 +206,14 @@ public class ParserTest {
     }
 
     private void commonTestCommandMultipleBooleanMap2List(String input, Boolean filterres, String[] datares, String[] fieldsres) throws Exception {
-        Configuration configuration= null;
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        Language language = new SCM_ExpressionLanguage(configuration);
+        Language language = new SCM_ExpressionLanguage();
         DataSourceRecord dr = new DataSourceRecord();
-        LanguageSource source = new LanguageSource(input);
+        DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
         Parser parser = new Parser(source, language);
@@ -232,25 +221,25 @@ public class ParserTest {
         if (presult instanceof ExpressionMap map) {
             assertEquals(3, map.size());
             //
-            checkFilter(map, filterres, configuration, dr);
-            checkData(map, datares, configuration, dr);
-            checkFields(map, fieldsres, configuration, dr);
+            checkFilter(map, filterres, dr);
+            checkData(map, datares, dr);
+            checkFields(map, fieldsres, dr);
         }
     }
 
-    private void checkFilter(ExpressionMap map, Boolean res, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
+    private void checkFilter(ExpressionMap map, Boolean res, DataSourceRecord datarecord) throws RPTWTRException {
         if (map.get("filter") instanceof BooleanExpression bexp) {
-            assertEquals(res, bexp.evaluate(configuration, datarecord));
+            assertEquals(res, bexp.evaluate(datarecord));
         } else {
             fail("filter is not a booleanexpression");
         }
     }
 
-    private void checkData(ExpressionMap map, String[] res, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
+    private void checkData(ExpressionMap map, String[] res, DataSourceRecord datarecord) throws RPTWTRException {
         if (map.get("data") instanceof ExpressionMap p) {
             if (p.get(res[0]) instanceof ExpressionMap p2) {
                 if (p2.get(res[1]) instanceof StringExpression sexp) {
-                    assertEquals(res[2], sexp.evaluate(configuration, datarecord));
+                    assertEquals(res[2], sexp.evaluate(datarecord));
                 } else {
                     fail("data third level is not a string expression");
                 }
@@ -263,12 +252,12 @@ public class ParserTest {
 
     }
 
-    private void checkFields(ExpressionMap map, String[] fieldsres, Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
+    private void checkFields(ExpressionMap map, String[] fieldsres, DataSourceRecord datarecord) throws RPTWTRException {
         if (map.get("fields") instanceof ExpressionList expl) {
             assertEquals(3, expl.size());
             for (int i = 0; i < 3; i++) {
                 if (expl.get(i) instanceof StringExpression sexp) {
-                    assertEquals(fieldsres[i], sexp.evaluate(configuration, datarecord));
+                    assertEquals(fieldsres[i], sexp.evaluate(datarecord));
                 } else {
                     fail("an element of fields is not a string expression");
                 }
@@ -481,19 +470,19 @@ public class ParserTest {
         System.out.println("TEST34MINUS - parse - simplified complex expression 1");
         commonTestString("string!TRUE", "No");
     }
-    
+
     @Test
     public void testParse34MINUS2() throws Exception {
         System.out.println("TEST34MINUS - parse - simplified complex expression 1");
         commonTestString("string!(TRUE)", "No");
     }
-    
+
     @Test
     public void testParse34MINUS3() throws Exception {
         System.out.println("TEST34MINUS - parse - simplified complex expression 1");
         commonTestString("string!(TRUE)+\"?\"", "No?");
     }
-    
+
     @Test
     public void testParse34() throws Exception {
         System.out.println("TEST34 - parse - complex expression 1");
@@ -517,11 +506,11 @@ public class ParserTest {
         System.out.println("TEST37 - parse - list separator * n, list terminator with expressions");
         commonTestStringMultiple("[string (a==b),string(!(FALSE||FALSE||TRUE&&FALSE||FALSE)),c+d]", "No", "Yes", "cd");
     }
-    
+
     @Test
     public void testParse38MINUS() throws Exception {
         System.out.println("TEST38MINUS - parse - expressionmap builer");
-        commonTestMap("{filter:abc}", "filter","abc");
+        commonTestMap("{filter:abc}", "filter", "abc");
     }
 
     @Test
@@ -549,19 +538,19 @@ public class ParserTest {
         commonTestCommandMultipleBooleanMap2List("{filter:TRUE,data:{bookings:{path:\"file.csv\"}},fields:[Hello,World,AGAIN]}",
                 true, new String[]{"bookings", "path", "file.csv"}, new String[]{"Hello", "World", "AGAIN"});
     }
-    
+
     @Test
     public void testParse42() throws Exception {
         System.out.println("TEST42 - parse - system parameter");
         commonTestString("sys \"file.encoding\"", "UTF-8");
     }
-    
+
     @Test
     public void testParse43() throws Exception {
         System.out.println("TEST43 - parse - env value");
         commonTestString("env SHELL", "/bin/bash");
     }
-    
+
     @Test
     public void testParse44() throws Exception {
         System.out.println("TEST44 - parse - command parameter");

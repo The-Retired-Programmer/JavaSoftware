@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,10 +23,7 @@ import org.junit.jupiter.api.Test;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
 import uk.theretiredprogrammer.scmreportwriter.language.Operand;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportDefinition2Test {
 
@@ -33,26 +31,23 @@ public class ReportDefinition2Test {
     }
 
     @Test
-    public void testCreate() throws IOException, LexerException, FileNotFoundException,
-            ParserException, InternalReportWriterException {
+    public void testCreate() throws IOException, RPTWTRException, FileNotFoundException {
         System.out.println("definitions 2");
-        DataSourceRecord datarecord = new DataSourceRecord();
-        datarecord.put("Event","dummy");
-        datarecord.put("Type","dummy");
-        Configuration configuration= null;
+
+        DataSourceRecord datarecord = new DataSourceRecord("Event", "Type", "dummy", "dummy");
         try {
-            configuration = new TestConfiguration("reportdefinition");
-        } catch (ConfigurationException | IOException ex) {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         ReportDefinition reportdefinition = new ReportDefinition();
-        reportdefinition.buildReportDefinition(configuration);
+        reportdefinition.buildReportDefinition();
         //
         ExpressionMap map = reportdefinition.getDatadefinitions();
         assertEquals(2, map.size());
         if (map.get("contacts") instanceof ExpressionMap contacts) {
             assertEquals(2, contacts.size());
-            assertEquals("latest_startswith", contacts.get("match").evaluate(configuration, datarecord));
+            assertEquals("latest_startswith", contacts.get("match").evaluate(datarecord));
         } else {
             fail("Data - contacts is not a map");
         }
@@ -60,13 +55,13 @@ public class ReportDefinition2Test {
         Operand reports = reportdefinition.getReportdefinitions();
         if (reports instanceof ExpressionList rptlist) {
             Operand report1 = rptlist.get(0);
-            if (report1 instanceof ExpressionMap rptmap){
+            if (report1 instanceof ExpressionMap rptmap) {
                 if (rptmap.get("headers") instanceof ExpressionList list) {
                     assertEquals(7, list.size());
-                    assertEquals("Made for", list.get(0).evaluate(configuration, datarecord));
+                    assertEquals("Made for", list.get(0).evaluate(datarecord));
                 }
                 if (rptmap.get("filter") instanceof BooleanExpression bexp) {
-                    assertEquals(false, bexp.evaluate(configuration, datarecord));
+                    assertEquals(false, bexp.evaluate(datarecord));
                 } else {
                     fail("report1>filter is not a boolean expression");
                 }

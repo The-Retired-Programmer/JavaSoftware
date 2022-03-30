@@ -18,10 +18,8 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 
 public interface S_Token {
     
-    public void setLocation(int charoffset, int length);
+    public void setLocator(TokenSourceLocator locator);
     
-    public int getLocation();
-    
-    public int getLength();
+    public TokenSourceLocator getLocator();
 
 }

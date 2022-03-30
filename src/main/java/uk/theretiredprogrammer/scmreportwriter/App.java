@@ -15,37 +15,35 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import java.io.IOException;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class App {
 
     public static void main(String args[]) {
 
-        Configuration configuration = new Configuration();
         try {
-            configuration.loadconfiguration(args);
-        } catch (ConfigurationException | IOException ex) {
+            Configuration.create(args);
+        } catch (RPTWTRException | IOException ex) {
             System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
             System.exit(1);
         }
 
         @SuppressWarnings("UnusedAssignment")
-        ReportWriter reportwriter=null;
+        ReportWriter reportwriter = null;
         try {
-            reportwriter = new ReportWriter(configuration);
-            if (!reportwriter.buildReportDefinition() ) {
+            reportwriter = new ReportWriter();
+            if (!reportwriter.buildReportDefinition()) {
                 System.exit(0);
             }
-        } catch (IOException | LexerException | ParserException | ReportWriterException ex) {
+        } catch (IOException | RPTWTRException ex) {
             System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
             System.exit(2);
         }
         try {
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (ConfigurationException | ReportWriterException | IOException ex) {
+        } catch (RPTWTRException | IOException ex) {
             System.err.println("Report Execution Failure: " + ex.getLocalizedMessage());
             System.exit(3);
         }

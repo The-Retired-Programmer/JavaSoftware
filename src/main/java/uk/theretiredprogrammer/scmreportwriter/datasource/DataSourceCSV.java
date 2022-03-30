@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.scmreportwriter;
+package uk.theretiredprogrammer.scmreportwriter.datasource;
 
 //
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -27,27 +28,26 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 
 public class DataSourceCSV extends DataSource {
 
-    public static DataSource read(Configuration configuration, String name, ExpressionMap parameters) throws IOException, InternalReportWriterException {
-        return new DataSourceCSV().load(configuration, name, parameters);
+    public static DataSource read(String name, ExpressionMap parameters) throws IOException, RPTWTRException {
+        return new DataSourceCSV().load(name, parameters);
     }
 
-    public static void write(Configuration configuration, String path, List<List<String>> lines) throws IOException, InternalReportWriterException, InternalParserException, ConfigurationException {
-        new DataSourceCSV().store(configuration, path, lines);
+    public static void write(String path, List<List<String>> lines) throws IOException, RPTWTRException {
+        new DataSourceCSV().store(path, lines);
     }
 
     public static void sysout(String title, List<List<String>> lines) {
         new DataSourceCSV().sysoutlist(title, lines);
     }
 
-    public DataSource load(Configuration configuration, String name, ExpressionMap parameters) throws IOException, InternalReportWriterException {
-        File f = getInputFile(configuration, parameters);
-        if (configuration.getArgConfiguration().isListCmd()) {
+    public DataSource load(String name, ExpressionMap parameters) throws IOException, RPTWTRException {
+        File f = DataSourceIO.getInputFile(parameters);
+        if (Configuration.getDefault().getArgConfiguration().isListCmd()) {
             System.out.println("loading "+ name + " from " + f.getCanonicalPath());
         }
         try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
@@ -73,8 +73,8 @@ public class DataSourceCSV extends DataSource {
         System.out.println();
     }
 
-    public void store(Configuration configuration, String path, List<List<String>> lines) throws IOException, ConfigurationException {
-        File f = getOutputFile(configuration, path);
+    public void store(String path, List<List<String>> lines) throws IOException, RPTWTRException {
+        File f = DataSourceIO.getOutputFile(path);
         try ( Writer wtr = new FileWriter(f);  PrintWriter pwtr = new PrintWriter(wtr)) {
             lines.stream().forEach((List<String> record) -> {
                 pwtr.println(
@@ -102,7 +102,7 @@ public class DataSourceCSV extends DataSource {
     private StringBuilder token;
     private boolean inData = false;
 
-    private void createDataSourceRecords(CharacterSource charsource) throws IOException {
+    private void createDataSourceRecords(CharacterSource charsource) throws IOException, RPTWTRException {
         state = State.STARTOFFIELD;
         tokenlist = new ArrayList<>();
         token = new StringBuilder();
@@ -116,15 +116,12 @@ public class DataSourceCSV extends DataSource {
         }
     }
 
-    private void processlineoftokens() throws IOException {
+    private void processlineoftokens() throws IOException, RPTWTRException {
         if (inData) {
             if (columnKeys.size() != tokenlist.size()) {
                 throw new IOException("Badly formatted CSV (columns count inconsistent): " + charsource.getCurrentLine());
             }
-            DataSourceRecord record = new DataSourceRecord();
-            for (String key : columnKeys) {
-                record.put(key, tokenlist.remove(0));
-            }
+            DataSourceRecord record = new DataSourceRecord(columnKeys, tokenlist);
             add(record);
         } else {
             columnKeys = tokenlist;
@@ -135,7 +132,7 @@ public class DataSourceCSV extends DataSource {
         token = new StringBuilder();
     }
 
-    private void processNextChar(CharacterSource charsource) throws IOException {
+    private void processNextChar(CharacterSource charsource) throws IOException, RPTWTRException {
         char c = charsource.getChar();
         switch (state) {
             case STARTOFFIELD -> {

@@ -15,6 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
 
 public abstract class Language {
@@ -146,33 +147,33 @@ public abstract class Language {
     public final Operator OPERATOR_START = new Operator("START", PrecedenceGroup.START, this::reduceSTART);
     public final Operator OPERATOR_END = new Operator("END", PrecedenceGroup.END, this::reduceEND);
 
-    private void reduceSTART(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
-        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on 'START' operator");
+    private void reduceSTART(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+        throw new RPTWTRException("Illegal to reduce on 'START' operator", operatorstack.pop());
     }
 
-    private void reduceEND(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    private void reduceEND(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         if (operatorstack.size() != 2) { // ie not end and start
-            throw new InternalParserException(operatorstack.pop(), "Operator stack not empty when reduction completed");
+            throw new RPTWTRException("Operator stack not empty when reduction completed", operatorstack.pop());
         }
         if (operandstack.size() != 1) {
-            throw new InternalParserException(operandstack.pop(), "Single operand expected (the program) - wrong number of operands remain");
+            throw new RPTWTRException("Single operand expected (the program) - wrong number of operands remain", operatorstack.pop());
         }
     }
 
-    public void reduceEXPRESSIONSEPARATOR(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
-        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on ',' operator");
+    public void reduceEXPRESSIONSEPARATOR(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+        throw new RPTWTRException("Illegal to reduce on ',' operator", operatorstack.pop());
     }
 
-    public void reduceBRA(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
-        throw new InternalParserException(operatorstack.pop(), "Illegal to reduce on '(' operator");
+    public void reduceBRA(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+        throw new RPTWTRException("Illegal to reduce on '(' operator", operatorstack.pop());
     }
 
-    public void reduceKET(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    public void reduceKET(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         Operator operator = operatorstack.pop(); // this will be the closing bracket
         if (operatorstack.peek().toString().equals("(")) {
             operatorstack.pop();
             return;
         }
-        throw new InternalParserException(operatorstack.peek(), "Bad syntax - '(' ... ')' has embedded operator");
+        throw new RPTWTRException("Bad syntax - '(' ... ')' has embedded operator", operatorstack.peek());
     }
 }

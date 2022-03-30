@@ -15,18 +15,18 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import java.io.IOException;
 
+public class TestConfiguration {
 
-public class TestConfiguration extends Configuration {
-    
-    public TestConfiguration(String reportdefinition) throws IOException, ConfigurationException {
-        this(reportdefinition,"<undefined>");
+    public static void create(String reportdefinition) throws IOException, RPTWTRException {
+        create(reportdefinition, "<undefined>");
     }
-    
-    public TestConfiguration(String reportdefinition, String commandparameter) throws IOException, ConfigurationException {
-        super();
-        this.loadconfiguration(new String[] {"-wd", "TESTRPTWTR", "-od", "output", "-dd",  "TESTRPTWTR/Downloads", reportdefinition , commandparameter });
+
+    public static void create(String reportdefinition, String commandparameter) throws IOException, RPTWTRException {
+        Configuration.create(
+                new String[]{"-wd", "TESTRPTWTR", "-od", "output", "-dd", "TESTRPTWTR/Downloads", reportdefinition, commandparameter}
+        );
     }
-    
 }

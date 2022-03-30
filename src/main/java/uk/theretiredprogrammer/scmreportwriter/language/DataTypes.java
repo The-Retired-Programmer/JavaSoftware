@@ -15,89 +15,90 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
 
 public class DataTypes  {
     
-    public static ExpressionMap isExpressionMap(Operand operand) throws InternalReportWriterException {
+    public static ExpressionMap isExpressionMap(Operand operand) throws RPTWTRException {
         if (operand instanceof ExpressionMap map){
             return map;
         }
-        throw new InternalReportWriterException(operand, "Requires an ExpressionMap");
+        throw new RPTWTRException("Requires an ExpressionMap",operand);
     }
     
-    public static ExpressionMap isExpressionMap(ExpressionMap parent, String key) throws InternalReportWriterException {
+    public static ExpressionMap isExpressionMap(ExpressionMap parent, String key) throws RPTWTRException {
         Operand operand = parent.get(key);
         if (operand == null) return null;   
         if (operand instanceof ExpressionMap map){
             return map;
         }
-        throw new InternalReportWriterException(parent.get(key), "Requires an ExpressionMap");
+        throw new RPTWTRException("Requires an ExpressionMap", parent.get(key));
     }
     
-    public static ExpressionList isExpressionList(ExpressionMap parent, String key) throws InternalReportWriterException {
+    public static ExpressionList isExpressionList(ExpressionMap parent, String key) throws RPTWTRException {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof ExpressionList list){
             return list;
         }
-        throw new InternalReportWriterException(parent.get(key), "Requires an ExpressionList");
+        throw new RPTWTRException("Requires an ExpressionList", parent.get(key));
     }
 
-    public static BooleanExpression isBooleanExpression(Operand operand) throws InternalParserException {
+    public static BooleanExpression isBooleanExpression(Operand operand) throws RPTWTRException {
         if (operand instanceof BooleanExpression bexp) {
             return bexp;
         }
-        throw new InternalParserException(operand, "Requires a boolean value");
+        throw new RPTWTRException("Requires a boolean value", operand);
     }
     
-    public static BooleanExpression isBooleanExpression(ExpressionMap parent, String key) throws InternalReportWriterException {
+    public static BooleanExpression isBooleanExpression(ExpressionMap parent, String key) throws RPTWTRException {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof BooleanExpression bexp) {
             return bexp;
         }
-        throw new InternalReportWriterException(parent.get(key), "requires a boolean value");
+        throw new RPTWTRException("requires a boolean value", parent.get(key));
     }
 
-    public static StringExpression isStringExpression(Operand operand) throws InternalParserException {
+    public static StringExpression isStringExpression(Operand operand) throws RPTWTRException {
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new InternalParserException(operand, "Requires a String value");
+        throw new RPTWTRException("Requires a String value", operand);
     }
     
-    public static StringExpression isStringExpression(ExpressionList parent, int index) throws InternalReportWriterException {
+    public static StringExpression isStringExpression(ExpressionList parent, int index) throws RPTWTRException {
         Operand operand = parent.get(index);
         if (operand == null) return null; 
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new InternalReportWriterException(parent.get(index), "Requires a String value");
+        throw new RPTWTRException("Requires a String value", parent.get(index));
     }
     
-    public static StringExpression isStringExpression(ExpressionMap parent, String key) throws InternalReportWriterException {
+    public static StringExpression isStringExpression(ExpressionMap parent, String key) throws RPTWTRException {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new InternalReportWriterException(parent.get(key), "Requires a String value");
+        throw new RPTWTRException("Requires a String value", parent.get(key));
     }
     
-    public static String isStringLiteral(Operand operand) throws InternalParserException {
+    public static String isStringLiteral(Operand operand) throws RPTWTRException {
         if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
-        throw new InternalParserException(operand, "Requires a String literal value");
+        throw new RPTWTRException("Requires a String literal value", operand);
     }
     
-    public static String isStringLiteral(ExpressionMap parent, String key) throws InternalReportWriterException {
+    public static String isStringLiteral(ExpressionMap parent, String key) throws RPTWTRException {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
-        throw new InternalReportWriterException(parent.get(key), "requires a String literal value");
+        throw new RPTWTRException("requires a String literal value", parent.get(key));
     }
 }

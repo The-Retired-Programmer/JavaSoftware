@@ -15,9 +15,8 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class StringLiteral extends StringExpression {
 
@@ -26,7 +25,7 @@ public class StringLiteral extends StringExpression {
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) {
+    public String evaluate(DataSourceRecord datarecord) {
         return toString();
     }
 }

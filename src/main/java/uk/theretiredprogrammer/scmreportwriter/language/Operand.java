@@ -15,10 +15,10 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public interface Operand<T> extends S_Token {
-    
-     public abstract T evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException;
+
+    public abstract T evaluate(DataSourceRecord datarecord) throws RPTWTRException;
 }

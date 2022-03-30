@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 pi.
+ * Copyright 2022 Richard Linsdale (richard at theretiredprogrammer.uk).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,9 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+
 @FunctionalInterface
 public interface Reduction {
-   void accept(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException;
+    void accept(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException;
 }

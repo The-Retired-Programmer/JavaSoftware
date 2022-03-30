@@ -15,9 +15,17 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-public class ParserException extends Exception {
+public class TokenSourceLocator {
 
-    public ParserException(String message) {
-        super(message);
+    public final String source;
+    public final int lineoffset;
+    public final int charoffset;
+    public final int length;
+
+    public TokenSourceLocator(String source, int lineoffset, int charoffset, int length) {
+        this.source = source;
+        this.lineoffset = lineoffset;
+        this.charoffset = charoffset;
+        this.length = length;
     }
 }

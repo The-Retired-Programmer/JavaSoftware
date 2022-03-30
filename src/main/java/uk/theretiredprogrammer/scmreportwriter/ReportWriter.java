@@ -15,6 +15,10 @@
  */
 package uk.theretiredprogrammer.scmreportwriter;
 
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataMapper;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceCSV;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,79 +29,67 @@ import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
 import uk.theretiredprogrammer.scmreportwriter.language.Operand;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportWriter {
 
     private final ReportDefinition definition;
     private final Map<String, DataSource> datasources = new HashMap<>();
-    private final Configuration configuration;
-    
-    public ReportWriter(Configuration configuration) {
-        this.configuration = configuration;
+
+    public ReportWriter() {
         definition = new ReportDefinition();
     }
 
-    public boolean buildReportDefinition() throws IOException, LexerException, ParserException, ReportWriterException {
-        try {
-            return definition.buildReportDefinition(configuration);
-        } catch (InternalReportWriterException ex) {
-            throw definition.getLanguageSource().newReportWriterException(ex);
+    public boolean buildReportDefinition() throws IOException, RPTWTRException {
+        return definition.buildReportDefinition();
+    }
+
+    public void loadDataFiles() throws IOException, RPTWTRException {
+        ExpressionMap datadefs = definition.getDatadefinitions();
+        for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
+            ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
+            datasources.put(nameandparameters.getKey(), DataSourceCSV.read(nameandparameters.getKey(), parameters));
         }
     }
 
-    public void loadDataFiles() throws IOException, ReportWriterException {
-        try {
-            ExpressionMap datadefs = definition.getDatadefinitions();
-            for (Entry<String, Operand> nameandparameters : datadefs.entrySet()) {
-                ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
-                datasources.put(nameandparameters.getKey(), DataSourceCSV.read(configuration, nameandparameters.getKey(), parameters));
-            }
-        } catch (InternalReportWriterException ex) {
-            throw definition.getLanguageSource().newReportWriterException(ex);
+    public void createAllGeneratedFiles() throws RPTWTRException {
+        ExpressionMap generatedfiles = definition.getGeneratedFilesdefinitions();
+        for (Entry<String, Operand> nameandparameters : generatedfiles.entrySet()) {
+            ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
+            DataMapper.addTransformedDataSource(datasources, nameandparameters.getKey(), parameters);
         }
     }
 
-    public void createAllReports() throws ReportWriterException, IOException, ConfigurationException {
-        try {
-            for (Operand operand : definition.getReportdefinitions()) {
-                ExpressionMap map = DataTypes.isExpressionMap(operand);
-                DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
-                ExpressionList headers = DataTypes.isExpressionList(map, "headers");
-                BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
-                ExpressionList fields = DataTypes.isExpressionList(map, "fields");
-                String to = DataTypes.isStringLiteral(map, "to");
-                String title = DataTypes.isStringLiteral(map, "title");
-                // create report output
-                List<List<String>> outputlines = new ArrayList<>();
-                DataSourceRecord firstrecord = primaryds.get(0);
-                outputlines.add(evaluate(headers, firstrecord));
-                for (DataSourceRecord datarecord : primaryds) {
-                    if (filter == null || filter.evaluate(configuration, datarecord)) {
-                        outputlines.add(evaluate(fields, datarecord));
-                    }
-                }
-                if (to == null) {
-                    DataSourceCSV.sysout(title, outputlines);
-                } else {
-                    DataSourceCSV.write(configuration, to, outputlines);
+    public void createAllReports() throws RPTWTRException, IOException {
+        for (Operand operand : definition.getReportdefinitions()) {
+            ExpressionMap map = DataTypes.isExpressionMap(operand);
+            DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
+            ExpressionList headers = DataTypes.isExpressionList(map, "headers");
+            BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
+            ExpressionList fields = DataTypes.isExpressionList(map, "fields");
+            String to = DataTypes.isStringLiteral(map, "to");
+            String title = DataTypes.isStringLiteral(map, "title");
+            // create report output
+            List<List<String>> outputlines = new ArrayList<>();
+            DataSourceRecord firstrecord = primaryds.get(0);
+            outputlines.add(evaluate(headers, firstrecord));
+            for (DataSourceRecord datarecord : primaryds) {
+                if (filter == null || filter.evaluate(datarecord)) {
+                    outputlines.add(evaluate(fields, datarecord));
                 }
             }
-        } catch (InternalReportWriterException ex) {
-            throw definition.getLanguageSource().newReportWriterException(ex);
-        } catch (InternalParserException ex) {
-            throw definition.getLanguageSource().newReportWriterException(ex);
+            if (to == null) {
+                DataSourceCSV.sysout(title, outputlines);
+            } else {
+                DataSourceCSV.write(to, outputlines);
+            }
         }
     }
 
-    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws InternalParserException, InternalReportWriterException {
+    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws RPTWTRException {
         List<String> fields = new ArrayList<>();
         for (Operand operand : fieldexpressions) {
-            fields.add(DataTypes.isStringExpression(operand).evaluate(configuration, datarecord));
+            fields.add(DataTypes.isStringExpression(operand).evaluate(datarecord));
         }
         return fields;
     }

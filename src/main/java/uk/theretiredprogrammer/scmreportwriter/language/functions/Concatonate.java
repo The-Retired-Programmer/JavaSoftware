@@ -15,27 +15,25 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
-public class Concatonate extends StringExpression{
-    
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+public class Concatonate extends StringExpression {
+
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new Concatonate(DataTypes.isStringExpression(operandstack.pop()), rhs));
     }
-    
+
     private final StringExpression lhs;
     private final StringExpression rhs;
-    
+
     public Concatonate(StringExpression lhs, StringExpression rhs) {
         super("Concatonate expression");
         this.lhs = lhs;
@@ -43,7 +41,7 @@ public class Concatonate extends StringExpression{
     }
 
     @Override
-    public String evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return lhs.evaluate(configuration, datarecord)+rhs.evaluate(configuration, datarecord);
+    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return lhs.evaluate(datarecord) + rhs.evaluate(datarecord);
     }
 }

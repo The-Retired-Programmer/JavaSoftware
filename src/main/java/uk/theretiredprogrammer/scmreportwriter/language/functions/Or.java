@@ -15,19 +15,17 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Or extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         BooleanExpression rhs = DataTypes.isBooleanExpression(operandstack.pop());
         operandstack.push(new Or(DataTypes.isBooleanExpression(operandstack.pop()), rhs));
@@ -43,7 +41,7 @@ public class Or extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return lhs.evaluate(configuration, datarecord) || rhs.evaluate(configuration, datarecord);
+    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return lhs.evaluate(datarecord) || rhs.evaluate(datarecord);
     }
 }

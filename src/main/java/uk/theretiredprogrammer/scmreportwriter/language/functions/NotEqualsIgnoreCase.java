@@ -15,20 +15,18 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.Configuration;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
-import uk.theretiredprogrammer.scmreportwriter.DataSourceRecord;
+import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalParserException;
-import uk.theretiredprogrammer.scmreportwriter.language.InternalReportWriterException;
 import uk.theretiredprogrammer.scmreportwriter.language.Language;
 import uk.theretiredprogrammer.scmreportwriter.language.OperandStack;
 import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class NotEqualsIgnoreCase extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws InternalParserException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new NotEqualsIgnoreCase(DataTypes.isStringExpression(operandstack.pop()), rhs));
@@ -44,7 +42,7 @@ public class NotEqualsIgnoreCase extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(Configuration configuration, DataSourceRecord datarecord) throws InternalReportWriterException {
-        return !(lhs.evaluate(configuration, datarecord).equalsIgnoreCase(rhs.evaluate(configuration, datarecord)));
+    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+        return !(lhs.evaluate(datarecord).equalsIgnoreCase(rhs.evaluate(datarecord)));
     }
 }

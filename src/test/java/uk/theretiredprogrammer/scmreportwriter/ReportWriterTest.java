@@ -18,8 +18,6 @@ package uk.theretiredprogrammer.scmreportwriter;
 import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import uk.theretiredprogrammer.scmreportwriter.language.LexerException;
-import uk.theretiredprogrammer.scmreportwriter.language.ParserException;
 
 public class ReportWriterTest {
 
@@ -28,21 +26,20 @@ public class ReportWriterTest {
 
     @Test
     public void testAppfunctionality() {
-            System.out.println("App functionality");
-            Configuration configuration= null;
-            try {
-                configuration = new TestConfiguration("reportdefinition");
-            } catch (ConfigurationException | IOException ex) {
-                fail("Configuration Failure: " + ex.getLocalizedMessage());
-            }
-        try {    
-            ReportWriter reportwriter = new ReportWriter(configuration);
+        System.out.println("App functionality");
+        try {
+            TestConfiguration.create("reportdefinition");
+        } catch (RPTWTRException | IOException ex) {
+            fail("Configuration Failure: " + ex.getLocalizedMessage());
+        }
+        try {
+            ReportWriter reportwriter = new ReportWriter();
             if (!reportwriter.buildReportDefinition()) {
                 fail("missing definition file");
             }
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (IOException | LexerException | ParserException | ReportWriterException | ConfigurationException ex) {
+        } catch (IOException | RPTWTRException ex) {
             fail(ex.getLocalizedMessage());
         }
     }

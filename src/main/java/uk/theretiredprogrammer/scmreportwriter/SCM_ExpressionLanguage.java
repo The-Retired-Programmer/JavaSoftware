@@ -37,36 +37,35 @@ import uk.theretiredprogrammer.scmreportwriter.language.functions.String2Boolean
 import uk.theretiredprogrammer.scmreportwriter.language.functions.EnvValue;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.SysValue;
 
-public class SCM_ExpressionLanguage extends Language{
-    
-    public SCM_ExpressionLanguage(Configuration config) {
+public class SCM_ExpressionLanguage extends Language {
+
+    public SCM_ExpressionLanguage() {
         setSyntaxTreeSymbols(new SyntaxTreeItem[]{
-                    new SyntaxTreeItem("boolean", new Operator("Boolean cast", PrecedenceGroup.MONADIC, String2Boolean::reduce)),
-                    new SyntaxTreeItem("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
-                    new SyntaxTreeItem("FALSE", new BooleanLiteral(false)),
-                    new SyntaxTreeItem("TRUE", new BooleanLiteral(true)),
-                    new SyntaxTreeItem("parameter", new Operator("Parameter value", PrecedenceGroup.MONADIC, CmdParamValue::reduce)),
-                    new SyntaxTreeItem("env", new Operator("Env value", PrecedenceGroup.MONADIC, EnvValue::reduce)),
-                    new SyntaxTreeItem("sys", new Operator("System Property value", PrecedenceGroup.MONADIC, SysValue::reduce)),
-                });
+            new SyntaxTreeItem("boolean", new Operator("Boolean cast", PrecedenceGroup.MONADIC, String2Boolean::reduce)),
+            new SyntaxTreeItem("string", new Operator("String cast", PrecedenceGroup.MONADIC, Boolean2String::reduce)),
+            new SyntaxTreeItem("FALSE", new BooleanLiteral(false)),
+            new SyntaxTreeItem("TRUE", new BooleanLiteral(true)),
+            new SyntaxTreeItem("parameter", new Operator("Parameter value", PrecedenceGroup.MONADIC, CmdParamValue::reduce)),
+            new SyntaxTreeItem("env", new Operator("Env value", PrecedenceGroup.MONADIC, EnvValue::reduce)),
+            new SyntaxTreeItem("sys", new Operator("System Property value", PrecedenceGroup.MONADIC, SysValue::reduce)),});
         setSyntaxTreeOperators(new SyntaxTreeItem[]{
-                    new SyntaxTreeItem("!=~", new Operator("!=~", PrecedenceGroup.EQ, NotEqualsIgnoreCase::reduce)),
-                    new SyntaxTreeItem("&&", new Operator("&&", PrecedenceGroup.AND, And::reduce)),
-                    new SyntaxTreeItem("||", new Operator("||", PrecedenceGroup.OR, Or::reduce)),
-                    new SyntaxTreeItem("==", new Operator("==", PrecedenceGroup.EQ, Equals::reduce)),
-                    new SyntaxTreeItem("=~", new Operator("=~", PrecedenceGroup.EQ, EqualsIgnoreCase::reduce)),
-                    new SyntaxTreeItem("!=", new Operator("!=", PrecedenceGroup.EQ, NotEquals::reduce)),
-                    new SyntaxTreeItem("!", new Operator("!", PrecedenceGroup.MONADIC, Not::reduce)),
-                    new SyntaxTreeItem("+", new Operator("+", PrecedenceGroup.DIADIC, Concatonate::reduce)),
-                    new SyntaxTreeItem("[", new Operator("[", PrecedenceGroup.EXPBRA, ExpressionList::reduce_s)),
-                    new SyntaxTreeItem("]", new Operator("]", PrecedenceGroup.EXPKET, ExpressionList::reduce)),
-                    new SyntaxTreeItem("{", new Operator("{", PrecedenceGroup.EXPBRA, ExpressionMap::reduce_s)),
-                    new SyntaxTreeItem("}", new Operator("}", PrecedenceGroup.EXPKET, ExpressionMap::reduce)),
-                    new SyntaxTreeItem("(", new Operator("(", PrecedenceGroup.BRA, this::reduceBRA)),
-                    new SyntaxTreeItem(")", new Operator(")", PrecedenceGroup.KET, this::reduceKET)),
-                    new SyntaxTreeItem("$", new Operator("$", PrecedenceGroup.MONADIC, DataRecordField::reduce)),
-                    new SyntaxTreeItem(",", new Operator(",", PrecedenceGroup.EXPSEP, this::reduceEXPRESSIONSEPARATOR)),
-                    new SyntaxTreeItem(":", new Operator(":", PrecedenceGroup.PROPERTY, Property::reduce))
-                });
+            new SyntaxTreeItem("!=~", new Operator("!=~", PrecedenceGroup.EQ, NotEqualsIgnoreCase::reduce)),
+            new SyntaxTreeItem("&&", new Operator("&&", PrecedenceGroup.AND, And::reduce)),
+            new SyntaxTreeItem("||", new Operator("||", PrecedenceGroup.OR, Or::reduce)),
+            new SyntaxTreeItem("==", new Operator("==", PrecedenceGroup.EQ, Equals::reduce)),
+            new SyntaxTreeItem("=~", new Operator("=~", PrecedenceGroup.EQ, EqualsIgnoreCase::reduce)),
+            new SyntaxTreeItem("!=", new Operator("!=", PrecedenceGroup.EQ, NotEquals::reduce)),
+            new SyntaxTreeItem("!", new Operator("!", PrecedenceGroup.MONADIC, Not::reduce)),
+            new SyntaxTreeItem("+", new Operator("+", PrecedenceGroup.DIADIC, Concatonate::reduce)),
+            new SyntaxTreeItem("[", new Operator("[", PrecedenceGroup.EXPBRA, ExpressionList::reduce_s)),
+            new SyntaxTreeItem("]", new Operator("]", PrecedenceGroup.EXPKET, ExpressionList::reduce)),
+            new SyntaxTreeItem("{", new Operator("{", PrecedenceGroup.EXPBRA, ExpressionMap::reduce_s)),
+            new SyntaxTreeItem("}", new Operator("}", PrecedenceGroup.EXPKET, ExpressionMap::reduce)),
+            new SyntaxTreeItem("(", new Operator("(", PrecedenceGroup.BRA, this::reduceBRA)),
+            new SyntaxTreeItem(")", new Operator(")", PrecedenceGroup.KET, this::reduceKET)),
+            new SyntaxTreeItem("$", new Operator("$", PrecedenceGroup.MONADIC, DataRecordField::reduce)),
+            new SyntaxTreeItem(",", new Operator(",", PrecedenceGroup.EXPSEP, this::reduceEXPRESSIONSEPARATOR)),
+            new SyntaxTreeItem(":", new Operator(":", PrecedenceGroup.PROPERTY, Property::reduce))
+        });
     }
 }
