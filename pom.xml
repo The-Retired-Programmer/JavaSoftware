@@ -21,7 +21,7 @@
                     <configuration>
                         <archive>
                             <manifest>
-                                <mainClass>uk.theretiredprogrammer.scmreportwriter.App</mainClass>
+                                <mainClass>uk.theretiredprogrammer.reportwriter.App</mainClass>
                             </manifest>
                         </archive>
                     </configuration>
