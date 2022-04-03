@@ -27,6 +27,11 @@ public class DataSource extends ArrayList<DataSourceRecord> {
         super(copyfrom);
         this.columnnames = copyfrom.columnnames;
     }
+    
+    public DataSource(List<String> columnnames, List<DataSourceRecord> datarecords) {
+        super(datarecords);
+        this.columnnames = columnnames;
+    }
 
     public DataSource() {
         super();
@@ -35,6 +40,10 @@ public class DataSource extends ArrayList<DataSourceRecord> {
 
     public void setColumnNames(List<String> columnnames) {
         this.columnnames = columnnames;
+    }
+    
+    public List<String> getColumnNames(){
+        return columnnames;
     }
 
     protected int getColumnIndex(String columnname) throws RPTWTRException {

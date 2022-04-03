@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
@@ -26,7 +25,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Equals extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new Equals(DataTypes.isStringExpression(operandstack.pop()), rhs));
@@ -42,7 +41,7 @@ public class Equals extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Boolean evaluate(DataSourceRecord datarecord) {
         return leftnode.evaluate(datarecord).equals(rightnode.evaluate(datarecord));
     }
 }

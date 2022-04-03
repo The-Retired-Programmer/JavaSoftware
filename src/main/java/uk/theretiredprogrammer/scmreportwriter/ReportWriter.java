@@ -61,32 +61,36 @@ public class ReportWriter {
     }
 
     public void createAllReports() throws RPTWTRException, IOException {
-        for (Operand operand : definition.getReportdefinitions()) {
-            ExpressionMap map = DataTypes.isExpressionMap(operand);
-            DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
-            ExpressionList headers = DataTypes.isExpressionList(map, "headers");
-            BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
-            ExpressionList fields = DataTypes.isExpressionList(map, "fields");
-            String to = DataTypes.isStringLiteral(map, "to");
-            String title = DataTypes.isStringLiteral(map, "title");
-            // create report output
-            List<List<String>> outputlines = new ArrayList<>();
-            DataSourceRecord firstrecord = primaryds.get(0);
-            outputlines.add(evaluate(headers, firstrecord));
-            for (DataSourceRecord datarecord : primaryds) {
-                if (filter == null || filter.evaluate(datarecord)) {
-                    outputlines.add(evaluate(fields, datarecord));
+        try {
+            for (Operand operand : definition.getReportdefinitions()) {
+                ExpressionMap map = DataTypes.isExpressionMap(operand);
+                DataSource primaryds = datasources.get(DataTypes.isStringLiteral(map, "using"));
+                ExpressionList headers = DataTypes.isExpressionList(map, "headers");
+                BooleanExpression filter = DataTypes.isBooleanExpression(map, "filter");
+                ExpressionList fields = DataTypes.isExpressionList(map, "fields");
+                String to = DataTypes.isStringLiteral(map, "to");
+                String title = DataTypes.isStringLiteral(map, "title");
+                // create report output
+                List<List<String>> outputlines = new ArrayList<>();
+                DataSourceRecord firstrecord = primaryds.get(0);
+                outputlines.add(evaluate(headers, firstrecord));
+                for (DataSourceRecord datarecord : primaryds) {
+                    if (filter == null || filter.evaluate(datarecord)) {
+                        outputlines.add(evaluate(fields, datarecord));
+                    }
+                }
+                if (to == null) {
+                    DataSourceCSV.sysout(title, outputlines);
+                } else {
+                    DataSourceCSV.write(to, outputlines);
                 }
             }
-            if (to == null) {
-                DataSourceCSV.sysout(title, outputlines);
-            } else {
-                DataSourceCSV.write(to, outputlines);
-            }
+        } catch (RPTWTRRuntimeException ex) {
+            throw new RPTWTRException(ex);
         }
     }
 
-    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) throws RPTWTRException {
+    private List<String> evaluate(ExpressionList fieldexpressions, DataSourceRecord datarecord) {
         List<String> fields = new ArrayList<>();
         for (Operand operand : fieldexpressions) {
             fields.add(DataTypes.isStringExpression(operand).evaluate(datarecord));

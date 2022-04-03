@@ -15,9 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
-
 @FunctionalInterface
 public interface Reduction {
-    void accept(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException;
+    void accept(Language language, OperatorStack operatorstack, OperandStack operandstack);
 }

@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRRuntimeException;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class ExpressionMap extends HashMap<String, Operand> implements Operand {
@@ -35,11 +35,11 @@ public class ExpressionMap extends HashMap<String, Operand> implements Operand {
         return locator;
     }
 
-    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
-        throw new RPTWTRException("Illegal to reduce on '{' operator", operatorstack.pop());
+    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack)  {
+        throw new RPTWTRRuntimeException("Illegal to reduce on '{' operator", operatorstack.pop());
     }
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         ExpressionMap emap = new ExpressionMap();
         operatorstack.pop(); // this will be "}"
         while (operatorstack.peek().toString().equals(",")) {
@@ -48,23 +48,23 @@ public class ExpressionMap extends HashMap<String, Operand> implements Operand {
         if (operatorstack.peek().toString().equals("{")) {
             addProperty2Map(operatorstack, operandstack, emap);
         } else {
-            throw new RPTWTRException("'{' expected when generating a ExpressionMap", operandstack.peek());
+            throw new RPTWTRRuntimeException("'{' expected when generating a ExpressionMap", operandstack.peek());
         }
         operandstack.push(emap);
     }
 
-    private static void addProperty2Map(OperatorStack operatorstack, OperandStack operandstack, ExpressionMap emap) throws RPTWTRException {
+    private static void addProperty2Map(OperatorStack operatorstack, OperandStack operandstack, ExpressionMap emap)  {
         Operand operand = operandstack.pop();
         if (operand instanceof Property property) {
             emap.put(property.getName(), property.getExpression());
         } else {
-            throw new RPTWTRException("Expression is not allowed in ExpressionMap context", operand);
+            throw new RPTWTRRuntimeException("Expression is not allowed in ExpressionMap context", operand);
         }
         operatorstack.pop();
     }
 
     @Override
-    public Map<String, Object> evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Map<String, Object> evaluate(DataSourceRecord datarecord){
         Map<String, Object> result = new HashMap<>();
         for (Entry<String, Operand> e : entrySet()) {
             result.put(e.getKey(), e.getValue().evaluate(datarecord));

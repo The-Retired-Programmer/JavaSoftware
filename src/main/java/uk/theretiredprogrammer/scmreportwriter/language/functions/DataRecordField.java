@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -25,7 +24,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class DataRecordField extends StringExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         operandstack.push(new DataRecordField(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -38,7 +37,7 @@ public class DataRecordField extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public String evaluate(DataSourceRecord datarecord) {
         return datarecord.getFieldValue(fieldnameexpression.evaluate(datarecord));
     }
 

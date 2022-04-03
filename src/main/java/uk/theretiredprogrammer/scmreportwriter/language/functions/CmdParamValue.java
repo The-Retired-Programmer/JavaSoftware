@@ -15,7 +15,7 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRRuntimeException;
 import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
@@ -26,7 +26,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class CmdParamValue extends StringExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         operandstack.push(new CmdParamValue(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -39,15 +39,15 @@ public class CmdParamValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public String evaluate(DataSourceRecord datarecord) {
         String pval;
         try {
             pval = Configuration.getDefault().getArgConfiguration().getCommandParameter(Integer.parseInt(expression.evaluate(datarecord)));
         } catch (NumberFormatException ex) {
-            throw new RPTWTRException("Integer expected after \"parameter\"", expression);
+            throw new RPTWTRRuntimeException("Integer expected after \"parameter\"", expression);
         }
         if (pval == null) {
-            throw new RPTWTRException("No such parameter on command line", expression);
+            throw new RPTWTRRuntimeException("No such parameter on command line", expression);
         }
         return pval;
     }

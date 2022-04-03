@@ -20,7 +20,7 @@ import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class Property implements Operand {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         Operand rhs = operandstack.pop();
         operandstack.push(new Property(DataTypes.isStringLiteral(operandstack.pop()), rhs));
@@ -54,7 +54,7 @@ public class Property implements Operand {
     }
 
     @Override
-    public Object evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Object evaluate(DataSourceRecord datarecord) {
         return expression.evaluate(datarecord);
     }
 

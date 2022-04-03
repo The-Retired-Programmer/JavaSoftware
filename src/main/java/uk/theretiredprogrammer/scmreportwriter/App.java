@@ -23,7 +23,12 @@ public class App {
     public static void main(String args[]) {
 
         try {
-            Configuration.create(args);
+            try {
+                Configuration.create(args);
+            } catch (RPTWTRRuntimeException ex) {
+                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
+                System.exit(1);
+            }
         } catch (RPTWTRException | IOException ex) {
             System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
             System.exit(1);
@@ -32,17 +37,28 @@ public class App {
         @SuppressWarnings("UnusedAssignment")
         ReportWriter reportwriter = null;
         try {
-            reportwriter = new ReportWriter();
-            if (!reportwriter.buildReportDefinition()) {
-                System.exit(0);
+            try {
+                reportwriter = new ReportWriter();
+                if (!reportwriter.buildReportDefinition()) {
+                    System.exit(0);
+                }
+            } catch (RPTWTRRuntimeException ex) {
+                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
+                System.exit(2);
             }
         } catch (IOException | RPTWTRException ex) {
             System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
             System.exit(2);
         }
         try {
-            reportwriter.loadDataFiles();
-            reportwriter.createAllReports();
+            try {
+                reportwriter.loadDataFiles();
+                reportwriter.createAllGeneratedFiles();
+                reportwriter.createAllReports();
+            } catch (RPTWTRRuntimeException ex) {
+                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
+                System.exit(1);
+            }
         } catch (RPTWTRException | IOException ex) {
             System.err.println("Report Execution Failure: " + ex.getLocalizedMessage());
             System.exit(3);

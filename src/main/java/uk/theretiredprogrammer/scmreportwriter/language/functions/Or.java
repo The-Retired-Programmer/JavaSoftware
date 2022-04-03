@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -25,7 +24,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Or extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         BooleanExpression rhs = DataTypes.isBooleanExpression(operandstack.pop());
         operandstack.push(new Or(DataTypes.isBooleanExpression(operandstack.pop()), rhs));
@@ -41,7 +40,7 @@ public class Or extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Boolean evaluate(DataSourceRecord datarecord) {
         return lhs.evaluate(datarecord) || rhs.evaluate(datarecord);
     }
 }

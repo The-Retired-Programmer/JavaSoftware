@@ -18,21 +18,17 @@ package uk.theretiredprogrammer.scmreportwriter;
 import uk.theretiredprogrammer.scmreportwriter.language.S_Token;
 import uk.theretiredprogrammer.scmreportwriter.language.TokenSourceLocator;
 
-public class RPTWTRException extends Exception {
+public class RPTWTRRuntimeException extends RuntimeException {
 
-    public RPTWTRException(String message) {
+    public RPTWTRRuntimeException(String message) {
         super(message);
     }
     
-    public RPTWTRException(Throwable t) {
-        super(t);
-    }
-    
-    public RPTWTRException(String message, S_Token token) {
+    public RPTWTRRuntimeException(String message, S_Token token) {
         this(message,token.getLocator());
     }
     
-    public RPTWTRException(String message, TokenSourceLocator locator) {
+    public RPTWTRRuntimeException(String message, TokenSourceLocator locator) {
         super(createSourceExtract(message, locator));
     }
     

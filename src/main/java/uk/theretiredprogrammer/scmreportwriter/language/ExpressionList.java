@@ -17,7 +17,8 @@ package uk.theretiredprogrammer.scmreportwriter.language;
 
 import java.util.ArrayList;
 import java.util.List;
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import java.util.stream.Collectors;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRRuntimeException;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 
 public class ExpressionList extends ArrayList<Operand> implements Operand {
@@ -34,11 +35,11 @@ public class ExpressionList extends ArrayList<Operand> implements Operand {
         return locator;
     }
 
-    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
-        throw new RPTWTRException("Illegal to reduce on '[' operator", operatorstack.pop());
+    public static void reduce_s(Language language, OperatorStack operatorstack, OperandStack operandstack) {
+        throw new RPTWTRRuntimeException("Illegal to reduce on '[' operator", operatorstack.pop());
     }
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         ExpressionList elist = new ExpressionList();
         operatorstack.pop(); // this will be "]"
         while (operatorstack.peek().toString().equals(",")) {
@@ -48,15 +49,15 @@ public class ExpressionList extends ArrayList<Operand> implements Operand {
         if (operatorstack.peek().toString().equals("[")) {
             addExpression2List(operatorstack, operandstack, elist);
         } else {
-            throw new RPTWTRException("'[' expected when generating a ExpressionList", operandstack.peek());
+            throw new RPTWTRRuntimeException("'[' expected when generating a ExpressionList", operandstack.peek());
         }
         operandstack.push(elist);
     }
 
-    private static void addExpression2List(OperatorStack operatorstack, OperandStack operandstack, ExpressionList elist) throws RPTWTRException {
+    private static void addExpression2List(OperatorStack operatorstack, OperandStack operandstack, ExpressionList elist)  {
         Operand operand = operandstack.pop();
         if (operand instanceof Property) {
-            throw new RPTWTRException("Property is not allowed in ExpressionList context", operand);
+            throw new RPTWTRRuntimeException("Property is not allowed in ExpressionList context", operand);
         } else {
             elist.add(0, operand);
         }
@@ -64,13 +65,8 @@ public class ExpressionList extends ArrayList<Operand> implements Operand {
     }
 
     @Override
-    public List evaluate(DataSourceRecord datarecord) throws RPTWTRException {
-        List result = new ArrayList();
-        for (Operand operand : this) {
-            result.add(operand.evaluate(datarecord));
-        }
-        return result;
-        //return this.stream().map((item) -> item.evaluate( datarecord)).collect(Collectors.toList());
+    public List evaluate(DataSourceRecord datarecord) {
+        return this.stream().map((item) -> item.evaluate( datarecord)).collect(Collectors.toList());
     }
 
     @Override

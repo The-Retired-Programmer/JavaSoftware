@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
@@ -25,7 +24,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Concatonate extends StringExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         StringExpression rhs = DataTypes.isStringExpression(operandstack.pop());
         operandstack.push(new Concatonate(DataTypes.isStringExpression(operandstack.pop()), rhs));
@@ -41,7 +40,7 @@ public class Concatonate extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public String evaluate(DataSourceRecord datarecord) {
         return lhs.evaluate(datarecord) + rhs.evaluate(datarecord);
     }
 }

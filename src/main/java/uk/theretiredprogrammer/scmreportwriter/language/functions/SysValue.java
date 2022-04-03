@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
@@ -26,7 +25,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class SysValue extends StringExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         operandstack.push(new SysValue(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -39,7 +38,7 @@ public class SysValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public String evaluate(DataSourceRecord datarecord) {
         return Configuration.getDefault().getSystemProperty(expression.evaluate(datarecord));
     }
 }

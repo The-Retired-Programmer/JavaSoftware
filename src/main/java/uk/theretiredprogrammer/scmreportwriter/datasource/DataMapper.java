@@ -16,14 +16,17 @@
 package uk.theretiredprogrammer.scmreportwriter.datasource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.DataTypes;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.scmreportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.scmreportwriter.language.Operand;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 
 public class DataMapper {
@@ -33,20 +36,45 @@ public class DataMapper {
     }
 
     public void transform(Map<String, DataSource> datasources, String name, ExpressionMap parameters) throws RPTWTRException {
-        DataSource data = datasources.get(getRequiredString(parameters, "using"));
-        // filter <boolean expression>  [optional]
+        String sourcename = getRequiredString(parameters, "using");
+        DataSource data = datasources.get(sourcename);
+        //
         BooleanExpression filterexpression = DataTypes.isBooleanExpression(parameters, "filter");
-        if (filterexpression != null) {
-            data = applyFilter(data, filterexpression);
-        }
+        Predicate<DataSourceRecord> predicate = filterexpression == null ? null :(dr)-> filterpredicate(dr, filterexpression);
+        //
         ExpressionList sortfields = DataTypes.isExpressionList(parameters, "sort_by");
-        if (sortfields != null) {
-            data = applySort(data, sortfields);
+        List<String> fieldnames = sortfields == null? null: getSortFieldNames(sortfields);
+        Comparator<DataSourceRecord> comparator = sortfields == null ? null : (dr1,dr2) -> sortcomparator(dr1,dr2,fieldnames);
+        //
+        if (Configuration.getDefault().getArgConfiguration().isListCmd()) {
+            System.out.println("generating "+ name + " from " + sourcename);
         }
-        // this is temporarly a simple copy through transform
-        datasources.put(name, data);
+        DataSourceRecordStream result = DataSourceRecordStream.of(data.stream())
+                        .filter(predicate)
+                        .sort(comparator)
+                        .map(null);
+        if (result.isFailure()) {
+            throw new RPTWTRException(result.getThrownMessage());
+        }
+        DataSource resultds = new DataSource(
+                data.getColumnNames(),
+                result.get().collect(Collectors.toList())
+        );
+        datasources.put(name, resultds);
     }
-
+    
+    private boolean filterpredicate(DataSourceRecord dr, BooleanExpression filterexpression) {
+            return filterexpression.evaluate(dr);
+    }
+    
+    private  int sortcomparator(DataSourceRecord dr1, DataSourceRecord dr2, List<String> fieldnames) {
+        for (var fn : fieldnames){
+            int cmp = dr1.getFieldValue(fn).compareTo(dr2.getFieldValue(fn));
+            if (cmp != 0) return cmp;
+        }
+        return 0;
+    }
+   
     private String getRequiredString(ExpressionMap parameters, String key) throws RPTWTRException {
         StringExpression keyparameter = DataTypes.isStringExpression(parameters, key);
         if (keyparameter != null) {
@@ -55,31 +83,13 @@ public class DataMapper {
         throw new RPTWTRException(key + " parameter missing in generated_data statement", parameters);
     }
 
-    private DataSource applyFilter(DataSource data, BooleanExpression filter) throws RPTWTRException {
-        DataSource filtered = new DataSource();
-        boolean headerrecord = true;
-        for (DataSourceRecord datarecord : data) {
-            if (headerrecord || filter == null || filter.evaluate(datarecord)) {
-                filtered.add(datarecord);
-            }
-            headerrecord = false;
-        }
-        return filtered;
-    }
-
-    private DataSource applySort(DataSource data, ExpressionList sortfields) throws RPTWTRException {
-        List<String> sortfieldnames = getSortFieldNames(sortfields);
-        //return data.stream().sort(Comparator.comparing(DataSourceIO::getField(sortfieldnames.get(0)))).collect(Collectors.toList);
-        return data;  // needs proper implementation
-    }
-
     private List<String> getSortFieldNames(ExpressionList sortfields) throws RPTWTRException {
-        List<String> fieldnames = new ArrayList<>();
-        for (Operand operand : sortfields) {
+        List<String> res = new ArrayList<>();
+        for (var operand: sortfields){
             StringExpression stringexp = DataTypes.isStringExpression(operand);
-            fieldnames.add(stringexp.evaluate(new DataSourceRecord()));
+            res.add(stringexp.evaluate(new DataSourceRecord()));
         }
-        return fieldnames;
+        return res;
     }
 
 }

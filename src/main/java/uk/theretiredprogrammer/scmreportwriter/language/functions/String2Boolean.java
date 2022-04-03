@@ -15,7 +15,6 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language.functions;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
 import uk.theretiredprogrammer.scmreportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.scmreportwriter.language.StringExpression;
 import uk.theretiredprogrammer.scmreportwriter.datasource.DataSourceRecord;
@@ -26,7 +25,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class String2Boolean extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         operandstack.push(new String2Boolean(DataTypes.isStringExpression(operandstack.pop())));
     }
@@ -39,7 +38,7 @@ public class String2Boolean extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Boolean evaluate(DataSourceRecord datarecord) {
         return expression.evaluate(datarecord).equalsIgnoreCase("Yes") || expression.evaluate(datarecord).equalsIgnoreCase("True");
     }
 }

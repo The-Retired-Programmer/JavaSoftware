@@ -25,7 +25,7 @@ import uk.theretiredprogrammer.scmreportwriter.language.OperatorStack;
 
 public class Not extends BooleanExpression {
 
-    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) throws RPTWTRException {
+    public static void reduce(Language language, OperatorStack operatorstack, OperandStack operandstack) {
         operatorstack.pop();
         operandstack.push(new Not(DataTypes.isBooleanExpression(operandstack.pop())));
     }
@@ -38,7 +38,7 @@ public class Not extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) throws RPTWTRException {
+    public Boolean evaluate(DataSourceRecord datarecord)  {
         return !bexp.evaluate(datarecord);
     }
 }

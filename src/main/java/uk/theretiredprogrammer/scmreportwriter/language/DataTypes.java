@@ -15,90 +15,90 @@
  */
 package uk.theretiredprogrammer.scmreportwriter.language;
 
-import uk.theretiredprogrammer.scmreportwriter.RPTWTRException;
+import uk.theretiredprogrammer.scmreportwriter.RPTWTRRuntimeException;
 import uk.theretiredprogrammer.scmreportwriter.language.functions.StringLiteral;
 
 public class DataTypes  {
     
-    public static ExpressionMap isExpressionMap(Operand operand) throws RPTWTRException {
+    public static ExpressionMap isExpressionMap(Operand operand) {
         if (operand instanceof ExpressionMap map){
             return map;
         }
-        throw new RPTWTRException("Requires an ExpressionMap",operand);
+        throw new RPTWTRRuntimeException("Requires an ExpressionMap",operand);
     }
     
-    public static ExpressionMap isExpressionMap(ExpressionMap parent, String key) throws RPTWTRException {
+    public static ExpressionMap isExpressionMap(ExpressionMap parent, String key) {
         Operand operand = parent.get(key);
         if (operand == null) return null;   
         if (operand instanceof ExpressionMap map){
             return map;
         }
-        throw new RPTWTRException("Requires an ExpressionMap", parent.get(key));
+        throw new RPTWTRRuntimeException("Requires an ExpressionMap", parent.get(key));
     }
     
-    public static ExpressionList isExpressionList(ExpressionMap parent, String key) throws RPTWTRException {
+    public static ExpressionList isExpressionList(ExpressionMap parent, String key) {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof ExpressionList list){
             return list;
         }
-        throw new RPTWTRException("Requires an ExpressionList", parent.get(key));
+        throw new RPTWTRRuntimeException("Requires an ExpressionList", parent.get(key));
     }
 
-    public static BooleanExpression isBooleanExpression(Operand operand) throws RPTWTRException {
+    public static BooleanExpression isBooleanExpression(Operand operand) {
         if (operand instanceof BooleanExpression bexp) {
             return bexp;
         }
-        throw new RPTWTRException("Requires a boolean value", operand);
+        throw new RPTWTRRuntimeException("Requires a boolean value", operand);
     }
     
-    public static BooleanExpression isBooleanExpression(ExpressionMap parent, String key) throws RPTWTRException {
+    public static BooleanExpression isBooleanExpression(ExpressionMap parent, String key) {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof BooleanExpression bexp) {
             return bexp;
         }
-        throw new RPTWTRException("requires a boolean value", parent.get(key));
+        throw new RPTWTRRuntimeException("requires a boolean value", parent.get(key));
     }
 
-    public static StringExpression isStringExpression(Operand operand) throws RPTWTRException {
+    public static StringExpression isStringExpression(Operand operand)  {
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new RPTWTRException("Requires a String value", operand);
+        throw new RPTWTRRuntimeException("Requires a String value", operand);
     }
     
-    public static StringExpression isStringExpression(ExpressionList parent, int index) throws RPTWTRException {
+    public static StringExpression isStringExpression(ExpressionList parent, int index){
         Operand operand = parent.get(index);
         if (operand == null) return null; 
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new RPTWTRException("Requires a String value", parent.get(index));
+        throw new RPTWTRRuntimeException("Requires a String value", parent.get(index));
     }
     
-    public static StringExpression isStringExpression(ExpressionMap parent, String key) throws RPTWTRException {
+    public static StringExpression isStringExpression(ExpressionMap parent, String key){
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof StringExpression sexp) {
             return sexp;
         }
-        throw new RPTWTRException("Requires a String value", parent.get(key));
+        throw new RPTWTRRuntimeException("Requires a String value", parent.get(key));
     }
     
-    public static String isStringLiteral(Operand operand) throws RPTWTRException {
+    public static String isStringLiteral(Operand operand) {
         if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
-        throw new RPTWTRException("Requires a String literal value", operand);
+        throw new RPTWTRRuntimeException("Requires a String literal value", operand);
     }
     
-    public static String isStringLiteral(ExpressionMap parent, String key) throws RPTWTRException {
+    public static String isStringLiteral(ExpressionMap parent, String key) {
         Operand operand = parent.get(key);
         if (operand == null) return null; 
         if (operand instanceof StringLiteral slit) {
             return slit.toString();
         }
-        throw new RPTWTRException("requires a String literal value", parent.get(key));
+        throw new RPTWTRRuntimeException("requires a String literal value", parent.get(key));
     }
 }
