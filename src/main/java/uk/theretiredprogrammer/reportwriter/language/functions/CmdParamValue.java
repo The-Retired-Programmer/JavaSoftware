@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.reportwriter.language.functions;
 import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
 import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.Language;
 import uk.theretiredprogrammer.reportwriter.language.OperandStack;
@@ -39,7 +39,7 @@ public class CmdParamValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
+    public String evaluate(DataRecord datarecord) {
         String pval;
         try {
             pval = Configuration.getDefault().getArgConfiguration().getCommandParameter(Integer.parseInt(expression.evaluate(datarecord)));

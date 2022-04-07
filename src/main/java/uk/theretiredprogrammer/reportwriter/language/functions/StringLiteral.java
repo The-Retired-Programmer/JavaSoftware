@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 
 public class StringLiteral extends StringExpression {
 
@@ -25,7 +25,7 @@ public class StringLiteral extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
+    public String evaluate(DataRecord datarecord) {
         return toString();
     }
 }

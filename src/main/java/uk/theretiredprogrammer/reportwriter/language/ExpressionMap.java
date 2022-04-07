@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 
 public class ExpressionMap extends HashMap<String, Operand> implements Operand {
 
@@ -64,7 +64,7 @@ public class ExpressionMap extends HashMap<String, Operand> implements Operand {
     }
 
     @Override
-    public Map<String, Object> evaluate(DataSourceRecord datarecord){
+    public Map<String, Object> evaluate(DataRecord datarecord){
         Map<String, Object> result = new HashMap<>();
         for (Entry<String, Operand> e : entrySet()) {
             result.put(e.getKey(), e.getValue().evaluate(datarecord));

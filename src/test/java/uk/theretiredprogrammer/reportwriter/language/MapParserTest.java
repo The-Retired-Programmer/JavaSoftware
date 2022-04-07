@@ -15,21 +15,13 @@
  */
 package uk.theretiredprogrammer.reportwriter.language;
 
-import uk.theretiredprogrammer.reportwriter.language.DefinitionSource;
-import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.language.ExpressionMap;
-import uk.theretiredprogrammer.reportwriter.language.Language;
-import uk.theretiredprogrammer.reportwriter.language.Parser;
-import uk.theretiredprogrammer.reportwriter.language.Operand;
-import uk.theretiredprogrammer.reportwriter.language.Lexer;
-import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import uk.theretiredprogrammer.reportwriter.RPTWTRException;
 import uk.theretiredprogrammer.reportwriter.SCM_ExpressionLanguage;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.TestConfiguration;
 
 public class MapParserTest {
@@ -49,11 +41,10 @@ public class MapParserTest {
     private void commonTestMap(String input, String expectedkey, String expectedvalue) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord datarecord = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -62,7 +53,7 @@ public class MapParserTest {
         if (presult instanceof ExpressionMap map) {
             assertEquals(true, map.containsKey(expectedkey));
             if (map.get(expectedkey) instanceof StringExpression string) {
-                assertEquals(expectedvalue, string.evaluate(datarecord));
+                assertEquals(expectedvalue, string.evaluate(DataRecord.EMPTY));
                 return;
             } else {
                 fail("result expression is not expressionmap>stringexpression");
@@ -74,11 +65,10 @@ public class MapParserTest {
     private void commonTestMap2deep(String input, String[] datares) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord dr = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -90,7 +80,7 @@ public class MapParserTest {
             if (map.get(datares[0]) instanceof ExpressionMap p) {
                 assertEquals(1, p.size());
                 if (p.get(datares[1]) instanceof StringExpression stringexp) {
-                    assertEquals(datares[2], stringexp.evaluate(dr));
+                    assertEquals(datares[2], stringexp.evaluate(DataRecord.EMPTY));
                 } else {
                     fail("data second level is not a string expression");
                 }
@@ -103,11 +93,10 @@ public class MapParserTest {
     private void commonTestMap3deep(String input, String[] datares) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord dr = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -121,7 +110,7 @@ public class MapParserTest {
                 if (p.get(datares[1]) instanceof ExpressionMap p2) {
                     assertEquals(1, p2.size());
                     if (p2.get(datares[2]) instanceof StringExpression stringexp) {
-                        assertEquals(datares[3], stringexp.evaluate(dr));
+                        assertEquals(datares[3], stringexp.evaluate(DataRecord.EMPTY));
                     } else {
                         fail("data third level is not a string expression");
                     }
@@ -137,11 +126,10 @@ public class MapParserTest {
     private void commonTestMap2wide(String input, String[] datares) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord dr = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -153,7 +141,7 @@ public class MapParserTest {
             if (map.get(datares[0]) instanceof ExpressionMap p) {
                 assertEquals(1, p.size());
                 if (p.get(datares[1]) instanceof StringExpression stringexp) {
-                    assertEquals(datares[2], stringexp.evaluate(dr));
+                    assertEquals(datares[2], stringexp.evaluate(DataRecord.EMPTY));
                 } else {
                     fail("data1 second level is not a string expression");
                 }
@@ -163,7 +151,7 @@ public class MapParserTest {
             if (map.get(datares[3]) instanceof ExpressionMap p) {
                 assertEquals(1, p.size());
                 if (p.get(datares[4]) instanceof StringExpression stringexp) {
-                    assertEquals(datares[5], stringexp.evaluate(dr));
+                    assertEquals(datares[5], stringexp.evaluate(DataRecord.EMPTY));
                 } else {
                     fail("data2 second level is not a string expression");
                 }
@@ -176,11 +164,10 @@ public class MapParserTest {
     private void commonTestMap3wide(String input, String[] datares) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord dr = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -194,7 +181,7 @@ public class MapParserTest {
                 if (p.get(datares[1]) instanceof ExpressionMap p2) {
                     assertEquals(1, p2.size());
                     if (p2.get(datares[2]) instanceof StringExpression stringexp) {
-                        assertEquals(datares[3], stringexp.evaluate(dr));
+                        assertEquals(datares[3], stringexp.evaluate(DataRecord.EMPTY));
                     } else {
                         fail("data1 third level is not a string expression");
                     }
@@ -209,7 +196,7 @@ public class MapParserTest {
                 if (q.get(datares[5]) instanceof ExpressionMap q2) {
                     assertEquals(1, q2.size());
                     if (q2.get(datares[6]) instanceof StringExpression stringexp) {
-                        assertEquals(datares[7], stringexp.evaluate(dr));
+                        assertEquals(datares[7], stringexp.evaluate(DataRecord.EMPTY));
                     } else {
                         fail("data2 third level is not a string expression");
                     }
@@ -221,15 +208,14 @@ public class MapParserTest {
             }
         }
     }
-    
+
     private void commonTestMap(String input, int elements) throws Exception {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language language = new SCM_ExpressionLanguage();
-        DataSourceRecord dr = new DataSourceRecord();
         DefinitionSource source = new DefinitionSource(input);
         Lexer lexer = new Lexer(source, language);
         lexer.lex();
@@ -265,19 +251,19 @@ public class MapParserTest {
         System.out.println("TEST4 - parse - map>map>map");
         commonTestMap3deep("{ a:{ b:{c:d }}}", new String[]{"a", "b", "c", "d"});
     }
-    
+
     @Test
     public void test5MapParse() throws Exception {
         System.out.println("TEST5 - parse - map>{map>map,map>map}");
         commonTestMap3wide("{ a:{ b:{c:d }} , e:{f:{g:h }}}", new String[]{"a", "b", "c", "d", "e", "f", "g", "h"});
     }
-    
+
     @Test
     public void test6MapParse() throws Exception {
         System.out.println("TEST6 - parse - map");
         commonTestMap("{ a:{ b:{c:d }} , e_1:{f:{g:h }}}", 2);
     }
-    
+
     @Test
     public void test7MapParse() throws Exception {
         System.out.println("TEST7 - parse - map");

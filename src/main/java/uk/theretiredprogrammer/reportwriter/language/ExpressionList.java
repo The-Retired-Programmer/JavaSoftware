@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 
 public class ExpressionList extends ArrayList<Operand> implements Operand {
 
@@ -65,7 +65,7 @@ public class ExpressionList extends ArrayList<Operand> implements Operand {
     }
 
     @Override
-    public List evaluate(DataSourceRecord datarecord) {
+    public List evaluate(DataRecord datarecord) {
         return this.stream().map((item) -> item.evaluate( datarecord)).collect(Collectors.toList());
     }
 

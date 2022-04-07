@@ -24,6 +24,10 @@ public class RPTWTRRuntimeException extends RuntimeException {
         super(message);
     }
     
+    public RPTWTRRuntimeException(Throwable t) {
+        super(t);
+    }
+    
     public RPTWTRRuntimeException(String message, S_Token token) {
         this(message,token.getLocator());
     }

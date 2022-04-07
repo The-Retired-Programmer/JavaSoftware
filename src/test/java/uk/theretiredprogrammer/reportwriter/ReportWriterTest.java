@@ -15,11 +15,10 @@
  */
 package uk.theretiredprogrammer.reportwriter;
 
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
-import uk.theretiredprogrammer.reportwriter.ReportWriter;
-import java.io.IOException;
+import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
 
 public class ReportWriterTest {
 
@@ -31,17 +30,18 @@ public class ReportWriterTest {
         System.out.println("App functionality");
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
+        File f = Configuration.getDefault().getReportFile();
+        if (f == null) {
+           fail("Missing report source file");
+        }
         try {
-            ReportWriter reportwriter = new ReportWriter();
-            if (!reportwriter.buildReportDefinition()) {
-                fail("missing definition file");
-            }
+            ReportWriter reportwriter = new ReportWriter(f);
             reportwriter.loadDataFiles();
             reportwriter.createAllReports();
-        } catch (IOException | RPTWTRException ex) {
+        } catch (RPTWTRException ex) {
             fail(ex.getLocalizedMessage());
         }
     }

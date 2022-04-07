@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.language.BooleanExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 
 public class BooleanLiteral extends BooleanExpression {
 
@@ -28,7 +28,7 @@ public class BooleanLiteral extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
+    public Boolean evaluate(DataRecord datarecord) {
         return literal;
     }
 }

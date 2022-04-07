@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.Language;
 import uk.theretiredprogrammer.reportwriter.language.OperandStack;
@@ -38,7 +38,7 @@ public class String2Boolean extends BooleanExpression {
     }
 
     @Override
-    public Boolean evaluate(DataSourceRecord datarecord) {
+    public Boolean evaluate(DataRecord datarecord) {
         return expression.evaluate(datarecord).equalsIgnoreCase("Yes") || expression.evaluate(datarecord).equalsIgnoreCase("True");
     }
 }

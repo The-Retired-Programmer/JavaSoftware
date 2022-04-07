@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.reportwriter.language;
 
 import uk.theretiredprogrammer.reportwriter.RPTWTRException;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 
 public class Property implements Operand {
 
@@ -54,7 +54,7 @@ public class Property implements Operand {
     }
 
     @Override
-    public Object evaluate(DataSourceRecord datarecord) {
+    public Object evaluate(DataRecord datarecord) {
         return expression.evaluate(datarecord);
     }
 

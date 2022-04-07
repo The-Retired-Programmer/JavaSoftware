@@ -15,11 +15,6 @@
  */
 package uk.theretiredprogrammer.reportwriter.language;
 
-import uk.theretiredprogrammer.reportwriter.language.Language;
-import uk.theretiredprogrammer.reportwriter.language.Lexer;
-import uk.theretiredprogrammer.reportwriter.language.S_Token;
-import uk.theretiredprogrammer.reportwriter.language.DefinitionSource;
-import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -289,7 +284,7 @@ public class LexerTest {
     private void lextest(String input, String... results) throws RPTWTRException {
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         Language languagedefinition = new SCM_ExpressionLanguage();

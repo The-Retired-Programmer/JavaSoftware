@@ -15,13 +15,14 @@
  */
 package uk.theretiredprogrammer.reportwriter;
 
-import uk.theretiredprogrammer.reportwriter.ReportDefinition;
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import java.io.File;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.reportwriter.language.BooleanExpression;
 import uk.theretiredprogrammer.reportwriter.language.ExpressionList;
 import uk.theretiredprogrammer.reportwriter.language.ExpressionMap;
@@ -36,16 +37,22 @@ public class ReportDefinition2Test {
     public void testCreate() throws IOException, RPTWTRException, FileNotFoundException {
         System.out.println("definitions 2");
 
-        DataSourceRecord datarecord = new DataSourceRecord("Event", "Type", "dummy", "dummy");
+        DataRecord datarecord = new DataRecord(
+                Arrays.asList("Event", "Type"),
+                Arrays.asList("dummy", "dummy")
+        );
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
-        ReportDefinition reportdefinition = new ReportDefinition();
-        reportdefinition.buildReportDefinition();
+        File f = Configuration.getDefault().getReportFile();
+        if (f == null) {
+            fail("Missing report source file");
+        }
+        ReportCompiler compiled = new ReportCompiler(f);
         //
-        ExpressionMap map = reportdefinition.getDatadefinitions();
+        ExpressionMap map = compiled.getCompiledOutputDataStatements();
         assertEquals(2, map.size());
         if (map.get("contacts") instanceof ExpressionMap contacts) {
             assertEquals(2, contacts.size());
@@ -54,7 +61,7 @@ public class ReportDefinition2Test {
             fail("Data - contacts is not a map");
         }
         //
-        Operand reports = reportdefinition.getReportdefinitions();
+        Operand reports = compiled.getCompiledOutputReportsStatements();
         if (reports instanceof ExpressionList rptlist) {
             Operand report1 = rptlist.get(0);
             if (report1 instanceof ExpressionMap rptmap) {

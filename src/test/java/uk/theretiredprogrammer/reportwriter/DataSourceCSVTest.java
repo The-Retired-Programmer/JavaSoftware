@@ -15,65 +15,65 @@
  */
 package uk.theretiredprogrammer.reportwriter;
 
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceCSV;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSource;
-import java.io.IOException;
+import java.util.Iterator;
+import uk.theretiredprogrammer.reportwriter.datasource.DataSetFromCSV;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.StoredDataSet;
 import uk.theretiredprogrammer.reportwriter.language.ExpressionMap;
 import uk.theretiredprogrammer.reportwriter.language.functions.StringLiteral;
 
 public class DataSourceCSVTest {
 
-    public DataSourceCSVTest() {
-    }
-
-    /**
-     * Test of load method, of class DataSourceCSVExtended.
-     */
     @Test
     @SuppressWarnings("null")
     public void testLoad() {
         System.out.println("load");
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("club-dinghy-racing-2022-bookings20220222 (1).csv"));
         parameters.put("match", new StringLiteral("full"));
-        DataSource datasource = null;
+        StoredDataSet dataset = null;
         try {
-            datasource = DataSourceCSV.read("bookings", parameters);
-        } catch (RPTWTRException | IOException ex) {
-            fail("loading CSV failure: " + ex.getMessage());
+            dataset = DataSetFromCSV.create("bookings", parameters);
+        } catch (Throwable t) {
+            fail("loading CSV failure: " + t.getMessage());
         }
-        assertEquals("Richard Linsdale", datasource.get(1).getFieldValue("Made for"));
-        assertEquals("Janie Linsdale", datasource.get(0).getFieldValue("Made for"));
+
+        Iterator<DataRecord> i = dataset.getStream().iterator();
+        assertEquals("Janie Linsdale", i.next().get("Made for"));
+        assertEquals("Richard Linsdale", i.next().get("Made for"));
     }
 
     @Test
     @SuppressWarnings("null")
-    public void testLoad2()  {
+    public void testLoad2() {
         System.out.println("load2");
         try {
             TestConfiguration.create("reportdefinition");
-        } catch (RPTWTRException | IOException ex) {
+        } catch (RPTWTRException ex) {
             fail("Configuration Failure: " + ex.getLocalizedMessage());
         }
         ExpressionMap parameters = new ExpressionMap();
         parameters.put("path", new StringLiteral("enquiries20220317.csv"));
         parameters.put("match", new StringLiteral("full"));
-        DataSource datasource = null;
+        StoredDataSet dataset = null;
         try {
-            datasource = DataSourceCSV.read("enquiries", parameters);
-        } catch (RPTWTRException | IOException ex) {
-            fail("loading CSV failure: " + ex.getMessage());
+            dataset = DataSetFromCSV.create("enquiries", parameters);
+        } catch (Throwable t) {
+            fail("loading CSV failure: " + t.getLocalizedMessage());
         }
-        assertEquals(40, datasource.size());
-        assertEquals("Lucas Hartley", datasource.get(3).getFieldValue("Subject"));
-        assertEquals("richard@rlinsdale.uk", datasource.get(5).getFieldValue("Email"));
+        Iterator<DataRecord> i = dataset.getStream().iterator();
+        i.next();
+        i.next();
+        i.next();
+        assertEquals("Lucas Hartley", i.next().get("Subject"));
+        i.next();
+        assertEquals("richard@rlinsdale.uk", i.next().get("Email"));
     }
 }

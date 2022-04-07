@@ -15,17 +15,15 @@
  */
 package uk.theretiredprogrammer.reportwriter;
 
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
 import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
-import java.io.IOException;
 
 public class TestConfiguration {
 
-    public static void create(String reportdefinition) throws IOException, RPTWTRException {
+    public static void create(String reportdefinition) throws RPTWTRException {
         create(reportdefinition, "<undefined>");
     }
 
-    public static void create(String reportdefinition, String commandparameter) throws IOException, RPTWTRException {
+    public static void create(String reportdefinition, String commandparameter) throws RPTWTRException {
         Configuration.create(
                 new String[]{"-wd", "TESTRPTWTR", "-od", "output", "-dd", "TESTRPTWTR/Downloads", reportdefinition, commandparameter}
         );

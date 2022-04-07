@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.Language;
 import uk.theretiredprogrammer.reportwriter.language.OperandStack;
@@ -37,8 +37,8 @@ public class DataRecordField extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
-        return datarecord.getFieldValue(fieldnameexpression.evaluate(datarecord));
+    public String evaluate(DataRecord datarecord) {
+        return datarecord.get(fieldnameexpression.evaluate(datarecord));
     }
 
 }

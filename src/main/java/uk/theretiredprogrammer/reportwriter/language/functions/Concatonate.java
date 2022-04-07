@@ -16,7 +16,7 @@
 package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.Language;
 import uk.theretiredprogrammer.reportwriter.language.OperandStack;
@@ -40,7 +40,7 @@ public class Concatonate extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
+    public String evaluate(DataRecord datarecord) {
         return lhs.evaluate(datarecord) + rhs.evaluate(datarecord);
     }
 }

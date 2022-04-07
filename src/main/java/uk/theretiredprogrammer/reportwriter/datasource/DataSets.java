@@ -13,11 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.reportwriter.language;
+package uk.theretiredprogrammer.reportwriter.datasource;
 
-import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
+import java.util.HashMap;
+import java.util.Map;
 
-public interface Operand<T> extends S_Token {
+public class DataSets {
+        
+    private Map<String,StoredDataSet> datasets = new HashMap<>();
 
-    public abstract T evaluate(DataRecord datarecord);
+    public StoredDataSet getDataSet(String datasetname) {
+        return datasets.get(datasetname);
+    }
+    
+    public void saveDataSet(String datasetname, StoredDataSet dataset) {
+        datasets.put(datasetname, dataset);
+    }
 }

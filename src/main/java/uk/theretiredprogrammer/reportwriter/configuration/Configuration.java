@@ -16,19 +16,18 @@
 package uk.theretiredprogrammer.reportwriter.configuration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 import uk.theretiredprogrammer.reportwriter.RPTWTRException;
+import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
 
 public class Configuration {
 
     private static Configuration configuration;
 
-    public static void create(String args[]) throws IOException, RPTWTRException {
+    public static void create(String args[]) throws RPTWTRException {
         configuration = new Configuration();
         configuration.loadconfiguration(args);
     }
@@ -49,12 +48,14 @@ public class Configuration {
     private File downloaddir;
     private File workingdir;
     private File outputdir;
-    private File definitionfile;
+    private File reportfile;
 
     private Configuration() {
     }
 
-    private void loadconfiguration(String args[]) throws IOException, RPTWTRException {
+    @SuppressWarnings("UseSpecificCatch")
+    private void loadconfiguration(String args[]) throws RPTWTRException {
+        try {
         argconfiguration = new ArgConfiguration();
         argproperties = argconfiguration.parseArgs(args);
         getSystemConfig();
@@ -69,8 +70,8 @@ public class Configuration {
         downloaddir = findDir("downloaddir", "Downloads");
         workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
         outputdir = findOutputDir();
-        definitionfile = findDefinitionFile();
-        if (argconfiguration.isListCmd()) {
+        reportfile = findReportFile();
+            if (argconfiguration.isListCmd()) {
             System.out.println("\n Current Directory Parameters and Resulting Paths\n");
             System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
             System.out.println("workingdir is " + getPropertyValue("workingdir") + " expands to " + workingdir.getCanonicalPath());
@@ -91,9 +92,12 @@ public class Configuration {
             }
             saveUserConfig();
         }
+        } catch (Throwable t) {
+            throw new RPTWTRException(t);
+        }
     }
 
-    public File findDir(String propertyname, String defaultvalue) throws RPTWTRException {
+    private File findDir(String propertyname, String defaultvalue) {
         String dir = getPropertyValue(propertyname);
         if (dir == null) {
             dir = defaultvalue;
@@ -104,16 +108,16 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new RPTWTRException("Failed to create a new file - " + dir);
+                throw new RPTWTRRuntimeException("Failed to create a new file - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new RPTWTRException(propertyname + " does not evauate to a file system directory");
+            throw new RPTWTRRuntimeException(propertyname + " does not exist");
         }
         return f;
     }
 
-    public File findOutputDir() throws RPTWTRException {
+    private File findOutputDir() {
         String dir = getPropertyValue("outputdir");
         if (dir == null) {
             return getWorkingDir();
@@ -124,26 +128,26 @@ public class Configuration {
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
-                throw new RPTWTRException("Failed to create a new directory - " + dir);
+                throw new RPTWTRRuntimeException("Failed to create a new directory - " + dir);
             }
         }
         if (!f.isDirectory()) {
-            throw new RPTWTRException("Output directory does not evauate to a file system directory");
+            throw new RPTWTRRuntimeException("Output directory does not exist");
         }
         return f;
     }
 
-    public File findDefinitionFile() throws RPTWTRException {
+    private File findReportFile() {
         String file = argconfiguration.getDefinitionFile();
         if (file == null) {
             return null;
         }
         File f = new File(getWorkingDir(), file);
         if (!f.exists()) {
-            throw new RPTWTRException("Definition file does not evauate to a file system file; " + file);
+            throw new RPTWTRRuntimeException("Report file does not exist" + file);
         }
         if (!f.canRead()) {
-            throw new RPTWTRException("Definition file is not readable; " + file);
+            throw new RPTWTRRuntimeException("Report file is not readable; " + file);
         }
         return f;
     }
@@ -172,8 +176,8 @@ public class Configuration {
         return outputdir;
     }
 
-    public File getDefinitionFile() {
-        return definitionfile;
+    public File getReportFile() {
+        return reportfile;
     }
 
     public String getSystemProperty(String key) {
@@ -224,32 +228,42 @@ public class Configuration {
 
     private static final String USERCONFIGFILE = ".reportwriter";
 
-    private void getUserConfig() throws RPTWTRException, FileNotFoundException, IOException {
+    @SuppressWarnings("UseSpecificCatch")
+    private void getUserConfig() {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new RPTWTRException("Cannot identify user home directory");
+            throw new RPTWTRRuntimeException("Cannot identify user home directory");
         }
         userproperties = new Properties();
         File file_config = new File(userhome, USERCONFIGFILE);
         if (!file_config.canRead()) {
             return;
         }
-        try ( FileReader in = new FileReader(file_config)) {
-            userproperties.load(in);
+        try {
+            try ( FileReader in = new FileReader(file_config)) {
+                userproperties.load(in);
+            }
+        } catch (Throwable t) {
+            throw new RPTWTRRuntimeException(t);
         }
     }
 
-    private void saveUserConfig() throws RPTWTRException, IOException {
-        File file_config = deleteUserConfigIfExists();
-        try ( FileWriter out = new FileWriter(file_config)) {
-            userproperties.store(out, "-- ReportWriter User Configuration --");
+    @SuppressWarnings("UseSpecificCatch")
+    private void saveUserConfig() {
+        try {
+            File file_config = deleteUserConfigIfExists();
+            try ( FileWriter out = new FileWriter(file_config)) {
+                userproperties.store(out, "-- ReportWriter User Configuration --");
+            }
+        } catch (Throwable t) {
+            throw new RPTWTRRuntimeException(t);
         }
     }
 
-    private File deleteUserConfigIfExists() throws RPTWTRException {
+    private File deleteUserConfigIfExists() {
         String userhome = systemproperties.getProperty("user.home");
         if (userhome == null) {
-            throw new RPTWTRException("Cannot identify user home directory");
+            throw new RPTWTRRuntimeException("Cannot identify user home directory");
         }
         File file_config = new File(userhome, USERCONFIGFILE);
         if (file_config.exists()) {

@@ -15,84 +15,92 @@
  */
 package uk.theretiredprogrammer.reportwriter.datasource;
 
-//
 import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.Writer;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
+import java.util.concurrent.TimeUnit;
+import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
+import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.ExpressionMap;
+import uk.theretiredprogrammer.reportwriter.language.StringExpression;
 
-public class DataSourceCSV extends DataSource {
+public class DataSetFromCSV {
 
-    public static DataSource read(String name, ExpressionMap parameters) throws IOException, RPTWTRException {
-        return new DataSourceCSV().load(name, parameters);
+    public static StoredDataSet create(String name, ExpressionMap parameters) {
+        return new DataSetFromCSV().load(name, parameters);
     }
 
-    public static void write(String path, List<List<String>> lines) throws IOException, RPTWTRException {
-        new DataSourceCSV().store(path, lines);
-    }
+    private StoredDataSet dataset;
 
-    public static void sysout(String title, List<List<String>> lines) {
-        new DataSourceCSV().sysoutlist(title, lines);
-    }
-
-    public DataSource load(String name, ExpressionMap parameters) throws IOException, RPTWTRException {
-        File f = DataSourceIO.getInputFile(parameters);
-        if (Configuration.getDefault().getArgConfiguration().isListCmd()) {
-            System.out.println("loading "+ name + " from " + f.getCanonicalPath());
-        }
-        try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
-            charsource = new CharacterSource(brdr.lines().toList());
-            createDataSourceRecords(charsource);
-        }
-        return this;
-    }
-
-    public void sysoutlist(String title, List<List<String>> lines) {
-        if (title != null) {
-            System.out.println();
-            System.out.println(title);
-            System.out.println();
-        }
-        lines.stream().forEach((List<String> record) -> {
-            System.out.println(
-                    record.stream()
-                            .map(field -> mapfield(field))
-                            .collect(Collectors.joining("\",\"", "\"", "\""))
-            );
-        });
-        System.out.println();
-    }
-
-    public void store(String path, List<List<String>> lines) throws IOException, RPTWTRException {
-        File f = DataSourceIO.getOutputFile(path);
-        try ( Writer wtr = new FileWriter(f);  PrintWriter pwtr = new PrintWriter(wtr)) {
-            lines.stream().forEach((List<String> record) -> {
-                pwtr.println(
-                        record.stream()
-                                .map(field -> mapfield(field))
-                                .collect(Collectors.joining("\",\"", "\"", "\""))
-                );
-            });
+    private StoredDataSet load(String name, ExpressionMap parameters) {
+        try {
+            File f = getInputFile(parameters);
+            if (Configuration.getDefault().getArgConfiguration().isListCmd()) {
+                System.out.println("loading " + name + " from " + f.getCanonicalPath());
+            }
+            try ( Reader rdr = new FileReader(f);  BufferedReader brdr = new BufferedReader(rdr)) {
+                charsource = new CharacterSource(brdr.lines().toList());
+                createDataSourceRecords(charsource);
+            }
+            return dataset;
+        } catch (IOException t) {
+            throw new RPTWTRRuntimeException(t);
         }
     }
 
-    private String mapfield(String field) {
-        return field.replace("\"","\"\"");
+    private File getInputFile(ExpressionMap parameters) throws IOException {
+        File f;
+        switch (getRequiredString(parameters, "match")) {
+            case "full" -> {
+                f = new File(getRequiredString(parameters, "path"));
+                if (f.isAbsolute()) {
+                    return f;
+                }
+                return new File(Configuration.getDefault().getDownloadDir(), f.getPath());
+            }
+            case "latest_startswith" -> {
+                String startswith = getRequiredString(parameters, "path");
+                String[] files = Configuration.getDefault().getDownloadDir().list((file, filename) -> filename.startsWith(startswith));
+                f = getResolvedLatestFile(files);
+            }
+            default ->
+                throw new RPTWTRRuntimeException("illegal parameter value for \"match\" parameter in data statement", parameters);
+        }
+        return f.isAbsolute() ? f : new File(Configuration.getDefault().getDownloadDir(), f.getPath());
     }
 
-    // the READ section
+    private File getResolvedLatestFile(String[] files) throws IOException {
+        long mostrecenttime = 0;
+        File mostrecentfile = null;
+        for (String file : files) {
+            File f = new File(file);
+            if (!f.isAbsolute()) {
+                f = new File(Configuration.getDefault().getDownloadDir(), f.getPath());
+            }
+            long time = Files.getLastModifiedTime(f.toPath()).to(TimeUnit.SECONDS);
+            if (time > mostrecenttime) {
+                mostrecenttime = time;
+                mostrecentfile = f;
+            }
+        }
+        return mostrecentfile;
+    }
+
+    private String getRequiredString(ExpressionMap parameters, String key) {
+        StringExpression keyparameter = DataTypes.isStringExpression(parameters, key);
+        if (keyparameter != null) {
+            return keyparameter.evaluate(DataRecord.EMPTY);
+        }
+        throw new RPTWTRRuntimeException(key + " parameter missing in data statement", parameters);
+    }
+
     private CharacterSource charsource;
-    private List<String> columnKeys;
 
     private enum State {
         STARTOFFIELD, INQUOTEDFIELD, INUNQUOTEDFIELD, AFTERQUOTEDFIELD
@@ -102,29 +110,20 @@ public class DataSourceCSV extends DataSource {
     private StringBuilder token;
     private boolean inData = false;
 
-    private void createDataSourceRecords(CharacterSource charsource) throws IOException, RPTWTRException {
+    private void createDataSourceRecords(CharacterSource charsource) {
         state = State.STARTOFFIELD;
         tokenlist = new ArrayList<>();
         token = new StringBuilder();
-        try {
-            do {
-                processNextChar(charsource);
-            } while (!charsource.isEOF());
-
-        } catch (IOException ex) {
-            throw new IOException(ex.getMessage() + charsource.getCurrentLine());
-        }
+        do {
+            processNextChar(charsource);
+        } while (!charsource.isEOF());
     }
 
-    private void processlineoftokens() throws IOException, RPTWTRException {
+    private void processlineoftokens() {
         if (inData) {
-            if (columnKeys.size() != tokenlist.size()) {
-                throw new IOException("Badly formatted CSV (columns count inconsistent): " + charsource.getCurrentLine());
-            }
-            DataSourceRecord record = new DataSourceRecord(columnKeys, tokenlist);
-            add(record);
+            dataset.insertDataRecord(tokenlist.stream());
         } else {
-            columnKeys = tokenlist;
+            dataset = new StoredDataSet(tokenlist);
             inData = true;
         }
         tokenlist = new ArrayList<>();
@@ -132,7 +131,7 @@ public class DataSourceCSV extends DataSource {
         token = new StringBuilder();
     }
 
-    private void processNextChar(CharacterSource charsource) throws IOException, RPTWTRException {
+    private void processNextChar(CharacterSource charsource) {
         char c = charsource.getChar();
         switch (state) {
             case STARTOFFIELD -> {
@@ -200,7 +199,7 @@ public class DataSourceCSV extends DataSource {
                     case ' ' -> {
                     }
                     default ->
-                        throw new IOException("Badly formatted CSV (extra text after closing quote): ");
+                        throw new RPTWTRRuntimeException("Badly formatted CSV (extra text after closing quote): ");
                 }
             }
         }

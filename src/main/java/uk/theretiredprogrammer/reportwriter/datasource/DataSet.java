@@ -13,11 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.theretiredprogrammer.reportwriter.language;
+package uk.theretiredprogrammer.reportwriter.datasource;
 
-import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
+import java.util.List;
+import java.util.stream.Stream;
 
-public interface Operand<T> extends S_Token {
-
-    public abstract T evaluate(DataRecord datarecord);
+public abstract class DataSet {
+    
+    private final List<String> headers;
+    
+    public DataSet(List<String> headers) {
+        this.headers = headers;
+    }
+    
+    public DataSet(Stream<String> headers) {
+        this.headers = headers.toList();
+    }
+    
+    public List<String> getHeaders() {
+        return headers;
+    }
+    
+    public Stream<String> getHeaderStream() {
+        return headers.stream();
+    }
+    
 }

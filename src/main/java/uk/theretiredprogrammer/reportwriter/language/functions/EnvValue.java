@@ -17,7 +17,7 @@ package uk.theretiredprogrammer.reportwriter.language.functions;
 
 import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
 import uk.theretiredprogrammer.reportwriter.language.StringExpression;
-import uk.theretiredprogrammer.reportwriter.datasource.DataSourceRecord;
+import uk.theretiredprogrammer.reportwriter.datasource.DataRecord;
 import uk.theretiredprogrammer.reportwriter.language.DataTypes;
 import uk.theretiredprogrammer.reportwriter.language.Language;
 import uk.theretiredprogrammer.reportwriter.language.OperandStack;
@@ -38,7 +38,7 @@ public class EnvValue extends StringExpression {
     }
 
     @Override
-    public String evaluate(DataSourceRecord datarecord) {
+    public String evaluate(DataRecord datarecord) {
         return Configuration.getDefault().getEnvironmentValue(expression.evaluate(datarecord));
     }
 }

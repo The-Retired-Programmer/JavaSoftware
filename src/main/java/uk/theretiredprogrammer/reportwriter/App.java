@@ -15,53 +15,42 @@
  */
 package uk.theretiredprogrammer.reportwriter;
 
+import java.io.File;
 import uk.theretiredprogrammer.reportwriter.configuration.Configuration;
-import java.io.IOException;
 
 public class App {
 
     public static void main(String args[]) {
-
         try {
             try {
                 Configuration.create(args);
-            } catch (RPTWTRRuntimeException ex) {
-                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
+            } catch (RPTWTRException ex) {
+                System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
                 System.exit(1);
             }
-        } catch (RPTWTRException | IOException ex) {
-            System.err.println("Configuration Failure: " + ex.getLocalizedMessage());
-            System.exit(1);
-        }
-
-        @SuppressWarnings("UnusedAssignment")
-        ReportWriter reportwriter = null;
-        try {
+            File f = Configuration.getDefault().getReportFile();
+            if (f == null) {
+                System.exit(0);
+            }
+            @SuppressWarnings("UnusedAssignment")
+            ReportWriter reportwriter = null;
             try {
-                reportwriter = new ReportWriter();
-                if (!reportwriter.buildReportDefinition()) {
-                    System.exit(0);
-                }
-            } catch (RPTWTRRuntimeException ex) {
-                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
+                reportwriter = new ReportWriter(f);
+            } catch (RPTWTRException ex) {
+                System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
                 System.exit(2);
             }
-        } catch (IOException | RPTWTRException ex) {
-            System.err.println("Report Definition Failure: " + ex.getLocalizedMessage());
-            System.exit(2);
-        }
-        try {
             try {
                 reportwriter.loadDataFiles();
                 reportwriter.createAllGeneratedFiles();
                 reportwriter.createAllReports();
-            } catch (RPTWTRRuntimeException ex) {
-                System.err.println("Runtime Exception management problem: " + ex.getLocalizedMessage());
-                System.exit(1);
+            } catch (RPTWTRException ex) {
+                System.err.println("Report Execution Failure: " + ex.getLocalizedMessage());
+                System.exit(3);
             }
-        } catch (RPTWTRException | IOException ex) {
-            System.err.println("Report Execution Failure: " + ex.getLocalizedMessage());
-            System.exit(3);
+        } catch (Throwable t) {
+            System.err.println("Program Exception Caught: " + t.getLocalizedMessage());
+            System.exit(8);
         }
     }
 }

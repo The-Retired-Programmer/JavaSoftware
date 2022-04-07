@@ -18,7 +18,7 @@ package uk.theretiredprogrammer.reportwriter.configuration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import uk.theretiredprogrammer.reportwriter.RPTWTRException;
+import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
 
 public class ArgConfiguration {
 
@@ -32,7 +32,7 @@ public class ArgConfiguration {
     private boolean list = false;
     private boolean debuglist = false;
 
-    public Properties parseArgs(String[] args) throws RPTWTRException {
+    public Properties parseArgs(String[] args) {
         extractArgCommands(args);
         Properties p = new Properties();
         if (downloaddir != null) {
@@ -74,7 +74,7 @@ public class ArgConfiguration {
         return debuglist;
     }
 
-    private void extractArgCommands(String[] args) throws RPTWTRException {
+    private void extractArgCommands(String[] args) {
         ArgReader argrdr = new ArgReader(args);
         while (argrdr.more()) {
             String p1 = argrdr.next();
@@ -128,9 +128,9 @@ public class ArgConfiguration {
             index = 0;
         }
 
-        public String next() throws RPTWTRException {
+        public String next() {
             if (index >= args.length) {
-                throw new RPTWTRException("Command Line: bad structure - missing arguements");
+                throw new RPTWTRRuntimeException("Command Line: bad structure - missing arguements");
             }
             return args[index++];
         }
