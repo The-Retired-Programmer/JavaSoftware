@@ -46,7 +46,7 @@ public class Configuration {
     private Map<String, String> envmap;
 
     private File downloaddir;
-    private File workingdir;
+    private File projectdir;
     private File outputdir;
     private File reportfile;
 
@@ -56,42 +56,45 @@ public class Configuration {
     @SuppressWarnings("UseSpecificCatch")
     private void loadconfiguration(String args[]) throws RPTWTRException {
         try {
-        argconfiguration = new ArgConfiguration();
-        argproperties = argconfiguration.parseArgs(args);
-        getSystemConfig();
-        if (argconfiguration.isClearCmd()) {
-            deleteUserConfigIfExists();
-        }
-        getUserConfig();
-        getEnvConfig();
-        if (argconfiguration.isDebugListCmd()) {
-            dumpargs();
-        }
-        downloaddir = findDir("downloaddir", "Downloads");
-        workingdir = findDir("workingdir", systemproperties.getProperty("user.dir"));
-        outputdir = findOutputDir();
-        reportfile = findReportFile();
+            argconfiguration = new ArgConfiguration();
+            argproperties = argconfiguration.parseArgs(args);
+            if (argconfiguration.isVersionCmd()) {
+                System.out.println("ReportWriter v1.0.0");
+            }
+            getSystemConfig();
+            if (argconfiguration.isClearCmd()) {
+                deleteUserConfigIfExists();
+            }
+            getUserConfig();
+            getEnvConfig();
+            if (argconfiguration.isDebugListCmd()) {
+                dumpargs();
+            }
+            downloaddir = findDir("downloaddir", "Downloads");
+            projectdir = findDir("projectdir", systemproperties.getProperty("user.dir"));
+            outputdir = findOutputDir();
+            reportfile = findReportFile();
             if (argconfiguration.isListCmd()) {
-            System.out.println("\n Current Directory Parameters and Resulting Paths\n");
-            System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
-            System.out.println("workingdir is " + getPropertyValue("workingdir") + " expands to " + workingdir.getCanonicalPath());
-            System.out.println("outputdir is " + getPropertyValue("outputdir") + " expands to " + outputdir.getCanonicalPath());
-        }
-        if (argconfiguration.isSaveCmd()) {
-            String dd = argproperties.getProperty("downloaddir");
-            if (dd != null) {
-                userproperties.setProperty("downloaddir", dd);
+                System.out.println("\n Current Directory Parameters and Resulting Paths\n");
+                System.out.println("downloadir is " + getPropertyValue("downloaddir") + " expands to " + downloaddir.getCanonicalPath());
+                System.out.println("projectdir is " + getPropertyValue("projectdir") + " expands to " + projectdir.getCanonicalPath());
+                System.out.println("outputdir is " + getPropertyValue("outputdir") + " expands to " + outputdir.getCanonicalPath());
             }
-            String wd = argproperties.getProperty("workingdir");
-            if (wd != null) {
-                userproperties.setProperty("workingdir", wd);
+            if (argconfiguration.isSaveCmd()) {
+                String dd = argproperties.getProperty("downloaddir");
+                if (dd != null) {
+                    userproperties.setProperty("downloaddir", dd);
+                }
+                String pd = argproperties.getProperty("projectdir");
+                if (pd != null) {
+                    userproperties.setProperty("projectdir", pd);
+                }
+                String od = argproperties.getProperty("outputdir");
+                if (od != null) {
+                    userproperties.setProperty("outputdir", od);
+                }
+                saveUserConfig();
             }
-            String od = argproperties.getProperty("outputdir");
-            if (od != null) {
-                userproperties.setProperty("outputdir", od);
-            }
-            saveUserConfig();
-        }
         } catch (Throwable t) {
             throw new RPTWTRException(t);
         }
@@ -120,11 +123,11 @@ public class Configuration {
     private File findOutputDir() {
         String dir = getPropertyValue("outputdir");
         if (dir == null) {
-            return getWorkingDir();
+            return getProjectDir();
         }
         File f = new File(dir);
         if (!f.isAbsolute()) {
-            f = new File(getWorkingDir(), dir);
+            f = new File(getProjectDir(), dir);
         }
         if (!f.exists()) {
             if (!f.mkdir()) {
@@ -142,7 +145,7 @@ public class Configuration {
         if (file == null) {
             return null;
         }
-        File f = new File(getWorkingDir(), file);
+        File f = new File(getProjectDir(), file);
         if (!f.exists()) {
             throw new RPTWTRRuntimeException("Report file does not exist" + file);
         }
@@ -168,8 +171,8 @@ public class Configuration {
         return downloaddir;
     }
 
-    public File getWorkingDir() {
-        return workingdir;
+    public File getProjectDir() {
+        return projectdir;
     }
 
     public File getOutputDir() {
@@ -216,9 +219,9 @@ public class Configuration {
         if (dd != null) {
             envproperties.setProperty("downloaddir", dd);
         }
-        String wd = envmap.get("RPTWTR_wd");
+        String wd = envmap.get("RPTWTR_pd");
         if (wd != null) {
-            envproperties.setProperty("workingdir", wd);
+            envproperties.setProperty("projectdir", wd);
         }
         String od = envmap.get("RPTWTR_od");
         if (od != null) {

@@ -23,7 +23,7 @@ import uk.theretiredprogrammer.reportwriter.RPTWTRRuntimeException;
 public class ArgConfiguration {
 
     private String downloaddir = null;
-    private String workingdir = null;
+    private String projectdir = null;
     private String outputdir = null;
     private String definitionfile = null;
     private final List<String> commandparameters = new ArrayList<>();
@@ -31,6 +31,7 @@ public class ArgConfiguration {
     private boolean clear = false;
     private boolean list = false;
     private boolean debuglist = false;
+    private boolean version = false;
 
     public Properties parseArgs(String[] args) {
         extractArgCommands(args);
@@ -38,8 +39,8 @@ public class ArgConfiguration {
         if (downloaddir != null) {
             p.setProperty("downloaddir", downloaddir);
         }
-        if (workingdir != null) {
-            p.setProperty("workingdir", workingdir);
+        if (projectdir != null) {
+            p.setProperty("projectdir", projectdir);
         }
         if (outputdir != null) {
             p.setProperty("outputdir", outputdir);
@@ -73,6 +74,10 @@ public class ArgConfiguration {
     public boolean isDebugListCmd() {
         return debuglist;
     }
+    
+    public boolean isVersionCmd() {
+        return version;
+    }
 
     private void extractArgCommands(String[] args) {
         ArgReader argrdr = new ArgReader(args);
@@ -81,8 +86,8 @@ public class ArgConfiguration {
             switch (p1) {
                 case "--downloaddir" ->
                     downloaddir = argrdr.next();
-                case "--workingdir" ->
-                    workingdir = argrdr.next();
+                case "--projectdir" ->
+                    projectdir = argrdr.next();
                 case "--outputdir" ->
                     outputdir = argrdr.next();
                 case "--save" ->
@@ -93,10 +98,12 @@ public class ArgConfiguration {
                     list = true;
                 case "--debuglist" ->
                     debuglist = true;
+                case "--version" ->
+                    version = true;
                 case "-dd" ->
                     downloaddir = argrdr.next();
-                case "-wd" ->
-                    workingdir = argrdr.next();
+                case "-pd" ->
+                    projectdir = argrdr.next();
                 case "-od" ->
                     outputdir = argrdr.next();
                 case "-s" ->
@@ -107,6 +114,8 @@ public class ArgConfiguration {
                     list = true;
                 case "-dl" ->
                     debuglist = true;
+                case "-v" ->
+                    version = true;
                 default -> {
                     definitionfile = p1;
                     commandparameters.clear();

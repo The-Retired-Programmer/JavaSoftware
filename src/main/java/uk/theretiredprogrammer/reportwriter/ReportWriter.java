@@ -97,13 +97,15 @@ public class ReportWriter {
                             primarystream = primarystream.createDataSetStream(primarystream.filter(filterexpression));
                         }
                         StoredDataSet dataset = primarystream.createStoredDataSet();
-                        var headerfields = dataset.evaluateheaders(headers);
-                        primarystream = dataset.createDataRecordStream(headerfields);
-                        primarystream = primarystream.createDataSetStreamIncludeHeader(primarystream.buildNewDataRecordStream(fields));
-                        if (to == null) {
-                            DataSetToSysout.display(title, primarystream);
-                        } else {
-                            DataSetToCSV.save(to, primarystream);
+                        if (!dataset.isEmpty()) {
+                            var headerfields = dataset.evaluateheaders(headers);
+                            primarystream = dataset.createDataRecordStream(headerfields);
+                            primarystream = primarystream.createDataSetStreamIncludeHeader(primarystream.buildNewDataRecordStream(fields));
+                            if (to == null) {
+                                DataSetToSysout.display(title, primarystream);
+                            } else {
+                                DataSetToCSV.save(to, primarystream);
+                            }
                         }
                     });
         } catch (Throwable t) {

@@ -25,7 +25,7 @@ public class TestConfiguration {
 
     public static void create(String reportdefinition, String commandparameter) throws RPTWTRException {
         Configuration.create(
-                new String[]{"-wd", "TESTRPTWTR", "-od", "output", "-dd", "TESTRPTWTR/Downloads", reportdefinition, commandparameter}
+                new String[]{"-pd", "TESTRPTWTR", "-od", "output", "-dd", "TESTRPTWTR/Downloads", reportdefinition, commandparameter}
         );
     }
 }

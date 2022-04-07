@@ -37,7 +37,7 @@ public class StoredDataSet extends DataSet {
     public DataSetStream createDataRecordStream() {
         return new DataSetStream(this);
     }
-    
+
     public DataSetStream createDataRecordStream(List<String> headers) {
         return new DataSetStream(headers, this.getStream());
     }
@@ -64,5 +64,9 @@ public class StoredDataSet extends DataSet {
         return headerexpressions.stream()
                 .map(operand -> DataTypes.isStringExpression(operand).evaluate(datarecord))
                 .collect(Collectors.toList());
+    }
+    
+    public boolean isEmpty() {
+        return dataset.isEmpty();
     }
 }

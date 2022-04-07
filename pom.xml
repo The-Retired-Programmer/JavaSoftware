@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
     <artifactId>reportwriter</artifactId>
-    <version>0.99</version>
+    <version>1.0.0</version>
     <name>Report Writer</name>
     <packaging>jar</packaging>
     <properties>
@@ -19,6 +19,7 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.1.2</version>
                     <configuration>
+                        <finalName>reportwriter</finalName>
                         <archive>
                             <manifest>
                                 <mainClass>uk.theretiredprogrammer.reportwriter.App</mainClass>
