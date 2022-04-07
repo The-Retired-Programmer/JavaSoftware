@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.theretiredprogrammer</groupId>
     <artifactId>reportwriter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Report Writer</name>
     <packaging>jar</packaging>
     <properties>

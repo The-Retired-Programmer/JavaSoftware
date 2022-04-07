@@ -59,7 +59,7 @@ public class Configuration {
             argconfiguration = new ArgConfiguration();
             argproperties = argconfiguration.parseArgs(args);
             if (argconfiguration.isVersionCmd()) {
-                System.out.println("ReportWriter v1.0.0");
+                System.out.println("ReportWriter v1.0.1");
             }
             getSystemConfig();
             if (argconfiguration.isClearCmd()) {

@@ -56,7 +56,9 @@ public class ReportWriter {
     @SuppressWarnings("UseSpecificCatch")
     public void createAllGeneratedFiles() throws RPTWTRException {
         try {
-            compiled.getCompiledOutputGeneratedDataStatements().entrySet()
+            var generated = compiled.getCompiledOutputGeneratedDataStatements();
+            if (generated != null) {
+                generated.entrySet()
                     .forEach(nameandparameters -> {
                         String toname = nameandparameters.getKey();
                         ExpressionMap parameters = DataTypes.isExpressionMap(nameandparameters.getValue());
@@ -76,6 +78,7 @@ public class ReportWriter {
                             System.out.println("generating " + toname + " from " + fromname);
                         }
                     });
+            }
         } catch (Throwable t) {
             throw new RPTWTRException(t);
         }
