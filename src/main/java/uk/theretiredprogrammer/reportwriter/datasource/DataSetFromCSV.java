@@ -199,7 +199,7 @@ public class DataSetFromCSV {
                     case ' ' -> {
                     }
                     default ->
-                        throw new RPTWTRRuntimeException("Badly formatted CSV (extra text after closing quote): ");
+                        throw new RPTWTRRuntimeException("Badly formatted CSV (extra text after closing quote): "+ charsource.getCurrentLine());
                 }
             }
         }
