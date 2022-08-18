@@ -1,0 +1,47 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "gybingdownwindtowindward-starboardtack-portrounding"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
+        "start": [50, 50],
+        "legs": [
+            ["mark1", "starboard"],
+            ["mark2", "starboard"]
+        ]
+    },
+    "marks": [{
+            "name": "mark1",
+            "location": [50, 90],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [50, 50],
+            "colour": "yellow"
+        }],
+    "boats": [{
+            "name": "Red",
+            "type": "laser2",
+            "location": [40, 50],
+            "heading": 135,
+            "reachdownwind": true,
+            "colour": "red"
+        }]
+}

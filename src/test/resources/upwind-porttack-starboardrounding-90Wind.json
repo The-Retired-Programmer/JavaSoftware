@@ -1,0 +1,46 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "upwind-starboardtack"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+   "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": "easterly",
+            "type": "manualflow",
+            "mean": 0,
+            "flow": [4.0, 0.0]
+        }],
+    "course": {
+        "start": [0, 10],
+        "legs": [
+            ["mark1", "starboard"],
+            ["mark2", "starboard"]
+        ]
+    },
+    "marks": [{
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [0, 10],
+            "colour": "yellow"
+        }],
+    "boats": [{
+            "name": "Red",
+            "type": "laser2",
+            "location": [25, 10],
+            "heading": 45,
+            "colour": "red"
+        }]
+}

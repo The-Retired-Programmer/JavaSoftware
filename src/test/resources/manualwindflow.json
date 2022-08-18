@@ -1,0 +1,44 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "testwindflow"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 240,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
+        "start": [50, 90],
+        "legs": [
+            ["mark1", "port"]
+        ]
+    },
+    "marks": [
+        {
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        }
+    ],
+    "boats": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [50, 90],
+            "heading": 225,
+            "colour": "red"
+        }
+    ]
+}

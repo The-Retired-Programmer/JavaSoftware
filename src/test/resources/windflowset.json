@@ -1,0 +1,59 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "constantwindflow"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [
+        {
+            "name": "northly",
+            "type": "constantflow",
+            "flow": [4.0, 270.0]
+        },
+        {
+            "name": "north+10",
+            "type": "constantflow",
+            "zlevel": 1,
+            "flow": [8.0, 280.0],
+            "area": [50, 50, 40.0, 15.0]
+        },
+        {
+            "name": "north-15",
+            "type": "constantflow",
+            "zlevel": 2,
+            "flow": [12.0, 255.0],
+            "area": [60, 40, 20.0, 20.0]
+        }
+    ],
+    "course": {
+        "start": [50, 90],
+        "legs": [
+            ["mark1", "port"]
+        ]
+    },
+    "marks": [
+        {
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        }
+    ],
+    "boats": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [50, 90],
+            "heading": 225,
+            "colour": "red"
+        }
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "gybingdownwindtowindward-starboardtack-portrounding-90Wind"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": "easterly",
+            "type": "manualflow",
+            "mean": 0,
+            "flow": [4.0, 0.0]
+        }],
+    "course": {
+        "start": [90, 90],
+        "legs": [
+            ["mark1", "port"],
+            ["mark2", "port"]
+        ]
+    },
+    "marks": [{
+            "name": "mark1",
+            "location": [50, 90],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [90, 90],
+            "colour": "yellow"
+        }],
+    "boats": [{
+            "name": "Red",
+            "type": "laser2",
+            "location": [90, 90],
+            "heading": 225,
+            "reachdownwind": true,
+            "colour": "red"
+        }]
+}

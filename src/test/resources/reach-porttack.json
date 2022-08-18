@@ -1,0 +1,50 @@
+{
+    "type": "sketch-v3",
+    "meta": {
+        "title": "reach-porttack"
+    },
+    "display": {
+        "zoom": 10,
+        "speedup": 5,
+        "displayarea": [0.0, 0.0, 100.0, 100.0]
+    },
+    "windshifts": {
+        "showflow": true,
+        "showflowinterval": 15,
+        "showflowcolour": "red"
+    },
+    "wind": [{
+            "name": " northly",
+            "type": "manualflow",
+            "mean": 270,
+            "flow": [4.0, 270.0]
+        }],
+    "course": {
+        "start": [10, 50],
+        "legs": [
+            ["mark2", "starboard"],
+            ["mark1", "starboard"]
+        ]
+    },
+    "marks": [
+        {
+            "name": "mark1",
+            "location": [10, 50],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [90, 50],
+            "colour": "yellow"
+        }
+    ],
+    "boats": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [50, 47],
+            "heading": 0,
+            "colour": "red"
+        }
+    ]
+}
