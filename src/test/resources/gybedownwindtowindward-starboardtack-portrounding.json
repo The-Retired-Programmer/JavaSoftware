@@ -1,0 +1,52 @@
+{
+    "TITLE": {
+        "title": "gybingdownwindtowindward-starboardtack-portrounding"
+    },
+    "DISPLAY": {
+        "zoom": 10,
+        "speedup": 5
+    },
+    "SAILING AREA": {
+        "west": 0,
+        "east": 100,
+        "north": 100,
+        "south": 0
+    },
+    "WIND": [
+        {
+            "type": "testflow",
+            "speed": 4,
+            "from": 0,
+            "mean": 0
+        }
+    ],
+    "MARKS": [
+        {
+            "name": "mark1",
+            "location": [50, 10],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [50, 50],
+            "colour": "yellow"
+        }
+    ],
+    "COURSE": {
+        "start": [50, 50],
+        "legs": [
+            ["mark1", "port"],
+            ["mark2", "port"]
+        ]
+    },
+    "BOATS": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [40, 50],
+            "heading": -135,
+            "reachdownwind": true,
+            "colour": "red"
+        }
+    ]
+}

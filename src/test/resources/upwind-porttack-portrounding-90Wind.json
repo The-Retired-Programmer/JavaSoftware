@@ -1,0 +1,51 @@
+{
+    "TITLE": {
+        "title": "upwind-starboardtack"
+    },
+    "DISPLAY": {
+        "zoom": 10,
+        "speedup": 5
+    },
+    "SAILING AREA": {
+        "west": 0,
+        "east": 100,
+        "north": 100,
+        "south": 0
+    },
+    "WIND": [
+        {
+            "type": "testflow",
+            "speed": 4,
+            "from": 90,
+            "mean": 90
+        }
+    ],
+    "MARKS": [
+        {
+            "name": "mark1",
+            "location": [50, 90],
+            "colour": "yellow"
+        },
+        {
+            "name": "mark2",
+            "location": [0, 90],
+            "colour": "yellow"
+        }
+    ],
+    "COURSE": {
+        "start": [0, 90],
+        "legs": [
+            ["mark1", "port"],
+            ["mark2", "port"]
+        ]
+    },
+    "BOATS": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [25, 90],
+            "heading": 135,
+            "colour": "red"
+        }
+    ]
+}

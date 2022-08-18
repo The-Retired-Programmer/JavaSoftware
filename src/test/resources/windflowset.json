@@ -1,0 +1,62 @@
+{
+    "TITLE": {
+        "title": "constantwindflow"
+    },
+    "DISPLAY": {
+        "zoom": 10,
+        "speedup": 5
+    },
+    "SAILING AREA": {
+        "west": 0,
+        "east": 100,
+        "north": 100,
+        "south": 0
+    },
+    "WIND": [
+        {
+            "type": "constantflow",
+            "speed": 4,
+            "from": 0
+        },
+        {
+            "type": "constantflow",
+            "zlevel": 1,
+            "speed": 8,
+            "from": 10,
+            "location": [50,50],
+            "width": 40,
+            "height": 15
+        },
+        {
+            "type": "constantflow",
+            "zlevel": 2,
+            "speed": 12,
+            "from": -15,
+            "location": [60, 40],
+            "width": 20,
+            "height": 20
+        }
+    ],
+    "MARKS": [
+        {
+            "name": "mark1",
+            "location": [50, 90],
+            "colour": "yellow"
+        }
+    ],
+    "COURSE": {
+        "start": [50,10],
+        "legs": [
+            ["mark1","port"]
+        ]
+    },
+    "BOATS": [
+        {
+            "name": "Red",
+            "type": "laser2",
+            "location": [50, 10],
+            "heading": -45,
+            "colour": "red"
+        }
+    ]
+}
